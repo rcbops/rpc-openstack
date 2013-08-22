@@ -59,7 +59,7 @@ def main():
     print "status ok"
 
     for k in metrics.keys():
-        print k, metrics[k]
+        print "metric %s int64 %d" % (k, metrics[k])
 
 
 def error():
