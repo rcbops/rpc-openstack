@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block css %}
+  {% include "_stylesheets.html" %}
+
+  {% load compress %}
+  {% compress css %}
+      <link href='{{ STATIC_URL }}rackspace/less/rackspace.less' type='text/less' media='screen' rel='stylesheet' />
+  {% endcompress %}
+{% endblock %}
