@@ -40,7 +40,7 @@ setuptools.setup(
     package_data={'rackspace': ['static/rackspace/img/*',
                                 'static/rackspace/less/*',
                                 'templates/*.html',
-                                'templates/rackspace/*.html'
+                                'templates/rackspace/*.html',
                                 'templates/rackspace/training/*',
                                 'templates/rackspace/welcome/*']},
     url=info.__url__,
