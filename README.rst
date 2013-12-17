@@ -39,6 +39,11 @@ I recommend you add them to your local settings file which is generally located 
             os.path.join(rackspace.__path__[0], 'static')
         )
 
+    # Rackspace Sandbox Values
+    RAX_SPOG_VALUES = {
+        'welcome_query': 'replace this with a query string',
+        'training_query': 'replace this with a query string'
+    }
 
 If you are looking for the Rackspace Tab to be the default modify the horizon config as found in the ``/etc/openstack-dashboard/local_settings.py`` file.
 
