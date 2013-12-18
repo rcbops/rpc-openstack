@@ -21,7 +21,7 @@ class IndexView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        click_through = getattr(settings, 'RAX_SPOG_VM_TYPE')
+        click_through = getattr(settings, 'RAX_SPOG_VALUES')
         if click_through is not None and isinstance(click_through, dict):
             context['training_query'] = click_through.get('training_query', '')
 
