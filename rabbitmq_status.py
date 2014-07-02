@@ -3,10 +3,12 @@
 import requests
 import sys
 
-OVERVIEW_URL = "http://localhost:55672/api/overview"
-NODES_URL = "http://localhost:55672/api/nodes"
+OVERVIEW_URL = "http://localhost:15672/api/overview"
+NODES_URL = "http://localhost:15672/api/nodes"
 USERNAME = 'guest'
 PASSWORD = 'guest'
+CLUSTERED = True
+CLUSTER_SIZE = 3
 
 OVERVIEW_METRICS = {"queue_totals": ("messages",
                                      "messages_ready",
@@ -24,7 +26,9 @@ NODES_METRICS = ("proc_used",
                  "sockets_total",
                  "mem_used",
                  "mem_limit",
-                 "mem_alarm")
+                 "mem_alarm",
+                 "disk_free_alarm",
+                 "uptime")
 
 
 def main():
@@ -56,7 +60,10 @@ def main():
     else:
         error()
 
-    print "status ok"
+    if CLUSTERED and len(r.json()) < CLUSTER_SIZE:
+      print "status err cluster too small"
+    else:
+      print "status ok"
 
     for k in metrics.keys():
         print "metric %s int64 %d" % (k, metrics[k])
