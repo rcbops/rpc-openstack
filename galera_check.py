@@ -3,19 +3,20 @@ import sys
 import subprocess
 import shlex
 
+
 def galera_status_check(arg):
     proc = subprocess.Popen(shlex.split(arg),
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                             shell=False)
 
-    out,err = proc.communicate()
+    out, err = proc.communicate()
     ret = proc.returncode
     return ret, out, err
 
 RETCODE, OUTPUT, ERR = galera_status_check('/usr/bin/mysql \
        --defaults-file=/root/.my.cnf \
-       -e "SHOW STATUS LIKE \'wsrep%\'"')
+       -e "SHOW STATUS WHERE Variable_name REGEXP \'^(wsrep.*|queries)\'"')
 
 if RETCODE:
     print >> sys.stderr, "There was an error (%d):\n" % RETCODE
@@ -30,7 +31,6 @@ if OUTPUT != "":
     for i in SHOW_STATUS_LIST:
         SLAVE_STATUS[i.split('\t')[0]] = i.split('\t')[1]
 
-
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
         print "status err there is a partition in the cluster."
 
@@ -39,10 +39,12 @@ if OUTPUT != "":
 
         print "status OK\n" \
             "metric WSREP_REPLICATED_BYTES int " \
-            + SLAVE_STATUS["wsrep_replicated_bytes"]  + "\n"\
+            + SLAVE_STATUS["wsrep_replicated_bytes"] + "\n"\
             "metric WSREP_RECEIVED_BYTES int " \
-            + SLAVE_STATUS["wsrep_received_bytes"]  + "\n"\
+            + SLAVE_STATUS["wsrep_received_bytes"] + "\n"\
             "metric WSREP_COMMIT_WINDOW float " \
             + SLAVE_STATUS["wsrep_commit_window"] + "\n" \
             "metric WSREP_CLUSTER_SIZE int " \
-            + SLAVE_STATUS["wsrep_cluster_size"]
+            + SLAVE_STATUS["wsrep_cluster_size"] + "\n" \
+            "metric QUERIES_PER_SECOND int " \
+            + SLAVE_STATUS["Queries"]
