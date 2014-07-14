@@ -34,17 +34,17 @@ if OUTPUT != "":
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
         print "status err there is a partition in the cluster."
 
-    if int(SLAVE_STATUS['wsrep_local_state']) == 4 and \
-            SLAVE_STATUS['wsrep_local_state_comment'] == "Synced":
+    if (int(SLAVE_STATUS['wsrep_local_state']) == 4 and
+            SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
 
-        print "status OK\n" \
-            "metric WSREP_REPLICATED_BYTES int " \
-            + SLAVE_STATUS["wsrep_replicated_bytes"] + "\n"\
-            "metric WSREP_RECEIVED_BYTES int " \
-            + SLAVE_STATUS["wsrep_received_bytes"] + "\n"\
-            "metric WSREP_COMMIT_WINDOW float " \
-            + SLAVE_STATUS["wsrep_commit_window"] + "\n" \
-            "metric WSREP_CLUSTER_SIZE int " \
-            + SLAVE_STATUS["wsrep_cluster_size"] + "\n" \
-            "metric QUERIES_PER_SECOND int " \
-            + SLAVE_STATUS["Queries"]
+        print ("status OK\n"
+               "metric WSREP_REPLICATED_BYTES int "
+               + SLAVE_STATUS["wsrep_replicated_bytes"] + "\n"
+               "metric WSREP_RECEIVED_BYTES int "
+               + SLAVE_STATUS["wsrep_received_bytes"] + "\n"
+               "metric WSREP_COMMIT_WINDOW float "
+               + SLAVE_STATUS["wsrep_commit_window"] + "\n"
+               "metric WSREP_CLUSTER_SIZE int "
+               + SLAVE_STATUS["wsrep_cluster_size"] + "\n"
+               "metric QUERIES_PER_SECOND int "
+               + SLAVE_STATUS["Queries"])
