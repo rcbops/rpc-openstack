@@ -26,3 +26,7 @@ def main():
         print 'status ok memcached is reachable'
     else:
         print 'status err memcached is unreachable'
+
+
+if __name__ == '__main__':
+    main()
