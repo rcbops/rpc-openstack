@@ -64,3 +64,7 @@ def main():
         print 'status err Node {0} not listed as running'.format(name)
     else:
         print 'status ok Node {0} listed as running'.format(name)
+
+
+if __name__ == '__main__':
+    main()
