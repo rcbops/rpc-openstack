@@ -70,10 +70,16 @@ def main():
             if i in resp_json[0]:
                 metrics[i] = resp_json[0][i]
 
-        for node in resp_json:
-            if name == node['name']:
-                is_cluster_member = True
-                break
+        # Ensure this node is a member of the cluster
+        is_cluster_member = any(name == n['name'] for n in resp_json)
+        # Gather the queue lengths for all nodes in the cluster
+        queues = [n['run_queue'] for n in resp_json]
+        # Grab the first queue length
+        first = queues.pop()
+        # Check that all other queues are equal to it
+        if not all(first == q for q in queues):
+            # If they're not, the queues are not synchronized
+            print "status err cluster not replicated across all nodes"
     else:
         error('Received status {0} from RabbitMQ API'.format(r.status_code))
 
