@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import requests
+import subprocess
 import sys
 
 OVERVIEW_URL = "http://localhost:15672/api/overview"
@@ -31,46 +32,71 @@ NODES_METRICS = ("proc_used",
                  "uptime")
 
 
+def hostname():
+    """Return the name of the current host/node."""
+    return subprocess.check_output(['hostname']).strip()
+
+
 def main():
     metrics = {}
+    s = requests.Session()  # Make a Session to store the authenticate creds
+    s.auth = (USERNAME, PASSWORD)
 
     try:
-        r = requests.get(OVERVIEW_URL, auth=(USERNAME, PASSWORD))
-    except requests.exceptions.ConnectionError:
-        error()
+        r = s.get(OVERVIEW_URL)
+    except requests.exceptions.ConnectionError as e:
+        error(e)
 
-    if r.status_code == 200:
-        for k in OVERVIEW_METRICS.keys():
-            if k in r.json():
+    if r.ok:
+        resp_json = r.json()  # Parse the JSON once
+        for k in OVERVIEW_METRICS:
+            if k in resp_json:
                 for i in OVERVIEW_METRICS[k]:
-                    if i in r.json()[k]:
-                        metrics[i] = r.json()[k][i]
+                    if i in resp_json[k]:
+                        metrics[i] = resp_json[k][i]
     else:
-        error()
+        error('Received status {0} from RabbitMQ API'.format(r.status_code))
 
     try:
-        r = requests.get(NODES_URL, auth=(USERNAME, PASSWORD))
-    except requests.exceptions.ConnectionError:
-        error()
+        r = s.get(NODES_URL)
+    except requests.exceptions.ConnectionError as e:
+        error(e)
 
-    if r.status_code == 200:
+    name = hostname()
+    is_cluster_member = False
+    if r.ok:
+        resp_json = r.json()
         for i in NODES_METRICS:
-            if i in r.json()[0]:
-                metrics[i] = r.json()[0][i]
-    else:
-        error()
+            if i in resp_json[0]:
+                metrics[i] = resp_json[0][i]
 
-    if CLUSTERED and len(r.json()) < CLUSTER_SIZE:
-      print "status err cluster too small"
+        # Ensure this node is a member of the cluster
+        is_cluster_member = any(name == n['name'] for n in resp_json)
+        # Gather the queue lengths for all nodes in the cluster
+        queues = [n['run_queue'] for n in resp_json]
+        # Grab the first queue length
+        first = queues.pop()
+        # Check that all other queues are equal to it
+        if not all(first == q for q in queues):
+            # If they're not, the queues are not synchronized
+            print "status err cluster not replicated across all nodes"
     else:
-      print "status ok"
+        error('Received status {0} from RabbitMQ API'.format(r.status_code))
+
+    if CLUSTERED:
+        if len(r.json()) < CLUSTER_SIZE:
+            print "status err cluster too small"
+        if not is_cluster_member:
+            print "status err {0} not a member of the cluster".format(name)
+    else:
+        print "status ok"
 
     for k in metrics.keys():
         print "metric %s int64 %d" % (k, metrics[k])
 
 
-def error():
-    print "status error"
+def error(e):
+    print "status error {0}".format(str(e))
     sys.exit(1)
 
 
