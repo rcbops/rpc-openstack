@@ -4,12 +4,12 @@ import subprocess
 
 def get_namespace_list():
     """Retrieve the list of DHCP namespaces."""
-    return subprocess(['ip', 'netns', 'list']).split()
+    return subprocess.check_output(['ip', 'netns', 'list']).split()
 
 
 def get_interfaces_for(namespace):
     """Retrieve the list of interfaces inside a namespace."""
-    return subprocess([
+    return subprocess.check_output([
         'ip', 'netns', 'exec', namespace, 'ip', 'a'
     ]).split('\n')
 
