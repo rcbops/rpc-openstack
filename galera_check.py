@@ -34,6 +34,10 @@ if OUTPUT != "":
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
         print "status err there is a partition in the cluster."
 
+    if (SLAVE_STATUS['wrsep_local_state_uuid'] !=
+            SLAVE_STATUS['wsrep_cluster_state_uuid']):
+        print "status err the local node is out of sync"
+
     if (int(SLAVE_STATUS['wsrep_local_state']) == 4 and
             SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
 
