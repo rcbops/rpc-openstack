@@ -9,11 +9,14 @@ def get_namespace_list():
 
 def get_interfaces_for(namespace):
     """Retrieve the list of interfaces inside a namespace."""
-    return subprocess(['ip', 'netns', 'exec', namespace, 'ip', 'a'])
+    return subprocess([
+        'ip', 'netns', 'exec', namespace, 'ip', 'a'
+    ]).split('\n')
 
 
 def main():
-    TAP = re.compile('\btap\S+')
+    TAP = re.compile('^\d+: .*state [A-Z]+$')
+    LOOP = re.compile('^\d+: lo')
     namespaces = get_namespace_list()
     if not namespaces:
         print 'status err no dhcp namespaces on this host'
@@ -22,7 +25,9 @@ def main():
     interfaces = ((n, get_interfaces_for(n)) for n in namespaces)
     errored = False
     for namespace, interface_list in interfaces:
-        num_taps = len(TAP.findall(interface_list))
+        # Filter down to the output of ip a that looks like 1: lo
+        named_interfaces = filter(lambda i: TAP.match(i), interface_list)
+        num_taps = len(i for i in named_interfaces if not LOOP.match(i))
         if num_taps != 1:
             print 'status err namespace {0} has {1} TAPs present'.format(
                 namespaces, num_taps)
