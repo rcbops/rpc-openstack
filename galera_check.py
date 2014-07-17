@@ -54,5 +54,7 @@ if OUTPUT != "":
                + SLAVE_STATUS["Queries"] + "\n"
                "metric WSREP_CLUSTER_STATE_UUID str "
                + SLAVE_STATUS["wsrep_cluster_state_uuid"] + "\n"
+               "metric WSREP_CLUSTER_STATUS str "
+               + SLAVE_STATUS["wsrep_cluster_status"] + "\n"
                "metric WSREP_LOCAL_STATE_UUID str "
                + SLAVE_STATUS["wsrep_local_state_uuid"] + "\n")
