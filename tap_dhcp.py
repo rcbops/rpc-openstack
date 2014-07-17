@@ -1,4 +1,5 @@
 import re
+import sys
 import subprocess
 
 
@@ -20,7 +21,7 @@ def main():
     namespaces = get_namespace_list()
     if not namespaces:
         print 'status err no dhcp namespaces on this host'
-        raise SystemError(True)
+        sys.exit(1)
 
     interfaces = ((n, get_interfaces_for(n)) for n in namespaces)
     errored = False
@@ -36,7 +37,7 @@ def main():
     if not errored:
         print 'status ok'
     else:
-        raise SystemError(True)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
