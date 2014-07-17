@@ -57,4 +57,6 @@ if OUTPUT != "":
                "metric WSREP_CLUSTER_STATUS str "
                + SLAVE_STATUS["wsrep_cluster_status"] + "\n"
                "metric WSREP_LOCAL_STATE_UUID str "
-               + SLAVE_STATUS["wsrep_local_state_uuid"] + "\n")
+               + SLAVE_STATUS["wsrep_local_state_uuid"] + "\n"
+               "metric WSREP_LOCAL_STATE_COMMENT str "
+               + SLAVE_STATUS["wsrep_local_state_comment"] + "\n")
