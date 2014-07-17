@@ -27,7 +27,7 @@ def main():
     for namespace, interface_list in interfaces:
         # Filter down to the output of ip a that looks like 1: lo
         named_interfaces = filter(lambda i: TAP.match(i), interface_list)
-        num_taps = len(i for i in named_interfaces if not LOOP.match(i))
+        num_taps = len([i for i in named_interfaces if not LOOP.match(i)])
         if num_taps != 1:
             print 'status err namespace {0} has {1} TAPs present'.format(
                 namespaces, num_taps)
