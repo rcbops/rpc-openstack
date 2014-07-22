@@ -7,6 +7,7 @@ import telnetlib
 
 
 ITEM_COUNT = re.compile('STAT items:\d+:number (\d+)')
+MEMCACHED_CONF = '/etc/memcached.conf'
 
 
 def item_stats(host, port):
@@ -43,17 +44,17 @@ def main():
     bind_ip = '127.0.0.1'
     port = 11211
 
-    if os.path.exists('/etc/memcached.conf'):
-      conf = open('/etc/memcached.conf')
-      for line in conf:
-        line_arr = line.split()
+    if os.path.exists(MEMCACHED_CONF):
+        conf = open(MEMCACHED_CONF)
+        for line in conf:
+            line_arr = line.split()
 
-        if len(line_arr) > 1:
-          if line_arr[0] == "-l":
-            bind_ip = line_arr[1]
-          elif line_arr[0] == "-p":
-            port = line_arr[1]
-      conf.close()
+            if len(line_arr) > 1:
+                if line_arr[0] == "-l":
+                    bind_ip = line_arr[1]
+                elif line_arr[0] == "-p":
+                    port = line_arr[1]
+        conf.close()
 
     results = item_stats(bind_ip, port)
 
