@@ -34,6 +34,10 @@ if OUTPUT != "":
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
         print "status err there is a partition in the cluster."
 
+    if (SLAVE_STATUS['wrsep_local_state_uuid'] !=
+            SLAVE_STATUS['wsrep_cluster_state_uuid']):
+        print "status err the local node is out of sync"
+
     if (int(SLAVE_STATUS['wsrep_local_state']) == 4 and
             SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
 
@@ -47,4 +51,12 @@ if OUTPUT != "":
                "metric WSREP_CLUSTER_SIZE int "
                + SLAVE_STATUS["wsrep_cluster_size"] + "\n"
                "metric QUERIES_PER_SECOND int "
-               + SLAVE_STATUS["Queries"])
+               + SLAVE_STATUS["Queries"] + "\n"
+               "metric WSREP_CLUSTER_STATE_UUID str "
+               + SLAVE_STATUS["wsrep_cluster_state_uuid"] + "\n"
+               "metric WSREP_CLUSTER_STATUS str "
+               + SLAVE_STATUS["wsrep_cluster_status"] + "\n"
+               "metric WSREP_LOCAL_STATE_UUID str "
+               + SLAVE_STATUS["wsrep_local_state_uuid"] + "\n"
+               "metric WSREP_LOCAL_STATE_COMMENT str "
+               + SLAVE_STATUS["wsrep_local_state_comment"] + "\n")
