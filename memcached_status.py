@@ -37,18 +37,25 @@ def item_count(results):
 
 
 def main():
-    if not os.path.exists('/etc/init.d/memcached'):
+    if not os.path.exists('/usr/bin/memcached'):
         return
 
-    hostname = subprocess.check_output('hostname').strip()
-    localhost = '127.0.0.1'
-    port = '11211'
+    bind_ip = '127.0.0.1'
+    port = 11211
 
-    results = item_stats(hostname, port)
-    if results is None:
-        # If connecting to hostname is not possible, try connecting to
-        # localhost
-        results = item_stats(localhost, port)
+    if os.path.exists('/etc/memcached.conf'):
+      conf = open('/etc/memcached.conf')
+      for line in conf:
+        line_arr = line.split()
+
+        if len(line_arr) > 1:
+          if line_arr[0] == "-l":
+            bind_ip = line_arr[1]
+          elif line_arr[0] == "-p":
+            port = line_arr[1]
+      conf.close()
+
+    results = item_stats(bind_ip, port)
 
     if results is not None:
         print 'status ok memcached is reachable'
