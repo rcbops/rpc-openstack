@@ -4,17 +4,11 @@ from glanceclient import Client, exc
 from keystoneclient.v2_0 import client
 from keystoneclient.openstack.common.apiclient import exceptions
 import maas_common
-import os
 import sys
 
 
 def main():
     auth_details = maas_common.set_auth_details()
-
-    for key, value in auth_details.items():
-        if value is None:
-            print "status err os.environ['%s'] not set" % key
-            sys.exit(1)
 
     try:
         keystone = client.Client(username=auth_details['OS_USERNAME'],
