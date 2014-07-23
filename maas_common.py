@@ -63,17 +63,19 @@ def keystone_auth(auth_details):
 
 def get_auth_details():
     auth_details = AUTH_DETAILS
-    pattern = re.compile('^(export\s)?(?P<key>\w+)(\s+)?=(\s+)?(?P<value>.*)$')
+    pattern = re.compile(
+        '^(?:export\s)?(?P<key>\w+)(?:\s+)?=(?:\s+)?(?P<value>.*)$'
+    )
 
-    openrc = open(OPENRC)
-    for line in openrc:
-        match = pattern.match(line)
-        if match:
+    with open(OPENRC) as openrc:
+        for line in openrc:
+            match = pattern.match(line)
+            if match is None:
+                continue
             k = match.group('key')
             v = match.group('value')
             if k in auth_details and auth_details[k] is None:
                 auth_details[k] = v
-    openrc.close()
 
     for key in auth_details.keys():
         if auth_details[key] is None:
