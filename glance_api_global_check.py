@@ -23,7 +23,7 @@ def get_keystone_client(auth_ref, previous_tries=0):
 
 
 def check(auth_ref):
-    keystone = get_keystone_client()
+    keystone = get_keystone_client(auth_ref)
     if keystone is None:
         return
 
