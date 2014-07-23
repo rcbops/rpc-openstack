@@ -18,25 +18,31 @@ OPENRC = '/root/openrc'
 TOKEN_FILE = '/root/.auth_ref.json'
 
 
-def get_auth_ref():
-    auth_details = set_auth_details()
-    auth_ref = get_token_from_file(auth_details)
-    expires = datetime.datetime.strptime(auth_ref['token']['expires'],
+def is_token_expired(token):
+    expires = datetime.datetime.strptime(token['expires'],
                                          '%Y-%m-%dT%H:%M:%SZ')
-    if datetime.datetime.now() >= expires:
+    return datetime.datetime.now() >= expires
+
+
+def get_auth_ref():
+    auth_details = get_auth_details()
+    auth_ref = get_auth_from_file(auth_details)
+    if auth_ref is None:
+        auth_ref = keystone_auth(auth_details)
+
+    if is_token_expired(auth_ref['token']):
         auth_ref = keystone_auth(auth_details)
 
     return auth_ref
 
 
-def get_token_from_file(auth_details):
+def get_auth_from_file(auth_details):
     if os.path.exists(TOKEN_FILE):
         with open(TOKEN_FILE) as token_file:
             auth_ref = json.load(token_file)
 
         return auth_ref
-    else:
-        return keystone_auth(auth_details)
+    return None
 
 
 def keystone_auth(auth_details):
@@ -55,7 +61,7 @@ def keystone_auth(auth_details):
     return keystone.auth_ref
 
 
-def set_auth_details():
+def get_auth_details():
     auth_details = AUTH_DETAILS
     pattern = re.compile('^(export\s)?(?P<key>\w+)(\s+)?=(\s+)?(?P<value>.*)$')
 
