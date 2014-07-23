@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
+import datetime
+import json
+import os
 import re
 import sys
+
+from keystoneclient.v2_0 import client
+from keystoneclient.openstack.common.apiclient import exceptions
 
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
@@ -9,16 +15,26 @@ AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_AUTH_URL': None}
 
 OPENRC = '/root/openrc'
-TOKEN_FILE = '/root/.token'
+TOKEN_FILE = '/root/.auth_ref.json'
+
+
+def get_auth_ref():
+    auth_details = set_auth_details()
+    auth_ref = get_token_from_file(auth_details)
+    expires = datetime.datetime.strptime(auth_ref['token']['expires'],
+                                         '%Y-%m-%dT%H:%M:%SZ')
+    if datetime.datetime.now() >= expires:
+        auth_ref = keystone_auth(auth_details)
+
+    return auth_ref
 
 
 def get_token_from_file(auth_details):
-    if os.path.exists('/root/.token'):
-        token_file = open(TOKEN_FILE)
-        os_auth_token = token_file.readline()
-        token_file.close()
+    if os.path.exists(TOKEN_FILE):
+        with open(TOKEN_FILE) as token_file:
+            auth_ref = json.load(token_file)
 
-        return os_auth_token
+        return auth_ref
     else:
         return keystone_auth(auth_details)
 
@@ -33,11 +49,10 @@ def keystone_auth(auth_details):
         print "status err %s" % e
         sys.exit(1)
 
-    token_file = open(TOKEN_FILE, 'w')
-    token_file.write("%s\n" % keystone.auth_ref['token']['id'])
-    token_file.close()
+    with open(TOKEN_FILE, 'w') as token_file:
+        json.dump(keystone.auth_ref, token_file)
 
-    return keystone.auth_ref['token']['id']
+    return keystone.auth_ref
 
 
 def set_auth_details():
