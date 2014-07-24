@@ -4,9 +4,21 @@ import requests
 import subprocess
 
 
+def get_elasticsearch_container():
+    containers = subprocess.check_output('lxc-ls').strip().split('\n')
+    for container in containers:
+        if 'elasticsearch' in container:
+            break
+    else:
+        raise SystemExit(True)
+
+    return container
+
+
 def get_elasticsearch_address():
     """Get the bind_host address from elasticsearch's config."""
-    cmd = ['lxc-attach', '-n', 'elasticsearch', '--', 'cat',
+    es_container = get_elasticsearch_container()
+    cmd = ['lxc-attach', '-n', es_container, '--', 'cat',
            '/etc/elasticsearch/elasticsearch.yml']
     output = subprocess.check_output(cmd)
     match = re.search('network\.bind_host:\s+([0-9\.]+)\s+', output)
