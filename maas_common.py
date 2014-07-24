@@ -26,7 +26,7 @@ def is_token_expired(token):
 
 def get_auth_ref():
     auth_details = get_auth_details()
-    auth_ref = get_auth_from_file(auth_details)
+    auth_ref = get_auth_from_file()
     if auth_ref is None:
         auth_ref = keystone_auth(auth_details)
 
@@ -36,7 +36,7 @@ def get_auth_ref():
     return auth_ref
 
 
-def get_auth_from_file(auth_details):
+def get_auth_from_file():
     if os.path.exists(TOKEN_FILE):
         with open(TOKEN_FILE) as token_file:
             auth_ref = json.load(token_file)
