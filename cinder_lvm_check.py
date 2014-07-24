@@ -12,7 +12,7 @@ def execute(cmd):
 
 
 def get_volume_group_info(vg_name):
-    """Get volume group stats."""
+    """Get volume group stats. Note that this must run as root."""
     out, err = execute(['env', 'LC_ALL=C', 'vgs', '--noheadings',
                         '--nosuffix', '--units', 'g', '-o',
                         'size,free,lv_count', '--separator', ':',
