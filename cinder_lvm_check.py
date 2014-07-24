@@ -3,19 +3,16 @@ import sys
 import subprocess
 
 
-def execute(cmd):
-    process = subprocess.Popen(cmd,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-    return process.communicate()
-
-
 def get_volume_group_info(vg_name):
     """Get volume group stats. Note that this must run as root."""
-    out, err = execute(['env', 'LC_ALL=C', 'vgs', '--noheadings',
-                        '--nosuffix', '--units', 'g', '-o',
-                        'size,free,lv_count', '--separator', ':',
-                        vg_name])
+    try:
+        out = subprocess.check_output(['env', 'LC_ALL=C', 'vgs', '--noheadings',
+                                       '--nosuffix', '--units', 'g', '-o',
+                                       'size,free,lv_count', '--separator', ':',
+                                       vg_name],
+                                       stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError:
+        return None
 
     vg_info = None
     if out is not None:
