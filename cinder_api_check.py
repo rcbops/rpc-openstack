@@ -21,14 +21,12 @@ def main():
 
     volumes = cinder.volumes.list()
     available = [v for v in volumes if v.status == 'available']
-    errored = [v for v in volumes if v.status == 'error' or
-               v.status == 'error-deleting']
+    errored = [v for v in volumes if 'error' in v.status]
     size = sum([v.size for v in available])
 
     snapshots = cinder.volume_snapshots.list()
     snapshots_available = [v for v in snapshots if v.status == 'available']
-    snapshots_errored = [v for v in snapshots if v.status == 'error' or
-               v.status == 'error-deleting']
+    snapshots_errored = [v for v in snapshots if 'error' in v.status]
     snapshots_size = sum([v.size for v in snapshots_available])
 
     print 'status OK'
