@@ -100,6 +100,6 @@ def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
         # Force an update of auth_ref
         auth_details = maas_common.get_auth_details()
         auth_ref = maas_common.keystone_auth(auth_details)
-        keystone = get_keystone_client(auth_ref, previous_tries + 1)
+        keystone = get_keystone_client(auth_ref, previous_tries + 1, endpoint)
 
     return keystone
