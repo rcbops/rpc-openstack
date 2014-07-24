@@ -38,13 +38,25 @@ def main():
 
     volumes = cinder.volumes.list()
     available = [v for v in volumes if v.status == 'available']
-    errored = [v for v in volumes if v.status == 'error']
+    errored = [v for v in volumes if v.status == 'error' or
+               v.status == 'error-deleting']
     size = sum([v.size for v in available])
+
+    snapshots = cinder.volume_snapshots.list()
+    snapshots_available = [v for v in snapshots if v.status == 'available']
+    snapshots_errored = [v for v in snapshots if v.status == 'error' or
+               v.status == 'error-deleting']
+    snapshots_size = sum([v.size for v in snapshots_available])
 
     print 'status OK'
     print 'metric cinder_volumes uint32 %d' % len(volumes)
-    print 'metric cinder_errored uint32 %d' % len(errored)
-    print 'metric cinder_size uint32 %d' % size
-    
+    print 'metric cinder_volumes_available uint32 %d' % len(available)
+    print 'metric cinder_volumes_errored uint32 %d' % len(errored)
+    print 'metric cinder_volumes_size uint32 %d' % size
+    print 'metric cinder_volume_snapshots uint32 %d' % len(snapshots)
+    print 'metric cinder_volume_snapshots_available uint32 %d' % len(snapshots_available)
+    print 'metric cinder_volume_snapshots_errored uint32 %d' % len(snapshots_errored)
+    print 'metric cinder_volume_snapshots_size uint32 %d' % snapshots_size
+
 if __name__ == "__main__":
     main()
