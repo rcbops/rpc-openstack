@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import os
 import sys
 import subprocess
 
@@ -20,10 +19,11 @@ def get_volume_group_info(vg_name):
 
     vg_info = None
     if out is not None:
-        fields = out.split()[0].split(':')
-        vg_info = {'size': float(fields[0]),
-                   'free': float(fields[1]),
-                   'count': int(fields[2])}
+        fields = out.split(':')
+        if len(fields) == 3:
+            vg_info = {'size': float(fields[0]),
+                       'free': float(fields[1]),
+                       'count': int(fields[2])}
 
     return vg_info
 
