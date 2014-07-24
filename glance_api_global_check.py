@@ -25,7 +25,9 @@ def get_keystone_client(auth_ref, previous_tries=0):
 def check(auth_ref):
     keystone = get_keystone_client(auth_ref)
     if keystone is None:
-        return
+        print 'status err Unable to obtain valid keystone client, ' \
+              'cannot proceed'
+        sys.exit(1)
 
     service = keystone.services.find(type="image")
     endpoint = keystone.endpoints.find(service_id=service.id)
