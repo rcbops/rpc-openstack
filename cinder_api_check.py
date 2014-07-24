@@ -3,6 +3,7 @@ import os
 import sys
 from cinderclient.client import Client
 from cinderclient import exceptions as exc
+from maas_common import get_auth_details
 
 
 def set_auth_details():
@@ -19,12 +20,7 @@ def set_auth_details():
 
 
 def main():
-    auth_details = set_auth_details()
-
-    for key, value in auth_details.items():
-        if value is None:
-            print "status err os.environ['%s'] not set" % key
-            sys.exit(1)
+    auth_details = get_auth_details()
 
     try:
         cinder = Client('1',

@@ -61,13 +61,13 @@ def keystone_auth(auth_details):
     return keystone.auth_ref
 
 
-def get_auth_details():
+def get_auth_details(openrc_file=OPENRC):
     auth_details = AUTH_DETAILS
     pattern = re.compile(
         '^(?:export\s)?(?P<key>\w+)(?:\s+)?=(?:\s+)?(?P<value>.*)$'
     )
 
-    with open(OPENRC) as openrc:
+    with open(openrc_file) as openrc:
         for line in openrc:
             match = pattern.match(line)
             if match is None:
