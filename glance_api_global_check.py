@@ -15,7 +15,7 @@ def get_keystone_client(auth_ref, previous_tries=0):
         keystone = client.Client(auth_ref=auth_ref)
     except exceptions.AuthorizationFailure as e:
         keystone = get_keystone_client(auth_ref, previous_tries + 1)
-    except (exceptions.Unauthorized, exceptions.AuthorizationFailure) as e:
+    except exceptions.Unauthorized as e:
         print "status err %s" % e
         sys.exit(1)
 
