@@ -83,3 +83,23 @@ def get_auth_details():
             sys.exit(1)
 
     return auth_details
+
+
+def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
+    if previous_tries > 3:
+        return None
+
+    if endpoint is None:
+        keystone = client.Client(auth_ref=auth_ref)
+    else:
+        keystone = client.Client(auth_ref=auth_ref, endpoint=endpoint)
+
+    try:
+        keystone.authenticate()
+    except (exceptions.AuthorizationFailure, exceptions.Unauthorized) as e:
+        # Force an update of auth_ref
+        auth_details = maas_common.get_auth_details()
+        auth_ref = maas_common.keystone_auth(auth_details)
+        keystone = get_keystone_client(auth_ref, previous_tries + 1)
+
+    return keystone

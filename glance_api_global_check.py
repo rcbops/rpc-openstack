@@ -1,29 +1,12 @@
 #!/usr/bin/env python
 
 from glanceclient import Client, exc
-from keystoneclient.v2_0 import client
-from keystoneclient.openstack.common.apiclient import exceptions
 import maas_common
 import sys
 
 
-def get_keystone_client(auth_ref, previous_tries=0):
-    if previous_tries >= 3:
-        return None
-
-    try:
-        keystone = client.Client(auth_ref=auth_ref)
-    except exceptions.AuthorizationFailure as e:
-        keystone = get_keystone_client(auth_ref, previous_tries + 1)
-    except exceptions.Unauthorized as e:
-        print "status err %s" % e
-        sys.exit(1)
-
-    return keystone
-
-
 def check(auth_ref):
-    keystone = get_keystone_client(auth_ref)
+    keystone = maas_common.get_keystone_client(auth_ref)
     if keystone is None:
         print 'status err Unable to obtain valid keystone client, ' \
               'cannot proceed'
