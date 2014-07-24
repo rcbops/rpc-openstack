@@ -28,19 +28,6 @@ def get_volume_group_info(vg_name):
     return vg_info
 
 
-def set_auth_details():
-    auth_details = {'OS_USERNAME': None,
-                    'OS_PASSWORD': None,
-                    'OS_TENANT_NAME': None,
-                    'OS_AUTH_URL': None}
-
-    for key in auth_details.keys():
-        if key in os.environ:
-            auth_details[key] = os.environ[key]
-
-    return auth_details
-
-
 def main():
     if len(sys.argv) < 2:
         print 'status err volume group name must be given as an argument'

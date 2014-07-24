@@ -6,19 +6,6 @@ from cinderclient import exceptions as exc
 from maas_common import get_auth_details
 
 
-def set_auth_details():
-    auth_details = {'OS_USERNAME': None,
-                    'OS_PASSWORD': None,
-                    'OS_TENANT_NAME': None,
-                    'OS_AUTH_URL': None}
-
-    for key in auth_details.keys():
-        if key in os.environ:
-            auth_details[key] = os.environ[key]
-
-    return auth_details
-
-
 def main():
     auth_details = get_auth_details()
 
