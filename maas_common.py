@@ -55,8 +55,12 @@ def keystone_auth(auth_details):
         print "status err %s" % e
         sys.exit(1)
 
-    with open(TOKEN_FILE, 'w') as token_file:
-        json.dump(keystone.auth_ref, token_file)
+    try:
+        with open(TOKEN_FILE, 'w') as token_file:
+            json.dump(keystone.auth_ref, token_file)
+    except IOError:
+        # if we can't write the file we go on
+        pass
 
     return keystone.auth_ref
 
