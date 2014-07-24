@@ -3,6 +3,7 @@
 import requests
 import re
 import maas_common
+import sys
 from requests import exceptions as exc
 from lxml import html
 
@@ -54,8 +55,10 @@ def main():
                 print 'status OK'
             else:
                 print 'status err could not log in'
+                sys.ext(1)
         else:
             print 'status err could not load login page'
+            sys.ext(1)
 
     except (exc.ConnectionError,
             exc.HTTPError,
