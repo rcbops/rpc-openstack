@@ -29,7 +29,10 @@ def get_number_of(loglevel, index):
 
 
 def main():
-    latest = find_indices()[-1]
+    indices = find_indices()
+    if not indices:
+        return
+    latest = indices[-1]
     num_errors = get_number_of('ERROR', latest)
     num_warnings = get_number_of('WARN*', latest)
     print 'metric int NUMBER_OF_LOG_ERRORS {0}'.format(num_errors)
