@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from glanceclient import Client, exc
 import maas_common
 import sys
 
@@ -17,7 +16,11 @@ def check(auth_ref):
     os_image_endpoint = endpoint.publicurl
     os_auth_token = keystone.auth_ref['token']['id']
 
-    glance = Client('1', endpoint=os_image_endpoint, token=os_auth_token)
+    glance = maas_common.get_glance_client(os_auth_token, os_image_endpoint)
+    if glance is None:
+        print 'status err Unable to obtain valid glance client, ' \
+              'cannot proceed'
+        sys.exit(1)
 
     active, queued, killed = 0, 0, 0
 
@@ -32,9 +35,7 @@ def check(auth_ref):
                 queued += 1
             if i.status == "killed":
                 killed += 1
-    except (exc.CommunicationError,
-            exc.HTTPInternalServerError,
-            exc.HTTPUnauthorized) as e:
+    except Exception as e:
         print "status err %s" % e
         sys.exit(1)
 
