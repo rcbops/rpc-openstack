@@ -6,6 +6,7 @@ import os
 import re
 import sys
 
+from glanceclient import Client, exc
 from keystoneclient.v2_0 import client
 from keystoneclient.openstack.common.apiclient import exceptions
 
@@ -112,3 +113,24 @@ def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
         keystone = get_keystone_client(auth_ref, previous_tries + 1, endpoint)
 
     return keystone
+
+
+def get_glance_client(token, endpoint, previous_tries=0):
+    if previous_tries > 3:
+        return None
+
+    glance = Client('1', endpoint=endpoint, token=token)
+
+    try:
+        # We don't want to be pulling massive lists of images every time we
+        # run
+        image = glance.images.list(limit=1)
+        # Exceptions are only thrown when we iterate over image
+        [i.id for i in image]
+    except (exc.HTTPUnauthorized, exc.HTTPUnauthorized) as e:
+        get_glance_client(token, endpoint, previous_tries + 1)
+    except Exception, e:
+        print "status err %s" % e
+        sys.exit(1)
+
+    return glance
