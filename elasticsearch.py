@@ -11,7 +11,7 @@ def get_elastic_search_bind_host():
     hosts = filter(bind_host_re.match, contents)
     if not hosts:
         raise SystemExit(False)
-    match = bind_host_re.match(hosts[0])
+    match = bind_host_re.match(hosts[-1])
     return match.groups()[0]
 
 ES_HOST = get_elastic_search_bind_host()
