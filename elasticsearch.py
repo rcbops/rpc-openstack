@@ -6,8 +6,12 @@ import requests
 
 def get_elastic_search_bind_host():
     with open('/etc/elasticsearch/elasticsearch.yml') as fd:
-        contents = fd.read()
-    match = re.search('network\.bind_host:\s+([0-9\.]+)\s+', contents)
+        contents = fd.readlines()
+    bind_host_re = re.compile('^network\.bind_host:\s+([0-9\.]+)\s+')
+    hosts = filter(bind_host_re.match, contents)
+    if not hosts:
+        raise SystemExit(False)
+    match = bind_host_re.match(hosts[0])
     return match.groups()[0]
 
 ES_HOST = get_elastic_search_bind_host()
