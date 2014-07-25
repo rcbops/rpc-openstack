@@ -7,9 +7,11 @@ import re
 import sys
 
 from glanceclient import Client as g_client
-from glanceclient import exc
-from keystoneclient.v2_0 import client
-from keystoneclient.openstack.common.apiclient import exceptions
+from glanceclient import exc as g_exc
+from keystoneclient.v2_0 import client as k_client
+from keystoneclient.openstack.common.apiclient import exceptions as k_exc
+from neutronclient.neutron import client as n_client
+from neutronclient.common import exceptions as n_exc
 
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
@@ -49,11 +51,11 @@ def get_auth_from_file():
 
 def keystone_auth(auth_details):
     try:
-        keystone = client.Client(username=auth_details['OS_USERNAME'],
-                                 password=auth_details['OS_PASSWORD'],
-                                 tenant_name=auth_details['OS_TENANT_NAME'],
-                                 auth_url=auth_details['OS_AUTH_URL'])
-    except (exceptions.Unauthorized, exceptions.AuthorizationFailure) as e:
+        keystone = k_client.Client(username=auth_details['OS_USERNAME'],
+                                   password=auth_details['OS_PASSWORD'],
+                                   tenant_name=auth_details['OS_TENANT_NAME'],
+                                   auth_url=auth_details['OS_AUTH_URL'])
+    except (k_exc.Unauthorized, k_exc.AuthorizationFailure) as e:
         print "status err %s" % e
         sys.exit(1)
 
@@ -101,16 +103,16 @@ def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
         return None
 
     if endpoint is None:
-        keystone = client.Client(auth_ref=auth_ref)
+        keystone = k_client.Client(auth_ref=auth_ref)
     else:
-        keystone = client.Client(auth_ref=auth_ref, endpoint=endpoint)
+        keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
 
     try:
         keystone.authenticate()
-    except (exceptions.AuthorizationFailure, exceptions.Unauthorized) as e:
+    except (k_exc.AuthorizationFailure, k_exc.Unauthorized):
         # Force an update of auth_ref
-        auth_details = maas_common.get_auth_details()
-        auth_ref = maas_common.keystone_auth(auth_details)
+        auth_details = get_auth_details()
+        auth_ref = keystone_auth(auth_details)
         keystone = get_keystone_client(auth_ref, previous_tries + 1, endpoint)
 
     return keystone
@@ -128,10 +130,32 @@ def get_glance_client(token, endpoint, previous_tries=0):
         image = glance.images.list(limit=1)
         # Exceptions are only thrown when we iterate over image
         [i.id for i in image]
-    except exc.HTTPUnauthorized as e:
+    except g_exc.HTTPUnauthorized as e:
         get_glance_client(token, endpoint, previous_tries + 1)
     except Exception as e:
         print "status err %s" % e
         sys.exit(1)
 
     return glance
+
+
+def get_neutron_client(token, endpoint_url, previous_tries=0):
+    if previous_tries > 3:
+        return None
+
+    neutron = n_client.Client('2.0', token=token, endpoint_url=endpoint_url)
+
+    try:
+        # some arbitrary command that should always have at least 1 result
+        agents = neutron.list_agents()
+        # iterate the list to ensure we actually have something
+        [i['id'] for i in agents['agents']]
+    except (n_exc.Unauthorized,
+            n_exc.ConnectionFailed,
+            n_exc.Forbidden) as e:
+        get_neutron_client(token, endpoint_url, previous_tries + 1)
+    except n_exc.NeutronException as e:
+        print "status err %s" % e
+        sys.exit(1)
+
+    return neutron
