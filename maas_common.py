@@ -55,27 +55,36 @@ def keystone_auth(auth_details):
         print "status err %s" % e
         sys.exit(1)
 
-    with open(TOKEN_FILE, 'w') as token_file:
-        json.dump(keystone.auth_ref, token_file)
+    try:
+        with open(TOKEN_FILE, 'w') as token_file:
+            json.dump(keystone.auth_ref, token_file)
+    except IOError:
+        # if we can't write the file we go on
+        pass
 
     return keystone.auth_ref
 
 
-def get_auth_details():
+def get_auth_details(openrc_file=OPENRC):
     auth_details = AUTH_DETAILS
     pattern = re.compile(
         '^(?:export\s)?(?P<key>\w+)(?:\s+)?=(?:\s+)?(?P<value>.*)$'
     )
 
-    with open(OPENRC) as openrc:
-        for line in openrc:
-            match = pattern.match(line)
-            if match is None:
-                continue
-            k = match.group('key')
-            v = match.group('value')
-            if k in auth_details and auth_details[k] is None:
-                auth_details[k] = v
+    if os.path.exists(openrc_file):
+        with open(openrc_file) as openrc:
+            for line in openrc:
+                match = pattern.match(line)
+                if match is None:
+                    continue
+                k = match.group('key')
+                v = match.group('value')
+                if k in auth_details and auth_details[k] is None:
+                    auth_details[k] = v
+    else:
+        # no openrc file, so we try the environment
+        for key in auth_details.keys():
+            auth_details[key] = os.environ.get(key)
 
     for key in auth_details.keys():
         if auth_details[key] is None:
