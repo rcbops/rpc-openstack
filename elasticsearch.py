@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 import json
+import re
 import requests
 
-ES_HOST = 'localhost'
+
+def get_elastic_search_bind_host():
+    with open('/etc/elasticsearch/elasticsearch.yml') as fd:
+        contents = fd.read()
+    match = re.search('network\.bind_host:\s+([0-9\.]+)\s+', contents)
+    return match.groups()[0]
+
+ES_HOST = get_elastic_search_bind_host()
 ES_PORT = '9200'
 ELASTICSEARCH = 'http://{0}:{1}'.format(ES_HOST, ES_PORT)
 
@@ -30,8 +38,10 @@ def get_number_of(loglevel, index):
 
 def main():
     indices = find_indices()
+
     if not indices:
         return
+
     latest = indices[-1]
     num_errors = get_number_of('ERROR', latest)
     num_warnings = get_number_of('WARN*', latest)
