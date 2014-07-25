@@ -16,7 +16,7 @@ def check(auth_ref):
     os_image_endpoint = endpoint.publicurl
     os_auth_token = keystone.auth_ref['token']['id']
 
-    glance = maas_common.get_glance_client(token, IMAGE_ENDPOINT)
+    glance = maas_common.get_glance_client(os_auth_token, os_image_endpoint)
     if glance is None:
         print 'status err Unable to obtain valid glance client, ' \
               'cannot proceed'
