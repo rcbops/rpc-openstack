@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-import os
 import sys
+from time import time
 from cinderclient.client import Client
 from cinderclient import exceptions as exc
 from maas_common import get_auth_details
@@ -19,7 +19,9 @@ def main():
         print "status err %s" % e
         sys.exit(1)
 
+    start_time = time()
     volumes = cinder.volumes.list()
+    request_time = time() - start_time
     available = [v for v in volumes if v.status == 'available']
     errored = [v for v in volumes if 'error' in v.status]
     size = sum([v.size for v in available])
@@ -30,6 +32,7 @@ def main():
     snapshots_size = sum([v.size for v in snapshots_available])
 
     print 'status OK'
+    print 'metric cinder_response_time double %f' % request_time
     print 'metric cinder_volumes uint32 %d' % len(volumes)
     print 'metric cinder_volumes_available uint32 %d' % len(available)
     print 'metric cinder_volumes_errored uint32 %d' % len(errored)
