@@ -12,7 +12,8 @@ def err(reason):
 
 procnames = sys.argv[1:]
 if not procnames:
-    err('script takes a single argument - the process name to check for')
+    err('script takes between 1 and 10 arguments, each being '
+        ' a process name to check for')
     sys.exit(1)
 # single monitor can only report up to 10 metrics
 if len(procnames) > 10:
