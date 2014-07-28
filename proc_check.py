@@ -1,22 +1,29 @@
 #!/usr/bin/env python
 
-import sys
-import psutil
+import collections
 import os
+import psutil
+import sys
 
-try:
-    procname = sys.argv[1]
-except IndexError:
-    print 'script takes a single argument - the process name to check for'
+
+def err(reason):
+    print 'status err', reason
     sys.exit(1)
 
-matching_procs = [p.pid for p in psutil.get_process_list() if
-                  (procname in str(p.cmdline) and
-                  p.pid != os.getpid())]
-
-if not matching_procs:
-    print 'status err: no process running that matches %s' % procname
+procnames = sys.argv[1:]
+if not procnames:
+    err('script takes a single argument - the process name to check for')
     sys.exit(1)
+# single monitor can only report up to 10 metrics
+if len(procnames) > 10:
+    err('script takes at most 10 process names to check for')
+
+results = collections.Counter(**{proc: 0 for proc in procnames})
+for to_match in procnames:
+    for proc in psutil.process_iter():
+        if (to_match in str(proc.cmdline) and proc.pid != os.getpid()):
+            results.update((to_match, ))
 
 print 'status OK'
-print 'metric num_running_processes uint32 %d' % len(matching_procs)
+for proc, count in results.viewitems():
+    print 'metric num_running_processes_%s uint32 %d' % (proc, count)
