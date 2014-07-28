@@ -159,3 +159,26 @@ def get_neutron_client(token, endpoint_url, previous_tries=0):
         sys.exit(1)
 
     return neutron
+
+
+def status(status, message):
+    status_line = 'status %s' % status
+    if message is not None:
+        status_line = ' '.join((status_line, message))
+    print status_line
+
+
+def status_err(message=None):
+    status('err', message)
+    sys.exit(1)
+
+
+def status_ok(message=None):
+    status('ok', message)
+
+
+def metric(name, metric_type, value, unit=None):
+    metric_line = 'metric %s %s %s' % (name, metric_type, value)
+    if unit is not None:
+        metric_line = ' '.join((metric_line, unit))
+    print metric_line
