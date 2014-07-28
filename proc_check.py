@@ -22,7 +22,7 @@ if len(procnames) > 10:
 results = collections.Counter(**{proc: 0 for proc in procnames})
 for to_match in procnames:
     for proc in psutil.process_iter():
-        if (to_match in str(proc.cmdline) and proc.pid != os.getpid()):
+        if to_match in str(proc.cmdline) and proc.pid != os.getpid():
             results.update((to_match, ))
 
 print 'status OK'
