@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
-from maas_common import get_auth_ref
+from maas_common import get_auth_ref, status_err, status_ok, metric
+import maas_common
 import os
 import re
 import subprocess
 import sys
 
 CACHE_DIR = '/var/lib/glance/cache'
-METRIC_NAME = 'glance_api_local_cache'
+METRIC_PREFIX = 'glance_api_local_cache'
 UUID_FORMAT = re.compile('[0-9a-z]{8}-([0-9a-z]{4}-){3}[0-9a-z]{12}')
 
 
@@ -24,8 +25,7 @@ def main():
     tenant = auth_ref['token']['tenant']['name']
 
     if not os.path.exists(CACHE_DIR):
-        print 'status err Directory %s does not exist' % CACHE_DIR
-        sys.exit(1)
+        status_err("Directory %s does not exist" % CACHE_DIR)
 
     try:
         output = subprocess.check_output(['glance-cache-manage',
@@ -37,8 +37,7 @@ def main():
     except subprocess.CalledProcessError:
         # We don't capture and print the exception as it will contain our
         # API token, which shouldn't get sent to MaaS
-        print 'status err glance-cache-manage returned a non-zero exit status'
-        sys.exit(1)
+        status_err("glance-cache-manage returned a non-zero exit status")
 
     expected_cached = []
     actual_cached = []
@@ -52,9 +51,9 @@ def main():
         if is_uuid(i) and os.path.isfile(i):
             actual_cached.append(i)
 
-    print 'status OK'
-    print "metric %s_expected uint32 %d" % (METRIC_NAME, len(expected_cached))
-    print "metric %s_actual uint32 %d" % (METRIC_NAME, len(actual_cached))
+    status_ok()
+    metric("%s_expected" % METRIC_PREFIX, 'uint32', len(expected_cached))
+    metric("%s_actual" % METRIC_PREFIX, 'uint32', len(actual_cached))
 
 
 if __name__ == "__main__":
