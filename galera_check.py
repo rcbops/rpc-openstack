@@ -48,7 +48,7 @@ if OUTPUT != "":
                SLAVE_STATUS['wsrep_replicated_bytes'])
         metric('WSREP_RECEIVED_BYTES', 'int64',
                SLAVE_STATUS['wsrep_received_bytes'])
-        metric('WSREP_COMMIT_WINDOW', 'float',
+        metric('WSREP_COMMIT_WINDOW', 'double',
                SLAVE_STATUS['wsrep_commit_window'])
         metric('WSREP_CLUSTER_SIZE', 'int64',
                SLAVE_STATUS['wsrep_cluster_size'])
