@@ -2,8 +2,9 @@
 import os
 import re
 import socket
-import subprocess
 import telnetlib
+
+from maas_common import status_ok, status_err, metric
 
 
 ITEM_COUNT = re.compile('STAT items:\d+:number (\d+)')
@@ -59,10 +60,10 @@ def main():
     results = item_stats(bind_ip, port)
 
     if results is not None:
-        print 'status ok memcached is reachable'
-        print 'metric items_in_cache {0}'.format(item_count(results))
+        status_ok('memcached is reachable')
+        metric('items_in_cache', 'uint64', item_count(results))
     else:
-        print 'status err memcached is unreachable'
+        status_err('memcached is unreachable')
 
 
 if __name__ == '__main__':
