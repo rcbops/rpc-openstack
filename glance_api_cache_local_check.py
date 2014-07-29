@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from maas_common import get_auth_ref, status_err, status_ok, metric
-import maas_common
 import os
 import re
 import subprocess

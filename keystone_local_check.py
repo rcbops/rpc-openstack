@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from maas_common import get_auth_ref, get_keystone_client
-from maas_common import status_err, status_ok, metric
+from maas_common import (get_auth_ref, get_keystone_client,
+                         status_err, status_ok, metric)
 import re
 import sys
 
