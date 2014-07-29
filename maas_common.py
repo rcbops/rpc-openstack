@@ -165,28 +165,12 @@ else:
 
 try:
     from heatclient import client as heat_client
-    from keystoneclient import session as kssession
-    from keystoneclient.auth import token_endpoint as kstoken
 except ImportError:
     def get_heat_client(*args, **kwargs):
         status_err('Cannot import heatclient')
 else:
     def get_heat_client(endpoint, token):
-        auth_details = get_auth_details()
-        keystone_session = kssession.Session(verify=True)
-        keystone_auth = kstoken.Token(endpoint, token)
-
-        kwargs = {
-            'auth_url': auth_details['OS_AUTH_URL'],
-            'session': keystone_session,
-            'auth': keystone_auth,
-            'service_type': 'orchestration',
-            'endpoint_type': 'publicURL',
-            'username': auth_details['OS_USERNAME'],
-            'password': auth_details['OS_PASSWORD'],
-            'include_pass': True
-        }
-        heat = heat_client.Client('1', endpoint, **kwargs)
+        heat = heat_client.Client('1', endpoint=endpoint, token=token)
         try:
             heat.build_info.build_info()
         except Exception as e:
