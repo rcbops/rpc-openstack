@@ -21,7 +21,6 @@ try:
 except ImportError:
     def get_glance_client(*args, **kwargs):
         status_err('Cannot import glanceclient')
-        raise SystemExit(True)
 else:
     def get_glance_client(token, endpoint, previous_tries=0):
         if previous_tries > 3:
@@ -49,11 +48,9 @@ try:
 except ImportError:
     def keystone_auth(*args, **kwargs):
         status_err('Cannot import keystoneclient')
-        raise SystemExit(True)
 
     def get_keystone_client(*args, **kwargs):
         status_err('Cannot import keystoneclient')
-        raise SystemExit(True)
 else:
     def keystone_auth(auth_details):
         try:
@@ -103,12 +100,8 @@ try:
 except ImportError:
     def get_neutron_client(*args, **kwargs):
         status_err('Cannot import neutronclient')
-        raise SystemExit(True)
 else:
     def get_neutron_client(token, endpoint_url, previous_tries=0):
-        if not n_client_avail:
-            status_err('Unable to import neutronclient')
-
         if previous_tries > 3:
             return None
 
