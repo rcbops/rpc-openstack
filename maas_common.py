@@ -37,8 +37,7 @@ else:
         except g_exc.HTTPUnauthorized as e:
             get_glance_client(token, endpoint, previous_tries + 1)
         except Exception as e:
-            print "status err %s" % e
-            sys.exit(1)
+            status_err(str(e))
 
         return glance
 
@@ -60,8 +59,7 @@ else:
                                        tenant_name=tenant_name,
                                        auth_url=auth_details['OS_AUTH_URL'])
         except (k_exc.Unauthorized, k_exc.AuthorizationFailure) as e:
-            print "status err %s" % e
-            sys.exit(1)
+            status_err(str(e))
 
         try:
             with open(TOKEN_FILE, 'w') as token_file:
@@ -119,8 +117,7 @@ else:
                 n_exc.Forbidden) as e:
             get_neutron_client(token, endpoint_url, previous_tries + 1)
         except n_exc.NeutronException as e:
-            print "status err %s" % e
-            sys.exit(1)
+            status_err(str(e))
 
         return neutron
 
@@ -175,8 +172,7 @@ def get_auth_details(openrc_file=OPENRC):
 
     for key in auth_details.keys():
         if auth_details[key] is None:
-            print "status err %s not set" % key
-            sys.exit(1)
+            status_err('%s not set' % key)
 
     return auth_details
 
