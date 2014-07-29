@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from maas_common import status_ok, status_err, metric
-import maas_common
+from maas_common import (status_ok, status_err, metric, get_auth_ref,
+                         get_keystone_client, get_neutron_client)
 
 
 def check(auth_ref):
 
-    keystone = maas_common.get_keystone_client(auth_ref=auth_ref)
+    keystone = get_keystone_client(auth_ref=auth_ref)
     if keystone is None:
         status_err('Unable to obtain valid keystone client, cannot proceed')
 
@@ -15,7 +15,7 @@ def check(auth_ref):
     endpoint_url = endpoints.publicurl
     token = keystone.auth_ref['token']['id']
 
-    neutron = maas_common.get_neutron_client(token, endpoint_url)
+    neutron = get_neutron_client(token, endpoint_url)
     if neutron is None:
         status_err('Unable to obtain valid neutron client, cannot proceed')
 
@@ -33,7 +33,7 @@ def check(auth_ref):
 
 
 def main():
-    auth_ref = maas_common.get_auth_ref()
+    auth_ref = get_auth_ref()
     check(auth_ref)
 
 
