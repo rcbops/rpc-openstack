@@ -4,21 +4,22 @@ from maas_common import status_ok, status_err, metric, get_cinder_client
 
 
 def main():
+    try:
+        cinder = get_cinder_client()
+        if cinder is None:
+            status_err('Unable to obtain valid cinder client, cannot proceed')
 
-    cinder = get_cinder_client()
+        start_time = time()
+        volumes = cinder.volumes.list()
+        request_time = int((time() - start_time) * 1000)
+        available = [v for v in volumes if v.status == 'available']
+        errored = [v for v in volumes if 'error' in v.status]
 
-    if cinder is None:
-        status_err('Unable to obtain valid cinder client, cannot proceed')
-
-    start_time = time()
-    volumes = cinder.volumes.list()
-    request_time = int((time() - start_time) * 1000)
-    available = [v for v in volumes if v.status == 'available']
-    errored = [v for v in volumes if 'error' in v.status]
-
-    snaps = cinder.volume_snapshots.list()
-    snaps_available = [v for v in snaps if v.status == 'available']
-    snaps_errored = [v for v in snaps if 'error' in v.status]
+        snaps = cinder.volume_snapshots.list()
+        snaps_available = [v for v in snaps if v.status == 'available']
+        snaps_errored = [v for v in snaps if 'error' in v.status]
+    except Exception as e:
+        status_err(str(e))
 
     status_ok()
     metric('cinder_response_time', 'uint32', request_time)
