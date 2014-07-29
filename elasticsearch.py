@@ -3,8 +3,10 @@ import json
 import re
 import requests
 
+from maas_common import metric
 
-def get_elastic_search_bind_host():
+
+def get_elasticsearch_bind_host():
     with open('/etc/elasticsearch/elasticsearch.yml') as fd:
         contents = fd.readlines()
     bind_host_re = re.compile('^network\.bind_host:\s+([0-9\.]+)\s+')
@@ -14,7 +16,7 @@ def get_elastic_search_bind_host():
     match = bind_host_re.match(hosts[-1])
     return match.groups()[0]
 
-ES_HOST = get_elastic_search_bind_host()
+ES_HOST = get_elasticsearch_bind_host()
 ES_PORT = '9200'
 ELASTICSEARCH = 'http://{0}:{1}'.format(ES_HOST, ES_PORT)
 
@@ -49,8 +51,8 @@ def main():
     latest = indices[-1]
     num_errors = get_number_of('ERROR', latest)
     num_warnings = get_number_of('WARN*', latest)
-    print 'metric int NUMBER_OF_LOG_ERRORS {0}'.format(num_errors)
-    print 'metric int NUMBER_OF_LOG_WARNINGS {0}'.format(num_warnings)
+    metric('NUMBER_OF_LOG_ERRORS', 'int', num_errors)
+    metric('NUMBER_OF_LOG_WARNINGS', 'int', num_warnings)
 
 
 if __name__ == '__main__':
