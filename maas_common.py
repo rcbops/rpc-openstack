@@ -6,27 +6,27 @@ import os
 import re
 import sys
 
-glance_client_avail = True
-keystone_client_avail = True
-neutron_client_avail = True
+g_client_avail = True
+k_client_avail = True
+n_client_avail = True
 
 try:
     from glanceclient import Client as g_client
     from glanceclient import exc as g_exc
 except ImportError:
-    glance_client_avail = False
+    g_client_avail = False
 
 try:
     from keystoneclient.v2_0 import client as k_client
     from keystoneclient.openstack.common.apiclient import exceptions as k_exc
 else ImportError:
-    keystone_client_avail = False
+    k_client_avail = False
 
 try:
     from neutronclient.neutron import client as n_client
     from neutronclient.common import exceptions as n_exc
 except ImportError:
-    neutron_client_avail = False
+    n_client_avail = False
 
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
