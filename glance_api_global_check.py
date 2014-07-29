@@ -33,7 +33,7 @@ def check(auth_ref):
             if i.status == "killed":
                 killed += 1
     except Exception as e:
-        status_err(e)
+        status_err(str(e))
 
     status_ok()
     metric('glance_active_images', 'uint32', active)

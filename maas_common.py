@@ -95,7 +95,7 @@ else:
                                        password=auth_details['OS_PASSWORD'],
                                        tenant_name=tenant_name,
                                        auth_url=auth_details['OS_AUTH_URL'])
-        except (k_exc.Unauthorized, k_exc.AuthorizationFailure) as e:
+        except Exception as e:
             status_err(str(e))
 
         try:
@@ -117,7 +117,9 @@ else:
             keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
 
         try:
-            keystone.authenticate()
+            # This should be a rather light-weight call that validates we're
+            # actually connected/authenticated.
+            keystone.services.list()
         except (k_exc.AuthorizationFailure, k_exc.Unauthorized):
             # Force an update of auth_ref
             auth_details = get_auth_details()
@@ -125,6 +127,8 @@ else:
             keystone = get_keystone_client(auth_ref,
                                            previous_tries + 1,
                                            endpoint)
+        except Exception as e:
+            status_err(str(e))
 
         return keystone
 
