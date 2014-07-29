@@ -16,6 +16,43 @@ TOKEN_FILE = '/root/.auth_ref.json'
 
 
 try:
+    from cinderclient.client import Client as c_client
+    from cinderclient import exceptions as c_exc
+
+except ImportError:
+    def get_cinder_client(*args, **kwargs):
+        status_err('Cannot import cinderclient')
+else:
+
+    def get_cinder_client(previous_tries=0):
+        if previous_tries > 3:
+            return None
+        # right now, cinderclient does not accept a previously derived token
+        # or endpoint url. So we have to pass it creds and let it do it's own
+        # auth each time it's called.
+        # NOTE: (mancdaz) update when https://review.openstack.org/#/c/74602/
+        # lands
+
+        auth_details = get_auth_details()
+        cinder = c_client('2',
+                          auth_details['OS_USERNAME'],
+                          auth_details['OS_PASSWORD'],
+                          auth_details['OS_TENANT_NAME'],
+                          auth_details['OS_AUTH_URL'])
+
+        try:
+            # Do something just to ensure we actually have auth'd ok
+            volumes = cinder.volumes.list()
+            # Exceptions are only thrown when we iterate over volumes
+            [i.id for i in volumes]
+        except (c_exc.Unauthorized, c_exc.AuthorizationFailure) as e:
+            get_cinder_client(previous_tries + 1)
+        except Exception as e:
+            status_err(str(e))
+
+        return cinder
+
+try:
     from glanceclient import Client as g_client
     from glanceclient import exc as g_exc
 except ImportError:
