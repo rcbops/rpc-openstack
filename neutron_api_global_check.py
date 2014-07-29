@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
+from maas_common import status_ok, status_err, metric
 import maas_common
-import sys
 
 
 def check(auth_ref):
 
     keystone = maas_common.get_keystone_client(auth_ref=auth_ref)
     if keystone is None:
-        print 'status err Unable to obtain valid keystone client, ' \
-              'cannot proceed'
-        sys.exit(1)
+        status_err('Unable to obtain valid keystone client, cannot proceed')
 
     service = keystone.services.find(type="network")
     endpoints = keystone.endpoints.find(service_id=service.id)
@@ -19,21 +17,18 @@ def check(auth_ref):
 
     neutron = maas_common.get_neutron_client(token, endpoint_url)
     if neutron is None:
-        print 'status err Unable to obtain valid neutron client, ' \
-              'cannot proceed'
-        sys.exit(1)
+        status_err('Unable to obtain valid neutron client, cannot proceed')
 
-    networks = len(neutron.list_networks()['networks'])
-    agents = len(neutron.list_agents()['agents'])
-    routers = len(neutron.list_routers()['routers'])
-    subnets = len(neutron.list_subnets()['subnets'])
+    results = {}
+    results['networks'] = len(neutron.list_networks()['networks'])
+    results['agents'] = len(neutron.list_agents()['agents'])
+    results['routers'] = len(neutron.list_routers()['routers'])
+    results['subnets'] = len(neutron.list_subnets()['subnets'])
 
-    print 'status OK'
-    print 'metric neutron_api_global_status uint32 1'
-    print 'metric neutron_routers uint32 %s' % routers
-    print 'metric neutron_networks uint32 %s' % networks
-    print 'metric neutron_subnets uint32 %s' % subnets
-    print 'metric neutron_agents uint32 %s' % agents
+    status_ok()
+    metric('neutron_api_global_status', 'uint32', 1)
+    for k, v in results.iteritems():
+        metric('neutron_%s' % k, 'uint32', v)
 
 
 def main():
