@@ -6,12 +6,27 @@ import os
 import re
 import sys
 
-from glanceclient import Client as g_client
-from glanceclient import exc as g_exc
-from keystoneclient.v2_0 import client as k_client
-from keystoneclient.openstack.common.apiclient import exceptions as k_exc
-from neutronclient.neutron import client as n_client
-from neutronclient.common import exceptions as n_exc
+glance_client_avail = True
+keystone_client_avail = True
+neutron_client_avail = True
+
+try:
+    from glanceclient import Client as g_client
+    from glanceclient import exc as g_exc
+except ImportError:
+    glance_client_avail = False
+
+try:
+    from keystoneclient.v2_0 import client as k_client
+    from keystoneclient.openstack.common.apiclient import exceptions as k_exc
+else ImportError:
+    keystone_client_avail = False
+
+try:
+    from neutronclient.neutron import client as n_client
+    from neutronclient.common import exceptions as n_exc
+except ImportError:
+    neutron_client_avail = False
 
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
@@ -99,6 +114,9 @@ def get_auth_details(openrc_file=OPENRC):
 
 
 def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
+    if not k_client_avail:
+        status_err('Unable to import keystoneclient')
+
     if previous_tries > 3:
         return None
 
@@ -119,6 +137,9 @@ def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
 
 
 def get_glance_client(token, endpoint, previous_tries=0):
+    if not g_client_avail:
+        status_err('Unable to import glanceclient')
+
     if previous_tries > 3:
         return None
 
@@ -140,6 +161,9 @@ def get_glance_client(token, endpoint, previous_tries=0):
 
 
 def get_neutron_client(token, endpoint_url, previous_tries=0):
+    if not n_client_avail:
+        status_err('Unable to import neutronclient')
+
     if previous_tries > 3:
         return None
 
