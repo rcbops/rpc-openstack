@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import memcache
-import sys
+
+from maas_common import status_ok, status_err, metric
 
 MEMCACHE_KEYS = ("get_hits",
                  "get_misses")
@@ -12,7 +13,7 @@ def main():
     mc = memcache.Client(['localhost:11211'], debug=0)
 
     if len(mc.get_stats()) == 0:
-        error()
+        status_err()
 
     stats = mc.get_stats()[0][1]
 
@@ -21,16 +22,11 @@ def main():
             metrics[k] = stats[k]
 
     if len(metrics.keys()) > 0:
-        print "status ok"
-        for k in metrics.keys():
-            print "metric %s int64 %s" % (k, metrics[k])
+        status_ok()
+        for k, v in metrics.items():
+            metric(k, 'int64', v)
     else:
-        error()
-
-
-def error():
-    print "status error"
-    sys.exit(1)
+        status_err()
 
 
 if __name__ == "__main__":
