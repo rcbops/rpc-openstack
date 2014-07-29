@@ -8,7 +8,7 @@ def main():
     cinder = get_cinder_client()
 
     if cinder is None:
-        status_err('Unable to obtain valid neutron client, cannot proceed')
+        status_err('Unable to obtain valid cinder client, cannot proceed')
 
     start_time = time()
     volumes = cinder.volumes.list()
