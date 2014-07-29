@@ -35,7 +35,7 @@ def check(auth_ref):
     except Exception as e:
         status_err(e)
 
-    status_ok
+    status_ok()
     metric('glance_active_images', 'uint32', active)
     metric('glance_queued_images', 'uint32', queued)
     metric('glance_killed_images', 'uint32', killed)
