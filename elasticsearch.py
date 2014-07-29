@@ -51,8 +51,8 @@ def main():
     latest = indices[-1]
     num_errors = get_number_of('ERROR', latest)
     num_warnings = get_number_of('WARN*', latest)
-    metric('NUMBER_OF_LOG_ERRORS', 'int', num_errors)
-    metric('NUMBER_OF_LOG_WARNINGS', 'int', num_warnings)
+    metric('NUMBER_OF_LOG_ERRORS', 'uint32', num_errors)
+    metric('NUMBER_OF_LOG_WARNINGS', 'uint32', num_warnings)
 
 
 if __name__ == '__main__':
