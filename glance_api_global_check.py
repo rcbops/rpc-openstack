@@ -1,26 +1,23 @@
 #!/usr/bin/env python
 
-import maas_common
+from maas_common import (get_auth_ref, get_keystone_client, get_glance_client,
+                         status_err, status_ok, metric)
 import sys
 
 
 def check(auth_ref):
-    keystone = maas_common.get_keystone_client(auth_ref)
+    keystone = get_keystone_client(auth_ref)
     if keystone is None:
-        print 'status err Unable to obtain valid keystone client, ' \
-              'cannot proceed'
-        sys.exit(1)
+        status_err('Unable to obtain valid keystone client, cannot proceed')
 
     service = keystone.services.find(type="image")
     endpoint = keystone.endpoints.find(service_id=service.id)
     os_image_endpoint = endpoint.publicurl
     os_auth_token = keystone.auth_ref['token']['id']
 
-    glance = maas_common.get_glance_client(os_auth_token, os_image_endpoint)
+    glance = get_glance_client(os_auth_token, os_image_endpoint)
     if glance is None:
-        print 'status err Unable to obtain valid glance client, ' \
-              'cannot proceed'
-        sys.exit(1)
+        status_err('Unable to obtain valid glance client, cannot proceed')
 
     active, queued, killed = 0, 0, 0
 
@@ -36,17 +33,16 @@ def check(auth_ref):
             if i.status == "killed":
                 killed += 1
     except Exception as e:
-        print "status err %s" % e
-        sys.exit(1)
+        status_err(e)
 
-    print 'status OK'
-    print 'metric glance_active_images uint32 %d' % active
-    print 'metric glance_queued_images uint32 %d' % queued
-    print 'metric glance_killed_images uint32 %d' % killed
+    status_ok()
+    metric('glance_active_images', 'uint32', active)
+    metric('glance_queued_images', 'uint32', queued)
+    metric('glance_killed_images', 'uint32', killed)
 
 
 def main():
-    auth_ref = maas_common.get_auth_ref()
+    auth_ref = get_auth_ref()
     check(auth_ref)
 
 if __name__ == "__main__":

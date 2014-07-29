@@ -1,26 +1,25 @@
 #!/usr/bin/env python
 
-import maas_common
+from maas_common import (get_auth_ref, get_keystone_client,
+                         status_err, status_ok, metric)
 import sys
 
 
 def check(auth_ref):
-    keystone = maas_common.get_keystone_client(auth_ref)
+    keystone = get_keystone_client(auth_ref)
 
     if keystone is None:
-        print 'status err Unable to obtain valid keystone client, ' \
-              'cannot proceed'
-        sys.exit(1)
+        status_err('Unable to obtain valid keystone client, cannot proceed')
 
     users = keystone.users.list()
     enabled = [u for u in users if u.enabled is True]
 
-    print 'status OK'
-    print 'metric keystone_users uint32 %d' % len(enabled)
+    status_ok()
+    metric('keystone_users', 'uint32', len(enabled))
 
 
 def main():
-    auth_ref = maas_common.get_auth_ref()
+    auth_ref = get_auth_ref()
     check(auth_ref)
 
 if __name__ == "__main__":
