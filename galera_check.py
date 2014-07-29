@@ -44,14 +44,16 @@ if OUTPUT != "":
             SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
 
         status_ok()
-        metric('WSREP_REPLICATED_BYTES', 'int',
+        metric('WSREP_REPLICATED_BYTES', 'int64',
                SLAVE_STATUS['wsrep_replicated_bytes'])
-        metric('WSREP_RECEIVED_BYTES', 'int',
+        metric('WSREP_RECEIVED_BYTES', 'int64',
                SLAVE_STATUS['wsrep_received_bytes'])
         metric('WSREP_COMMIT_WINDOW', 'float',
                SLAVE_STATUS['wsrep_commit_window'])
-        metric('WSREP_CLUSTER_SIZE', 'int', SLAVE_STATUS['wsrep_cluster_size'])
-        metric('QUERIES_PER_SECOND', 'int', SLAVE_STATUS['Queries'])
+        metric('WSREP_CLUSTER_SIZE', 'int64',
+               SLAVE_STATUS['wsrep_cluster_size'])
+        metric('QUERIES_PER_SECOND', 'int64',
+               SLAVE_STATUS['Queries'])
         metric('WSREP_CLUSTER_STATE_UUID', 'string',
                SLAVE_STATUS['wsrep_cluster_state_uuid'])
         metric('WSREP_CLUSTER_STATUS', 'string',
