@@ -3,6 +3,8 @@ import sys
 import subprocess
 import shlex
 
+from maas_common import status_err, status_ok, metric
+
 
 def galera_status_check(arg):
     proc = subprocess.Popen(shlex.split(arg),
@@ -32,31 +34,29 @@ if OUTPUT != "":
         SLAVE_STATUS[i.split('\t')[0]] = i.split('\t')[1]
 
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
-        print "status err there is a partition in the cluster."
+        status_err("there is a partition in the cluster")
 
     if (SLAVE_STATUS['wrsep_local_state_uuid'] !=
             SLAVE_STATUS['wsrep_cluster_state_uuid']):
-        print "status err the local node is out of sync"
+        status_err("the local node is out of sync")
 
     if (int(SLAVE_STATUS['wsrep_local_state']) == 4 and
             SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
 
-        print ("status OK\n"
-               "metric WSREP_REPLICATED_BYTES int "
-               + SLAVE_STATUS["wsrep_replicated_bytes"] + "\n"
-               "metric WSREP_RECEIVED_BYTES int "
-               + SLAVE_STATUS["wsrep_received_bytes"] + "\n"
-               "metric WSREP_COMMIT_WINDOW float "
-               + SLAVE_STATUS["wsrep_commit_window"] + "\n"
-               "metric WSREP_CLUSTER_SIZE int "
-               + SLAVE_STATUS["wsrep_cluster_size"] + "\n"
-               "metric QUERIES_PER_SECOND int "
-               + SLAVE_STATUS["Queries"] + "\n"
-               "metric WSREP_CLUSTER_STATE_UUID str "
-               + SLAVE_STATUS["wsrep_cluster_state_uuid"] + "\n"
-               "metric WSREP_CLUSTER_STATUS str "
-               + SLAVE_STATUS["wsrep_cluster_status"] + "\n"
-               "metric WSREP_LOCAL_STATE_UUID str "
-               + SLAVE_STATUS["wsrep_local_state_uuid"] + "\n"
-               "metric WSREP_LOCAL_STATE_COMMENT str "
-               + SLAVE_STATUS["wsrep_local_state_comment"] + "\n")
+        status_ok()
+        metric('WSREP_REPLICATED_BYTES', 'int',
+               SLAVE_STATUS['wsrep_replicated_bytes'])
+        metric('WSREP_RECEIVED_BYTES', 'int',
+               SLAVE_STATUS['wsrep_received_bytes'])
+        metric('WSREP_COMMIT_WINDOW', 'float',
+               SLAVE_STATUS['wsrep_commit_window'])
+        metric('WSREP_CLUSTER_SIZE', 'int', SLAVE_STATUS['wsrep_cluster_size'])
+        metric('QUERIES_PER_SECOND', 'int', SLAVE_STATUS['Queries'])
+        metric('WSREP_CLUSTER_STATE_UUID', 'string',
+               SLAVE_STATUS['wsrep_cluster_state_uuid'])
+        metric('WSREP_CLUSTER_STATUS', 'string',
+               SLAVE_STATUS['wsrep_cluster_status'])
+        metric('WSREP_LOCAL_STATE_UUID', 'string',
+               SLAVE_STATUS['wsrep_local_state_uuid'])
+        metric('WSREP_LOCAL_STATE_COMMENT', 'string',
+               SLAVE_STATUS['wsrep_local_state_comment'])
