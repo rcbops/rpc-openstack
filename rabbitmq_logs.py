@@ -61,9 +61,14 @@ def main():
     log_level_counter = collections.Counter()
     for message in generate_parsed_messages():
         level = message['level']
+        if START_DATETIME - message['datetime'] > INTERVAL_DELTA:
+            # Ignore any messages from the last interval. This will ideally
+            # keep people from becoming confused because this check has 10
+            # errors counted but only 5 reported as a metric.
+            continue
+
         log_level_counter.update((level,))
-        if (level in ('ERROR', 'WARNING') and
-                (START_DATETIME - message['datetime'] < INTERVAL_DELTA)):
+        if level in ('ERROR', 'WARNING'):
             metric_name = 'rabbitmq_{0}_{1}'.format(level.lower(),
                                                     log_level_counter[level])
             metric(metric_name, 'string', message['msg'])
