@@ -19,16 +19,17 @@ def check(auth_ref):
     if neutron is None:
         status_err('Unable to obtain valid neutron client, cannot proceed')
 
-    results = {}
-    results['networks'] = len(neutron.list_networks()['networks'])
-    results['agents'] = len(neutron.list_agents()['agents'])
-    results['routers'] = len(neutron.list_routers()['routers'])
-    results['subnets'] = len(neutron.list_subnets()['subnets'])
+    networks = len(neutron.list_networks()['networks'])
+    agents = len(neutron.list_agents()['agents'])
+    routers = len(neutron.list_routers()['routers'])
+    subnets = len(neutron.list_subnets()['subnets'])
 
     status_ok()
     metric('neutron_api_global_status', 'uint32', 1)
-    for k, v in results.iteritems():
-        metric('neutron_%s' % k, 'uint32', v)
+    metric('neutron_networks', 'uint32', networks)
+    metric('neutron_agents', 'uint32', agents)
+    metric('neutron_routers', 'uint32', routers)
+    metric('neutron_subnets', 'uint32', subnets)
 
 
 def main():
