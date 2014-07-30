@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from maas_common import (status_ok, status_err, metric, metric_bool,
+from maas_common import (status_ok, status_err, metric, get_keystone_client,
                          get_auth_ref)
 import requests
 from requests import exceptions as exc
@@ -11,13 +11,17 @@ from requests import exceptions as exc
 
 
 def check(auth_ref):
+
+    keystone = get_keystone_client(auth_ref)
+    tenant_id = keystone.tenant_id
+    auth_token = keystone.auth_token
     volume_endpoint = 'http://127.0.0.1:8776/v1/%s' % tenant_id
 
     s = requests.Session()
 
     s.headers.update(
         {'Content-type': 'application/json',
-         'x-auth-token': auth_ref['token']['id']})
+         'x-auth-token': auth_token})
 
     try:
         r = s.get('%s/volumes' % volume_endpoint,
@@ -34,7 +38,7 @@ def check(auth_ref):
     milliseconds = r.elapsed.total_seconds() * 1000
 
     status_ok()
-    metric_bool('cinder_api_local_status', 1)
+    metric('cinder_api_local_status', 'uint32', 1)
     metric('cinder_api_response_time', 'uint32', milliseconds)
 
 
