@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from maas_common import status_ok, status_err, metric, get_auth_ref
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         get_auth_ref)
 from requests import Session
 from requests import exceptions as exc
 
@@ -32,7 +33,7 @@ def check(auth_ref):
             api_status = 0
 
     status_ok()
-    metric('glance_api_local_status', 'uint32', api_status)
+    metric_bool('glance_api_local_status', api_status)
     metric('glance_api_local_response_time', 'int32', milliseconds)
 
 
