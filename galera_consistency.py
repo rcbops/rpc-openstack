@@ -2,6 +2,8 @@ import io
 import optparse
 import subprocess
 
+from maas_common import status_err, status_ok
+
 
 def table_checksum(user, password, host):
     """Run pt-table-checksum with the user, password, and host specified."""
@@ -56,10 +58,10 @@ def main():
     # it. Stderr should contain any problems we run across.
     (status, _, err) = table_checksum(args[0], args[1], options.host)
     if status != 0:
-        print "status err %s" % err.strip()
+        status_err(err.strip())
         raise SystemExit(True)
 
-    print "status ok"
+    status_ok()
 
 
 if __name__ == '__main__':

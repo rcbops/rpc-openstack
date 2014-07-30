@@ -1,6 +1,7 @@
 import re
-import sys
 import subprocess
+
+from maas_common import metric, status_ok, status_err
 
 
 def get_namespace_list():
@@ -20,8 +21,7 @@ def main():
     LOOP = re.compile('^\d+: lo')
     namespaces = get_namespace_list()
     if not namespaces:
-        print 'status err no dhcp namespaces on this host'
-        sys.exit(1)
+        status_err('no dhcp namespaces on this host')
 
     interfaces = ((n, get_interfaces_for(n)) for n in namespaces)
     errored = False
@@ -30,15 +30,13 @@ def main():
         named_interfaces = filter(lambda i: TAP.match(i), interface_list)
         num_taps = len([i for i in named_interfaces if not LOOP.match(i)])
         if num_taps != 1:
-            print ('status err namespace {0} has {1} TAPs present'
-                   ' (expected only 1 TAP to be present)').format(
-                namespace, num_taps)
+            metric('namespace_{0}'.format(namespace), 'uint32', num_taps)
             errored = True
 
-    if not errored:
-        print 'status ok'
-    else:
-        sys.exit(1)
+    if errored:
+        status_err('a namespace had an unexpected number of TAPs present')
+
+    status_ok()
 
 
 if __name__ == '__main__':

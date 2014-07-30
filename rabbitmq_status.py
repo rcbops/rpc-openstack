@@ -2,7 +2,8 @@
 
 import requests
 import subprocess
-import sys
+
+from maas_common import metric, status_ok, status_err
 
 OVERVIEW_URL = "http://localhost:15672/api/overview"
 NODES_URL = "http://localhost:15672/api/nodes"
@@ -45,7 +46,7 @@ def main():
     try:
         r = s.get(OVERVIEW_URL)
     except requests.exceptions.ConnectionError as e:
-        error(e)
+        status_err(str(e))
 
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
@@ -55,12 +56,13 @@ def main():
                     if i in resp_json[k]:
                         metrics[i] = resp_json[k][i]
     else:
-        error('Received status {0} from RabbitMQ API'.format(r.status_code))
+        status_err('Received status {0} from RabbitMQ API'.format(
+            r.status_code))
 
     try:
         r = s.get(NODES_URL)
     except requests.exceptions.ConnectionError as e:
-        error(e)
+        status_err(str(e))
 
     name = hostname()
     is_cluster_member = False
@@ -81,23 +83,19 @@ def main():
             # If they're not, the queues are not synchronized
             print "status err cluster not replicated across all nodes"
     else:
-        error('Received status {0} from RabbitMQ API'.format(r.status_code))
+        status_err('Received status {0} from RabbitMQ API'.format(
+            r.status_code))
 
     if CLUSTERED:
         if len(r.json()) < CLUSTER_SIZE:
-            print "status err cluster too small"
+            status_err('cluster too small')
         if not is_cluster_member:
-            print "status err {0} not a member of the cluster".format(name)
+            status_err('{0} not a member of the cluster'.format(name))
     else:
-        print "status ok"
+        status_ok()
 
-    for k in metrics.keys():
-        print "metric %s int64 %d" % (k, metrics[k])
-
-
-def error(e):
-    print "status error {0}".format(str(e))
-    sys.exit(1)
+    for k, v in metrics.items():
+        metric(k, 'int64', v)
 
 
 if __name__ == "__main__":

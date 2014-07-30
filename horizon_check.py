@@ -2,8 +2,7 @@
 
 import requests
 import re
-import maas_common
-import sys
+from maas_common import get_auth_details, metric, status_err, status_ok
 from requests import exceptions as exc
 from lxml import html
 
@@ -17,7 +16,7 @@ def main():
     login_status_code = 0
     login_seconds = 0.0
 
-    auth_details = maas_common.get_auth_details()
+    auth_details = get_auth_details()
     OS_USERNAME = auth_details['OS_USERNAME']
     OS_PASSWORD = auth_details['OS_PASSWORD']
 
@@ -30,13 +29,11 @@ def main():
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
-        print 'status err %s ' % e
-        sys.exit(1)
+        status_err(str(e))
 
     if not (r.ok and
             re.search('openstack dashboard', r.content, re.IGNORECASE)):
-        print 'status err could not load login page'
-        sys.exit(1)
+        status_err('could not load login page')
 
     splash_status_code = r.status_code
     splash_seconds = r.elapsed.total_seconds()
@@ -60,21 +57,19 @@ def main():
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
-        print 'status err While logging in: %s ' % e
-        sys.exit(1)
+        status_err('While logging in: %s' % e)
 
     if not (l.ok and re.search('overview', l.content, re.IGNORECASE)):
-        print 'status err could not log in'
-        sys.exit(1)
+        status_err('could not log in')
 
     login_status_code = l.status_code
     login_seconds = l.elapsed.total_seconds()
 
-    print 'status OK'
-    print 'metric splash_status_code uint32 %d' % splash_status_code
-    print 'metric splash_seconds double %.2f' % splash_seconds
-    print 'metric login_status_code uint32 %d' % login_status_code
-    print 'metric login_seconds double %.2f' % login_seconds
+    status_ok()
+    metric('splash_status_code', 'uint32', splash_status_code)
+    metric('splash_seconds', 'double', splash_seconds)
+    metric('login_status_code', 'uint32', login_status_code)
+    metric('login_seconds', 'double', login_seconds)
 
 if __name__ == "__main__":
     main()

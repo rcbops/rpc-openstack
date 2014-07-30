@@ -6,6 +6,8 @@ from nova.db import api
 from nova.scheduler import host_manager
 from nova.scheduler.filters import ram_filter
 
+from maas_common import status_ok, metric
+
 
 def main():
     config.parse_args([])
@@ -24,9 +26,9 @@ def main():
 
         total_disk_mb_free += compute_host['free_disk_gb'] * 1024
 
-    print "status success"
-    print "metric total_ram_mb_free int64 %d" % total_ram_mb_free
-    print "metric total_disk_mb_free int64 %d" % total_disk_mb_free
+    status_ok()
+    metric('total_ram_mb_free', 'int64', total_ram_mb_free)
+    metric('total_disk_mb_free', 'int64', total_disk_mb_free)
 
 
 if __name__ == "__main__":

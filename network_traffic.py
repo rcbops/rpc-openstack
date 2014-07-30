@@ -1,6 +1,8 @@
 import collections
 import re
 
+from maas_common import metric
+
 # In the event we need more information, let's name the information
 Interface = collections.namedtuple(
     'Interface',  # Name of the named tuple
@@ -44,12 +46,10 @@ def as_kb(num_bytes):
 def main():
     """The heart of the program."""
     for interface in network_info():
-        print 'metric {0}_KB_RECEIVED int32 {1}'.format(
-            interface.name, as_kb(interface.rcv_bytes)
-        )
-        print 'metric {0}_KB_SENT int32 {1}'.format(
-            interface.name, as_kb(interface.tx_bytes)
-        )
+        metric('{0}_KB_RECEIVED'.format(interface.name), 'int32',
+               as_kb(interface.rcv_bytes))
+        metric('{0}_KB_SENT'.format(interface.name), 'int32',
+               as_kb(interface.tx_bytes))
 
 
 if __name__ == '__main__':
