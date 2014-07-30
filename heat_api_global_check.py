@@ -4,12 +4,8 @@ import sys
 import time
 
 from heatclient.client import Client
-from maas_common import get_heat_client
-from maas_common import get_auth_ref
-from maas_common import get_keystone_client
-from maas_common import metric
-from maas_common import status_err
-from maas_common import status_ok
+from maas_common import (get_heat_client, get_auth_ref, get_keystone_client,
+                         metric, status_err, status_ok)
 
 STATUS_COMPLETE = 'COMPLETE'
 STATUS_FAILED = 'FAILED'
