@@ -12,7 +12,7 @@ def check(auth_ref):
     auth_token = keystone.auth_token
     api_endpoint = 'http://127.0.0.1:9292/v2'
 
-    api-status = 1
+    api_status = 1
     milliseconds = 0
 
     s = Session()
