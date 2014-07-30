@@ -7,6 +7,8 @@ from requests import exceptions as exc
 
 
 def check(auth_ref):
+    # We call get_keystone_client here as there is some logic within to get a
+    # new token if previous one is bad.
     keystone = get_keystone_client(auth_ref)
     tenant_id = keystone.tenant_id
     auth_token = keystone.auth_token
@@ -36,7 +38,7 @@ def check(auth_ref):
             api_status = 0
 
     status_ok()
-    metric('glance_registry_local_status', 'uint32', api_status)
+    metric_bool('glance_registry_local_status', api_status)
     metric('glance_registry_local_response_time', 'int32', milliseconds)
 
 
