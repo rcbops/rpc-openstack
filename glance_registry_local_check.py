@@ -24,9 +24,7 @@ def check(auth_ref):
     try:
         # /images returns a list of public, non-deleted images
         r = s.get('%s/images' % registry_endpoint, verify=False, timeout=10)
-    except (exc.ConnectionError,
-            exc.HTTPError,
-            exc.Timeout):
+    except (exc.ConnectionError, exc.HTTPError, exc.Timeout):
         api_status = 0
         milliseconds = -1
     except Exception as e:
