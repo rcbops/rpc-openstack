@@ -10,7 +10,7 @@ def check(auth_ref):
     keystone = get_keystone_client(auth_ref)
     tenant_id = keystone.tenant_id
     auth_token = keystone.auth_token
-    registry_endpoint = 'http://127.0.0.1:9292/v2'
+    api_endpoint = 'http://127.0.0.1:9292/v2'
 
     api-status = 1
     milliseconds = 0
@@ -24,7 +24,7 @@ def check(auth_ref):
     try:
         # Hit something that isn't querying the glance-registry, since we
         # query glance-registry in separate checks
-        r = s.get('%s/schemas/image' % registry_endpoint, verify=False,
+        r = s.get('%s/schemas/image' % api_endpoint, verify=False,
                   timeout=10)
     except (exc.ConnectionError, exc.HTTPError, exc.Timeout):
         api_status = 0
@@ -38,8 +38,8 @@ def check(auth_ref):
             api_status = 0
 
     status_ok()
-    metric('glance_registry_local_status', 'uint32', api_status)
-    metric('glance_registry_local_response_time', 'int32', milliseconds)
+    metric('glance_api_local_status', 'uint32', api_status)
+    metric('glance_api_local_response_time', 'int32', milliseconds)
 
 
 def main():
