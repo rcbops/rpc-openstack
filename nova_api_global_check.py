@@ -8,16 +8,8 @@ SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
 
 
 def check(auth_ref):
-    keystone = get_keystone_client(auth_ref)
-    if keystone is None:
-        status_err('Unable to obtain valid keystone client, cannot proceed')
 
-    compute_endpoint = keystone.service_catalog.url_for(
-        service_type='compute',
-        endpoint_type='public')
-    auth_token = keystone.service_catalog.get_token()['id']
-
-    nova = get_nova_client(auth_token, compute_endpoint)
+    nova = get_nova_client()
     if nova is None:
         status_err('Unable to obtain valid nova client, cannot proceed')
 
