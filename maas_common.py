@@ -163,6 +163,22 @@ else:
         return neutron
 
 
+try:
+    from heatclient import client as heat_client
+except ImportError:
+    def get_heat_client(*args, **kwargs):
+        status_err('Cannot import heatclient')
+else:
+    def get_heat_client(endpoint, token):
+        heat = heat_client.Client('1', endpoint=endpoint, token=token)
+        try:
+            heat.build_info.build_info()
+        except Exception as e:
+            status_err(str(e))
+
+        return heat
+
+
 def is_token_expired(token):
     expires = datetime.datetime.strptime(token['expires'],
                                          '%Y-%m-%dT%H:%M:%SZ')
