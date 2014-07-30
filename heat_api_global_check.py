@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import collections
 import sys
 import time
 
@@ -7,9 +8,7 @@ from heatclient.client import Client
 from maas_common import (get_heat_client, get_auth_ref, get_keystone_client,
                          metric, status_err, status_ok)
 
-STATUS_COMPLETE = 'COMPLETE'
-STATUS_FAILED = 'FAILED'
-STATUS_IN_PROGRESS = 'IN_PROGRESS'
+HEAT_STATUS = ['COMPLETE', 'FAILED', 'IN_PROGRESS']
 
 
 def check_availability(auth_ref):
@@ -31,24 +30,18 @@ def check_availability(auth_ref):
     auth_token_id = keystone.auth_ref['token']['id']
     heat = get_heat_client(heat_endpoint, auth_token_id)
 
-    complete, failed, in_progress = 0, 0, 0
+    counters = collections.Counter(zip(HEAT_STATUS, [0] * len(HEAT_STATUS)))
     start_at = time.time()
     try:
         for stack in heat.stacks.list():
-            if STATUS_COMPLETE == stack.status:
-                complete += 1
-            if STATUS_FAILED == stack.status:
-                failed += 1
-            if STATUS_IN_PROGRESS == stack.status:
-                in_progress += 1
+            counters[stack.status] += 1
     except Exception as e:
         status_err(str(e))
     elapsed_ms = (time.time() - start_at) * 1000
 
     status_ok('heat api success')
-    metric('heat_complete_stacks', 'uint32', complete)
-    metric('heat_failed_stacks', 'uint32', failed)
-    metric('heat_in_progress_stacks', 'uint32', in_progress)
+    for key in HEAT_STATUS:
+        metric('heat_{0}_stacks'.format(key.lower()), 'uint32', counters[key])
     metric('heat_response_ms', 'double', elapsed_ms)
 
 

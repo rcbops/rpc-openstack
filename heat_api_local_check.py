@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import requests
-from requests import exceptions as exc
 from maas_common import (get_auth_ref, get_heat_client, get_keystone_client,
                          metric, status_ok, status_err)
 
