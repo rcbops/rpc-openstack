@@ -239,3 +239,8 @@ def metric(name, metric_type, value, unit=None):
     if unit is not None:
         metric_line = ' '.join((metric_line, unit))
     print metric_line
+
+
+def metric_bool(name, success):
+    value = success and 1 or 0
+    metric(name, 'uint32', value)
