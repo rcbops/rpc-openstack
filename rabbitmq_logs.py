@@ -1,6 +1,6 @@
 import datetime
 import collections
-from maas_common import metric
+from maas_common import metric, status_ok
 import os
 import re
 
@@ -73,6 +73,7 @@ def main():
                                                     log_level_counter[level])
             metric(metric_name, 'string', message['msg'])
 
+    status_ok()
     for (level, count) in log_level_counter.items():
         metric('num_{0}'.format(level.lower()), 'uint32', count)
 
