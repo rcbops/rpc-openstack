@@ -79,6 +79,30 @@ else:
         return glance
 
 try:
+    from novaclient.client import Client as nova_client
+    from novaclient.client import exceptions as nova_exc
+except ImportError:
+    def get_nova_client(*args, **kwargs):
+        status_err('Cannot import novaclient')
+else:
+    def get_nova_client(auth_token, bypass_url, previous_tries=0):
+        if previous_tries > 3:
+            return None
+
+        nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
+
+        try:
+            servers = nova.servers.list()
+            # Exceptions are only thrown when we iterate over servers
+            [server.id for server in servers]
+        except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+            get_nova_client(auth_token, bypass_url, previous_tries + 1)
+        except Exception as e:
+            status_err(str(e))
+
+        return nova
+
+try:
     from keystoneclient.v2_0 import client as k_client
     from keystoneclient.openstack.common.apiclient import exceptions as k_exc
 except ImportError:
