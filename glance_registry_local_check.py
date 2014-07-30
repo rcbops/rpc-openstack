@@ -12,6 +12,9 @@ def check(auth_ref):
     auth_token = keystone.auth_token
     registry_endpoint = 'http://127.0.0.1:9191'
 
+    api_status = 1
+    milliseconds = 0
+
     s = Session()
 
     s.headers.update(
@@ -24,15 +27,19 @@ def check(auth_ref):
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
+        api_status = 0
+        milliseconds = -1
+    except Exception as e:
         status_err(str(e))
-
-    if not r.ok:
-        status_err('could not get a 200 response from glance-registry')
-
-    milliseconds = r.elapsed.total_seconds() * 1000
+    else:
+        if r.ok:
+            milliseconds = r.elapsed.total_seconds() * 1000
+        else:
+            api_status = 0
+            milliseconds = -1
 
     status_ok()
-    metric('glance_registry_local_status', 'uint32', 1)
+    metric('glance_registry_local_status', 'uint32', api_status)
     metric('glance_registry_local_response_time', 'uint32', milliseconds)
 
 
