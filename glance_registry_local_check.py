@@ -26,17 +26,16 @@ def check(auth_ref):
         r = s.get('%s/images' % registry_endpoint, verify=False, timeout=10)
     except (exc.ConnectionError,
             exc.HTTPError,
-            exc.Timeout) as e:
+            exc.Timeout):
         api_status = 0
         milliseconds = -1
     except Exception as e:
         status_err(str(e))
     else:
-        if r.ok:
-            milliseconds = r.elapsed.total_seconds() * 1000
-        else:
+        milliseconds = r.elapsed.total_seconds() * 1000
+
+        if not r.ok:
             api_status = 0
-            milliseconds = -1
 
     status_ok()
     metric('glance_registry_local_status', 'uint32', api_status)
