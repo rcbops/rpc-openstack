@@ -70,9 +70,9 @@ else:
         if not token:
             token = auth_ref['token']['id']
         if not endpoint:
-            endpoint = [i['endpoints'][0]['publicURL']
-                        for i in auth_ref['serviceCatalog']
-                        if i['type'] == 'image'][0]
+            endpoint = get_endpoint_url_for_service(
+                'image',
+                auth_ref['serviceCatalog'])
 
         glance = g_client('1', endpoint=endpoint, token=token)
 
