@@ -1,24 +1,29 @@
 #!/usr/bin/env python
 
-from maas_common import (get_auth_ref, get_nova_client, status_err,
-                         status_ok, metric)
+from maas_common import get_nova_client, status_err, status_ok, metric_bool
+from novaclient.client import exceptions as exc
 
 COMPUTE_ENDPOINT = 'http://127.0.0.1:8774/v3'
 
 
-def check(token):
-    nova = get_nova_client(token, COMPUTE_ENDPOINT)
-    if nova is None:
-        status_err('Unable to obtain valid nova client, cannot proceed')
+def check():
 
-    status_ok()
-    metric('nova_api_local_status', 'uint32', 1)
+    try:
+        get_nova_client(bypass_url=COMPUTE_ENDPOINT)
+        status_ok()
+        metric_bool('nova_api_local_status', True)
+
+    # if we get a ClientException don't bother sending any other metric
+    # The API IS DOWN
+    except exc.ClientException:
+        metric_bool('nova_api_local_status', False)
+    # Any other exception presumably isn't an API error
+    except Exception as e:
+        status_err(str(e))
 
 
 def main():
-    auth_ref = get_auth_ref()
-    token = auth_ref['token']['id']
-    check(token)
+    check()
 
 
 if __name__ == "__main__":

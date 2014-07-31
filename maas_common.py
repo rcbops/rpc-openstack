@@ -88,40 +88,40 @@ else:
     def get_nova_client(auth_token=None, bypass_url=None, previous_tries=0):
         if previous_tries > 3:
             return None
-        
+
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
-        
+
         if not auth_token:
             auth_token = auth_ref['token']['id']
         if not bypass_url:
-            bypass_url = [i['endpoints'][0]['publicURL'] \
-                         for i in auth_ref['serviceCatalog'] \
-                         if i['type'] == 'compute'][0]
-        
+            bypass_url = [i['endpoints'][0]['publicURL']
+                          for i in auth_ref['serviceCatalog']
+                          if i['type'] == 'compute'][0]
+
         nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
 
         try:
-            servers = nova.servers.list()
+            flavors = nova.flavors.list()
             # Exceptions are only thrown when we try and do something
-            [server.id for server in servers]
+            [flavor.id for flavor in flavors]
 
         #except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
-        # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but 
-        # in fact tries tore-auth, all by itself. But we didn't pass it 
-        # an auth_url, so it bombs out horribly with an 
+        # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
+        # in fact tries to re-auth, all by itself. But we didn't pass it
+        # an auth_url, so it bombs out horribly with an
         # Attribute error. This is a bug, to be filed...
 
         except AttributeError:
             auth_details = get_auth_details()
             auth_ref = keystone_auth(auth_details)
             auth_token = auth_ref['token']['id']
-            
+
             nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
 
         # we only want to pass ClientException back to the calling poller
-        # since this encapsulates all of our actual API filures. Other 
+        # since this encapsulates all of our actual API failures. Other
         # exceptions will be treated as script/environmental issues and
         # sent to status_err
         except nova_exc.ClientException:
