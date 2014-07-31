@@ -193,9 +193,20 @@ except ImportError:
     def get_neutron_client(*args, **kwargs):
         status_err('Cannot import neutronclient')
 else:
-    def get_neutron_client(token, endpoint_url, previous_tries=0):
+    def get_neutron_client(token=None, endpoint_url=None, previous_tries=0):
         if previous_tries > 3:
             return None
+
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        auth_ref = get_auth_ref()
+
+        if not token:
+            token = auth_ref['token']['id']
+        if not endpoint_url:
+            endpoint_url = [i['endpoints'][0]['publicURL']
+                            for i in auth_ref['serviceCatalog']
+                            if i['type'] == 'network'][0]
 
         neutron = n_client.Client('2.0',
                                   token=token,
@@ -206,12 +217,25 @@ else:
             agents = neutron.list_agents()
             # iterate the list to ensure we actually have something
             [i['id'] for i in agents['agents']]
-        except (n_exc.Unauthorized,
-                n_exc.ConnectionFailed,
-                n_exc.Forbidden) as e:
+        # if we have provided a bum token, neutron wants to try and reauth
+        # itself but it can't as we didn't provide it an auth_url and all that
+        # jazz. Since we want to auth again ourselves (so we can update our
+        # local token) we'll just catch the exception it throws and move on
+        except n_exc.NoAuthURLProvided:
+            auth_details = get_auth_details()
+            auth_ref = keystone_auth(auth_details)
+            token = auth_ref['token']['id']
+
             neutron = get_neutron_client(token, endpoint_url,
                                          previous_tries + 1)
-        except n_exc.NeutronException as e:
+
+        # we only want to pass NeutronClientException back to the caller
+        # since this encapsulates all of our actual API failures. Other
+        # exceptions will be treated as script/environmental issues and
+        # sent to status_err
+        except n_exc.NeutronClientException as e:
+            raise
+        except Exception as e:
             status_err(str(e))
 
         return neutron
