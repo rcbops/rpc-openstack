@@ -26,6 +26,7 @@ def check():
     # if we get a ClientException don't bother sending any other metric
     # The API IS DOWN
     except exc.ClientException:
+        status_ok()
         metric_bool('nova_api_local_status', False)
     # Any other exception presumably isn't an API error
     except Exception as e:
