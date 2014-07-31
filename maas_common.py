@@ -79,6 +79,59 @@ else:
         return glance
 
 try:
+    from novaclient.client import Client as nova_client
+    from novaclient.client import exceptions as nova_exc
+except ImportError:
+    def get_nova_client(*args, **kwargs):
+        status_err('Cannot import novaclient')
+else:
+    def get_nova_client(auth_token=None, bypass_url=None, previous_tries=0):
+        if previous_tries > 3:
+            return None
+
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        auth_ref = get_auth_ref()
+
+        if not auth_token:
+            auth_token = auth_ref['token']['id']
+        if not bypass_url:
+            bypass_url = get_endpoint_url_for_service(
+                'compute',
+                auth_ref['serviceCatalog'])
+
+        nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
+
+        try:
+            flavors = nova.flavors.list()
+            # Exceptions are only thrown when we try and do something
+            [flavor.id for flavor in flavors]
+
+        #except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+        # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
+        # in fact tries to re-auth, all by itself. But we didn't pass it
+        # an auth_url, so it bombs out horribly with an
+        # Attribute error. This is a bug, to be filed...
+
+        except AttributeError:
+            auth_details = get_auth_details()
+            auth_ref = keystone_auth(auth_details)
+            auth_token = auth_ref['token']['id']
+
+            nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
+
+        # we only want to pass ClientException back to the calling poller
+        # since this encapsulates all of our actual API failures. Other
+        # exceptions will be treated as script/environmental issues and
+        # sent to status_err
+        except nova_exc.ClientException:
+            raise
+        except Exception as e:
+            status_err(str(e))
+
+        return nova
+
+try:
     from keystoneclient.v2_0 import client as k_client
     from keystoneclient.openstack.common.apiclient import exceptions as k_exc
 except ImportError:
@@ -233,6 +286,12 @@ def get_auth_details(openrc_file=OPENRC):
             status_err('%s not set' % key)
 
     return auth_details
+
+
+def get_endpoint_url_for_service(service_type, service_catalog):
+    for i in service_catalog:
+        if i['type'] == service_type:
+            return i['endpoints'][0]['publicURL']
 
 
 def status(status, message):
