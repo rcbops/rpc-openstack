@@ -59,9 +59,20 @@ except ImportError:
     def get_glance_client(*args, **kwargs):
         status_err('Cannot import glanceclient')
 else:
-    def get_glance_client(token, endpoint, previous_tries=0):
+    def get_glance_client(token=None, endpoint=None, previous_tries=0):
         if previous_tries > 3:
             return None
+
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        auth_ref = get_auth_ref()
+
+        if not token:
+            token = auth_ref['token']['id']
+        if not endpoint:
+            endpoint = [i['endpoints'][0]['publicURL']
+                        for i in auth_ref['serviceCatalog']
+                        if i['type'] == 'image'][0]
 
         glance = g_client('1', endpoint=endpoint, token=token)
 
@@ -73,6 +84,12 @@ else:
             [i.id for i in image]
         except g_exc.HTTPUnauthorized as e:
             glance = get_glance_client(token, endpoint, previous_tries + 1)
+        # we only want to pass HTTPException back to the calling poller
+        # since this encapsulates all of our actual API failures. Other
+        # exceptions will be treated as script/environmental issues and
+        # sent to status_err
+        except g_exc.HTTPException:
+            raise
         except Exception as e:
             status_err(str(e))
 
