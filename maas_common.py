@@ -156,7 +156,8 @@ else:
         except (n_exc.Unauthorized,
                 n_exc.ConnectionFailed,
                 n_exc.Forbidden) as e:
-            neutron = get_neutron_client(token, endpoint_url, previous_tries + 1)
+            neutron = get_neutron_client(token, endpoint_url,
+                                         previous_tries + 1)
         except n_exc.NeutronException as e:
             status_err(str(e))
 
