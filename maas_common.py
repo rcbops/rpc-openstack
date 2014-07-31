@@ -46,7 +46,7 @@ else:
             # Exceptions are only thrown when we iterate over volumes
             [i.id for i in volumes]
         except (c_exc.Unauthorized, c_exc.AuthorizationFailure) as e:
-            get_cinder_client(previous_tries + 1)
+            cinder = get_cinder_client(previous_tries + 1)
         except Exception as e:
             status_err(str(e))
 
@@ -72,7 +72,7 @@ else:
             # Exceptions are only thrown when we iterate over image
             [i.id for i in image]
         except g_exc.HTTPUnauthorized as e:
-            get_glance_client(token, endpoint, previous_tries + 1)
+            glance = get_glance_client(token, endpoint, previous_tries + 1)
         except Exception as e:
             status_err(str(e))
 
@@ -156,7 +156,8 @@ else:
         except (n_exc.Unauthorized,
                 n_exc.ConnectionFailed,
                 n_exc.Forbidden) as e:
-            get_neutron_client(token, endpoint_url, previous_tries + 1)
+            neutron = get_neutron_client(token, endpoint_url,
+                                         previous_tries + 1)
         except n_exc.NeutronException as e:
             status_err(str(e))
 
