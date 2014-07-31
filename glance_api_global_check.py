@@ -6,6 +6,8 @@ from maas_common import (get_auth_ref, get_keystone_client, get_glance_client,
 import collections
 import sys
 
+IMAGE_STATUSES = ['active', 'queued', 'killed']
+
 
 def check():
     try:
@@ -16,7 +18,9 @@ def check():
         status_ok()
         metric_bool('glance_api_global_status', True)
 
-        for status in counter.keys():
+        for status in IMAGE_STATUSES:
+            # Only send metrics for statuses that we care about -- seeing
+            # deleted count over time is probably not useful.
             metric('glance_%s_images' % status, 'uint32', counter[status])
     except exc.HTTPException:
         status_ok()
