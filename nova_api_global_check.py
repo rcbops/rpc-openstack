@@ -15,7 +15,7 @@ def check():
         server_states = [server.state for server in nova.servers.list()]
         server_results = collections.Counter(server_states)
         status_ok()
-        metric_bool('nova_api_local_status', True)
+        metric_bool('nova_api_global_status', True)
 
     # print counts of the statuses we care about
         for state in SERVER_STATUSES:
@@ -27,7 +27,7 @@ def check():
     # The API IS DOWN
     except exc.ClientException:
         status_ok()
-        metric_bool('nova_api_local_status', False)
+        metric_bool('nova_api_global_status', False)
     # Any other exception presumably isn't an API error
     except Exception as e:
         status_err(str(e))
