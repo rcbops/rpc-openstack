@@ -25,7 +25,8 @@ def check():
     # if we get a NeutronClientException don't bother sending any other metric
     # The API IS DOWN
     except exc.NeutronClientException:
-        metric_bool('nova_api_local_status', False)
+        status_ok()
+        metric_bool('neutron_api_global_status', False)
     # Any other exception presumably isn't an API error
     except Exception as e:
         status_err(str(e))
