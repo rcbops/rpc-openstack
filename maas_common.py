@@ -204,10 +204,12 @@ else:
         if not token:
             token = auth_ref['token']['id']
         if not endpoint_url:
-            endpoint_url = [i['endpoints'][0]['publicURL']
-                            for i in auth_ref['serviceCatalog']
-                            if i['type'] == 'network'][0]
+            endpoint_url = get_endpoint_url_for_service(
+                'network',
+                auth_ref['serviceCatalog'])
 
+        print token
+        print endpoint_url
         neutron = n_client.Client('2.0',
                                   token=token,
                                   endpoint_url=endpoint_url)
