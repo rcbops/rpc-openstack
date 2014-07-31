@@ -92,15 +92,16 @@ else:
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
-        auth_url = [i['endpoints'][0]['publicURL'] for i in auth_ref['serviceCatalog']  if i['type'] == 'identity'][0]
         
         if not auth_token:
             auth_token = auth_ref['token']['id']
-            print "first auth_token", auth_token
         if not bypass_url:
-            bypass_url = [i['endpoints'][0]['publicURL'] for i in auth_ref['serviceCatalog']  if i['type'] == 'compute'][0]
-            print "first url", bypass_url
+            bypass_url = [i['endpoints'][0]['publicURL'] \
+                         for i in auth_ref['serviceCatalog'] \
+                         if i['type'] == 'compute'][0]
         
+        print "auth_token %s: %s" % (previous_tries, auth_token)
+        print "bypass_url %s: %s" % (previous_tries, bypass_url)
         nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
 
         try:
@@ -108,13 +109,11 @@ else:
             # Exceptions are only thrown when we try and do something
             [server.id for server in servers]
 
-        except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+        #except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+        except Exception:
             auth_details = get_auth_details()
-            auth_ref = keystone_auth()
+            auth_ref = keystone_auth(auth_details)
             auth_token = auth_ref['token']['id']
-            print "second auth_token", auth_token
-            bypass_url = [i['endpoints'][0]['publicURL'] for i in auth_ref['serviceCatalog']  if i['type'] == 'compute'][0]
-            print "second url", bypass_url
             
             get_nova_client(auth_token, bypass_url, previous_tries + 1)
 
