@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from maas_common import (status_ok, status_err, metric, get_keystone_client,
-                         get_auth_ref)
+                         get_auth_ref, metric_bool)
 from requests import Session
 from requests import exceptions as exc
 
