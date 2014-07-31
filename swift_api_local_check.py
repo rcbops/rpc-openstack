@@ -15,7 +15,7 @@ except Exception as e:
 def check(auth_ref):
     status_msg = None
     api_ok = True
-    elapsed = 0
+    elapsed = -1
 
     try:
         keystone = get_keystone_client(auth_ref)
@@ -49,7 +49,7 @@ def check(auth_ref):
 
     status_ok(status_msg)
     metric_bool('swift_api_local_status', api_ok)
-    metric('swift_api_response_time', 'uint32', elapsed)
+    metric('swift_api_response_time', 'int32', elapsed)
 
 
 def main():
