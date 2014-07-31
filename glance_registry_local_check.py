@@ -10,11 +10,10 @@ def check(auth_ref):
     # We call get_keystone_client here as there is some logic within to get a
     # new token if previous one is bad.
     keystone = get_keystone_client(auth_ref)
-    tenant_id = keystone.tenant_id
     auth_token = keystone.auth_token
     registry_endpoint = 'http://127.0.0.1:9191'
 
-    api_status = 1
+    api_is_up = True
     milliseconds = 0
 
     s = Session()
@@ -27,18 +26,17 @@ def check(auth_ref):
         # /images returns a list of public, non-deleted images
         r = s.get('%s/images' % registry_endpoint, verify=False, timeout=10)
     except (exc.ConnectionError, exc.HTTPError, exc.Timeout):
-        api_status = 0
+        api_is_up = False
         milliseconds = -1
     except Exception as e:
         status_err(str(e))
     else:
         milliseconds = r.elapsed.total_seconds() * 1000
 
-        if not r.ok:
-            api_status = 0
+        api_is_up = r.ok
 
     status_ok()
-    metric_bool('glance_registry_local_status', api_status)
+    metric_bool('glance_registry_local_status', api_is_up)
     metric('glance_registry_local_response_time', 'int32', milliseconds)
 
 

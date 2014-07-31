@@ -2,7 +2,7 @@
 
 from requests import Session
 from requests import exceptions as exc
-from maas_common import (get_auth_ref, get_keystone_client,
+from maas_common import (get_auth_ref, get_keystone_client, metric_bool,
                          metric, status_ok, status_err)
 
 
@@ -12,21 +12,21 @@ def check_heat(tenant, token):
         {'Content-type': 'application/json',
          'x-auth-token': token})
 
-    api_status = 1
+    api_is_up = True
     try:
-        r = s.get('http://127.0.0.1:8004/v1/{0}/build_info'.format(tenant), verify=False, timeout=10)
+        r = s.get('http://127.0.0.1:8004/v1/{0}/build_info'.format(tenant),
+                  verify=False, timeout=10)
     except (exc.ConnectionError, exc.HTTPError, exc.Timeout):
-        api_status = 0
+        api_is_up = False
         milliseconds = -1
     except Exception as e:
         status_err(str(e))
     else:
         milliseconds = r.elapsed.total_seconds() * 1000.0
-        if not r.ok:
-            api_status = 0
+        api_is_up = r.ok
 
     status_ok()
-    metric('heat_api_local_status', 'uint32', api_status)
+    metric_bool('heat_api_local_status', api_is_up)
     metric('heat_local_response_time', 'int32', milliseconds)
 
 
