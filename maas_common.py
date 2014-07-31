@@ -96,9 +96,9 @@ else:
         if not auth_token:
             auth_token = auth_ref['token']['id']
         if not bypass_url:
-            bypass_url = [i['endpoints'][0]['publicURL']
-                          for i in auth_ref['serviceCatalog']
-                          if i['type'] == 'compute'][0]
+            bypass_url = get_endpoint_url_for_service(
+                'compute',
+                auth_ref['serviceCatalog'])
 
         nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
 
@@ -286,6 +286,12 @@ def get_auth_details(openrc_file=OPENRC):
             status_err('%s not set' % key)
 
     return auth_details
+
+
+def get_endpoint_url_for_service(service_type, service_catalog):
+    for i in service_catalog:
+        if i['type'] == service_type:
+            return i['endpoints'][0]['publicURL']
 
 
 def status(status, message):
