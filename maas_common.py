@@ -100,8 +100,6 @@ else:
                          for i in auth_ref['serviceCatalog'] \
                          if i['type'] == 'compute'][0]
         
-        print "auth_token %s: %s" % (previous_tries, auth_token)
-        print "bypass_url %s: %s" % (previous_tries, bypass_url)
         nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
 
         try:
@@ -110,13 +108,24 @@ else:
             [server.id for server in servers]
 
         #except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
-        except Exception:
+        # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but 
+        # in fact tries tore-auth, all by itself. But we didn't pass it 
+        # an auth_url, so it bombs out horribly with an 
+        # Attribute error. This is a bug, to be filed...
+
+        except AttributeError:
             auth_details = get_auth_details()
             auth_ref = keystone_auth(auth_details)
             auth_token = auth_ref['token']['id']
             
-            get_nova_client(auth_token, bypass_url, previous_tries + 1)
+            nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
 
+        # we only want to pass ClientException back to the calling poller
+        # since this encapsulates all of our actual API filures. Other 
+        # exceptions will be treated as script/environmental issues and
+        # sent to status_err
+        except nova_exc.ClientException:
+            raise
         except Exception as e:
             status_err(str(e))
 
