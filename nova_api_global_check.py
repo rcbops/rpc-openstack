@@ -17,7 +17,7 @@ def check():
         status_ok()
         metric_bool('nova_api_global_status', True)
 
-    # print counts of the statuses we care about
+        # print counts of the statuses we care about
         for state in SERVER_STATUSES:
             metric('nova_servers_in_state_%s' % state,
                    'uint32',
