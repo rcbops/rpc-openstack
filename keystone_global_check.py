@@ -1,26 +1,29 @@
 #!/usr/bin/env python
 
-from maas_common import (get_auth_ref, get_keystone_client,
-                         status_err, status_ok, metric)
-import sys
+from maas_common import (get_keystone_client, status_err, status_ok, metric,
+                         metric_bool)
+from keystoneclient.openstack.common.apiclient import exceptions as k_exc
 
 
-def check(auth_ref):
-    keystone = get_keystone_client(auth_ref)
+def check():
+    try:
+        keystone = get_keystone_client()
 
-    if keystone is None:
-        status_err('Unable to obtain valid keystone client, cannot proceed')
+        users = keystone.users.list()
+        enabled = [u for u in users if u.enabled is True]
 
-    users = keystone.users.list()
-    enabled = [u for u in users if u.enabled is True]
-
-    status_ok()
-    metric('keystone_users', 'uint32', len(enabled))
+        status_ok()
+        metric_bool('keystone_global_status', True)
+        metric('keystone_users', 'uint32', len(enabled))
+    except k_exc.ClientException:
+        status_ok()
+        metric_bool('keystone_global_status', False)
+    except Exception as e:
+        status_err(str(e))
 
 
 def main():
-    auth_ref = get_auth_ref()
-    check(auth_ref)
+    check()
 
 if __name__ == "__main__":
     main()

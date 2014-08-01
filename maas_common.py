@@ -180,14 +180,20 @@ else:
 
         return keystone.auth_ref
 
-    def get_keystone_client(auth_ref, previous_tries=0, endpoint=None):
+    def get_keystone_client(auth_ref=None, endpoint=None, previous_tries=0):
         if previous_tries > 3:
             return None
 
-        if endpoint is None:
-            keystone = k_client.Client(auth_ref=auth_ref)
-        else:
-            keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        if not auth_ref:
+            auth_ref = get_auth_ref()
+        if not endpoint:
+            endpoint = get_endpoint_url_for_service('identity',
+                                                    auth_ref['serviceCatalog'],
+                                                    'adminURL')
+
+        keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
 
         try:
             # This should be a rather light-weight call that validates we're
@@ -196,10 +202,11 @@ else:
         except (k_exc.AuthorizationFailure, k_exc.Unauthorized):
             # Force an update of auth_ref
             auth_ref = force_reauth()
-
             keystone = get_keystone_client(auth_ref,
-                                           previous_tries + 1,
-                                           endpoint)
+                                           endpoint,
+                                           previous_tries + 1)
+        except (k_exc.HttpServerError, k_exc.ClientException):
+            raise
         except Exception as e:
             status_err(str(e))
 
@@ -337,10 +344,11 @@ def get_auth_details(openrc_file=OPENRC):
     return auth_details
 
 
-def get_endpoint_url_for_service(service_type, service_catalog):
+def get_endpoint_url_for_service(service_type, service_catalog,
+                                 url_type='publicURL'):
     for i in service_catalog:
         if i['type'] == service_type:
-            return i['endpoints'][0]['publicURL']
+            return i['endpoints'][0][url_type]
 
 
 def force_reauth():
