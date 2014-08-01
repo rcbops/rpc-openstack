@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import datetime
+import errno
 import json
 import os
 import re
@@ -277,12 +278,15 @@ def get_auth_ref():
 
 
 def get_auth_from_file():
-    if os.path.exists(TOKEN_FILE):
+    try:
         with open(TOKEN_FILE) as token_file:
             auth_ref = json.load(token_file)
 
         return auth_ref
-    return None
+    except IOError as e:
+        if e.errno == errno.ENOENT:
+            return None
+        status_err(e)
 
 
 def get_auth_details(openrc_file=OPENRC):
@@ -291,7 +295,7 @@ def get_auth_details(openrc_file=OPENRC):
         '^(?:export\s)?(?P<key>\w+)(?:\s+)?=(?:\s+)?(?P<value>.*)$'
     )
 
-    if os.path.exists(openrc_file):
+    try:
         with open(openrc_file) as openrc:
             for line in openrc:
                 match = pattern.match(line)
@@ -301,7 +305,9 @@ def get_auth_details(openrc_file=OPENRC):
                 v = match.group('value')
                 if k in auth_details and auth_details[k] is None:
                     auth_details[k] = v
-    else:
+    except IOError as e:
+        if e.errno != errno.ENOENT:
+            status_err(e)
         # no openrc file, so we try the environment
         for key in auth_details.keys():
             auth_details[key] = os.environ.get(key)
@@ -322,7 +328,7 @@ def get_endpoint_url_for_service(service_type, service_catalog):
 def status(status, message):
     status_line = 'status %s' % status
     if message is not None:
-        status_line = ' '.join((status_line, message))
+        status_line = ' '.join((status_line, str(message)))
     print status_line
 
 
