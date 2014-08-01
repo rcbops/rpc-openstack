@@ -208,8 +208,6 @@ else:
                 'network',
                 auth_ref['serviceCatalog'])
 
-        print token
-        print endpoint_url
         neutron = n_client.Client('2.0',
                                   token=token,
                                   endpoint_url=endpoint_url)
@@ -219,6 +217,7 @@ else:
             agents = neutron.list_agents()
             # iterate the list to ensure we actually have something
             [i['id'] for i in agents['agents']]
+
         # if we have provided a bum token, neutron wants to try and reauth
         # itself but it can't as we didn't provide it an auth_url and all that
         # jazz. Since we want to auth again ourselves (so we can update our
