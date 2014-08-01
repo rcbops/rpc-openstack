@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
 import collections
-import sys
 import time
 
-from heatclient.client import Client
 from heatclient import exc
 from maas_common import (get_heat_client, metric, metric_bool, status_err,
                          status_ok)
@@ -36,7 +34,7 @@ def check_availability():
         for key in HEAT_STATUS:
             metric('heat_{0}_stacks'.format(key.lower()), 'uint32',
                    counters[key])
-        metric('heat_response_ms', 'double', elapsed_ms)
+        metric('heat_response_ms', 'uint32', elapsed_ms)
     except exc.HTTPException:
         status_ok()
         metric_bool('heat_api_global_status', False)
