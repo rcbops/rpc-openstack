@@ -11,7 +11,7 @@ def check():
     try:
         keystone = get_keystone_client(endpoint=ENDPOINT)
 
-        users = keystone.users.list()
+        keystone.users.list()
 
         status_ok()
         metric_bool('keystone_local_status', True)
