@@ -83,6 +83,9 @@ else:
             # Exceptions are only thrown when we iterate over image
             [i.id for i in image]
         except g_exc.HTTPUnauthorized:
+            auth_ref = force_reauth()
+            token = auth_ref['token']['id']
+
             glance = get_glance_client(token, endpoint, previous_tries + 1)
         # we only want to pass HTTPException back to the calling poller
         # since this encapsulates all of our actual API failures. Other
@@ -131,8 +134,7 @@ else:
         # Attribute error. This is a bug, to be filed...
 
         except AttributeError:
-            auth_details = get_auth_details()
-            auth_ref = keystone_auth(auth_details)
+            auth_ref = force_reauth()
             auth_token = auth_ref['token']['id']
 
             nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
@@ -192,8 +194,8 @@ else:
             keystone.services.list()
         except (k_exc.AuthorizationFailure, k_exc.Unauthorized):
             # Force an update of auth_ref
-            auth_details = get_auth_details()
-            auth_ref = keystone_auth(auth_details)
+            auth_ref = force_reauth()
+
             keystone = get_keystone_client(auth_ref,
                                            previous_tries + 1,
                                            endpoint)
@@ -240,8 +242,7 @@ else:
         # jazz. Since we want to auth again ourselves (so we can update our
         # local token) we'll just catch the exception it throws and move on
         except n_exc.NoAuthURLProvided:
-            auth_details = get_auth_details()
-            auth_ref = keystone_auth(auth_details)
+            auth_ref = force_reauth()
             token = auth_ref['token']['id']
 
             neutron = get_neutron_client(token, endpoint_url,
@@ -334,6 +335,11 @@ def get_endpoint_url_for_service(service_type, service_catalog):
     for i in service_catalog:
         if i['type'] == service_type:
             return i['endpoints'][0]['publicURL']
+
+
+def force_reauth():
+    auth_details = get_auth_details()
+    return keystone_auth(auth_details)
 
 
 def status(status, message):
