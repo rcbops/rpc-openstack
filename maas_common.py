@@ -82,7 +82,7 @@ else:
             image = glance.images.list(limit=1)
             # Exceptions are only thrown when we iterate over image
             [i.id for i in image]
-        except g_exc.HTTPUnauthorized as e:
+        except g_exc.HTTPUnauthorized:
             glance = get_glance_client(token, endpoint, previous_tries + 1)
         # we only want to pass HTTPException back to the calling poller
         # since this encapsulates all of our actual API failures. Other

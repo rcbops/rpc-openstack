@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 from glanceclient import exc
-from maas_common import (get_auth_ref, get_keystone_client, get_glance_client,
-                         status_err, status_ok, metric, metric_bool)
+from maas_common import (get_auth_ref, get_glance_client, status_err,
+                         status_ok, metric, metric_bool)
 import collections
-import sys
 
 IMAGE_STATUSES = ['active', 'queued', 'killed']
 
