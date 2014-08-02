@@ -363,6 +363,7 @@ def status(status, message):
     status_line = 'status %s' % status
     if message is not None:
         status_line = ' '.join((status_line, str(message)))
+    status_line = status_line.replace('\n', '\\n')
     print status_line
 
 
