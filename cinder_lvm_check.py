@@ -12,7 +12,8 @@ def get_volume_group_info(vg_name):
                                        '--nosuffix', '--units', 'g', '-o',
                                        'size,free,lv_count', '--separator', ':',
                                        vg_name],
-                                      stderr=subprocess.STDOUT)
+                                      stderr=subprocess.STDOUT,
+                                      close_fds=True)
     except subprocess.CalledProcessError:
         return None
 
@@ -23,6 +24,8 @@ def get_volume_group_info(vg_name):
             vg_info = {'size': float(fields[0]),
                        'free': float(fields[1]),
                        'count': int(fields[2])}
+        else:
+            status_err(out)
 
     return vg_info
 
