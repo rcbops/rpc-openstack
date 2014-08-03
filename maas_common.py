@@ -380,6 +380,7 @@ def metric(name, metric_type, value, unit=None):
     metric_line = 'metric %s %s %s' % (name, metric_type, value)
     if unit is not None:
         metric_line = ' '.join((metric_line, unit))
+    metric_line = metric_line.replace('\n', '\\n')
     print metric_line
 
 
