@@ -11,10 +11,12 @@ def check(auth_ref):
     try:
         keystone = get_keystone_client(auth_ref)
         if keystone is None:
-            status_err('Unable to obtain valid keystone client, cannot proceed')
+            error = 'Unable to obtain valid keystone client, cannot proceed'
+            status_err(error)
 
-        endpoint = keystone.service_catalog.url_for(service_type='object-store',
-                                                endpoint_type='publicURL')
+        endpoint = keystone.service_catalog.url_for(
+            service_type='object-store',
+            endpoint_type='publicURL')
         auth_token = keystone.auth_ref['token']['id']
 
         swift = client.Connection(preauthurl=endpoint, preauthtoken=auth_token)

@@ -7,11 +7,10 @@ from maas_common import status_err, status_ok, metric
 
 def get_volume_group_info(vg_name):
     """Get volume group stats. Note that this must run as root."""
+    cmd = ['env', 'LC_ALL=C', 'vgs', '--noheadings', '--nosuffix', '--units',
+           'g', '-o', 'size,free,lv_count', '--separator', ':', vg_name]
     try:
-        out = subprocess.check_output(['env', 'LC_ALL=C', 'vgs', '--noheadings',
-                                       '--nosuffix', '--units', 'g', '-o',
-                                       'size,free,lv_count', '--separator', ':',
-                                       vg_name],
+        out = subprocess.check_output(cmd,
                                       stderr=subprocess.STDOUT,
                                       close_fds=True)
     except subprocess.CalledProcessError:

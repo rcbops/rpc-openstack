@@ -359,7 +359,7 @@ def force_reauth():
 def status(status, message):
     if status in ('ok', 'warn', 'err'):
         raise ValueError('The status "%s" is not allowed because it creates a '
-                        'metric called legacy_state' % status)
+                         'metric called legacy_state' % status)
     status_line = 'status %s' % status
     if message is not None:
         status_line = ' '.join((status_line, str(message)))
@@ -380,6 +380,7 @@ def metric(name, metric_type, value, unit=None):
     metric_line = 'metric %s %s %s' % (name, metric_type, value)
     if unit is not None:
         metric_line = ' '.join((metric_line, unit))
+    metric_line = metric_line.replace('\n', '\\n')
     print metric_line
 
 
