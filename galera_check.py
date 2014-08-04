@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import optparse
 import sys
 import subprocess
 import shlex
@@ -16,9 +17,31 @@ def galera_status_check(arg):
     ret = proc.returncode
     return ret, out, err
 
-RETCODE, OUTPUT, ERR = galera_status_check('/usr/bin/mysql \
-       --defaults-file=/root/.my.cnf \
-       -e "SHOW STATUS WHERE Variable_name REGEXP \'^(wsrep.*|queries)\'"')
+
+def generate_query(host, port):
+    if host:
+        host = ' -h %s' % host
+    else:
+        host = ''
+
+    if port:
+        port = ' -P %s' % port
+    else:
+        port = ''
+
+    return ('/usr/bin/mysql --defaults-file=/root/.my.cnf'
+            '%s%s -e "SHOW STATUS WHERE Variable_name REGEXP '
+            "'^(wsrep.*|queries)'") % (host, port)
+
+parser = optparse.OptionParser(usage='%prog [-h] [-H hostname] [-P port]')
+parser.add_option('-H', '--host', action='store', dest='host', default=None,
+                  help='Host to override the defaults with')
+parser.add_option('-P', '--port', action='store', dest='port', default=None,
+                  help='Port to override the defauults with')
+options, _ = parser.parse_args()
+
+RETCODE, OUTPUT, ERR = galera_status_check(generate_query(options.host,
+                                                          options.port))
 
 if RETCODE:
     print >> sys.stderr, "There was an error (%d):\n" % RETCODE
