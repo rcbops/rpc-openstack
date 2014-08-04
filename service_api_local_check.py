@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from maas_common import (status_ok, status_err, metric, get_keystone_client,
-                         get_auth_ref)
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         get_keystone_client, get_auth_ref)
 import argparse
 import requests
 from requests import exceptions as exc
@@ -36,7 +36,7 @@ def check(auth_ref, args):
         up = True
 
     status_ok()
-    metric('%s_api_local_status' % args.name, 'uint32', up)
+    metric_bool('%s_api_local_status' % args.name, up)
 
     if up and r.ok:
         milliseconds = r.elapsed.total_seconds() * 1000
