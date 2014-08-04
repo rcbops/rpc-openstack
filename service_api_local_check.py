@@ -33,11 +33,14 @@ def check(auth_ref, args):
         up = True
 
     status_ok()
-    metric_bool('%s_api_local_status' % args.name, up)
+    metric_bool('{name}_api_local_status'.format(name=args.name), up)
 
     if up and r.ok:
         milliseconds = r.elapsed.total_seconds() * 1000
-        metric('%s_api_response_time' % args.name, 'uint32', milliseconds)
+        metric('{name}_api_response_time'.format(name=args.name),
+               'uint32',
+               milliseconds,
+               'milliseconds')
 
 
 def main(args):
@@ -46,12 +49,12 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check service in up.')
+    parser = argparse.ArgumentParser(description='Check service is up.')
     parser.add_argument('name', help='Service name.')
     parser.add_argument('ip', help='Service IP address.')
     parser.add_argument('port', help='Service port.')
-    parser.add_argument('path', help='Service API request, this should include'
+    parser.add_argument('path', help='Service API path, this should include '
                                      'the version and tenant ID if required.')
-    parser.add_argument('ssl', type=bool, help='http or https.')
+    parser.add_argument('ssl', type=bool, help='Should SSL be used.')
     args = parser.parse_args()
     main(args)
