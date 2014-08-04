@@ -13,9 +13,6 @@ def check(auth_ref):
     auth_token = keystone.auth_token
     api_endpoint = 'http://127.0.0.1:9292/v2'
 
-    api_is_up = True
-    milliseconds = 0
-
     s = Session()
 
     s.headers.update(
@@ -28,18 +25,15 @@ def check(auth_ref):
         r = s.get('%s/schemas/image' % api_endpoint, verify=False,
                   timeout=10)
     except (exc.ConnectionError, exc.HTTPError, exc.Timeout):
-        api_is_up = False
-        milliseconds = -1
+        status_ok()
+        metric_bool('glance_api_local_status', False)
     except Exception as e:
         status_err(str(e))
     else:
         milliseconds = r.elapsed.total_seconds() * 1000
-
-        api_is_up = r.ok
-
-    status_ok()
-    metric_bool('glance_api_local_status', api_is_up)
-    metric('glance_api_local_response_time', 'int32', milliseconds)
+        status_ok()
+        metric_bool('glance_api_local_status', True)
+        metric('glance_api_local_response_time', 'uint32', milliseconds, 'ms')
 
 
 def main():
