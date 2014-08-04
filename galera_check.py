@@ -31,7 +31,7 @@ def generate_query(host, port):
 
     return ('/usr/bin/mysql --defaults-file=/root/.my.cnf'
             '%s%s -e "SHOW STATUS WHERE Variable_name REGEXP '
-            "'^(wsrep.*|queries)'") % (host, port)
+            "'^(wsrep.*|queries)'\"") % (host, port)
 
 parser = optparse.OptionParser(usage='%prog [-h] [-H hostname] [-P port]')
 parser.add_option('-H', '--host', action='store', dest='host', default=None,
@@ -59,7 +59,7 @@ if OUTPUT != "":
     if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
         status_err("there is a partition in the cluster")
 
-    if (SLAVE_STATUS['wrsep_local_state_uuid'] !=
+    if (SLAVE_STATUS['wsrep_local_state_uuid'] !=
             SLAVE_STATUS['wsrep_cluster_state_uuid']):
         status_err("the local node is out of sync")
 
