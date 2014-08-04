@@ -33,7 +33,7 @@ def check(auth_ref):
         milliseconds = r.elapsed.total_seconds() * 1000
         status_ok()
         metric_bool('glance_api_local_status', True)
-        metric('glance_api_local_response_time', 'uint32', milliseconds)
+        metric('glance_api_local_response_time', 'uint32', milliseconds, 'ms')
 
 
 def main():
