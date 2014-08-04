@@ -11,7 +11,9 @@ def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
     auth_token = keystone.auth_token
-    endpoint = 'http://{ip}:{port}'.format(ip=args.ip, port=args.port)
+    scheme = args.ssl and 'https' or 'http'
+    endpoint = '{scheme}://{ip}:{port}'.format(ip=args.ip, port=args.port,
+                                               scheme=scheme)
 
     s = requests.Session()
 
@@ -50,5 +52,6 @@ if __name__ == "__main__":
     parser.add_argument('port', help='Service port.')
     parser.add_argument('path', help='Service API request, this should include'
                                      'the version and tenant ID if required.')
+    parser.add_argument('ssl', type=bool, help='http or https.')
     args = parser.parse_args()
     main(args)
