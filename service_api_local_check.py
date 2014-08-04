@@ -11,11 +11,7 @@ def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
     auth_token = keystone.auth_token
-    endpoint = 'http://{ip}:{port}'.format(
-        ip=args.ip,
-        port=args.port,
-        version=args.version,
-        tenant_id=tenant_id)
+    endpoint = 'http://{ip}:{port}'.format(ip=args.ip, port=args.port)
 
     s = requests.Session()
 
