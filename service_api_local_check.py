@@ -10,9 +10,8 @@ from requests import exceptions as exc
 def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
-    tenant_id = keystone.tenant_id
     auth_token = keystone.auth_token
-    endpoint = 'http://{ip}:{port}/{version}/{tenant_id}'.format(
+    endpoint = 'http://{ip}:{port}'.format(
         ip=args.ip,
         port=args.port,
         version=args.version,
@@ -53,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument('name', help='Service name.')
     parser.add_argument('ip', help='Service IP address.')
     parser.add_argument('port', help='Service port.')
-    parser.add_argument('version', help='Service API version.')
-    parser.add_argument('path', help='Service API request.')
+    parser.add_argument('path', help='Service API request, this should include'
+                                     'the version and tenant ID if required.')
     args = parser.parse_args()
     main(args)
