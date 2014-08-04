@@ -12,7 +12,7 @@ def check(auth_ref, args):
     keystone = get_keystone_client(auth_ref)
     tenant_id = keystone.tenant_id
     auth_token = keystone.auth_token
-    volume_endpoint = 'http://{ip}:{port}/v{version}/{tenant_id}'.format(
+    endpoint = 'http://{ip}:{port}/{version}/{tenant_id}'.format(
         ip=args.ip,
         port=args.port,
         version=args.version,
@@ -25,7 +25,7 @@ def check(auth_ref, args):
          'x-auth-token': auth_token})
 
     try:
-        r = s.get('/'.join((volume_endpoint, args.path)),
+        r = s.get('/'.join((endpoint, args.path)),
                   verify=False,
                   timeout=10)
     except (exc.ConnectionError,
