@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
+import optparse
 import requests
 import subprocess
 
 from maas_common import metric, status_ok, status_err
 
-OVERVIEW_URL = "http://localhost:15672/api/overview"
-NODES_URL = "http://localhost:15672/api/nodes"
-USERNAME = 'guest'
-PASSWORD = 'guest'
+OVERVIEW_URL = "http://%s:%s/api/overview"
+NODES_URL = "http://%s:%s/api/nodes"
 CLUSTERED = True
 CLUSTER_SIZE = 3
 
@@ -38,13 +37,33 @@ def hostname():
     return subprocess.check_output(['hostname']).strip()
 
 
+def parse_args():
+    parser = optparse.OptionParser(
+        usage='%prog [-h] [-H hostname] [-P port] [-u username] [-p password]'
+    )
+    parser.add_option('-H', '--host', action='store', dest='host',
+                      default='localhost',
+                      help='Host address to use when connecting')
+    parser.add_option('-P', '--port', action='store', dest='port',
+                      default='15672',
+                      help='Port to use when connecting')
+    parser.add_option('-U', '--username', action='store', dest='username',
+                      default='guest',
+                      help='Username to use for authentication')
+    parser.add_option('-p', '--password', action='store', dest='password',
+                      default='guest',
+                      help='Password to use for authentication')
+    return parser.parse_args()
+
+
 def main():
+    (options, _) = parse_args()
     metrics = {}
     s = requests.Session()  # Make a Session to store the authenticate creds
-    s.auth = (USERNAME, PASSWORD)
+    s.auth = (options.username, options.password)
 
     try:
-        r = s.get(OVERVIEW_URL)
+        r = s.get(OVERVIEW_URL % (options.host, options.port))
     except requests.exceptions.ConnectionError as e:
         status_err(str(e))
 
@@ -60,7 +79,7 @@ def main():
             r.status_code))
 
     try:
-        r = s.get(NODES_URL)
+        r = s.get(NODES_URL % (options.host, options.port))
     except requests.exceptions.ConnectionError as e:
         status_err(str(e))
 
