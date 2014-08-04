@@ -7,27 +7,27 @@ import requests
 from requests import exceptions as exc
 
 
-def check(auth_ref, args):
-
-    keystone = get_keystone_client(auth_ref)
-    auth_token = keystone.auth_token
-    tenant_id = keystone.tenant_id
+def check(args):
+    headers = {'Content-type': 'application/json'}
+    path_options = {}
+    if args.auth:
+        auth_ref = get_auth_ref()
+        keystone = get_keystone_client(auth_ref)
+        auth_token = keystone.auth_token
+        tenant_id = keystone.tenant_id
+        headers['auth_token'] = auth_token
+        path_options['tenant_id'] = tenant_id
 
     scheme = args.ssl and 'https' or 'http'
     endpoint = '{scheme}://{ip}:{port}'.format(ip=args.ip, port=args.port,
                                                scheme=scheme)
-    path_options = {'tenant_id': tenant_id}
-    try:
+    if args.version is not None:
         path_options['version'] = args.version
-    except AttributeError:
-        pass
     path = args.path.format(path_options)
 
     s = requests.Session()
 
-    s.headers.update(
-        {'Content-type': 'application/json',
-         'x-auth-token': auth_token})
+    s.headers.update(headers)
 
     try:
         r = s.get('/'.join((endpoint, path)),
@@ -52,8 +52,7 @@ def check(auth_ref, args):
 
 
 def main(args):
-    auth_ref = get_auth_ref()
-    check(auth_ref, args)
+    check(args)
 
 
 if __name__ == "__main__":
@@ -65,7 +64,10 @@ if __name__ == "__main__":
                         help='Service API path, this should include '
                              'placeholders for the version "{version}" and '
                              'tenant ID "{tenant_id}" if required.')
-    parser.add_argument('ssl', type=bool, help='Should SSL be used.')
+    parser.add_argument('--auth', action='store_true', default=False,
+                        help='Does this API check require auth?')
+    parser.add_argument('--ssl', action='store_true', default=False,
+                        help='Should SSL be used.')
     parser.add_argument('--version', help='Service API version.')
     args = parser.parse_args()
     main(args)
