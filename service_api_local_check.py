@@ -30,10 +30,12 @@ def check(args):
 
     s.headers.update(headers)
 
+    if path and not path.startswith('/'):
+        url = '/'.join((endpoint, path))
+    else:
+        url = ''.join((endpoint, path))
     try:
-        r = s.get('/'.join((endpoint, path)),
-                  verify=False,
-                  timeout=10)
+        r = s.get(url, verify=False, timeout=10)
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout):
