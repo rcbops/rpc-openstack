@@ -270,14 +270,35 @@ else:
 
 try:
     from heatclient import client as heat_client
+    from heatclient import exc as h_exc
 except ImportError:
     def get_heat_client(*args, **kwargs):
         status_err('Cannot import heatclient')
 else:
-    def get_heat_client(endpoint, token):
+    def get_heat_client(token=None, endpoint=None, previous_tries=0):
+        if previous_tries > 3:
+            return None
+
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        auth_ref = get_auth_ref()
+
+        if not token:
+            token = auth_ref['token']['id']
+        if not endpoint:
+            endpoint = get_endpoint_url_for_service(
+                'orchestration',
+                auth_ref['serviceCatalog'])
+
         heat = heat_client.Client('1', endpoint=endpoint, token=token)
         try:
             heat.build_info.build_info()
+        except h_exc.HTTPUnauthorized:
+            auth_ref = force_reauth()
+            token = auth_ref['token']['id']
+            heat = get_heat_client(token, endpoint, previous_tries + 1)
+        except h_exc.HTTPException:
+            raise
         except Exception as e:
             status_err(str(e))
 
