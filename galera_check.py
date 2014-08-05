@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import optparse
-import sys
 import subprocess
 import shlex
 
@@ -33,55 +32,69 @@ def generate_query(host, port):
             '%s%s -e "SHOW STATUS WHERE Variable_name REGEXP '
             "'^(wsrep.*|queries)'\"") % (host, port)
 
-parser = optparse.OptionParser(usage='%prog [-h] [-H hostname] [-P port]')
-parser.add_option('-H', '--host', action='store', dest='host', default=None,
-                  help='Host to override the defaults with')
-parser.add_option('-P', '--port', action='store', dest='port', default=None,
-                  help='Port to override the defauults with')
-options, _ = parser.parse_args()
 
-RETCODE, OUTPUT, ERR = galera_status_check(generate_query(options.host,
-                                                          options.port))
+def parse_args():
+    parser = optparse.OptionParser(usage='%prog [-h] [-H hostname] [-P port]')
+    parser.add_option('-H', '--host', action='store', dest='host',
+                      default=None,
+                      help='Host to override the defaults with')
+    parser.add_option('-P', '--port', action='store', dest='port',
+                      default=None,
+                      help='Port to override the defauults with')
+    return parser.parse_args()
 
-if RETCODE:
-    print >> sys.stderr, "There was an error (%d):\n" % RETCODE
-    print >> sys.stderr, ERR
 
-if OUTPUT != "":
-    SHOW_STATUS_LIST = OUTPUT.split('\n')
-    del SHOW_STATUS_LIST[0]
-    del SHOW_STATUS_LIST[-1]
+def print_metrics(replica_status):
+    status_ok()
+    metric('WSREP_REPLICATED_BYTES', 'int64',
+           replica_status['wsrep_replicated_bytes'])
+    metric('WSREP_RECEIVED_BYTES', 'int64',
+           replica_status['wsrep_received_bytes'])
+    metric('WSREP_COMMIT_WINDOW', 'double',
+           replica_status['wsrep_commit_window'])
+    metric('WSREP_CLUSTER_SIZE', 'int64',
+           replica_status['wsrep_cluster_size'])
+    metric('QUERIES_PER_SECOND', 'int64',
+           replica_status['Queries'])
+    metric('WSREP_CLUSTER_STATE_UUID', 'string',
+           replica_status['wsrep_cluster_state_uuid'])
+    metric('WSREP_CLUSTER_STATUS', 'string',
+           replica_status['wsrep_cluster_status'])
+    metric('WSREP_LOCAL_STATE_UUID', 'string',
+           replica_status['wsrep_local_state_uuid'])
+    metric('WSREP_LOCAL_STATE_COMMENT', 'string',
+           replica_status['wsrep_local_state_comment'])
 
-    SLAVE_STATUS = {}
-    for i in SHOW_STATUS_LIST:
-        SLAVE_STATUS[i.split('\t')[0]] = i.split('\t')[1]
 
-    if SLAVE_STATUS['wsrep_cluster_status'] != "Primary":
+def main():
+    options, _ = parse_args()
+
+    retcode, output, err = galera_status_check(
+        generate_query(options.host, options.port)
+    )
+
+    if retcode > 0:
+        status_err(err)
+
+    if not output:
+        return
+
+    show_status_list = output.split('\n')[1:-1]
+    replica_status = {}
+    for i in show_status_list:
+        replica_status[i.split('\t')[0]] = i.split('\t')[1]
+
+    if replica_status['wsrep_cluster_status'] != "Primary":
         status_err("there is a partition in the cluster")
 
-    if (SLAVE_STATUS['wsrep_local_state_uuid'] !=
-            SLAVE_STATUS['wsrep_cluster_state_uuid']):
+    if (replica_status['wsrep_local_state_uuid'] !=
+            replica_status['wsrep_cluster_state_uuid']):
         status_err("the local node is out of sync")
 
-    if (int(SLAVE_STATUS['wsrep_local_state']) == 4 and
-            SLAVE_STATUS['wsrep_local_state_comment'] == "Synced"):
+    if (int(replica_status['wsrep_local_state']) == 4 and
+            replica_status['wsrep_local_state_comment'] == "Synced"):
+        print_metrics(replica_status)
 
-        status_ok()
-        metric('WSREP_REPLICATED_BYTES', 'int64',
-               SLAVE_STATUS['wsrep_replicated_bytes'])
-        metric('WSREP_RECEIVED_BYTES', 'int64',
-               SLAVE_STATUS['wsrep_received_bytes'])
-        metric('WSREP_COMMIT_WINDOW', 'double',
-               SLAVE_STATUS['wsrep_commit_window'])
-        metric('WSREP_CLUSTER_SIZE', 'int64',
-               SLAVE_STATUS['wsrep_cluster_size'])
-        metric('QUERIES_PER_SECOND', 'int64',
-               SLAVE_STATUS['Queries'])
-        metric('WSREP_CLUSTER_STATE_UUID', 'string',
-               SLAVE_STATUS['wsrep_cluster_state_uuid'])
-        metric('WSREP_CLUSTER_STATUS', 'string',
-               SLAVE_STATUS['wsrep_cluster_status'])
-        metric('WSREP_LOCAL_STATE_UUID', 'string',
-               SLAVE_STATUS['wsrep_local_state_uuid'])
-        metric('WSREP_LOCAL_STATE_COMMENT', 'string',
-               SLAVE_STATUS['wsrep_local_state_comment'])
+
+if __name__ == '__main__':
+    main()
