@@ -53,6 +53,9 @@ def parse_args():
     parser.add_option('-p', '--password', action='store', dest='password',
                       default='guest',
                       help='Password to use for authentication')
+    parser.add_option('-n', '--name', action='store', dest='name',
+                      default=None,
+                      help='Hostname to check for cluster membership')
     return parser.parse_args()
 
 
@@ -83,7 +86,9 @@ def main():
     except requests.exceptions.ConnectionError as e:
         status_err(str(e))
 
-    name = hostname()
+    # Either use the option provided by the commandline flag or the current
+    # hostname
+    name = options.name or hostname()
     is_cluster_member = False
     if r.ok:
         resp_json = r.json()
