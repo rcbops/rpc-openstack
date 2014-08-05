@@ -3,6 +3,7 @@
 from maas_common import (status_ok, status_err, metric, metric_bool,
                          get_keystone_client, get_auth_ref)
 import argparse
+from ipaddr import IPv4Address
 import requests
 from requests import exceptions as exc
 
@@ -58,9 +59,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Check service is up.')
     parser.add_argument('name', help='Service name.')
-    parser.add_argument('ip', help='Service IP address.')
-    parser.add_argument('port', help='Service port.')
-    parser.add_argument('path',
+    parser.add_argument('ip', type=IPv4Address, help='Service IP address.')
+    parser.add_argument('port', type=int, help='Service port.')
+    parser.add_argument('--path', default='',
                         help='Service API path, this should include '
                              'placeholders for the version "{version}" and '
                              'tenant ID "{tenant_id}" if required.')
