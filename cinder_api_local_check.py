@@ -3,8 +3,8 @@
 import argparse
 import requests
 from ipaddr import IPv4Address
-from maas_common import (status_ok, status_err, metric, get_keystone_client,
-                         get_auth_ref)
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         get_keystone_client, get_auth_ref)
 from requests import exceptions as exc
 
 # NOTE(mancdaz): until https://review.openstack.org/#/c/111051/
@@ -36,7 +36,7 @@ def check(auth_ref, args):
         status_err(str(e))
     finally:
         status_ok()
-        metric('cinder_api_local_status', 'uint32', is_up)
+        metric_bool('cinder_api_local_status', is_up)
         # only want to send other metrics if api is up
         if is_up:
             milliseconds = r.elapsed.total_seconds() * 1000
