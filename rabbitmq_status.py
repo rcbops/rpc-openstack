@@ -88,7 +88,7 @@ def main():
 
     # Either use the option provided by the commandline flag or the current
     # hostname
-    name = options.name or hostname()
+    name = '@' + (options.name or hostname())
     is_cluster_member = False
     if r.ok:
         resp_json = r.json()
@@ -97,7 +97,7 @@ def main():
                 metrics[i] = resp_json[0][i]
 
         # Ensure this node is a member of the cluster
-        is_cluster_member = any(name == n['name'] for n in resp_json)
+        is_cluster_member = any(n['name'].endswith(name) for n in resp_json)
         # Gather the queue lengths for all nodes in the cluster
         queues = [n['run_queue'] for n in resp_json]
         # Grab the first queue length
@@ -115,8 +115,8 @@ def main():
             status_err('cluster too small')
         if not is_cluster_member:
             status_err('{0} not a member of the cluster'.format(name))
-    else:
-        status_ok()
+
+    status_ok()
 
     for k, v in metrics.items():
         metric(k, 'int64', v)
