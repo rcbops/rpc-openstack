@@ -55,7 +55,8 @@ def parse_args():
                       help='Password to use for authentication')
     parser.add_option('-n', '--name', action='store', dest='name',
                       default=None,
-                      help='Hostname to check for cluster membership')
+                      help=("Check a node's cluster membership using the "
+                            'provided name'))
     return parser.parse_args()
 
 
