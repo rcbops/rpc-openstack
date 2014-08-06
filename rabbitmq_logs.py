@@ -1,81 +1,55 @@
-import datetime
-import collections
-from maas_common import metric, status_ok
-import os
-import re
+import optparse
 
-LOG_MESSAGE_RE = re.compile(
-    '=(?P<level>[A-Z]+) REPORT=+ '
-    '(?P<datetime>\d+-\w+-\d{4}::\d{2}:\d{2}:\d{2})'  # Parse the datetime
-    '.*=+\n(?P<msg>.*)',
-    re.MULTILINE
+from maas_common import metric, status_ok, status_err
+
+from elasticsearch import (
+    most_recent_index, json_filter, search_url_for, get_json
 )
 
-LOGDIR = '/var/log/rabbitmq'
 
-INTERVAL_IN_MINUTES = 5
-INTERVAL_DELTA = datetime.timedelta(0, INTERVAL_IN_MINUTES * 60, 0)
-START_DATETIME = datetime.datetime.now()
-
-
-def log_filenames(logdir=LOGDIR):
-    """Generate the rabbitmq log filenames."""
-    for filename in os.listdir(logdir):
-        if 'sasl' not in filename and filename.endswith(('log', 'err')):
-            yield os.path.join(logdir, filename)
+def search_for_loglevel(loglevel, index=None):
+    index = index or most_recent_index()
+    query_string = 'ampq_{0} {1}'.format(loglevel.lower(), loglevel.upper())
+    query = json_filter({
+        'query': {'query_string': {'query': query_string}},
+        'filter': {'query': {'query_string': {'query': 'rabbit'}}}
+    })
+    url = search_url_for(index)
+    return get_json(url, query)
 
 
-def get_messages_from(filename):
-    r"""Get a list of log messages from a log file.
-
-    RabbitMQ generates logs of the format::
-
-        \n
-        ={LOGLEVEL} REPORT==== {DATEINFO}
-        {LOGMESSAGE}
-        \n
-
-    So there are two ``\n`` between each message.
-    """
-    with open(filename) as fd:
-        content = fd.read().strip()
-
-    return content.split('\n\n')
+def search_for_errors(index=None):
+    return search_for_loglevel('error', index)
 
 
-def generate_parsed_messages():
-    """Generate dictionaries of parsed log messages."""
-    for filename in log_filenames():
-        for message in get_messages_from(filename):
-            m = LOG_MESSAGE_RE.match(message)
-            if m:
-                parsed = m.groupdict()
-                parsed['datetime'] = datetime.datetime.strptime(
-                    parsed['datetime'],
-                    '%d-%b-%Y::%H:%M:%S'
-                )
-                yield parsed
+def search_for_warnings(index=None):
+    return search_for_loglevel('warning', index)
+
+
+def parse_args():
+    parser = optparse.OptionParser(usage='%prog [-h|--help] [-i index]')
+    parser.add_option('-i', '--index', action='store', dest='index',
+                      default=None,
+                      help='Use specified index instead of latest')
+    return parser.parse_args()
 
 
 def main():
-    log_level_counter = collections.Counter()
-    for message in generate_parsed_messages():
-        level = message['level']
-        if START_DATETIME - message['datetime'] > INTERVAL_DELTA:
-            # Ignore any messages from the last interval. This will ideally
-            # keep people from becoming confused because this check has 10
-            # errors counted but only 5 reported as a metric.
-            continue
+    options, _ = parse_args()
 
-        log_level_counter.update((level,))
-        if level in ('ERROR', 'WARNING'):
-            metric_name = 'rabbitmq_{0}_{1}'.format(level.lower(),
-                                                    log_level_counter[level])
-            metric(metric_name, 'string', message['msg'])
+    errors = search_for_errors(options.index)
+    warnings = search_for_warnings(options.index)
 
-    status_ok()
-    for (level, count) in log_level_counter.items():
-        metric('num_{0}'.format(level.lower()), 'uint32', count)
+    if 'hits' in errors:
+        status_ok()
+        metric('rabbitmq_logs_errors', 'uint32', errors['hits']['total'])
+    elif 'error' in errors:
+        status_err(errors['error'])
+    else:
+        status_err('Something went wrong searching for rabbitmq logs')
+
+    if 'hits' in warnings:
+        metric('rabbitmq_logs_warnings', 'uint32', warnings['hits']['total'])
 
 
 if __name__ == '__main__':
