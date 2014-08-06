@@ -29,19 +29,18 @@ def check(auth_ref, args):
         r = s.get('%s/volumes' % VOLUME_ENDPOINT,
                   verify=False,
                   timeout=10)
+        is_up = r.ok
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
         status_err(str(e))
-
-    if not r.ok:
-        status_err('could not get response from cinder api')
-
-    milliseconds = r.elapsed.total_seconds() * 1000
-
-    status_ok()
-    metric('cinder_api_local_status', 'uint32', 1)
-    metric('cinder_api_response_time', 'uint32', milliseconds)
+    finally:
+        status_ok()
+        metric('cinder_api_local_status', 'uint32', is_up)
+        # only want to send other metrics if api is up
+        if is_up:
+            milliseconds = r.elapsed.total_seconds() * 1000
+            metric('cinder_api_response_time', 'uint32', milliseconds)
 
 
 def main(args):
