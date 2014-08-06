@@ -21,14 +21,12 @@ def check(args):
     # return all the things
     status_ok()
     for service in services:
+        service_is_up = True
         if service.status == 'enabled' and service.state == 'down':
-            metric_bool('%s on host %s'
-                        % (service.binary, service.host),
-                        False)
-        else:
-            metric_bool('%s on host %s'
-                        % (service.binary, service.host),
-                        True)
+            service_is_up = False
+        metric_bool('%s_on_host_%s' %
+                    (service.binary, service.host),
+                    service_is_up)
 
 
 def main(args):
