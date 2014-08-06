@@ -13,17 +13,17 @@ def check(args):
 
     try:
         get_neutron_client(endpoint_url=NETWORK_ENDPOINT)
-        status_ok()
-        metric_bool('neutron_api_local_status', True)
-
+        is_up = True
     # if we get a NeutronClientException don't bother sending any other metric
     # The API IS DOWN
     except exc.NeutronClientException:
-        status_ok()
-        metric_bool('neutron_api_local_status', False)
+        is_up = False
     # Any other exception presumably isn't an API error
     except Exception as e:
         status_err(str(e))
+    finally:
+        status_ok()
+        metric_bool('neutron_api_local_status', is_up)
 
 
 def main(args):
