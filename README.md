@@ -164,21 +164,21 @@ A discussion of these rules can be found in <https://github.com/rcbops/rcbops-ma
 
 ##### example metrics output:
 
-    metric disk_free_alarm int64 False
-    metric uptime int64 772978111
+    metric disk_free_alarm int64 1
+    metric uptime int64 869767336
     metric messages int64 0
-    metric ack int64 532107
-    metric deliver_get int64 532107
-    metric deliver int64 532107
-    metric fd_used int64 103
-    metric publish int64 540247
+    metric ack int64 632168
+    metric deliver_get int64 632168
+    metric deliver int64 632168
+    metric fd_used int64 65
+    metric publish int64 632171
     metric fd_total int64 1024
-    metric mem_used int64 76674832
-    metric mem_alarm int64 False
-    metric mem_limit int64 1678368768
+    metric mem_used int64 64421424
+    metric mem_alarm int64 1
+    metric mem_limit int64 12626460672
     metric sockets_total int64 829
-    metric proc_used int64 1153
-    metric sockets_used int64 80
+    metric proc_used int64 710
+    metric sockets_used int64 44
     metric messages_unacknowledged int64 0
     metric messages_ready int64 0
     metric proc_total int64 1048576
