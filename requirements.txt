@@ -1,10 +1,9 @@
-# NOTE:(mancdaz) needs to be updated with versions
-ipaddr
+ipaddr==2.1.11
 requests==2.3.0
-lxml
-python-keystoneclient
-python-glanceclient
-python-cinderclient
-python-novaclient
-python-neutronclient
-python-heatclient
+lxml==3.3.5
+python-cinderclient==1.0.9
+python-glanceclient==0.13.1
+python-heatclient==0.2.10
+python-keystoneclient==0.10.1
+python-neutronclient==2.3.5
+python-novaclient==2.18.1
