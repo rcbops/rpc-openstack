@@ -29,9 +29,13 @@ def check(auth_ref, args):
         is_up = False
     except Exception as e:
         status_err(str(e))
-    finally:
-        status_ok()
-        metric_bool('glance_registry_local_status', is_up)
+
+    status_ok()
+    metric_bool('glance_registry_local_status', is_up)
+    # only want to send other metrics if api is up
+    if is_up:
+        milliseconds = r.elapsed.total_seconds() * 1000
+        metric('glance_registry_local_response_time', 'uint32', milliseconds)
 
 
 def main(args):
