@@ -73,13 +73,14 @@ def main():
 
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
+        print resp_json
         for k in OVERVIEW_METRICS:
             if k in resp_json:
                 for i in OVERVIEW_METRICS[k]:
                     if i in resp_json[k]:
-                        if resp_json[k][i]:
+                        if resp_json[k][i] is True:
                             metrics[i] = 0
-                        elif not resp_json[k][i]:
+                        elif resp_json[k][i] is False:
                             metrics[i] = 1
                         else:
                             metrics[i] = resp_json[k][i]
@@ -100,9 +101,9 @@ def main():
         resp_json = r.json()
         for i in NODES_METRICS:
             if i in resp_json[0]:
-                if resp_json[0][i]:
+                if resp_json[0][i] is True:
                     metrics[i] = 0
-                elif not resp_json[0][i]:
+                elif resp_json[0][i] is False:
                     metrics[i] = 1
                 else:
                     metrics[i] = resp_json[0][i]
