@@ -51,7 +51,7 @@ def check(args):
         metric('{name}_api_response_time'.format(name=args.name),
                'uint32',
                milliseconds,
-               'milliseconds')
+               'ms')
 
 
 def main(args):
