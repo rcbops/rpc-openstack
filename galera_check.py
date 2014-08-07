@@ -77,7 +77,7 @@ def main():
         status_err(err)
 
     if not output:
-        return
+        status_err('No output received from mysql. Cannot gather metrics.')
 
     show_status_list = output.split('\n')[1:-1]
     replica_status = {}
