@@ -73,7 +73,6 @@ def main():
 
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
-        print resp_json
         for k in OVERVIEW_METRICS:
             if k in resp_json:
                 for i in OVERVIEW_METRICS[k]:
