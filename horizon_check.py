@@ -77,9 +77,9 @@ def main(args):
     check(args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check dashboard')
+    parser = argparse.ArgumentParser(description='Check horizon dashboard')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='dashboard IP address.')
+                        help='horizon dashboard IP address')
     args = parser.parse_args()
     main(args)

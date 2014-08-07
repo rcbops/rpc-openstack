@@ -44,9 +44,9 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check neutron agents')
+    parser = argparse.ArgumentParser(description='Check neutron API')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='neutron service IP address.')
+                        help='neutron API IP address')
     args = parser.parse_args()
     main(args)

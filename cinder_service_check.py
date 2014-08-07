@@ -53,9 +53,9 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check neutron agents')
+    parser = argparse.ArgumentParser(description='Check cinder services')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='neutron service IP address.')
+                        help='cinder API IP address')
     args = parser.parse_args()
     main(args)

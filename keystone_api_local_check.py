@@ -45,6 +45,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Check keystone API')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='nova API IP address.')
+                        help='keystone API IP address')
     args = parser.parse_args()
     main(args)

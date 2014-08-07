@@ -44,9 +44,9 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check glance api')
+    parser = argparse.ArgumentParser(description='Check glance registry')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='glance service IP address.')
+                        help='glance registry IP address')
     args = parser.parse_args()
     main(args)

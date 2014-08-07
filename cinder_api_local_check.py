@@ -51,9 +51,9 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check cinder services')
+    parser = argparse.ArgumentParser(description='Check cinder API')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='cinder service IP address.')
+                        help='cinder API IP address')
     args = parser.parse_args()
     main(args)
