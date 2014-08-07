@@ -2,20 +2,18 @@ import optparse
 
 from maas_common import metric, status_ok, status_err
 
-from elasticsearch import (
-    most_recent_index, json_filter, search_url_for, get_json
-)
+import elasticsearch
 
 
 def search_for_loglevel(loglevel, index=None):
-    index = index or most_recent_index()
+    index = index or elasticsearch.most_recent_index()
     query_string = 'ampq_{0} {1}'.format(loglevel.lower(), loglevel.upper())
-    query = json_filter({
+    query = elasticsearch.json_filter({
         'query': {'query_string': {'query': query_string}},
         'filter': {'query': {'query_string': {'query': 'rabbit'}}}
     })
-    url = search_url_for(index)
-    return get_json(url, query)
+    url = elasticsearch.search_url_for(index)
+    return elasticsearch.get_json(url, query)
 
 
 def search_for_errors(index=None):
@@ -27,15 +25,24 @@ def search_for_warnings(index=None):
 
 
 def parse_args():
-    parser = optparse.OptionParser(usage='%prog [-h|--help] [-i index]')
+    parser = optparse.OptionParser(
+        usage='%prog [-h|--help] [-i index] [-H host] [-P port]'
+    )
     parser.add_option('-i', '--index', action='store', dest='index',
                       default=None,
                       help='Use specified index instead of latest')
+    parser.add_option('-H', '--host', action='store', dest='host',
+                      default=None,
+                      help='Hostname or IP to use to connect to Elasticsearch')
+    parser.add_option('-P', '--port', action='store', dest='port',
+                      default=elasticsearch.ES_PORT,
+                      help='Port to use to connect to Elasticsearch')
     return parser.parse_args()
 
 
 def main():
     options, _ = parse_args()
+    elasticsearch.configure(options)
 
     errors = search_for_errors(options.index)
     warnings = search_for_warnings(options.index)

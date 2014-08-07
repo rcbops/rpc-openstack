@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import json
+import optparse
 import os
 import re
 import requests
@@ -22,9 +23,8 @@ def get_elasticsearch_bind_host():
     match = bind_host_re.match(hosts[-1])
     return match.groups()[0]
 
-ES_HOST = get_elasticsearch_bind_host()
 ES_PORT = '9200'
-ELASTICSEARCH = 'http://{0}:{1}'.format(ES_HOST, ES_PORT)
+ELASTICSEARCH = None
 
 
 def json_querystring(query_string, sort=None):
@@ -85,7 +85,29 @@ def get_number_of(loglevel, index):
     return json['hits']['total']
 
 
+def parse_args():
+    parser = optparse.OptionParser(usage='%prog [-h] [-H host] [-P port]')
+    parser.add_option('-H', '--host', action='store', dest='host',
+                      default=None,
+                      help=('Hostname or IP address to use to connect to '
+                            'Elasticsearch'))
+    parser.add_option('-P', '--port', action='store', dest='port',
+                      default=ES_PORT,
+                      help='Port to use to connect to Elasticsearch')
+    return parser.parse_args()
+
+
+def configure(options):
+    global ELASTICSEARCH
+    host = options.host or get_elasticsearch_bind_host()
+    port = options.port
+    ELASTICSEARCH = 'http://{0}:{1}'.format(host, port)
+
+
 def main():
+    options, _ = parse_args()
+    configure(options)
+
     latest = most_recent_index()
     num_errors = get_number_of('ERROR', latest)
     num_warnings = get_number_of('WARN*', latest)
