@@ -32,7 +32,6 @@ def check(auth_ref, args):
     except Exception as e:
         status_err(str(e))
 
-
     status_ok()
     metric_bool('glance_api_local_status', is_up)
 
