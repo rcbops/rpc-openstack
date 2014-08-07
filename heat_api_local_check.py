@@ -32,7 +32,10 @@ def check(args, tenant_id):
     metric_bool('heat_api_local_status', is_up)
     if is_up:
         # only want to send other metrics if api is up
-        metric('heat_api_local_response_time', 'uint32', milliseconds, 'ms')
+        metric('heat_api_local_response_time',
+               'uint32', 
+               '%.3f' % milliseconds, 
+               'ms')
 
 
 def main(args):

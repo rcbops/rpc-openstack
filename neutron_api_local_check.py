@@ -33,7 +33,10 @@ def check(args):
     metric_bool('neutron_api_local_status', is_up)
     # only want to send other metrics if api is up
     if is_up:
-        metric('neutron_api_local_response_time', 'uint32', milliseconds, 'ms')
+        metric('neutron_api_local_response_time', 
+               'uint32',
+               '%.3f' % milliseconds,
+               'ms')
 
 
 def main(args):

@@ -5,7 +5,7 @@ from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_keystone_client, status_err, status_ok, metric,
                          metric_bool)
-from keystoneclient.openstack.common.apiclient import exceptions as k_exc
+from keystoneclient.openstack.common.apiclient import exceptions as exc
 
 
 def check(args):
@@ -15,7 +15,7 @@ def check(args):
     try:
         keystone = get_keystone_client(endpoint=IDENTITY_ENDPOINT)
         is_up = True
-    except (k_exc.HttpServerError, k_exc.ClientException):
+    except (exc.HttpServerError, exc.ClientException):
         is_up = False
     # Any other exception presumably isn't an API error
     except Exception as e:
@@ -33,7 +33,7 @@ def check(args):
     if is_up:
         metric('keystone_api_local_response_time',
                'uint32',
-               milliseconds,
+               '%.3f' % milliseconds,
                'ms')
 
 

@@ -50,7 +50,7 @@ def check(args):
         milliseconds = r.elapsed.total_seconds() * 1000
         metric('{name}_api_local_response_time'.format(name=args.name),
                'uint32',
-               milliseconds,
+               '%.3f' % milliseconds,
                'ms')
 
 
