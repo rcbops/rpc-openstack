@@ -4,7 +4,7 @@ import optparse
 import requests
 import subprocess
 
-from maas_common import metric, status_ok, status_err
+from maas_common import metric, metric_bool, status_ok, status_err
 
 OVERVIEW_URL = "http://%s:%s/api/overview"
 NODES_URL = "http://%s:%s/api/nodes"
@@ -78,12 +78,7 @@ def main():
             if k in resp_json:
                 for i in OVERVIEW_METRICS[k]:
                     if i in resp_json[k]:
-                        if resp_json[k][i] is True:
-                            metrics[i] = 0
-                        elif resp_json[k][i] is False:
-                            metrics[i] = 1
-                        else:
-                            metrics[i] = resp_json[k][i]
+                        metrics[i] = resp_json[k][i]
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))
@@ -100,13 +95,7 @@ def main():
     if r.ok:
         resp_json = r.json()
         for i in NODES_METRICS:
-            if i in resp_json[0]:
-                if resp_json[0][i] is True:
-                    metrics[i] = 0
-                elif resp_json[0][i] is False:
-                    metrics[i] = 1
-                else:
-                    metrics[i] = resp_json[0][i]
+            metrics[i] = resp_json[0][i]
 
         # Ensure this node is a member of the cluster
         is_cluster_member = any(n['name'].endswith(name) for n in resp_json)
@@ -131,7 +120,10 @@ def main():
     status_ok()
 
     for k, v in metrics.items():
-        metric(k, 'int64', v)
+        if v is True or v is False:
+            metric_bool(k, not v)
+        else:
+            metric(k, 'int64', v)
 
 
 if __name__ == "__main__":
