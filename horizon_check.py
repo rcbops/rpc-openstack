@@ -68,9 +68,9 @@ def check(args):
 
     status_ok()
     metric('splash_status_code', 'uint32', splash_status_code)
-    metric('splash_milliseconds', 'double', splash_milliseconds)
+    metric('splash_milliseconds', 'double', splash_milliseconds, 'ms')
     metric('login_status_code', 'uint32', login_status_code)
-    metric('login_milliseconds', 'double', login_milliseconds)
+    metric('login_milliseconds', 'double', login_milliseconds, 'ms')
 
 
 def main(args):
