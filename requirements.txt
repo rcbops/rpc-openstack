@@ -1,6 +1,6 @@
 # NOTE:(mancdaz) needs to be updated with versions
 ipaddr
-requests
+requests==2.3.0
 lxml
 python-keystoneclient
 python-glanceclient
