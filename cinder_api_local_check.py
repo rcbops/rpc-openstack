@@ -16,8 +16,8 @@ def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
     auth_token = keystone.auth_token
-    VOLUME_ENDPOINT = 'http://{ip}:8776/v1/{tenant}' \
-                      .format(ip=args.ip, tenant=keystone.tenant_id)
+    VOLUME_ENDPOINT = ('http://{ip}:8776/v1/{tenant}'.format
+                       (ip=args.ip, tenant=keystone.tenant_id))
 
     s = requests.Session()
 
@@ -34,7 +34,7 @@ def check(auth_ref, args):
             exc.HTTPError,
             exc.Timeout) as e:
         status_err(str(e))
-    finally:
+    else:
         status_ok()
         metric_bool('cinder_api_local_status', is_up)
         # only want to send other metrics if api is up
@@ -48,9 +48,9 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check neutron agents')
+    parser = argparse.ArgumentParser(description='Check cinder services')
     parser.add_argument('ip',
                         type=IPv4Address,
-                        help='neutron service IP address.')
+                        help='cinder service IP address.')
     args = parser.parse_args()
     main(args)
