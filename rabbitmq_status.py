@@ -77,7 +77,12 @@ def main():
             if k in resp_json:
                 for i in OVERVIEW_METRICS[k]:
                     if i in resp_json[k]:
-                        metrics[i] = resp_json[k][i]
+                        if resp_json[k][i]:
+                            metrics[i] = 0
+                        elif not resp_json[k][i]:
+                            metrics[i] = 1
+                        else:
+                            metrics[i] = resp_json[k][i]
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))
@@ -95,7 +100,12 @@ def main():
         resp_json = r.json()
         for i in NODES_METRICS:
             if i in resp_json[0]:
-                metrics[i] = resp_json[0][i]
+                if resp_json[0][i]:
+                    metrics[i] = 0
+                elif not resp_json[0][i]:
+                    metrics[i] = 1
+                else:
+                    metrics[i] = resp_json[0][i]
 
         # Ensure this node is a member of the cluster
         is_cluster_member = any(n['name'].endswith(name) for n in resp_json)
