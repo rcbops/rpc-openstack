@@ -12,7 +12,7 @@ AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_TENANT_NAME': None,
                 'OS_AUTH_URL': None}
 
-OPENRC = '/root/openrc'
+OPENRC = '/root/openrc-maas'
 TOKEN_FILE = '/root/.auth_ref.json'
 
 
