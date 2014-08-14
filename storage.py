@@ -7,9 +7,9 @@ from maas_common import status_err, status_ok, metric_bool
 OKAY = re.compile('(?:Health|Status)\s+:\s+(\w+)')
 
 
-def chassis_report(report_type):
+def storage_report(report_type):
     """Return the report as a string."""
-    return subprocess.check_output(['omreport', 'chassis', report_type])
+    return subprocess.check_output(['omreport', 'storage', report_type])
 
 
 def all_okay(report):
@@ -30,7 +30,7 @@ def main():
     report_type = sys.argv[1].lower()
 
     try:
-        report = chassis_report(report_type)
+        report = storage_report(report_type)
     except (OSError, subprocess.CalledProcessError) as e:
         status_err(str(e))
 
