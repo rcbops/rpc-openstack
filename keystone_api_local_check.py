@@ -27,6 +27,10 @@ def check(args):
         end = time()
         milliseconds = (end - start) * 1000
 
+        # gather some vaguely interesting metrics to return
+        tenant_count = len(keystone.tenants.list())
+        user_count = len(keystone.users.list())
+
     status_ok()
     metric_bool('keystone_api_local_status', is_up)
     # only want to send other metrics if api is up
@@ -35,6 +39,8 @@ def check(args):
                'uint32',
                '%.3f' % milliseconds,
                'ms')
+        metric('keystone_user_count', 'uint32', user_count)
+        metric('keystone_tenant_count', 'uint32', tenant_count)
 
 
 def main(args):
