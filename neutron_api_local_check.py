@@ -32,7 +32,6 @@ def check(args):
         # gather some metrics
         networks = len(neutron.list_networks()['networks'])
         agents = len(neutron.list_agents()['agents'])
-        print [a['binary'] for a in neutron.list_agents()['agents']]
         routers = len(neutron.list_routers()['routers'])
         subnets = len(neutron.list_subnets()['subnets'])
 
