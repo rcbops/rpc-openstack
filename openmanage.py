@@ -30,9 +30,14 @@ def all_okay(report, regex_find):
 
 def main():
     if len(sys.argv[1:]) != 2:
+        args = ' '.join(sys.argv[1:])
         status_err(
+<<<<<<< HEAD
             'Requires 2 arguments, arguments provided: "%s"'
             % ' '.join(sys.argv[1:])
+=======
+            'Requires 2 arguments, arguments provided: "%s"' % args
+>>>>>>> Shorten the line length
         )
 
     report_type = sys.argv[1].lower()
