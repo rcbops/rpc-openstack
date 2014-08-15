@@ -22,7 +22,10 @@ def all_okay(report, regex_find):
     :returns: True if all "Ok", False otherwise
     :rtype: bool
     """
-    return all(v.lower() == 'ok' for v in regex_find.findall(report))
+    fields = regex_find.findall(report)
+    if not fields:
+        status_err('There were no Health or Status fields to check.')
+    return all(v.lower() == 'ok' for v in fields)
 
 
 def main():
