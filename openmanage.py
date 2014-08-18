@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 import sys
 import subprocess
@@ -10,7 +12,7 @@ regex = {'storage': STORAGE, 'chassis': CHASSIS}
 
 def hardware_report(report_type, report_request):
     """Return the report as a string."""
-    return subprocess.check_output(['omreport', report_type, report_request])
+    return subprocess.check_output(['/opt/dell/srvadmin/bin/omreport', report_type, report_request])
 
 
 def all_okay(report, regex_find):
