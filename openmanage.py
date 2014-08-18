@@ -39,7 +39,7 @@ def main():
         status_err(str(e))
 
     status_ok()
-    metric_bool('%s_okay' % report_type, all_okay(report, regex[report_type]))
+    metric_bool('hardware_%s_status' % report_request, all_okay(report, regex[report_type]))
 
 
 if __name__ == '__main__':
