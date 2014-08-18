@@ -10,6 +10,7 @@ from requests import exceptions as exc
 
 IMAGE_STATUSES = ['active', 'queued', 'killed']
 
+
 def check(auth_ref, args):
     # We call get_keystone_client here as there is some logic within to get a
     # new token if previous one is bad.
@@ -42,18 +43,17 @@ def check(auth_ref, args):
         except Exception as e:
             status_err(str(e))
         else:
-             image_statuses = [s['status'] for s in r.json()['images']]
-             status_count = collections.Counter(image_statuses)
-        
+            image_statuses = [i['status'] for i in r.json()['images']]
+            status_count = collections.Counter(image_statuses)
 
     status_ok()
     metric_bool('glance_api_local_status', is_up)
 
     # only want to send other metrics if api is up
     if is_up:
-        metric('glance_api_local_response_time', 
-               'uint32', 
-               '%.3f' % milliseconds, 
+        metric('glance_api_local_response_time',
+               'uint32',
+               '%.3f' % milliseconds,
                'ms')
         for status in IMAGE_STATUSES:
             metric('glance_%s_images' % status, 'uint32', status_count[status])

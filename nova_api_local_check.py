@@ -10,6 +10,7 @@ from novaclient.client import exceptions as exc
 
 SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
 
+
 def check(args):
 
     COMPUTE_ENDPOINT = 'http://{ip}:8774/v3'.format(ip=args.ip)
@@ -30,8 +31,9 @@ def check(args):
         milliseconds = (end - start) * 1000
 
         # gather some metrics
-        status_count = collections.Counter([s.status for s in nova.servers.list()])
-        
+        status_count = collections.Counter(
+            [s.status for s in nova.servers.list()]
+        )
 
     status_ok()
     metric_bool('nova_api_local_status', is_up)

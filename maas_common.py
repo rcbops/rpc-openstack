@@ -128,7 +128,7 @@ else:
             # Exceptions are only thrown when we try and do something
             [flavor.id for flavor in flavors]
 
-        #except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+        # except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
         # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
         # in fact tries to re-auth, all by itself. But we didn't pass it
         # an auth_url, so it bombs out horribly with an

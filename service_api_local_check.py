@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from maas_common import (status_ok, status_err, metric, metric_bool,
+from maas_common import (status_ok, metric, metric_bool,
                          get_keystone_client, get_auth_ref)
 import argparse
 from ipaddr import IPv4Address

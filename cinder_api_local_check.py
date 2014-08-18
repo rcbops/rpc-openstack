@@ -30,12 +30,12 @@ def check(auth_ref, args):
 
     try:
         vol = s.get('%s/volumes/detail' % VOLUME_ENDPOINT,
-                  verify=False,
-                  timeout=10)
+                    verify=False,
+                    timeout=10)
         milliseconds = vol.elapsed.total_seconds() * 1000
         snap = s.get('%s/snapshots/detail' % VOLUME_ENDPOINT,
-                  verify=False,
-                  timeout=10)
+                     verify=False,
+                     timeout=10)
         is_up = vol.ok and snap.ok
     except (exc.ConnectionError,
             exc.HTTPError,
@@ -43,29 +43,32 @@ def check(auth_ref, args):
         status_err(str(e))
     else:
         # gather some metrics
-        vol_statuses = [s['status'] for s in vol.json()['volumes']]
+        vol_statuses = [v['status'] for v in vol.json()['volumes']]
         vol_status_count = collections.Counter(vol_statuses)
         total_vols = len(vol.json()['volumes'])
 
-        snap_statuses = [s['status'] for s in snap.json()['snapshots']]
+        snap_statuses = [v['status'] for v in snap.json()['snapshots']]
         snap_status_count = collections.Counter(snap_statuses)
         total_snaps = len(snap.json()['snapshots'])
-        
 
     status_ok()
     metric_bool('cinder_api_local_status', is_up)
     # only want to send other metrics if api is up
     if is_up:
         metric('cinder_api_local_response_time',
-               'uint32', 
-               '%.3f' % milliseconds, 
+               'uint32',
+               '%.3f' % milliseconds,
                'ms')
         metric('total_cinder_volumes', 'uint32', total_vols)
         for status in VOLUME_STATUSES:
-            metric('cinder_%s_volumes' % status, 'uint32', vol_status_count[status])
+            metric('cinder_%s_volumes' % status,
+                   'uint32',
+                   vol_status_count[status])
         metric('total_cinder_snapshots', 'uint32', total_snaps)
         for status in VOLUME_STATUSES:
-            metric('cinder_%s_snaps' % status, 'uint32', snap_status_count[status])
+            metric('cinder_%s_snaps' % status,
+                   'uint32',
+                   snap_status_count[status])
 
 
 def main(args):
