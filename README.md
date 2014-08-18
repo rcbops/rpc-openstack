@@ -210,6 +210,26 @@ IP address of service to test
     metric glance_registry_local_response_time uint32 356.917
 
 ***
+#### memcached_status.py
+
+##### Description:
+Connects to a memcached server
+
+##### mandatory args:
+IP address of memcached server
+
+##### optional args:
+--port: port of service to test (default '15672')
+
+##### example output:
+
+    metric memcache_api_local_status uint32 1
+    metric memcache_total_items uint64 563324
+    metric memcache_get_hits uint64 4543534
+    metric memcache_get_misses uint64 2346565
+    metric memcache_total_connections uint64 42565
+
+***
 #### horizon_check.py
 
 ##### Description:
