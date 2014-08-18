@@ -55,7 +55,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Check glance API')
+    parser = argparse.ArgumentParser(description='Check memcached status')
     parser.add_argument('ip', type=IPv4Address, help='memcached IP address.')
     parser.add_argument('--port', type=int,
                         default=11211, help='memcached port.')
