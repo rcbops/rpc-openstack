@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import collections
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_nova_client, status_err, metric,
                          status_ok, metric_bool)
 from novaclient.client import exceptions as exc
+
+SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
 
 
 def check(args):
@@ -27,6 +30,11 @@ def check(args):
         end = time()
         milliseconds = (end - start) * 1000
 
+        # gather some metrics
+        status_count = collections.Counter(
+            [s.status for s in nova.servers.list()]
+        )
+
     status_ok()
     metric_bool('nova_api_local_status', is_up)
     # only want to send other metrics if api is up
@@ -35,6 +43,10 @@ def check(args):
                'uint32',
                '%.3f' % milliseconds,
                'ms')
+        for status in SERVER_STATUSES:
+            metric('nova_servers_in_state_%s' % status,
+                   'uint32',
+                   status_count[status])
 
 
 def main(args):

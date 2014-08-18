@@ -10,6 +10,7 @@ CHASSIS = re.compile('(?:Health)\s+:\s+(\w+)')
 STORAGE = re.compile('(?:Status)\s+:\s+(\w+)')
 regex = {'storage': STORAGE, 'chassis': CHASSIS}
 
+
 def hardware_report(report_type, report_request):
     """Return the report as a string."""
     return subprocess.check_output(['/opt/dell/srvadmin/bin/omreport', report_type, report_request])
@@ -27,7 +28,8 @@ def all_okay(report, regex_find):
 def main():
     if len(sys.argv[1:]) != 2:
         status_err(
-            'Requires 2 arguments, arguments provided: "%s"' % ' '.join(sys.argv[1:])
+            'Requires 2 arguments, arguments provided: "%s"'
+            % ' '.join(sys.argv[1:])
         )
 
     report_type = sys.argv[1].lower()

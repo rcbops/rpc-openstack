@@ -33,8 +33,8 @@ def check(args, tenant_id):
     if is_up:
         # only want to send other metrics if api is up
         metric('heat_api_local_response_time',
-               'uint32', 
-               '%.3f' % milliseconds, 
+               'uint32',
+               '%.3f' % milliseconds,
                'ms')
 
 

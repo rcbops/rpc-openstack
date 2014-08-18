@@ -29,14 +29,24 @@ def check(args):
         end = time()
         milliseconds = (end - start) * 1000
 
+        # gather some metrics
+        networks = len(neutron.list_networks()['networks'])
+        agents = len(neutron.list_agents()['agents'])
+        routers = len(neutron.list_routers()['routers'])
+        subnets = len(neutron.list_subnets()['subnets'])
+
     status_ok()
     metric_bool('neutron_api_local_status', is_up)
     # only want to send other metrics if api is up
     if is_up:
-        metric('neutron_api_local_response_time', 
+        metric('neutron_api_local_response_time',
                'uint32',
                '%.3f' % milliseconds,
                'ms')
+        metric('neutron_networks', 'uint32', networks)
+        metric('neutron_agents', 'uint32', agents)
+        metric('neutron_routers', 'uint32', routers)
+        metric('neutron_subnets', 'uint32', subnets)
 
 
 def main(args):

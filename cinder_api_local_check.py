@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import collections
 import requests
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, metric, metric_bool,
                          get_keystone_client, get_auth_ref)
 from requests import exceptions as exc
+
+VOLUME_STATUSES = ['available', 'in-use', 'error']
 
 # NOTE(mancdaz): until https://review.openstack.org/#/c/111051/
 # lands, there is no way to pass a custom (local) endpoint to
@@ -26,24 +29,46 @@ def check(auth_ref, args):
          'x-auth-token': auth_token})
 
     try:
-        r = s.get('%s/volumes' % VOLUME_ENDPOINT,
-                  verify=False,
-                  timeout=10)
-        is_up = r.ok
+        vol = s.get('%s/volumes/detail' % VOLUME_ENDPOINT,
+                    verify=False,
+                    timeout=10)
+        milliseconds = vol.elapsed.total_seconds() * 1000
+        snap = s.get('%s/snapshots/detail' % VOLUME_ENDPOINT,
+                     verify=False,
+                     timeout=10)
+        is_up = vol.ok and snap.ok
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
         status_err(str(e))
     else:
-        status_ok()
-        metric_bool('cinder_api_local_status', is_up)
-        # only want to send other metrics if api is up
-        if is_up:
-            milliseconds = r.elapsed.total_seconds() * 1000
-            metric('cinder_api_local_response_time',
-                   'uint32', 
-                   '%.3f' % milliseconds, 
-                   'ms')
+        # gather some metrics
+        vol_statuses = [v['status'] for v in vol.json()['volumes']]
+        vol_status_count = collections.Counter(vol_statuses)
+        total_vols = len(vol.json()['volumes'])
+
+        snap_statuses = [v['status'] for v in snap.json()['snapshots']]
+        snap_status_count = collections.Counter(snap_statuses)
+        total_snaps = len(snap.json()['snapshots'])
+
+    status_ok()
+    metric_bool('cinder_api_local_status', is_up)
+    # only want to send other metrics if api is up
+    if is_up:
+        metric('cinder_api_local_response_time',
+               'uint32',
+               '%.3f' % milliseconds,
+               'ms')
+        metric('total_cinder_volumes', 'uint32', total_vols)
+        for status in VOLUME_STATUSES:
+            metric('cinder_%s_volumes' % status,
+                   'uint32',
+                   vol_status_count[status])
+        metric('total_cinder_snapshots', 'uint32', total_snaps)
+        for status in VOLUME_STATUSES:
+            metric('cinder_%s_snaps' % status,
+                   'uint32',
+                   snap_status_count[status])
 
 
 def main(args):
