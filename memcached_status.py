@@ -19,11 +19,13 @@ MEMCACHE_METRICS = ['total_items',
 def item_stats(host, port):
     """Check the stats for items and connection status."""
 
-    mc = memcache.Client(['%s:%s' % (host, port)])
-    stats = mc.get_stats()[0][1]
-    if not stats:
-        status_err('could not retrieve status from memcached')
-    return stats
+    try:
+        mc = memcache.Client(['%s:%s' % (host, port)])
+        stats = mc.get_stats()[0][1]
+    except IndexError:
+        status_err('could not connect to memcached on %s:%s' % (host, port))
+    else:
+        return stats
 
 
 def main(args):
