@@ -32,8 +32,9 @@ def main(args):
     port = args.port
 
     stats = item_stats(bind_ip, port)
+    current_version = stats['version']
 
-    if stats['version'] != VERSION:
+    if current_version != VERSION:
         status_err('This plugin has only been tested with version %s '
                    'of memcached, and you are using version %s'
                    % (VERSION, current_version))
