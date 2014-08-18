@@ -33,8 +33,20 @@ def table_checksum(user, password, host):
     return (proc.return_code, out.getvalue(), err.getvalue())
 
 
+def check_version():
+    proc = subprocess.Popen(['/usr/bin/pt-table-checksum', '--version'],
+                            stdout=subprocess.PIPE)
+    output, _ = proc.communicate()  # Ignore the status code, that's always 1
+    _, version = output.strip().split(' ')
+    if version != '2.2.7':
+        status_err('This script has only been tested against version 2.2.7.'
+                   ' Found version %s installed instead.' % version)
+
+
 def main():
     usage = "Usage: %prog [-h] [-H] username password"
+
+    check_version()
 
     parser = optparse.OptionParser(usage=usage)
     parser.add_option(
