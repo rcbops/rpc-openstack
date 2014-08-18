@@ -19,12 +19,13 @@ MEMCACHE_METRICS = ['total_items',
 def item_stats(host, port):
     """Check the stats for items and connection status."""
 
+    stats = None
     try:
         mc = memcache.Client(['%s:%s' % (host, port)])
         stats = mc.get_stats()[0][1]
     except IndexError:
-        status_err('could not connect to memcached on %s:%s' % (host, port))
-    else:
+        raise
+    finally:
         return stats
 
 
@@ -32,22 +33,25 @@ def main(args):
 
     bind_ip = str(args.ip)
     port = args.port
+    is_up = True
 
-    stats = item_stats(bind_ip, port)
-    current_version = stats['version']
+    try:
+        stats = item_stats(bind_ip, port)
+        current_version = stats['version']
+    except TypeError, IndexError:
+        is_up = False
+    else:
+        is_up = True
+        if current_version != VERSION:
+            status_err('This plugin has only been tested with version %s '
+                       'of memcached, and you are using version %s'
+                       % (VERSION, current_version))
 
-    if current_version != VERSION:
-        status_err('This plugin has only been tested with version %s '
-                   'of memcached, and you are using version %s'
-                   % (VERSION, current_version))
-
-    if stats is not None:
-        status_ok
-        metric_bool('memcache_api_local_status', True)
+    status_ok()
+    metric_bool('memcache_api_local_status', is_up)
+    if is_up:
         for m in MEMCACHE_METRICS:
             metric('memcache_%s' % m, 'uint64', stats[m])
-    else:
-        status_err('memcached is unreachable')
 
 
 if __name__ == '__main__':
