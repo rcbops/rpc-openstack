@@ -6,8 +6,9 @@ import subprocess
 
 from maas_common import status_err, status_ok, metric_bool
 
-CHASSIS = re.compile('(?:Health)\s+:\s+(\w+)')
-STORAGE = re.compile('(?:Status)\s+:\s+(\w+)')
+OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'
+CHASSIS = re.compile(OM_PATTERN % {'field': 'Health', 'group_pattern': '\w+'})
+STORAGE = re.compile(OM_PATTERN % {'field': 'Status', 'group_pattern': '\w+'})
 regex = {'storage': STORAGE, 'chassis': CHASSIS}
 
 
@@ -22,18 +23,52 @@ def all_okay(report, regex_find):
     :returns: True if all "Ok", False otherwise
     :rtype: bool
     """
-    return all(v.lower() == 'ok' for v in regex_find.findall(report))
+    fields = regex_find.findall(report)
+    if not fields:
+        status_err('There were no Health or Status fields to check.')
+    return all(v.lower() == 'ok' for v in fields)
+
+
+def check_openmanage_version():
+    """Error early if the version of OpenManage is not supported."""
+    try:
+        # Because of
+        # https://github.com/rcbops/rcbops-maas/issues/82#issuecomment-52315709
+        # we need to redirect sdterr to stdout just so MaaS does not see any
+        # extra output
+        output = subprocess.check_output(['omconfig', 'about'],
+                                         stderr=subprocess.STDOUT)
+    except OSError:
+        # OSError happens when subprocess cannot find the executable to run
+        status_err('The OpenManage tools do not appear to be installed.')
+    except subprocess.CalledProcessError as e:
+        status_err(str(e))
+
+    match = re.search(OM_PATTERN % {'field': 'Version',
+                                    'group_pattern': '[0-9.]+'},
+                      output)
+    if not match:
+        status_err('Could not find the version information')
+
+    version = match.groups()[0]
+    if version != '7.1.0':
+        status_err(
+            'Expected version 7.1.0 to be installed but found %s' % version
+        )
 
 
 def main():
     if len(sys.argv[1:]) != 2:
+        args = ' '.join(sys.argv[1:])
         status_err(
-            'Requires 2 arguments, arguments provided: "%s"'
-            % ' '.join(sys.argv[1:])
+            'Requires 2 arguments, arguments provided: "%s"' % args
         )
 
     report_type = sys.argv[1].lower()
     report_request = sys.argv[2].lower()
+
+    # If we're not using the correct version of OpenManage, error out
+    check_openmanage_version()
 
     try:
         report = hardware_report(report_type, report_request)
@@ -41,7 +76,8 @@ def main():
         status_err(str(e))
 
     status_ok()
-    metric_bool('hardware_%s_status' % report_request, all_okay(report, regex[report_type]))
+    metric_bool('hardware_%s_status' % report_request,
+                all_okay(report, regex[report_type]))
 
 
 if __name__ == '__main__':
