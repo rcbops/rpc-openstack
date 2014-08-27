@@ -50,7 +50,7 @@ def check_openmanage_version():
         # https://github.com/rcbops/rcbops-maas/issues/82#issuecomment-52315709
         # we need to redirect sdterr to stdout just so MaaS does not see any
         # extra output
-        output = subprocess.check_output(['omconfig', 'about'],
+        output = subprocess.check_output(['/opt/dell/srvadmin/bin/omconfig', 'about'],
                                          stderr=subprocess.STDOUT)
     except OSError:
         # OSError happens when subprocess cannot find the executable to run
