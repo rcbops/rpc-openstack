@@ -1,0 +1,21 @@
+{% extends "rackspace/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Logged out" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title="Public Cloud" %}
+{% endblock page_header %}
+
+{% block body_id %}splash{% endblock %}
+
+{% block main %}
+<div class="row-fluid rpc-content">
+	<div class="span12">
+		<h1>You are logged out.</h1>
+
+		<a href="{% url 'horizon:rackspace:public_cloud:rpclogin' %}">Log In</href>
+	</div>
+</div>
+{% endblock %}
+

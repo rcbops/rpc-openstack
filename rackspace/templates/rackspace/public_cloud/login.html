@@ -1,0 +1,30 @@
+{% extends "rackspace/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title="Public Cloud" %}
+{% endblock page_header %}
+
+{% block body_id %}splash{% endblock %}
+
+{% block main %}
+<div class="row-fluid rpc-content">
+	<div class="span12">
+		<p class="lead">Authenticate to access your public cloud account here.
+	    
+		<form action="/rackspace/public_cloud/rpclogin" method="post">
+		    {% csrf_token %}
+		    {{ form }}
+		    <input type="submit" value="Submit" />
+		</form>
+	</div>
+	<a href="/rackspace/public_cloud/rpclogout">Log Out</href>
+</div>
+{% endblock %}
+
+
+{% block js %}
+    {% include "rackspace/public_cloud/_login_scripts.html" %}
+{% endblock %}
