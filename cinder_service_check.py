@@ -40,9 +40,9 @@ def check(auth_ref, args):
          'x-auth-token': auth_token})
 
     try:
-        r = s.get('%s/os-services' % VOLUME_ENDPOINT,
-                  verify=False,
-                  timeout=10)
+        # We cannot do /os-services?host=X as cinder returns a hostname of
+        # X@lvm for cinder-volume binary
+        r = s.get('%s/os-services' % VOLUME_ENDPOINT, verify=False, timeout=10)
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
@@ -51,15 +51,24 @@ def check(auth_ref, args):
     if not r.ok:
         status_err('could not get response from cinder api')
 
-    status_ok()
     services = r.json()['services']
+
+    if len(services) == 0:
+        status_err('No host(s) found in the service list')
+
+    status_ok()
     for service in services:
         service_is_up = True
         if service['status'] == 'enabled' and service['state'] != 'up':
             service_is_up = False
-        metric_bool('%s_on_host_%s' %
-                    (service['binary'], service['host']),
-                    service_is_up)
+
+        # We need to match against a host of X and X@lvm (or whatever backend)
+        if args.host and args.host in service['host']:
+            name = '%s_status' % service['binary']
+        else:
+            name = '%s_on_host_%s' % (service['binary'], service['host'])
+
+        metric_bool(name, service_is_up)
 
 
 def main(args):
@@ -71,5 +80,8 @@ if __name__ == "__main__":
     parser.add_argument('ip',
                         type=IPv4Address,
                         help='cinder API IP address')
+    parser.add_argument('--host',
+                        type=str,
+                        help='Only return metrics for the specified host')
     args = parser.parse_args()
     main(args)

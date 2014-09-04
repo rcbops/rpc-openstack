@@ -30,17 +30,28 @@ def check(args):
         status_err(str(e))
 
     # gather nova service states
-    services = nova.services.list()
+    if args.host:
+        services = nova.services.list(host=args.host)
+    else:
+        services = nova.services.list()
+
+    if len(services) == 0:
+        status_err("No host(s) found in the service list")
 
     # return all the things
     status_ok()
     for service in services:
         service_is_up = True
+
         if service.status == 'enabled' and service.state == 'down':
             service_is_up = False
-        metric_bool('%s_on_host_%s' %
-                    (service.binary, service.host),
-                    service_is_up)
+
+        if args.host:
+            name = '%s_status' % service.binary
+        else:
+            name = '%s_on_host_%s_status' % (service.binary, service.host)
+
+        metric_bool(name, service_is_up)
 
 
 def main(args):
@@ -52,5 +63,10 @@ if __name__ == "__main__":
     parser.add_argument('ip',
                         type=IPv4Address,
                         help='nova API IP address')
+    parser.add_argument('--host',
+                        type=str,
+                        help='Only return metrics for specified host',
+                        default=None)
     args = parser.parse_args()
+
     main(args)
