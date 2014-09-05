@@ -30,7 +30,13 @@ def check(args):
         status_err(str(e))
 
     # gather nova service states
-    agents = neutron.list_agents()['agents']
+    if args.host:
+        agents = neutron.list_agents(host=args.host)['agents']
+    else:
+        agents = neutron.list_agents()['agents']
+
+    if len(agents) == 0:
+        status_err("No host(s) found in the agents list")
 
     # return all the things
     status_ok()
@@ -38,9 +44,15 @@ def check(args):
         agent_is_up = True
         if agent['admin_state_up'] and not agent['alive']:
             agent_is_up = False
-        metric_bool('%s_%s_on_host_%s' %
-                    (agent['binary'], agent['id'], agent['host']),
-                    agent_is_up)
+
+        if args.host:
+            name = '%s_status' % agent['binary']
+        else:
+            name = '%s_%s_on_host_%s' % (agent['binary'],
+                                         agent['id'],
+                                         agent['host'])
+
+        metric_bool(name, agent_is_up)
 
 
 def main(args):
@@ -52,5 +64,9 @@ if __name__ == "__main__":
     parser.add_argument('ip',
                         type=IPv4Address,
                         help='neutron API IP address')
+    parser.add_argument('--host',
+                        type=str,
+                        help='Only return metrics for specified host',
+                        default=None)
     args = parser.parse_args()
     main(args)
