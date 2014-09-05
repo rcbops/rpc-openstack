@@ -54,7 +54,9 @@ def check(auth_ref, args):
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
-        status_err(str(e))
+        is_up = False
+    except Exception as e:
+           status_err(str(e))
     else:
         # gather some metrics
         vol_statuses = [v['status'] for v in vol.json()['volumes']]
