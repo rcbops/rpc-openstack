@@ -18,7 +18,8 @@ import argparse
 from ipaddr import IPv4Address
 import requests
 import re
-from maas_common import get_auth_details, metric, status_err, status_ok
+from maas_common import (get_auth_details, metric, metric_bool, status_err,
+                         status_ok)
 from requests import exceptions as exc
 from lxml import html
 
@@ -28,6 +29,8 @@ def check(args):
     splash_milliseconds = 0.0
     login_status_code = 0
     login_milliseconds = 0.0
+
+    is_up = True
 
     auth_details = get_auth_details()
     OS_USERNAME = auth_details['OS_USERNAME']
@@ -44,47 +47,50 @@ def check(args):
     except (exc.ConnectionError,
             exc.HTTPError,
             exc.Timeout) as e:
-        status_err(str(e))
+        is_up = False
+    else:
+        if not (r.ok and
+                re.search('openstack dashboard', r.content, re.IGNORECASE)):
+            status_err('could not load login page')
 
-    if not (r.ok and
-            re.search('openstack dashboard', r.content, re.IGNORECASE)):
-        status_err('could not load login page')
+        splash_status_code = r.status_code
+        splash_milliseconds = r.elapsed.total_seconds() * 1000
 
-    splash_status_code = r.status_code
-    splash_milliseconds = r.elapsed.total_seconds() * 1000
+        csrf_token = html.fromstring(r.content).xpath(
+            '//input[@name="csrfmiddlewaretoken"]/@value')[0]
+        region = html.fromstring(r.content).xpath(
+            '//input[@name="region"]/@value')[0]
+        s.headers.update(
+            {'Content-type': 'application/x-www-form-urlencoded',
+                'Referer': HORIZON_URL})
+        payload = {'username': OS_USERNAME,
+                   'password': OS_PASSWORD,
+                   'csrfmiddlewaretoken': csrf_token,
+                   'region': region}
+        try:
+            l = s.post(
+                ('%s:%s/auth/login/') % (HORIZON_URL, HORIZON_PORT),
+                data=payload,
+                verify=False)
+        except (exc.ConnectionError,
+                exc.HTTPError,
+                exc.Timeout) as e:
+            status_err('While logging in: %s' % e)
 
-    csrf_token = html.fromstring(r.content).xpath(
-        '//input[@name="csrfmiddlewaretoken"]/@value')[0]
-    region = html.fromstring(r.content).xpath(
-        '//input[@name="region"]/@value')[0]
-    s.headers.update(
-        {'Content-type': 'application/x-www-form-urlencoded',
-            'Referer': HORIZON_URL})
-    payload = {'username': OS_USERNAME,
-               'password': OS_PASSWORD,
-               'csrfmiddlewaretoken': csrf_token,
-               'region': region}
-    try:
-        l = s.post(
-            ('%s:%s/auth/login/') % (HORIZON_URL, HORIZON_PORT),
-            data=payload,
-            verify=False)
-    except (exc.ConnectionError,
-            exc.HTTPError,
-            exc.Timeout) as e:
-        status_err('While logging in: %s' % e)
+        if not (l.ok and re.search('overview', l.content, re.IGNORECASE)):
+            status_err('could not log in')
 
-    if not (l.ok and re.search('overview', l.content, re.IGNORECASE)):
-        status_err('could not log in')
-
-    login_status_code = l.status_code
-    login_milliseconds = l.elapsed.total_seconds() * 1000
+        login_status_code = l.status_code
+        login_milliseconds = l.elapsed.total_seconds() * 1000
 
     status_ok()
-    metric('splash_status_code', 'uint32', splash_status_code)
-    metric('splash_milliseconds', 'double', splash_milliseconds, 'ms')
-    metric('login_status_code', 'uint32', login_status_code)
-    metric('login_milliseconds', 'double', login_milliseconds, 'ms')
+    metric_bool('horizon_local_status', is_up)
+
+    if is_up:
+        metric('splash_status_code', 'uint32', splash_status_code)
+        metric('splash_milliseconds', 'double', splash_milliseconds, 'ms')
+        metric('login_status_code', 'uint32', login_status_code)
+        metric('login_milliseconds', 'double', login_milliseconds, 'ms')
 
 
 def main(args):
