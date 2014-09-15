@@ -12,19 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import horizon
+from django.views.generic import TemplateView
+from openstack_dashboard import settings
 
 
-class RackspacePanelGroup(horizon.PanelGroup):
-    slug = 'rackspace_private_cloud'
-    name = 'Rackspace Private Cloud'
-    panels = ('welcome', 'training', 'heat_store')
+class IndexView(TemplateView):
+    template_name = 'rackspace/training/index.html'
 
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        click_through = getattr(settings, 'RAX_SPOG_VALUES')
+        if click_through is not None and isinstance(click_through, dict):
+            context['training_query'] = click_through.get('training_query', '')
 
-class RackspaceDashboard(horizon.Dashboard):
-    name = 'Rackspace'
-    slug = 'rackspace'
-    panels = (RackspacePanelGroup,)
-    default_panel = 'welcome'
-
-horizon.register(RackspaceDashboard)
+        return self.render_to_response(context)
