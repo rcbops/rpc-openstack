@@ -1,0 +1,20 @@
+{% extends 'rackspace/base.html' %}
+{% load i18n %}
+{% block title %}Custom Heat Templates{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title="RPC Artisinal Templates" %}
+{% endblock page_header %}
+
+{% block main %}
+<div class="row-fluid rpc-content">
+    <div class="span12">
+        <h1>Rackspace Private Cloud Heat Templates</h1>
+        <p class="lead">
+        Using OpenStack's Orchestration service, Rackspace has designed some 
+        fantastic templates that will save you the hassle of starting and 
+        configuring instances for your applications.
+        </p>
+    </div>
+</div>
+{% endblock %}

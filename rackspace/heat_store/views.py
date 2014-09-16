@@ -17,7 +17,7 @@ from openstack_dashboard import settings
 
 
 class IndexView(TemplateView):
-    template_name = 'rackspace/training/index.html'
+    template_name = 'rackspace/heat_store/index.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

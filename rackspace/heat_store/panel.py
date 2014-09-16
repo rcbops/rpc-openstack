@@ -4,7 +4,7 @@ from rackspace import dashboard
 
 
 class HeatStorePanel(horizon.Panel):
-    name = 'Pre-made Heat Templates'
+    name = 'Custom Heat Templates'
     slug = 'heat_store'
 
 
