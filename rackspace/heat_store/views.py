@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from django.views.generic import TemplateView
-from openstack_dashboard import settings
+import yaml
 
 
 class IndexView(TemplateView):
@@ -21,8 +21,14 @@ class IndexView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        click_through = getattr(settings, 'RAX_SPOG_VALUES')
-        if click_through is not None and isinstance(click_through, dict):
-            context['training_query'] = click_through.get('training_query', '')
 
+        context['templates'] = load_templates()
         return self.render_to_response(context)
+
+
+def load_templates():
+    with open('../RAX_SPOG/templates/drupal/info.yaml') as fd:
+        template = yaml.safe_load(fd)
+        template['template_id'] = 'drupal'
+
+    return [template]
