@@ -7,7 +7,7 @@
 {% endblock page_header %}
 
 {% block main %}
-<div class="row-fluid rpc-content">
+<div class="row-fluid">
     <div class="span12">
         <h1>Rackspace Private Cloud Heat Templates</h1>
         <p class="lead">
@@ -20,13 +20,25 @@
     <div class="container">
         <div class="row">
         {% for template in templates %}
-            <div class="template col-sm-2 well">
-                <h1>{{ template.title }}</h1>
-                <p>{{ template.short_description }}</p>
-                <a href="#{{ template.template_id }}" method="POST"
-                    class="btn btn-sm btn-default">Launch</a>
-                <a href="#modal-{{ template.template_id }}"
-                    class="btn btn-sm btn-default">Learn more</a>
+            <div class="template col-sm-3 table_wrapper">
+                <table id="{{ template.template_id }}"
+                    class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="normal_column">
+                                {{ template.title }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody><tr><td>
+                        <p>{{ template.short_description }}</p>
+                    </td></tr></tbody>
+                    <tfoot><tr><td>
+                        <a href="#modal-{{ template.template_id }}">
+                            Learn more
+                        </a>
+                    </td></tr></tfoot>
+                </table>
             </div>
         {% endfor %}
         </div>
