@@ -17,40 +17,19 @@
         </p>
     </div>
 
-    <div class="row-fluid">
-        <!--
-        <div class="span6" style="width: 20%;">
-            <h1>Drupal</h1>
-            <p>
-            Drupal is awesome.
-            </p>
-            <p>
-            <a class="btn btn-default btn-sm" href="#">Create a Drupal 
-                Configuration</a>
-            </p>
-        </div>
-
-        <div class="span6" style="width: 20%;">
-            <h1>Drupal</h1>
-            <p>
-            Drupal is awesome.
-            </p>
-            <p>
-            <a class="btn btn-default btn-sm" href="#">Create a Drupal 
-                Configuration</a>
-            </p>
-        </div>
-        -->
+    <div class="container">
+        <div class="row">
         {% for template in templates %}
-            <div class="span6" style="width: 20%;">
+            <div class="template col-sm-2 well">
                 <h1>{{ template.title }}</h1>
                 <p>{{ template.short_description }}</p>
-                <a href="#{{template.template_id}}" method="POST"
-                    class="btn btn-sm btn-default">
-                    Create a {{ template.title }} deployment
-                </a>
+                <a href="#{{ template.template_id }}" method="POST"
+                    class="btn btn-sm btn-default">Launch</a>
+                <a href="#modal-{{ template.template_id }}"
+                    class="btn btn-sm btn-default">Learn more</a>
             </div>
         {% endfor %}
+        </div>
     </div>
 
 </div>

@@ -29,6 +29,11 @@ class IndexView(TemplateView):
 def load_templates():
     with open('../RAX_SPOG/templates/drupal/info.yaml') as fd:
         template = yaml.safe_load(fd)
-        template['template_id'] = 'drupal'
 
-    return [template]
+    templates = []
+    for i in range(20):
+        t = template.copy()
+        t['template_id'] = 'drupal-{0}'.format(i)
+        templates.append(t)
+
+    return templates
