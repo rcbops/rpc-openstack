@@ -1,0 +1,14 @@
+---
+title: the_title
+logo: the_logo.png
+short_description: "the short description"
+long_description: description.md
+highlights:
+  - "highlight_1"
+  - "highlight_2"
+links:
+  - "[example.com](http://example.com/)"
+  - "[Download](http://download.example.com/)"
+heat_template: "https://raw.githubusercontent.com/example/heat-example/master/example.yaml"
+env_file: "https://raw.githubusercontent.com/example/heat-example/master/env.yaml"
+template_version: 0.0.1
