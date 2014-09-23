@@ -56,7 +56,6 @@ class Solution(object):
         else:
             f = urlrequest.urlopen(info_yaml)
         solution_yaml = f.read().decode('utf-8')
-        print solution_yaml
 
         # create a markdown converter and modify it to rebase image links
         markdown = Markdown()
@@ -106,3 +105,6 @@ class Catalog(object):
             if solutions and len(solutions) > 0:
                 for solution_url in solutions:
                     self.solutions.append(Solution(solution_url))
+
+    def __iter__(self):
+        return iter(self.solutions)

@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.views.generic import TemplateView
-import yaml
+# from django.views.generic import TemplateView
+from horizon.tables import DataTableView
+from rackspace.heat_store.catalog import Catalog
+from rackspace.heat_store import tables
+
+# import yaml
 
 
-class IndexView(TemplateView):
+class IndexView(DataTableView):
+    table_name = tables.TemplateTable
     template_name = 'rackspace/heat_store/index.html'
 
     def get(self, request, *args, **kwargs):
@@ -25,15 +30,22 @@ class IndexView(TemplateView):
         context['templates'] = load_templates()
         return self.render_to_response(context)
 
+    def get_tables(self):
+        return dict((t.title, t) for t in load_templates())
+
 
 def load_templates():
-    with open('../RAX_SPOG/templates/drupal/info.yaml') as fd:
-        template = yaml.safe_load(fd)
+    c = Catalog(
+        '../RAX_SPOG/rackspace/heat_store/catalog/test_data/catalog.yml'
+    )
+    return c
+    # with open('../RAX_SPOG/templates/drupal/info.yaml') as fd:
+    #     template = yaml.safe_load(fd)
 
-    templates = []
-    for i in range(20):
-        t = template.copy()
-        t['template_id'] = 'drupal-{0}'.format(i)
-        templates.append(t)
+    # templates = []
+    # for i in range(20):
+    #     t = template.copy()
+    #     t['template_id'] = 'drupal-{0}'.format(i)
+    #     templates.append(t)
 
     return templates
