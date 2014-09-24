@@ -71,7 +71,7 @@ class Solution(object):
         self.short_description = info['short_description']
         self.template_version = info['template_version']
         self.highlights = info.get('highlights', [])
-        self.links = [markdown.convert(link) for link in info.get('links', [])]
+        self.links = info.get('links', [])
         self.heat_template = info['heat_template']
         self.env_file = info['env_file']
         desc_url = self._relative_to_absolute(info['long_description'])

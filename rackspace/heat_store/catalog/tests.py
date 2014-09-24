@@ -1,7 +1,9 @@
 import unittest
+
 import mox
 import six.moves.urllib.request as urlrequest
 from six import StringIO
+
 from solution import Solution
 
 
@@ -23,11 +25,8 @@ class TestSolution(unittest.TestCase):
         self.assertIn('alt="here is a diagram"', s.long_description)
         self.assertIn('highlight_1', s.highlights)
         self.assertIn('highlight_2', s.highlights)
-        self.assertIn('<p><a href="http://example.com/">example.com</a></p>',
-                      s.links)
-        self.assertIn(
-            '<p><a href="http://download.example.com/">Download</a></p>',
-            s.links)
+        self.assertIn({'example.com': 'http://example.com/'}, s.links)
+        self.assertIn({'Download': 'http://download.example.com/'}, s.links)
         self.assertEqual(s.heat_template,
                          'https://raw.githubusercontent.com/' +
                          'example/heat-example/master/example.yaml')
