@@ -108,3 +108,8 @@ class Catalog(object):
 
     def __iter__(self):
         return iter(self.solutions)
+
+    def find_by_id(self, template_id):
+        for template in self:
+            if template.id == template_id:
+                return template

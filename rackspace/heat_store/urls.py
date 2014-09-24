@@ -3,8 +3,10 @@ try:
 except ImportError:  # Django 1.6
     from django.conf.urls import patterns, url
 
-from rackspace.heat_store.views import IndexView
+from rackspace.heat_store.views import IndexView, MoreInformationView
 
 urlpatterns = patterns('',
-    url(r'^$', IndexView.as_view(), name='index')
+    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^#(?P<template_id>.+)$', MoreInformationView.as_view(),
+        name='more_info'),
 )

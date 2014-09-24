@@ -6,16 +6,16 @@ templates = object()
 class MoreInfoLink(tables.LinkAction):
     name = 'more-info'
     verbose_name = 'Installation and More Information'
-    # url = 'rackspace:heat_store:info'
     classes = ('ajax-modal',)
+    url = 'more_info'
     ajax = True
 
     def __init__(self, attrs=None, **kwargs):
         kwargs['preempt'] = True
         super(MoreInfoLink, self).__init__(attrs, **kwargs)
-
-    def get_link_url(self):
-        return '#{0}'.format(self.table.data.title.lower())
+#
+#    def get_link_url(self):
+#        return '#{0}'.format(self.table.data.title.lower())
 
 
 class TemplateRow(tables.Row):
