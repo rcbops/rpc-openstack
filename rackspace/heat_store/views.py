@@ -21,17 +21,24 @@ from rackspace.heat_store import tables
 
 
 class IndexView(DataTableView):
-    table_name = tables.TemplateTable
+    table_class = tables.TemplateTable
     template_name = 'rackspace/heat_store/index.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        context['templates'] = load_templates()
+        tables = []
+        for (name, table) in list(context.items()):
+            if name.endswith('_table'):
+                del context[name]
+                tables.append(table)
+
+        context['tables'] = tables
         return self.render_to_response(context)
 
     def get_tables(self):
-        return dict((t.title, t) for t in load_templates())
+        return dict((t.title, self.table_class(self.request, t))
+                    for t in load_templates())
 
 
 def load_templates():

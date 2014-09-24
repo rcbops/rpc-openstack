@@ -19,28 +19,9 @@
 
     <div class="container">
         <div class="row">
-        {% for template in templates %}
-            <div class="template col-sm-3 table_wrapper">
-                <table id="{{ template.template_id }}"
-                    class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="normal_column">
-                                {{ template.title }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody><tr><td>
-                        <p>{{ template.short_description }}</p>
-                    </td></tr></tbody>
-                    <tfoot><tr><td>
-                        <a href="#modal-{{ template.template_id }}">
-                            Learn more
-                        </a>
-                    </td></tr></tfoot>
-                </table>
-            </div>
-        {% endfor %}
+            {% for table in tables %}
+            {{ table.render }}
+            {% endfor %}
         </div>
     </div>
 
