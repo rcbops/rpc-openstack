@@ -1,4 +1,5 @@
 import os
+import hashlib
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
@@ -66,6 +67,7 @@ class Solution(object):
 
         # import the solution's metadata
         info = yaml.load(solution_yaml)
+        self.id = hashlib.md5(solution_yaml).hexdigest()
         self.title = info['title']
         self.logo = info['logo']
         self.short_description = info['short_description']

@@ -18,6 +18,7 @@ class TestSolution(unittest.TestCase):
 
     def test_create_solution(self):
         s = Solution('test_data/info.yaml')
+        self.assertEqual(s.id, 'b13b31472e42e8ca55f51cb7bd89574a')
         self.assertEqual(s.title, 'the_title')
         self.assertEqual(s.short_description, 'the short description')
         self.assertIn('the <em>long</em> description', s.long_description)
