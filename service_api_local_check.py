@@ -63,7 +63,7 @@ def check(args):
     if up and r.ok:
         milliseconds = r.elapsed.total_seconds() * 1000
         metric('{name}_api_local_response_time'.format(name=args.name),
-               'uint32',
+               'double',
                '%.3f' % milliseconds,
                'ms')
 

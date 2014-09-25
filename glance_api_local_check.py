@@ -66,7 +66,7 @@ def check(auth_ref, args):
     # only want to send other metrics if api is up
     if is_up:
         metric('glance_api_local_response_time',
-               'uint32',
+               'double',
                '%.3f' % milliseconds,
                'ms')
         for status in IMAGE_STATUSES:
