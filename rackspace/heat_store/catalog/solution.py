@@ -1,11 +1,16 @@
 import os
 import hashlib
+import re
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
 from markdown import Markdown
 from markdown.inlinepatterns import ImagePattern, ImageReferencePattern, \
     IMAGE_LINK_RE, IMAGE_REFERENCE_RE
+try:
+    from openstack_dashboard import api
+except ImportError:
+    api = None
 
 
 class _RebasedImageLinkPattern(ImagePattern):
@@ -87,9 +92,30 @@ class Solution(object):
         """Convert a filename relative to the solution's URL to absolute."""
         return os.path.join(self.base_url, rel)
 
-    def launch(self):
+    def _get_environment_data(self):
+        """Return the contents of the heat environment file (if provided).
+
+        This is necessary because the heat API does not accept a URL for
+        this parameter.
+        """
+        f = urlrequest.urlopen(self.env_file)
+        return f.read().decode('utf-8')
+
+    def launch(self, request):
         """Launch the solution's heat template."""
-        raise NotImplemented('This method has not been implemented yet')
+        if not api or not api.heat:
+            raise RuntimeError('Heat API is not available.')
+
+        fields = {
+            'stack_name': re.sub('[\W\d]+', '_', self.title.strip()),
+            'timeout_mins': 60,
+            'disable_rollback': False,
+            'parameters': {},
+            # 'password': '',
+            'template_url': self.heat_template,
+            'environment': self._get_environment_data()  # can't use URL here
+        }
+        api.heat.stack_create(request, **fields)
 
 
 class Catalog(object):
