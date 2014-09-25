@@ -49,7 +49,8 @@ def check(auth_ref, args):
     # only want to send other metrics if api is up
     if is_up:
         milliseconds = r.elapsed.total_seconds() * 1000
-        metric('glance_registry_local_response_time', 'uint32', milliseconds)
+        metric('glance_registry_local_response_time', 'uint32',
+               '%.3f' % milliseconds, 'ms')
 
 
 def main(args):
