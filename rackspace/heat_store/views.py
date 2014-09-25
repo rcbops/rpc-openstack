@@ -46,10 +46,9 @@ class MoreInformationView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        import pdb
-        pdb.set_trace()
         catalog = load_templates()
-        context['template'] = catalog.find_by_id()
+        context['template'] = catalog.find_by_id(context['template_id'])
+        context['hide'] = True
         return self.render_to_response(context)
 
 

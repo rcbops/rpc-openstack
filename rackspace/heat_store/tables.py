@@ -1,3 +1,4 @@
+from django.core import urlresolvers
 from horizon import tables
 
 templates = object()
@@ -7,15 +8,15 @@ class MoreInfoLink(tables.LinkAction):
     name = 'more-info'
     verbose_name = 'Installation and More Information'
     classes = ('ajax-modal',)
-    url = 'more_info'
     ajax = True
 
     def __init__(self, attrs=None, **kwargs):
         kwargs['preempt'] = True
         super(MoreInfoLink, self).__init__(attrs, **kwargs)
-#
-#    def get_link_url(self):
-#        return '#{0}'.format(self.table.data.title.lower())
+
+    def get_link_url(self):
+        return urlresolvers.reverse('horizon:rackspace:heat_store:more_info',
+                                    args=[self.table.data.id])
 
 
 class TemplateRow(tables.Row):
