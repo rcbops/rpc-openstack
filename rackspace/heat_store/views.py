@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.core import urlresolvers  # noqa
 from django.views.generic import TemplateView
 from horizon.tables import DataTableView
+
 from rackspace.heat_store.catalog import Catalog
 from rackspace.heat_store import tables
 
@@ -47,8 +49,13 @@ class MoreInformationView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         catalog = load_templates()
-        context['template'] = catalog.find_by_id(context['template_id'])
+        template_id = context['template_id']
+        context['template'] = catalog.find_by_id(template_id)
         context['hide'] = True
+        # context['launch_link'] = urlresolvers.reverse(
+        #     'horizon:rackspace:heat_store:launch', args=[template_id]
+        # )
+        context['launch_link'] = '#{0}'.format(template_id)
         return self.render_to_response(context)
 
 
