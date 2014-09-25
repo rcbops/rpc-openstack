@@ -44,7 +44,7 @@ class TestSolution(unittest.TestCase):
         # below are missing
         missing_list = ['title', 'logo', 'short_description',
                         'long_description', 'heat_template',
-                        'env_file', 'template_version']
+                        'template_version']
         self.mox.StubOutWithMock(urlrequest, 'urlopen')
         for missing in missing_list:
             yaml = [line for line in lines if missing not in line]

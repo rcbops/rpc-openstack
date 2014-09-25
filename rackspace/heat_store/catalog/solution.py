@@ -80,8 +80,12 @@ class Solution(object):
         self.highlights = info.get('highlights', [])
         self.links = info.get('links', [])
         self.heat_template = info['heat_template']
-        self.env_file = info['env_file']
-        desc_url = self._relative_to_absolute(info['long_description'])
+        self.env_file = info.get('env_file')  # environments are optional
+        desc_url = info['long_description']
+        url_parts = urlparse(desc_url)
+        if url_parts.scheme == '' and not os.path.isabs(url_parts.path):
+            desc_url = self._relative_to_absolute(info['long_description'])
+            url_parts = urlparse(desc_url)
         if url_parts.scheme == '':
             f = open(desc_url)
         else:
@@ -90,6 +94,9 @@ class Solution(object):
 
     def _relative_to_absolute(self, rel):
         """Convert a filename relative to the solution's URL to absolute."""
+        url_parts = urlparse(rel)
+        if url_parts.scheme != '' or os.path.isabs(url_parts.path):
+            return rel  # already absolute
         return os.path.join(self.base_url, rel)
 
     def _get_environment_data(self):
@@ -98,6 +105,8 @@ class Solution(object):
         This is necessary because the heat API does not accept a URL for
         this parameter.
         """
+        if not self.env_file:
+            return None
         f = urlrequest.urlopen(self.env_file)
         return f.read().decode('utf-8')
 
