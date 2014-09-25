@@ -2,8 +2,6 @@
 
 {% block modal_id %}{{ template.id }}{% endblock %}
 
-{% block title %}{{ template.title }}{% endblock %}
+{% block modal-header %}{{ template.title }}{% endblock %}
 
-{% block modal_header %}{{ template.title }}{% endblock %}
-
-{% block modal_body %}{{ template.long_description }} {% endblock %}
+{% block modal-body %}{{ template.long_description | safe }} {% endblock %}
