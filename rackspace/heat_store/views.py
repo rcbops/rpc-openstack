@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from django.core import urlresolvers  # noqa
+from django.core import urlresolvers
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 from horizon.tables import DataTableView
 
 from rackspace.heat_store.catalog import Catalog
 from rackspace.heat_store import tables
-
-# import yaml
 
 
 class IndexView(DataTableView):
@@ -52,11 +51,24 @@ class MoreInformationView(TemplateView):
         template_id = context['template_id']
         context['template'] = catalog.find_by_id(template_id)
         context['hide'] = True
-        # context['launch_link'] = urlresolvers.reverse(
-        #     'horizon:rackspace:heat_store:launch', args=[template_id]
-        # )
-        context['launch_link'] = '#{0}'.format(template_id)
+        context['launch_link'] = urlresolvers.reverse(
+            'horizon:rackspace:heat_store:launch', args=[template_id]
+        )
         return self.render_to_response(context)
+
+
+class LaunchView(RedirectView):
+    permanent = False
+    pattern_name = 'horizon:project:stacks:index'
+
+    def get_redirect_url(self, *args, **kwargs):
+        catalog = load_templates()
+        template_id = kwargs['template_id']
+        template = catalog.find_by_id(template_id)
+        if template is not None:
+            print("Launching template {0}".format(template.id))
+            # template.launch(self.request)
+        return urlresolvers.reverse(self.pattern_name)
 
 
 def load_templates():
