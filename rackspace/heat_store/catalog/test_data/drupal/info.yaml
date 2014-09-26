@@ -1,0 +1,17 @@
+---
+title: Drupal
+logo: logo.png
+short_description: "Drupal is an open source content management platform powering millions of websites and applications."
+long_description: description.md
+highlights:
+  - "Open Source Software with strong community support"
+  - "Professional services offered by multiple companies"
+  - "Extensive plugin catalog and marketplace"
+links:
+  - "[drupal.com](http://drupal.com/)"
+  - "[Drupal community portal](http://drupal.org/)"
+  - "[Drupal themes](http://themeforest.net/category/cms-themes/drupal)"
+  - "[Get Drupal Answers](http://drupal.stackexchange.com/)"
+heat_template: "https://raw.githubusercontent.com/absalon-james/heat-drupal/master/drupal_stack.yaml"
+env_file: "https://raw.githubusercontent.com/absalon-james/heat-drupal/master/env.yaml"
+template_version: 0.0.1
