@@ -1,6 +1,7 @@
 import os
 import hashlib
 import re
+import uuid
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
@@ -116,7 +117,8 @@ class Solution(object):
             raise RuntimeError('Heat API is not available.')
 
         fields = {
-            'stack_name': re.sub('[\W\d]+', '_', self.title.strip()),
+            'stack_name': (re.sub('[\W\d]+', '_', self.title.strip()) +
+                           '_' + str(uuid.uuid4())),
             'timeout_mins': 60,
             'disable_rollback': False,
             'parameters': {},

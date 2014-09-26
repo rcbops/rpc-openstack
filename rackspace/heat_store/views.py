@@ -67,7 +67,7 @@ class LaunchView(RedirectView):
         template = catalog.find_by_id(template_id)
         if template is not None:
             print("Launching template {0}".format(template.id))
-            # template.launch(self.request)
+            template.launch(self.request)
         return urlresolvers.reverse(self.pattern_name)
 
 
