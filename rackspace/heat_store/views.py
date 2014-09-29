@@ -12,28 +12,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from django.core import urlresolvers
 from django.views.generic import TemplateView
-import yaml
+from django.views.generic.base import RedirectView
+from horizon.tables import DataTableView
+
+from rackspace.heat_store.catalog import Catalog
+from rackspace.heat_store import tables
 
 
-class IndexView(TemplateView):
+class IndexView(DataTableView):
+    table_class = tables.TemplateTable
     template_name = 'rackspace/heat_store/index.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
-        context['templates'] = load_templates()
+        tables = []
+        for (name, table) in list(context.items()):
+            if name.endswith('_table'):
+                del context[name]
+                tables.append(table)
+
+        context['tables'] = tables
+        return self.render_to_response(context)
+
+    def get_tables(self):
+        return dict((t.title, self.table_class(self.request, t))
+                    for t in load_templates())
+
+
+class MoreInformationView(TemplateView):
+    template_name = 'rackspace/heat_store/_modal.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        catalog = load_templates()
+        template_id = context['template_id']
+        context['template'] = catalog.find_by_id(template_id)
+        context['hide'] = True
+        context['launch_link'] = urlresolvers.reverse(
+            'horizon:rackspace:heat_store:launch', args=[template_id]
+        )
         return self.render_to_response(context)
 
 
+class LaunchView(RedirectView):
+    permanent = False
+    pattern_name = 'horizon:project:stacks:index'
+
+    def get_redirect_url(self, *args, **kwargs):
+        catalog = load_templates()
+        template_id = kwargs['template_id']
+        template = catalog.find_by_id(template_id)
+        if template is not None:
+            print("Launching template {0}".format(template.id))
+            template.launch(self.request)
+        return urlresolvers.reverse(self.pattern_name)
+
+
 def load_templates():
-    with open('../RAX_SPOG/templates/drupal/info.yaml') as fd:
-        template = yaml.safe_load(fd)
-
-    templates = []
-    for i in range(20):
-        t = template.copy()
-        t['template_id'] = 'drupal-{0}'.format(i)
-        templates.append(t)
-
-    return templates
+    return Catalog(
+        '../RAX_SPOG/rackspace/heat_store/catalog/test_data/catalog.yml'
+    )

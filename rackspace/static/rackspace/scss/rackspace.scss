@@ -49,11 +49,29 @@
             border-top: 1px solid #DDD;
         }
     }
+
+    .table_actions {
+        min-width: inherit;
+    }
 }
 
+.modal-body {
+    #template-links {
+        ul {
+            list-style: circle;
+            li {
+                margin-left: -20px;
+            }
+        }
+    }
 
+    #links {
+        p {
+            margin: 0;
+        }
+    }
 
-
-
-
-
+    #launch-button {
+        margin-top: 10px;
+    }
+}

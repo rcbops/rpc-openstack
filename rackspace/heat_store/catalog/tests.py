@@ -1,7 +1,10 @@
+#!/usr/bin/env python
 import unittest
+
 import mox
 import six.moves.urllib.request as urlrequest
 from six import StringIO
+
 from solution import Solution
 
 
@@ -16,6 +19,7 @@ class TestSolution(unittest.TestCase):
 
     def test_create_solution(self):
         s = Solution('test_data/info.yaml')
+        self.assertEqual(s.id, 'b13b31472e42e8ca55f51cb7bd89574a')
         self.assertEqual(s.title, 'the_title')
         self.assertEqual(s.short_description, 'the short description')
         self.assertIn('the <em>long</em> description', s.long_description)
@@ -23,11 +27,8 @@ class TestSolution(unittest.TestCase):
         self.assertIn('alt="here is a diagram"', s.long_description)
         self.assertIn('highlight_1', s.highlights)
         self.assertIn('highlight_2', s.highlights)
-        self.assertIn('<p><a href="http://example.com/">example.com</a></p>',
-                      s.links)
-        self.assertIn(
-            '<p><a href="http://download.example.com/">Download</a></p>',
-            s.links)
+        self.assertIn({'example.com': 'http://example.com/'}, s.links)
+        self.assertIn({'Download': 'http://download.example.com/'}, s.links)
         self.assertEqual(s.heat_template,
                          'https://raw.githubusercontent.com/' +
                          'example/heat-example/master/example.yaml')
@@ -43,7 +44,7 @@ class TestSolution(unittest.TestCase):
         # below are missing
         missing_list = ['title', 'logo', 'short_description',
                         'long_description', 'heat_template',
-                        'env_file', 'template_version']
+                        'template_version']
         self.mox.StubOutWithMock(urlrequest, 'urlopen')
         for missing in missing_list:
             yaml = [line for line in lines if missing not in line]

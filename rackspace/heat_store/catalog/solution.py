@@ -1,10 +1,17 @@
 import os
+import hashlib
+import re
+import uuid
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
 from markdown import Markdown
 from markdown.inlinepatterns import ImagePattern, ImageReferencePattern, \
     IMAGE_LINK_RE, IMAGE_REFERENCE_RE
+try:
+    from openstack_dashboard import api
+except ImportError:
+    api = None
 
 
 class _RebasedImageLinkPattern(ImagePattern):
@@ -56,7 +63,6 @@ class Solution(object):
         else:
             f = urlrequest.urlopen(info_yaml)
         solution_yaml = f.read().decode('utf-8')
-        print solution_yaml
 
         # create a markdown converter and modify it to rebase image links
         markdown = Markdown()
@@ -67,15 +73,20 @@ class Solution(object):
 
         # import the solution's metadata
         info = yaml.load(solution_yaml)
+        self.id = hashlib.md5(solution_yaml).hexdigest()
         self.title = info['title']
         self.logo = info['logo']
         self.short_description = info['short_description']
         self.template_version = info['template_version']
         self.highlights = info.get('highlights', [])
-        self.links = [markdown.convert(link) for link in info.get('links', [])]
+        self.links = info.get('links', [])
         self.heat_template = info['heat_template']
-        self.env_file = info['env_file']
-        desc_url = self._relative_to_absolute(info['long_description'])
+        self.env_file = info.get('env_file')  # environments are optional
+        desc_url = info['long_description']
+        url_parts = urlparse(desc_url)
+        if url_parts.scheme == '' and not os.path.isabs(url_parts.path):
+            desc_url = self._relative_to_absolute(info['long_description'])
+            url_parts = urlparse(desc_url)
         if url_parts.scheme == '':
             f = open(desc_url)
         else:
@@ -84,11 +95,38 @@ class Solution(object):
 
     def _relative_to_absolute(self, rel):
         """Convert a filename relative to the solution's URL to absolute."""
+        url_parts = urlparse(rel)
+        if url_parts.scheme != '' or os.path.isabs(url_parts.path):
+            return rel  # already absolute
         return os.path.join(self.base_url, rel)
 
-    def launch(self):
+    def _get_environment_data(self):
+        """Return the contents of the heat environment file (if provided).
+
+        This is necessary because the heat API does not accept a URL for
+        this parameter.
+        """
+        if not self.env_file:
+            return None
+        f = urlrequest.urlopen(self.env_file)
+        return f.read().decode('utf-8')
+
+    def launch(self, request):
         """Launch the solution's heat template."""
-        raise NotImplemented('This method has not been implemented yet')
+        if not api or not api.heat:
+            raise RuntimeError('Heat API is not available.')
+
+        fields = {
+            'stack_name': (re.sub('[\W\d]+', '_', self.title.strip()) +
+                           '_' + str(uuid.uuid4())),
+            'timeout_mins': 60,
+            'disable_rollback': False,
+            'parameters': {},
+            # 'password': '',
+            'template_url': self.heat_template,
+            'environment': self._get_environment_data()  # can't use URL here
+        }
+        api.heat.stack_create(request, **fields)
 
 
 class Catalog(object):
@@ -106,3 +144,11 @@ class Catalog(object):
             if solutions and len(solutions) > 0:
                 for solution_url in solutions:
                     self.solutions.append(Solution(solution_url))
+
+    def __iter__(self):
+        return iter(self.solutions)
+
+    def find_by_id(self, template_id):
+        for template in self:
+            if template.id == template_id:
+                return template
