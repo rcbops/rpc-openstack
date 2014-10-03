@@ -32,11 +32,11 @@ I recommend you add them to your local settings file which is generally located 
     mod.INSTALLED_APPS += ('rackspace',)
     if 'STATICFILES_DIRS' in dir(mod):
         mod.STATICFILES_DIRS += (
-            os.path.join(rackspace.__path__[0], 'static')
+            os.path.join(rackspace.__path__[0], 'static'),
         )
     else:
         mod.STATICFILES_DIRS = (
-            os.path.join(rackspace.__path__[0], 'static')
+            os.path.join(rackspace.__path__[0], 'static'),
         )
 
     # Rackspace Sandbox Values

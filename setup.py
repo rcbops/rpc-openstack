@@ -44,6 +44,7 @@ setuptools.setup(
                                 'templates/rackspace/training/*',
                                 'templates/rackspace/welcome/*']},
     url=info.__url__,
+    install_requires=['Markdown'],
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Information Technology',
