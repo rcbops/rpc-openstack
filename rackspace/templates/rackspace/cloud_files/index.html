@@ -1,0 +1,16 @@
+{% extends 'rackspace/base.html' %}
+{% load i18n %}
+{% block title %}Training{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title="Public Cloud" %}
+{% endblock page_header %}
+
+{% block main %}
+<div class="row-fluid rpc-content">
+	<div class="span12">
+	  <h1>Cloud Files</h1>
+	  {{ table.render }}
+	</div>
+</div>
+{% endblock %}

@@ -11,4 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import cloud_files
+import json
+import math
+
+from rackspace.api import RPCNotAuthenticated
+
+def convertSize(size):
+    # FIXME - confirm that this code does not exist somewhere else in OpenStack
+    size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+                
+    if size:
+        i = int(math.floor(math.log(size,1024)))
+        p = math.pow(1024,i)
+        s = round(size/p,2)
+    else:
+        return '0 KB'
+                
+    if (s > 0):
+        return '%s %s' % (s,size_name[i])
+    else:
+        return '0B'
+

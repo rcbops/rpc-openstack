@@ -18,13 +18,17 @@ import horizon
 class RackspacePanelGroup(horizon.PanelGroup):
    slug = 'rackspace_private_cloud'
    name = 'Rackspace Private Cloud'
-   panels = ('welcome', 'training',)
+   panels = ('welcome', 'training', )
 
+class RackspacePublicCloudGroup(horizon.PanelGroup):
+   slug = 'rackspace_public_cloud'
+   name = 'Rackspace Public Cloud'
+   panels = ('public_cloud', 'cloud_files')
 
 class RackspaceDashboard(horizon.Dashboard):
-    name = 'Rackspace'
-    slug = 'rackspace'
-    panels = (RackspacePanelGroup,)
-    default_panel = 'welcome'
+   name = 'Rackspace'
+   slug = 'rackspace'
+   panels = (RackspacePanelGroup, RackspacePublicCloudGroup)
+   default_panel = 'welcome'
 
 horizon.register(RackspaceDashboard)

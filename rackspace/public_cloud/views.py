@@ -24,8 +24,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView
 from openstack_dashboard import settings
 
-import q # FIXME remove before prod release
-
 
 class IndexView(TemplateView):
     template_name = 'rackspace/public_cloud/index.html'
@@ -37,10 +35,7 @@ class IndexView(TemplateView):
         
         context = self.get_context_data(**kwargs)
         context['rpc_username'] = request.session['rpc_user']
-        click_through = getattr(settings, 'RAX_SPOG_VALUES')
-        #if click_through is not None and isinstance(click_through, dict):
-            #context['training_query'] = click_through.get('training_query', '')
-            
+        click_through = getattr(settings, 'RAX_SPOG_VALUES')            
 
         return self.render_to_response(context)
     
@@ -71,9 +66,7 @@ class LoginForm(forms.Form):
                 data=json.dumps(payload),
                 headers=headers
             )
-            
-            q(r)
-            
+                        
             content = json.loads(r.content)
             if 'unauthorized' in content:
                 raise forms.ValidationError(_('Could not login using the supplied username and password'))            
@@ -82,18 +75,13 @@ class LoginForm(forms.Form):
             
 def login(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        q('Processing POST')
-        
+        form = LoginForm(request.POST)        
         
         if form.is_valid():
-#            request.session['rax_auth_details'] = form.rax_auth_details
-            #request.session['nt1'] = 'xxx'
             request.session['rpc_token'] = form.rax_auth_details['access']['token']['id']
             request.session['rpc_user'] = form.rax_auth_details['access']['user']['name']
-            request.session['nctest'] = json.dumps(form.rax_auth_details)
-            #request.session.modified = True
-            #request.session.save()
+            request.session['rax_auth'] = json.dumps(form.rax_auth_details)
+
             return HttpResponseRedirect(reverse("horizon:rackspace:public_cloud:index"))
 
     else:
