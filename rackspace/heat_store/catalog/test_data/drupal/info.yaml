@@ -8,10 +8,14 @@ highlights:
   - "Professional services offered by multiple companies"
   - "Extensive plugin catalog and marketplace"
 links:
-  - "[drupal.com](http://drupal.com/)"
-  - "[Drupal community portal](http://drupal.org/)"
-  - "[Drupal themes](http://themeforest.net/category/cms-themes/drupal)"
-  - "[Get Drupal Answers](http://drupal.stackexchange.com/)"
+  - text: drupal.com
+    href: http://drupal.com
+  - text: Drupal community portal
+    href: http://drupal.org/
+  - text: Drupal themes
+    href: http://themeforest.net/category/cms-themes/drupal
+  - text: Get Drupal Answers
+    href: http://drupal.stackexchange.com/
 heat_template: "https://raw.githubusercontent.com/absalon-james/heat-drupal/master/drupal_stack.yaml"
 env_file: "https://raw.githubusercontent.com/absalon-james/heat-drupal/master/env.yaml"
 template_version: 0.0.1
