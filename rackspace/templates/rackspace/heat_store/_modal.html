@@ -22,9 +22,7 @@
     <div id="links">
         <h4>Links</h4>
         {% for link in template.links %}
-            {% for text, href in link.items %}
-            <p><a href="{{ href }}">{{ text }}</a></p>
-            {% endfor %}
+        <p><a href="{{ link.href }}">{{ link.text }}</a></p>
         {% endfor %}
     </div>
     <div id="launch-button">
