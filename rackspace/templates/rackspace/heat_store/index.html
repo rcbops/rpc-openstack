@@ -18,6 +18,9 @@
     </div>
 
     <div class="container">
+        <div id="filter-templates">
+            Search: <input type="text">
+        </div>
         <div class="row">
             {% for table in tables %}
             {{ table.render }}
@@ -26,4 +29,8 @@
     </div>
 
 </div>
+
+<script type="text/javascript"
+        src="/static/rackspace/js/template_filter.js">
+</script>
 {% endblock %}
