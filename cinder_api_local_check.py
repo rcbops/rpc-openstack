@@ -72,7 +72,7 @@ def check(auth_ref, args):
     # only want to send other metrics if api is up
     if is_up:
         metric('cinder_api_local_response_time',
-               'uint32',
+               'double',
                '%.3f' % milliseconds,
                'ms')
         metric('total_cinder_volumes', 'uint32', total_vols)

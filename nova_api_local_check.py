@@ -54,7 +54,7 @@ def check(args):
     # only want to send other metrics if api is up
     if is_up:
         metric('nova_api_local_response_time',
-               'uint32',
+               'double',
                '%.3f' % milliseconds,
                'ms')
         for status in SERVER_STATUSES:

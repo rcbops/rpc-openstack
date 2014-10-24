@@ -36,7 +36,7 @@ IP address of service to test
 
     status okay
     metric nova_api_local_status uint32 1
-    metric nova_api_local_response_time uint32 186.774 ms
+    metric nova_api_local_response_time double 186.774 ms
     metric nova_servers_in_state_ACTIVE uint32 2
     metric nova_servers_in_state_STOPPED uint32 0
     metric nova_servers_in_state_ERROR uint32 0
@@ -53,7 +53,7 @@ IP address of service to test
 
     status okay
     metric cinder_api_local_status uint32 1
-    metric cinder_api_local_response_time uint32 211.968 ms
+    metric cinder_api_local_response_time double 211.968 ms
     metric total_cinder_volumes uint32 2
     metric cinder_available_volumes uint32 1
     metric cinder_in-use_volumes uint32 1
@@ -74,7 +74,7 @@ IP address of service to test
 
     status okay
     metric keystone_api_local_status uint32 1
-    metric keystone_api_local_response_time uint32 67.161 ms
+    metric keystone_api_local_response_time double 67.161 ms
     metric keystone_user_count uint32 12
     metric keystone_tenant_count uint32 2
 
@@ -89,7 +89,7 @@ IP address of service to test
 
     status okay
     metric neutron_api_local_status uint32 1
-    metric neutron_api_local_response_time uint32 188.356 ms
+    metric neutron_api_local_response_time double 188.356 ms
     metric neutron_networks uint32 1
     metric neutron_agents uint32 21
     metric neutron_routers uint32 0
@@ -107,7 +107,7 @@ IP address of service to test
 
     status okay
     metric glance_api_local_status uint32 1
-    metric glance_api_local_response_time uint32 325.883 ms
+    metric glance_api_local_response_time double 325.883 ms
     metric glance_active_images uint32 2
     metric glance_queued_images uint32 0
     metric glance_killed_images uint32 0
@@ -123,7 +123,7 @@ IP address of service to test
 ##### example output:
 
     metric heat_api_local_status uint32 1
-    metric heat_api_local_response_time uint32 22.752 ms
+    metric heat_api_local_response_time double 22.752 ms
 
 ***
 #### service_api_local_check.py
@@ -141,7 +141,7 @@ Port of service to test
 ##### example output:
 
     metric <name>_api_local_status uint32 1
-    metric <name>_api_local_response_time uint32 6.222 ms
+    metric <name>_api_local_response_time double 6.222 ms
 
 ***
 ***

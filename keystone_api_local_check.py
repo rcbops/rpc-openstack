@@ -50,7 +50,7 @@ def check(args):
     # only want to send other metrics if api is up
     if is_up:
         metric('keystone_api_local_response_time',
-               'uint32',
+               'double',
                '%.3f' % milliseconds,
                'ms')
         metric('keystone_user_count', 'uint32', user_count)
