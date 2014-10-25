@@ -20,9 +20,10 @@ import subprocess
 
 from maas_common import status_err, status_ok, metric_bool
 
+SUPPORTED_VERSIONS = set([ "7.1.0", "7.4.0" ])
 OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'
-CHASSIS = re.compile(OM_PATTERN % {'field': 'Health', 'group_pattern': '\w+'})
-STORAGE = re.compile(OM_PATTERN % {'field': 'Status', 'group_pattern': '\w+'})
+CHASSIS = re.compile(OM_PATTERN % {'field': '^Health', 'group_pattern': '\w+'}, re.MULTILINE)
+STORAGE = re.compile(OM_PATTERN % {'field': '^Status', 'group_pattern': '\w+'}, re.MULTILINE)
 regex = {'storage': STORAGE, 'chassis': CHASSIS}
 
 
@@ -65,9 +66,10 @@ def check_openmanage_version():
         status_err('Could not find the version information')
 
     version = match.groups()[0]
-    if version != '7.1.0':
+    if version not in SUPPORTED_VERSIONS:
         status_err(
-            'Expected version 7.1.0 to be installed but found %s' % version
+            'Expected version in %s to be installed but found %s' 
+            % (SUPPORTED_VERSIONS, version)
         )
 
 
