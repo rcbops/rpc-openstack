@@ -18,6 +18,7 @@ import contextlib
 import datetime
 import errno
 import json
+import logging
 import os
 import re
 import StringIO
@@ -445,6 +446,10 @@ def metric_bool(name, success):
     metric(name, 'uint32', value)
 
 
+logging.basicConfig(filename='/var/log/maas_plugins.log',
+                    format='%(asctime)s %(levelname)s: %(message)s')
+
+
 @contextlib.contextmanager
 def print_output():
     try:
@@ -454,6 +459,8 @@ def print_output():
             print STATUS
         raise
     except Exception as e:
+        logging.exception('The plugin %s has failed with an unhandled '
+                          'exception', sys.argv[0])
         status_err(traceback.format_exc(), force_print=True, exception=e)
     else:
         if STATUS:
