@@ -91,7 +91,7 @@ def main():
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
         if any(channel['number'] > 1 for channel in resp_json):
-           status_err('Detected RabbitMQ connections with multiple channels. Please check RabbitMQ and all Openstack consumers')
+            status_err('Detected RabbitMQ connections with multiple channels. Please check RabbitMQ and all Openstack consumers')
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))
