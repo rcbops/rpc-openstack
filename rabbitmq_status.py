@@ -23,6 +23,8 @@ from maas_common import metric, metric_bool, status_ok, status_err
 
 OVERVIEW_URL = "http://%s:%s/api/overview"
 NODES_URL = "http://%s:%s/api/nodes"
+CHANNEL_URL = "http://%s:%s/api/channels"
+
 CLUSTERED = True
 CLUSTER_SIZE = 3
 
@@ -82,6 +84,21 @@ def main():
     s.auth = (options.username, options.password)
 
     try:
+        r = s.get(CHANNEL_URL % (options.host, options.port))
+    except requests.exceptions.ConnectionError as e:
+        status_err(str(e))
+
+    if r.ok:
+        resp_json = r.json()  # Parse the JSON once
+        for i in range(len(resp_json)):
+            if resp_json[i]['number'] > 1:
+               status_err('Detected RabbitMQ connections with multiple channels. Please check RabbitMQ and all Openstack consumers')
+    else:
+        status_err('Received status {0} from RabbitMQ API'.format(
+            r.status_code))
+
+
+    try:
         r = s.get(OVERVIEW_URL % (options.host, options.port))
     except requests.exceptions.ConnectionError as e:
         status_err(str(e))
@@ -130,6 +147,8 @@ def main():
             status_err('cluster too small')
         if not is_cluster_member:
             status_err('{0} not a member of the cluster'.format(name))
+
+
 
     status_ok()
 
