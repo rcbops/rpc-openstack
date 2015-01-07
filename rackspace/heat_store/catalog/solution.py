@@ -49,20 +49,23 @@ class Solution(object):
     :raises IOError: File not found.
             URLError: Remote file not found.
     """
-    def __init__(self, info_yaml):
+    def __init__(self, info_yaml, basedir=''):
         """Import the solution's info.yaml file."""
-        # determine if we have a URL or filename
         url_parts = urlparse(info_yaml)
-        self.base_url = urlunparse((url_parts.scheme, url_parts.netloc,
-                                   os.path.dirname(url_parts.path),
-                                   None, None, None))
 
         # read yaml content
         if url_parts.scheme == '':
+            if not os.path.isabs(info_yaml):
+                info_yaml = os.path.join(basedir, info_yaml)
+                url_parts = urlparse(info_yaml)
             f = open(info_yaml, 'rt')
         else:
             f = urlrequest.urlopen(info_yaml)
         solution_yaml = f.read().decode('utf-8')
+
+        self.base_url = urlunparse((url_parts.scheme, url_parts.netloc,
+                                   os.path.dirname(url_parts.path),
+                                   None, None, None))
 
         # create a markdown converter and modify it to rebase image links
         markdown = Markdown()
@@ -141,9 +144,10 @@ class Catalog(object):
         self.solutions = []
         for catalog in args:
             solutions = yaml.load(open(catalog).read())
+            basedir = os.path.abspath(os.path.dirname(catalog))
             if solutions and len(solutions) > 0:
                 for solution_url in solutions:
-                    self.solutions.append(Solution(solution_url))
+                    self.solutions.append(Solution(solution_url, basedir))
 
     def __iter__(self):
         return iter(self.solutions)

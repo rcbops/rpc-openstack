@@ -72,6 +72,8 @@ class LaunchView(RedirectView):
 
 
 def load_templates():
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
     return Catalog(
-        '../RAX_SPOG/rackspace/heat_store/catalog/test_data/catalog.yml'
+        os.path.join(basedir, 'catalog/test_data/catalog.yml')
     )
