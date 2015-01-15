@@ -9,6 +9,6 @@ highlights:
 links:
   - example.com: http://example.com/
   - Download: http://download.example.com/
-heat_template: "https://raw.githubusercontent.com/example/heat-example/master/example.yaml"
-env_file: "https://raw.githubusercontent.com/example/heat-example/master/env.yaml"
+heat_template: "example.yaml"
+env_file: "env.yaml"
 template_version: 0.0.1
