@@ -11,7 +11,7 @@ from markdown.inlinepatterns import ImagePattern, ImageReferencePattern, \
 try:
     from openstack_dashboard import api
 except:
-    api = None
+    from mockapi import api  # used for unit tests
 
 
 class _RebasedImageLinkPattern(ImagePattern):

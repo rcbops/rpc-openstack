@@ -67,7 +67,7 @@ class TestSolution(unittest.TestCase):
         self.assertEqual(params[0]['_mapping'], {'first_network': '11',
                                                  'second_network': '22',
                                                  'third_network': '33'})
-        self.assertEqual(s.map_parameter(params[0], 'second_network'), '33')
+        self.assertEqual(s.map_parameter(params[0], 'second_network'), '22')
 
         self.assertEqual(params[1]['name'], 'flavor')
         self.assertEqual(params[1]['type'], 'comma_delimited_list')
