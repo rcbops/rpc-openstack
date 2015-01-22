@@ -66,7 +66,7 @@ class Solution(object):
 
         # import the solution's metadata
         info = yaml.load(solution_yaml)
-        self.id = hashlib.md5(solution_yaml).hexdigest()
+        self.id = hashlib.md5(solution_yaml.encode('utf-8')).hexdigest()
         self.title = info['name']
         self.release = str(info['release'])
         self.logo = info.get('logo')  # optional
@@ -108,7 +108,7 @@ class Solution(object):
                 param_default = param.get('default')
                 param_mapping = None
                 if param_type == 'string' and param_constraints == []:
-                    if name.endswith('flavor'):
+                    if 'flavor' in name:
                         flavors = api.nova.flavor_list(request)
                         param_type = 'comma_delimited_list'
                         param_constraints = [
@@ -117,7 +117,7 @@ class Solution(object):
                         ]
                         if flavors and not param_default:
                             param_default = flavors[0].name
-                    elif name.endswith('image'):
+                    elif 'image' in name:
                         images, more, prev = \
                             api.glance.image_list_detailed(request)
                         param_type = 'comma_delimited_list'
@@ -127,7 +127,7 @@ class Solution(object):
                         ]
                         if images and not param_default:
                             param_default = images[0].name
-                    elif name.endswith('keyname'):
+                    elif 'keyname' in name:
                         keypairs = api.nova.keypair_list(request)
                         param_type = 'comma_delimited_list'
                         param_constraints = [
@@ -139,6 +139,19 @@ class Solution(object):
                     elif name == 'floating-network-id':
                         networks = api.neutron.network_list(
                             request, **{'router:external': True})
+                        param_type = 'comma_delimited_list'
+                        param_constraints = [
+                            {'allowed_values': [network.name
+                                                for network in networks]}
+                        ]
+                        if networks and not param_default:
+                            param_default = networks[0].name
+                        param_mapping = {}
+                        for network in networks:
+                            param_mapping[network.name] = network.id
+                    elif 'network' in name:
+                        networks = api.neutron.network_list(
+                            request, **{'router:external': False})
                         param_type = 'comma_delimited_list'
                         param_constraints = [
                             {'allowed_values': [network.name
@@ -244,6 +257,7 @@ class Catalog(object):
             basedir = os.path.abspath(os.path.dirname(catalog))
             if solutions and len(solutions) > 0:
                 for solution_url in solutions:
+                    print solution_url
                     self.solutions.append(Solution(solution_url, basedir))
 
     def __iter__(self):
