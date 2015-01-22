@@ -19,28 +19,28 @@ class TestSolution(unittest.TestCase):
 
     def test_create_solution(self):
         s = Solution('test_data/example/info.yaml')
-        self.assertEqual(s.id, 'ffeb917af8e0fb0bf90c4d11d5b0fe0a')
+        self.assertEqual(len(s.id), 32)
         self.assertEqual(s.title, 'the_title')
-        self.assertEqual(s.short_description, 'the short description')
-        self.assertIn('the <em>long</em> description', s.long_description)
+        self.assertEqual(s.logo, 'the_logo.png')
+        self.assertEqual(s.release, '0.1')
+        self.assertEqual(s.short_description, '<p>The short description</p>')
+        self.assertIn('This is the <em>long</em> description',
+                      s.long_description)
         self.assertIn('src="test_data/example/diagram.png"', s.long_description)
         self.assertIn('alt="here is a diagram"', s.long_description)
-        self.assertIn('highlight_1', s.highlights)
-        self.assertIn('highlight_2', s.highlights)
-        self.assertIn({'example.com': 'http://example.com/'}, s.links)
-        self.assertIn({'Download': 'http://download.example.com/'}, s.links)
+        self.assertIn('<strong>architecture</strong>', s.architecture)
+        self.assertIn('Design spec #1', s.design_specs)
+        self.assertIn('Design spec #2', s.design_specs)
         self.assertEqual(s.heat_template, 'example.yaml')
         self.assertEqual(s.env_file, 'env.yaml')
-        self.assertEqual(s.template_version, '0.0.1')
 
     def test_incomplete_solution(self):
         lines = open('test_data/example/info.yaml').readlines()
 
         # ensure the solution isn't imported if any of the items
         # below are missing
-        missing_list = ['title', 'logo', 'short_description',
-                        'long_description', 'heat_template',
-                        'template_version']
+        missing_list = ['name', 'logo', 'short_desc', 'long_desc',
+                        'heat_template', 'release']
         self.mox.StubOutWithMock(urlrequest, 'urlopen')
         for missing in missing_list:
             yaml = [line for line in lines if missing not in line]

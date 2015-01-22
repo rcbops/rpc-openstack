@@ -67,19 +67,15 @@ class Solution(object):
         # import the solution's metadata
         info = yaml.load(solution_yaml)
         self.id = hashlib.md5(solution_yaml).hexdigest()
-        self.title = info['title']
+        self.title = info['name']
+        self.release = str(info['release'])
         self.logo = info['logo']
-        self.short_description = info['short_description']
-        self.template_version = info['template_version']
-        self.highlights = info.get('highlights', [])
-        self.links = info.get('links', [])
+        self.short_description = markdown.convert(info['short_desc'])
+        self.long_description = markdown.convert(info['long_desc'])
+        self.architecture = markdown.convert(info['architecture'])
+        self.design_specs = info.get('design_specs', [])
         self.heat_template = info['heat_template']
         self.env_file = info.get('env_file')  # environments are optional
-        desc_url = info['long_description']
-
-        # read the markdown description
-        f, url_parts = self._open(desc_url, self.basedir)
-        self.long_description = markdown.convert(f.read().decode('utf-8'))
 
         # initialize parameters
         self.parameter_types = []
@@ -184,10 +180,27 @@ class Solution(object):
             'timeout_mins': 60,
             'disable_rollback': False,
             'parameters': params,
-            'template_url': self.heat_template,
+            'template_url': self._make_absolute_path(self.heat_template,
+                                                     self.basedir),
             'environment': self._get_environment_data()  # can't use URL here
         }
         api.heat.stack_create(request, **fields)
+
+    def _make_absolute_path(self, file_or_url, basedir=''):
+        """Return an absolute file or URL.
+
+        :param file_or_url: The filename or remote URL. If already absolute, it
+                            is returned untouched.
+        :param basedir: The path or URL to prepend when `file_or_url` is
+                        relative.
+        :returns a tuple with the absolute path or URL and the urlparse
+                 components that define it.
+        """
+        url_parts = urlparse(file_or_url)
+        if url_parts.scheme == '' and not os.path.isabs(url_parts.path):
+            file_or_url = os.path.join(basedir, file_or_url)
+            url_parts = urlparse(file_or_url)
+        return file_or_url, url_parts
 
     def _open(self, file_or_url, basedir=''):
         """Open a local or remote file.
@@ -197,10 +210,7 @@ class Solution(object):
                         relative.
         :returns a tuple with the file handle and the urlparsed filename.
         """
-        url_parts = urlparse(file_or_url)
-        if url_parts.scheme == '' and not os.path.isabs(url_parts.path):
-            file_or_url = os.path.join(basedir, file_or_url)
-            url_parts = urlparse(file_or_url)
+        file_or_url, url_parts = self._make_absolute_path(file_or_url, basedir)
         if url_parts.scheme == '':
             f = open(file_or_url)
         else:
@@ -215,7 +225,7 @@ class Solution(object):
         """
         if not self.env_file:
             return None
-        f = urlrequest.urlopen(self.env_file)
+        f, url_parts = self._open(self.env_file, self.basedir)
         return f.read().decode('utf-8')
 
 
