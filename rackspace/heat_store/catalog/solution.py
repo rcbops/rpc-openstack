@@ -69,7 +69,7 @@ class Solution(object):
         self.id = hashlib.md5(solution_yaml).hexdigest()
         self.title = info['name']
         self.release = str(info['release'])
-        self.logo = info['logo']
+        self.logo = info.get('logo')  # optional
         self.short_description = markdown.convert(info['short_desc'])
         self.long_description = markdown.convert(info['long_desc'])
         self.architecture = markdown.convert(info['architecture'])
