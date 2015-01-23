@@ -53,8 +53,8 @@ def check(args):
                'double',
                '%.3f' % milliseconds,
                'ms')
-        metric('keystone_user_count', 'uint32', user_count)
-        metric('keystone_tenant_count', 'uint32', tenant_count)
+        metric('keystone_user_count', 'uint32', user_count, 'users')
+        metric('keystone_tenant_count', 'uint32', tenant_count, 'tenants')
 
 
 def main(args):

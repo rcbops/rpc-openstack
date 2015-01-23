@@ -28,25 +28,27 @@ CHANNEL_URL = "http://%s:%s/api/channels"
 CLUSTERED = True
 CLUSTER_SIZE = 3
 
-OVERVIEW_METRICS = {"queue_totals": ("messages",
-                                     "messages_ready",
-                                     "messages_unacknowledged"),
-                    "message_stats": ("get",
-                                      "ack",
-                                      "deliver_get",
-                                      "deliver",
-                                      "publish")}
-NODES_METRICS = ("proc_used",
-                 "proc_total",
-                 "fd_used",
-                 "fd_total",
-                 "sockets_used",
-                 "sockets_total",
-                 "mem_used",
-                 "mem_limit",
-                 "mem_alarm",
-                 "disk_free_alarm",
-                 "uptime")
+# {metric_category: {metric_name: metric_unit}}
+OVERVIEW_METRICS = {"queue_totals": {"messages": "messages",
+                                     "messages_ready": "messages",
+                                     "messages_unacknowledged": "messages"},
+                    "message_stats": {"get": "messages",
+                                      "ack": "messages",
+                                      "deliver_get": "messages",
+                                      "deliver": "messages",
+                                      "publish": "messages"}}
+# {metric_name: metric_unit}
+NODES_METRICS = {"proc_used": "processes",
+                 "proc_total": "processes",
+                 "fd_used": "fd",
+                 "fd_total": "fd",
+                 "sockets_used": "fd",
+                 "sockets_total": "fd",
+                 "mem_used": "bytes",
+                 "mem_limit": "bytes",
+                 "mem_alarm": "status",
+                 "disk_free_alarm": "status",
+                 "uptime": "ms"}
 
 
 def hostname():
@@ -106,9 +108,9 @@ def main():
         resp_json = r.json()  # Parse the JSON once
         for k in OVERVIEW_METRICS:
             if k in resp_json:
-                for i in OVERVIEW_METRICS[k]:
-                    if i in resp_json[k]:
-                        metrics[i] = resp_json[k][i]
+                for a, b in OVERVIEW_METRICS[k].items():
+                    if a in resp_json[k]:
+                        metrics[a] = {'value': resp_json[k][a], 'unit': b}
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))
@@ -124,8 +126,8 @@ def main():
     is_cluster_member = False
     if r.ok:
         resp_json = r.json()
-        for i in NODES_METRICS:
-            metrics[i] = resp_json[0][i]
+        for k, v in NODES_METRICS.items():
+            metrics[k] = {'value': resp_json[0][k], 'unit': v}
 
         # Ensure this node is a member of the cluster
         is_cluster_member = any(n['name'].endswith(name) for n in resp_json)
@@ -152,10 +154,10 @@ def main():
     status_ok()
 
     for k, v in metrics.items():
-        if v is True or v is False:
-            metric_bool(k, not v)
+        if v['value'] is True or v['value'] is False:
+            metric_bool('rabbitmq_%s_status' % k, not v['value'])
         else:
-            metric(k, 'int64', v)
+            metric('rabbitmq_%s' % k, 'int64', v['value'], v['unit'])
 
 
 if __name__ == "__main__":

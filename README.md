@@ -37,9 +37,9 @@ IP address of service to test
     status okay
     metric nova_api_local_status uint32 1
     metric nova_api_local_response_time double 186.774 ms
-    metric nova_servers_in_state_ACTIVE uint32 2
-    metric nova_servers_in_state_STOPPED uint32 0
-    metric nova_servers_in_state_ERROR uint32 0
+    metric nova_instances_in_state_ACTIVE uint32 2 instances
+    metric nova_instances_in_state_STOPPED uint32 0 instances
+    metric nova_instances_in_state_ERROR uint32 0 instances
 
 ***
 #### cinder_api_local_check.py
@@ -54,14 +54,14 @@ IP address of service to test
     status okay
     metric cinder_api_local_status uint32 1
     metric cinder_api_local_response_time double 211.968 ms
-    metric total_cinder_volumes uint32 2
-    metric cinder_available_volumes uint32 1
-    metric cinder_in-use_volumes uint32 1
-    metric cinder_error_volumes uint32 0
-    metric total_cinder_snapshots uint32 0
-    metric cinder_available_snaps uint32 0
-    metric cinder_in-use_snaps uint32 0
-    metric cinder_error_snaps uint32 0
+    metric total_cinder_volumes uint32 2 volumes
+    metric cinder_available_volumes uint32 1 volumes
+    metric cinder_in-use_volumes uint32 1 volumes
+    metric cinder_error_volumes uint32 0 volumes
+    metric total_cinder_snapshots uint32 0 snapshots
+    metric cinder_available_snaps uint32 0 snapshots
+    metric cinder_in-use_snaps uint32 0 snapshots
+    metric cinder_error_snaps uint32 0 snapshots
 
 ***
 #### keystone_api_local_check.py
@@ -75,8 +75,8 @@ IP address of service to test
     status okay
     metric keystone_api_local_status uint32 1
     metric keystone_api_local_response_time double 67.161 ms
-    metric keystone_user_count uint32 12
-    metric keystone_tenant_count uint32 2
+    metric keystone_user_count uint32 12 users
+    metric keystone_tenant_count uint32 2 tenants
 
 ***
 #### neutron_api_local_check.py
@@ -90,10 +90,10 @@ IP address of service to test
     status okay
     metric neutron_api_local_status uint32 1
     metric neutron_api_local_response_time double 188.356 ms
-    metric neutron_networks uint32 1
-    metric neutron_agents uint32 21
-    metric neutron_routers uint32 0
-    metric neutron_subnets uint32 1
+    metric neutron_networks uint32 1 networks
+    metric neutron_agents uint32 21 agents
+    metric neutron_routers uint32 0 routers
+    metric neutron_subnets uint32 1 subnets
 
 ***
 #### glance_api_local_check.py
@@ -108,9 +108,9 @@ IP address of service to test
     status okay
     metric glance_api_local_status uint32 1
     metric glance_api_local_response_time double 325.883 ms
-    metric glance_active_images uint32 2
-    metric glance_queued_images uint32 0
-    metric glance_killed_images uint32 0
+    metric glance_active_images uint32 2 images
+    metric glance_queued_images uint32 0 images
+    metric glance_killed_images uint32 0 images
 
 ***
 #### heat_api_local_check.py
@@ -207,7 +207,7 @@ IP address of service to test
 ##### example output:
 
     metric glance_registry_local_status uint32 1
-    metric glance_registry_local_response_time uint32 356.917
+    metric glance_registry_local_response_time uint32 356.917 ms
 
 ***
 #### memcached_status.py
@@ -224,10 +224,10 @@ IP address of memcached server
 ##### example output:
 
     metric memcache_api_local_status uint32 1
-    metric memcache_total_items uint64 563324
-    metric memcache_get_hits uint64 4543534
-    metric memcache_get_misses uint64 2346565
-    metric memcache_total_connections uint64 42565
+    metric memcache_total_items uint64 563324 items
+    metric memcache_get_hits uint64 4543534 hits
+    metric memcache_get_misses uint64 2346565 misses
+    metric memcache_total_connections uint64 42565 connections
 
 ***
 #### horizon_check.py
@@ -241,7 +241,7 @@ IP address of service to test
 
     metric splash_status_code uint32 200
     metric splash_milliseconds double 83.557 ms
-    metric login_status_code uint32 200
+    metric login_status_code uint32 200 http_status
     metric login_milliseconds double 1344.399 ms
 
 ***
@@ -258,24 +258,20 @@ connects to an individual member of a rabbit cluster and grabs statistics from t
 
 ##### example output:
 
-    metric disk_free_alarm int64 1
-    metric uptime int64 869767336
-    metric messages int64 0
-    metric ack int64 632168
-    metric deliver_get int64 632168
-    metric deliver int64 632168
-    metric fd_used int64 65
-    metric publish int64 632171
-    metric fd_total int64 1024
-    metric mem_used int64 64421424
-    metric mem_alarm int64 1
-    metric mem_limit int64 12626460672
-    metric sockets_total int64 829
-    metric proc_used int64 710
-    metric sockets_used int64 44
-    metric messages_unacknowledged int64 0
-    metric messages_ready int64 0
-    metric proc_total int64 1048576
+    metric rabbitmq_uptime int64 73439448 ms
+    metric rabbitmq_proc_total int64 1048576 processes
+    metric rabbitmq_proc_used int64 180 processes
+    metric rabbitmq_messages int64 0 messages
+    metric rabbitmq_sockets_total int64 3594 fd
+    metric rabbitmq_fd_used int64 24 fd
+    metric rabbitmq_mem_used int64 41562432 bytes
+    metric rabbitmq_fd_total int64 4096 fd
+    metric rabbitmq_disk_free_alarm_status uint32 1
+    metric rabbitmq_mem_limit int64 3362471936 bytes
+    metric rabbitmq_mem_alarm_status uint32 1
+    metric rabbitmq_sockets_used int64 1 fd
+    metric rabbitmq_messages_unacknowledged int64 0 messages
+    metric rabbitmq_messages_ready int64 0 messages
 
 ***
 #### galera_check.py
@@ -289,12 +285,12 @@ connects to an individual member of a galera cluster and checks various statuses
 
 ##### example output:
 
-    metric WSREP_REPLICATED_BYTES int64 320737952
-    metric WSREP_RECEIVED_BYTES int64 33470
-    metric WSREP_COMMIT_WINDOW double 1.000000
-    metric WSREP_CLUSTER_SIZE int64 1
-    metric QUERIES_PER_SECOND int64 5792715
-    metric WSREP_CLUSTER_STATE_UUID string 67e41d08-165d-11e4-9d87-7e94ef43b302
-    metric WSREP_CLUSTER_STATUS string Primary
-    metric WSREP_LOCAL_STATE_UUID string 67e41d08-165d-11e4-9d87-7e94ef43b302
-    metric WSREP_LOCAL_STATE_COMMENT string Synced
+    metric wsrep_replicated_bytes int64 320737952 bytes
+    metric wsrep_received_bytes int64 33470 bytes
+    metric wsrep_commit_window double 1.000000
+    metric wsrep_cluster_size int64 3 nodes
+    metric queries_per_second int64 5792715 qps
+    metric wsrep_cluster_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
+    metric wsrep_cluster_status string primary
+    metric wsrep_local_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
+    metric wsrep_local_state_comment string synced
