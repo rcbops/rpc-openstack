@@ -75,16 +75,16 @@ def check(auth_ref, args):
                'uint32',
                '%.3f' % milliseconds,
                'ms')
-        metric('total_cinder_volumes', 'uint32', total_vols)
+        metric('total_cinder_volumes', 'uint32', total_vols, 'volumes')
         for status in VOLUME_STATUSES:
             metric('cinder_%s_volumes' % status,
                    'uint32',
-                   vol_status_count[status])
-        metric('total_cinder_snapshots', 'uint32', total_snaps)
+                   vol_status_count[status], 'volumes')
+        metric('total_cinder_snapshots', 'uint32', total_snaps, 'snapshots')
         for status in VOLUME_STATUSES:
             metric('cinder_%s_snaps' % status,
                    'uint32',
-                   snap_status_count[status])
+                   snap_status_count[status], 'snapshots')
 
 
 def main(args):
