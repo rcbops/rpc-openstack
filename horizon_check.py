@@ -90,9 +90,9 @@ def check(args):
     metric_bool('horizon_local_status', is_up)
 
     if is_up:
-        metric('splash_status_code', 'uint32', splash_status_code)
+        metric('splash_status_code', 'uint32', splash_status_code, 'http_code')
         metric('splash_milliseconds', 'double', splash_milliseconds, 'ms')
-        metric('login_status_code', 'uint32', login_status_code)
+        metric('login_status_code', 'uint32', login_status_code, 'http_code')
         metric('login_milliseconds', 'double', login_milliseconds, 'ms')
 
 

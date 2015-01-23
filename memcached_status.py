@@ -24,10 +24,10 @@ from maas_common import status_ok, status_err, metric, metric_bool
 
 VERSION_RE = re.compile('STAT version (\d+\.\d+\.\d+)(?![-+0-9\\.])')
 VERSION = '1.4.14 (Ubuntu)'
-MEMCACHE_METRICS = ['total_items',
-                    'get_hits',
-                    'get_misses',
-                    'total_connections']
+MEMCACHE_METRICS = {'total_items': 'items',
+        'get_hits': 'cache_hits',
+        'get_misses': 'cache_misses',
+        'total_connections': 'connections']
 
 
 def item_stats(host, port):
@@ -64,8 +64,8 @@ def main(args):
     status_ok()
     metric_bool('memcache_api_local_status', is_up)
     if is_up:
-        for m in MEMCACHE_METRICS:
-            metric('memcache_%s' % m, 'uint64', stats[m])
+        for metric, unit in MEMCACHE_METRICS.iteritems():
+            metric('memcache_%s' % metric, 'uint64', stats[metric], unit)
 
 
 if __name__ == '__main__':
