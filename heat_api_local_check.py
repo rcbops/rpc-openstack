@@ -59,9 +59,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check heat API')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='heat API IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check heat API')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='heat API IP address')
+        args = parser.parse_args()
+        main(args)

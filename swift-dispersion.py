@@ -125,4 +125,5 @@ def main():
 # > metric container_total_copies uint64 6
 
 if __name__ == '__main__':
-    main()
+    with print_output():
+        main()

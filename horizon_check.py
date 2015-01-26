@@ -100,9 +100,10 @@ def main(args):
     check(args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check horizon dashboard')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='horizon dashboard IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check horizon dashboard')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='horizon dashboard IP address')
+        args = parser.parse_args()
+        main(args)

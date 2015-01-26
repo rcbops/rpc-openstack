@@ -13,11 +13,12 @@ def utilisation(time):
     return utils
 
 if __name__ == '__main__':
-    try:
-        utils = utilisation(5)
-    except Exception as e:
-        status_err(e)
-    else:
-        status_ok()
-        for util in utils:
-            metric('disk_utilisation_%s' % util[0], 'double', util[1], '%')
+    with print_output():
+        try:
+            utils = utilisation(5)
+        except Exception as e:
+            status_err(e)
+        else:
+            status_ok()
+            for util in utils:
+                metric('disk_utilisation_%s' % util[0], 'double', util[1], '%')

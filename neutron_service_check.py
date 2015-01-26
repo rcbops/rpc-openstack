@@ -60,13 +60,14 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check neutron agents')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='neutron API IP address')
-    parser.add_argument('--host',
-                        type=str,
-                        help='Only return metrics for specified host',
-                        default=None)
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check neutron agents')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='neutron API IP address')
+        parser.add_argument('--host',
+                            type=str,
+                            help='Only return metrics for specified host',
+                            default=None)
+        args = parser.parse_args()
+        main(args)
