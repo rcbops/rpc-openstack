@@ -68,7 +68,7 @@ def check_openmanage_version():
     version = match.groups()[0]
     if version not in SUPPORTED_VERSIONS:
         status_err(
-            'Expected version in %s to be installed but found %s' 
+            'Expected version in %s to be installed but found %s'
             % (SUPPORTED_VERSIONS, version)
         )
 
@@ -97,4 +97,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    with print_output():
+        main()

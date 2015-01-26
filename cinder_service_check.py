@@ -76,12 +76,13 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check cinder services')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='cinder API IP address')
-    parser.add_argument('--host',
-                        type=str,
-                        help='Only return metrics for the specified host')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check cinder services')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='cinder API IP address')
+        parser.add_argument('--host',
+                            type=str,
+                            help='Only return metrics for the specified host')
+        args = parser.parse_args()
+        main(args)

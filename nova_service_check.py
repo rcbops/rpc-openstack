@@ -59,14 +59,15 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check nova services')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='nova API IP address')
-    parser.add_argument('--host',
-                        type=str,
-                        help='Only return metrics for specified host',
-                        default=None)
-    args = parser.parse_args()
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check nova services')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='nova API IP address')
+        parser.add_argument('--host',
+                            type=str,
+                            help='Only return metrics for specified host',
+                            default=None)
+        args = parser.parse_args()
 
-    main(args)
+        main(args)
