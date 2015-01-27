@@ -69,7 +69,9 @@ class Solution(object):
         self.id = hashlib.md5(solution_yaml.encode('utf-8')).hexdigest()
         self.title = info['name']
         self.release = str(info['release'])
-        self.logo = info.get('logo')  # optional
+        if 'logo' in info:
+            self.logo = self._make_absolute_path(info.get('logo'),
+                                                 self.basedir)[0]
         self.short_description = markdown.convert(info['short_desc'])
         self.long_description = markdown.convert(info['long_desc'])
         self.architecture = markdown.convert(info['architecture'])

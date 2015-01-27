@@ -21,7 +21,7 @@ class TestSolution(unittest.TestCase):
         s = Solution('test_data/example/info.yaml')
         self.assertEqual(len(s.id), 32)
         self.assertEqual(s.title, 'the_title')
-        self.assertEqual(s.logo, 'the_logo.png')
+        self.assertEqual(s.logo, 'test_data/example/the_logo.png')
         self.assertEqual(s.release, '0.1')
         self.assertEqual(s.short_description, '<p>The short description</p>')
         self.assertIn('This is the <em>long</em> description',
@@ -39,8 +39,8 @@ class TestSolution(unittest.TestCase):
 
         # ensure the solution isn't imported if any of the items
         # below are missing
-        missing_list = ['name', 'logo', 'short_desc', 'long_desc',
-                        'heat_template', 'release']
+        missing_list = ['name', 'short_desc', 'long_desc', 'heat_template',
+                        'release']
         self.mox.StubOutWithMock(urlrequest, 'urlopen')
         for missing in missing_list:
             yaml = [line for line in lines if missing not in line]
