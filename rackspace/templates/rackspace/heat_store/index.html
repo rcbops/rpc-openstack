@@ -3,34 +3,139 @@
 {% block title %}Heat Templates{% endblock %}
 
 {% block page_header %}
-  {% include "horizon/common/_page_header.html" with title="RPC Artisinal Templates" %}
+  {% include "horizon/common/_page_header.html" with title="Stacks" %}
 {% endblock page_header %}
 
 {% block main %}
+    <style>
+        .solution {
+            min-width: 245px;
+        }
+        
+     .solution-title {
+        background-color: #f1f1f1;
+        border: 1px solid #dddddd;
+        border-bottom-width: 2px;
+        border-collapse: collapse;
+        border-top-style: none;
+        border-top-width: 0px;
+        color: #333333;
+        vertical-align: middle;
+        //width: 254px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        }
+        
+    .solution-title-text {
+        font-size: 13px;
+        font-weight: bold;
+        height: 36px;
+        text-align: left;
+        padding: 8px;
+    }
+        
+    .solution-footer {
+            background-color: #dcdcdc;
+            height: 47px;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+            margin-bottom: 0px;
+            padding-bottom: 5px;
+            padding-left: 45px;
+            padding-right: 10px;
+            padding-top: 15px;
+    }
+    
+    .solution-footer a {
+        background-color: white;
+        border: 1px solid #cccccc;
+        color: #333333;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        height: 30px;
+        line-height: 18px;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        white-space: nowrap;
+        padding: 5px;
+    }
+        
+    .solution-body {
+        padding: 8px;
+        border-left: 1px solid #cccccc;
+        border-right: 1px solid #cccccc;
+    }
+        
+
+    </style>
 <div class="row-fluid">
     <div class="span12">
-        <h1>Rackspace Private Cloud Heat Templates</h1>
+        <h1>Rackspace Private Cloud Solutions</h1>
         <p class="lead">
-        Using OpenStack's Orchestration service, Rackspace has designed some 
-        fantastic templates that will save you the hassle of starting and 
-        configuring instances for your applications.
+        These solutions are OpenStack Heat based templates that have been 
+        purpose built to be deployed in your Rackspace Private Cloud. The
+        Open Source application stacks are configured to follow best practice
+        industry standards for cloud scaling applications, and are provided 
+        As-is without Rackspace Support. For more information, please visit
+        &lt;MARKETING PAGE&gt;
         </p>
     </div>
 
-    <div class="container">
-        <div id="filter-templates">
+    <div class="container" ng-controller="rpc_heat">
+        <div>
+            <div style="margin: 20px; float: right;">
+                <input type="search" ng-model="q" placeholder="filter solutions..." />
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+        <div ng-repeat="table in templates | filter:q" class="template col-sm-3 table_wrapper">
+            <div id="{$table.title$}" class="solution">
+                <div class="solution-title">
+                    <div class="solution-title-text">{$table.title$}</div>
+                </div>
+                <div class="solution-body">
+                    <div>
+                        <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" style="max-width: 240px">
+                    </div>
+                    <div>
+                        <span ng-bind-html="table.short_desc_safe"></span>
+                    </div>
+                </div>
+                <div class="solution-footer">
+                    <a href="#" ng-click="more_info(table)">Installation and More Information</a>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div id="filter-templates" style="clear: both">
             Search: <input type="text">
         </div>
         <div class="row">
             {% for table in tables %}
             {{ table.render }}
             {% endfor %}
-        </div>
-    </div>
+        </div>-->
 
+        <div style="clear: both;"></div>
+    </div><!-- end controller-->
 </div>
 
-<script type="text/javascript"
-        src="/static/rackspace/js/template_filter.js">
+<script type="text/javascript">
+var None = 'None';
+var rpc_templates = [{% for table in tables %}
+        {
+            title:'{{table.data.title}}',
+            logo:'{{table.data.logo}}',
+            basedir:'{{table.data.basedir}}',
+            short_desc:'{{table.data.short_description|safe}}',
+            actions:'more_info/{{table.data.title}}',
+            parameters: {{table.data.parameter_types|safe}}
+                        },
+    {% endfor %}];
 </script>
+<script type="text/javascript" src="/static/rackspace/js/ui-bootstrap-0.9.0.js"></script>
+<script type="text/javascript" src="/static/rackspace/js/heat.js"></script>
+<script type="text/javascript" src="/static/rackspace/js/template_filter.js"></script>
 {% endblock %}

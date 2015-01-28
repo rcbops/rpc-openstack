@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+
 from django.core import urlresolvers
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
@@ -32,6 +34,7 @@ class IndexView(DataTableView):
         for (name, table) in list(context.items()):
             if name.endswith('_table'):
                 del context[name]
+                table.data.paramater_types = json.dumps(table.data.get_parameter_types(self.request))
                 tables.append(table)
 
         context['tables'] = tables

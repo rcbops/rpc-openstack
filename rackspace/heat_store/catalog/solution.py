@@ -13,6 +13,7 @@ try:
 except:
     from mockapi import api  # used for unit tests
 
+from mockapi import api
 
 class _RebasedImageLinkPattern(ImagePattern):
     """This class adds a base URL to any relative image links seen by the
@@ -169,7 +170,7 @@ class Solution(object):
                     'name': name,
                     'type': param_type,
                     'constraints': param_constraints,
-                    'label': param['label'],
+                    'label': param['label'] if param.has_key('label') else name,
                     'description': param.get('description'),
                     'default': param_default
                 }
