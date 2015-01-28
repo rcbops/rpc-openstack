@@ -61,23 +61,23 @@ def parse_args():
 
 def print_metrics(replica_status):
     status_ok()
-    metric('WSREP_REPLICATED_BYTES', 'int64',
-           replica_status['wsrep_replicated_bytes'])
-    metric('WSREP_RECEIVED_BYTES', 'int64',
-           replica_status['wsrep_received_bytes'])
-    metric('WSREP_COMMIT_WINDOW', 'double',
-           replica_status['wsrep_commit_window'])
-    metric('WSREP_CLUSTER_SIZE', 'int64',
-           replica_status['wsrep_cluster_size'])
-    metric('QUERIES_PER_SECOND', 'int64',
-           replica_status['Queries'])
-    metric('WSREP_CLUSTER_STATE_UUID', 'string',
+    metric('wsrep_replicated_bytes', 'int64',
+           replica_status['wsrep_replicated_bytes'], 'bytes')
+    metric('wsrep_received_bytes', 'int64',
+           replica_status['wsrep_received_bytes'], 'bytes')
+    metric('wsrep_commit_window_size', 'double',
+           replica_status['wsrep_commit_window'], 'sequence_delta')
+    metric('wsrep_cluster_size', 'int64',
+           replica_status['wsrep_cluster_size'], 'nodes')
+    metric('queries_per_second', 'int64',
+           replica_status['Queries'], 'qps')
+    metric('wsrep_cluster_state_uuid', 'string',
            replica_status['wsrep_cluster_state_uuid'])
-    metric('WSREP_CLUSTER_STATUS', 'string',
+    metric('wsrep_cluster_status', 'string',
            replica_status['wsrep_cluster_status'])
-    metric('WSREP_LOCAL_STATE_UUID', 'string',
+    metric('wsrep_local_state_uuid', 'string',
            replica_status['wsrep_local_state_uuid'])
-    metric('WSREP_LOCAL_STATE_COMMENT', 'string',
+    metric('wsrep_local_state_comment', 'string',
            replica_status['wsrep_local_state_comment'])
 
 
