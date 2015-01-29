@@ -74,9 +74,14 @@ class Solution(object):
         if 'logo' in info:
             self.logo = self._make_absolute_path(info.get('logo'),
                                                  self.basedir)[0]
+        # in all the following fields, newlines are suppressed because they
+        # are not rendered properly in Javascript strings by Django
         self.short_description = markdown.convert(info['short_desc'])
+            .replace('\n', '')
         self.long_description = markdown.convert(info['long_desc'])
+            .replace('\n', '')
         self.architecture = markdown.convert(info['architecture'])
+            .replace('\n', '')
         self.design_specs = info.get('design_specs', [])
         self.heat_template = info['heat_template']
         self.env_file = info.get('env_file')  # environments are optional
