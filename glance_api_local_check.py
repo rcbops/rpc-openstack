@@ -70,7 +70,7 @@ def check(auth_ref, args):
                '%.3f' % milliseconds,
                'ms')
         for status in IMAGE_STATUSES:
-            metric('glance_%s_images' % status, 'uint32', status_count[status])
+            metric('glance_%s_images' % status, 'uint32', status_count[status], 'images')
 
 
 def main(args):

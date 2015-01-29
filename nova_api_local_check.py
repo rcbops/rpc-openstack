@@ -58,9 +58,9 @@ def check(args):
                '%.3f' % milliseconds,
                'ms')
         for status in SERVER_STATUSES:
-            metric('nova_servers_in_state_%s' % status,
+            metric('nova_instances_in_state_%s' % status,
                    'uint32',
-                   status_count[status])
+                   status_count[status], 'instances')
 
 
 def main(args):
