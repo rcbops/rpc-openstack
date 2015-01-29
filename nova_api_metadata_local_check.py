@@ -17,7 +17,8 @@
 import argparse
 import requests
 from ipaddr import IPv4Address
-from maas_common import (status_ok, status_err, metric, metric_bool)
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         print_output)
 from requests import exceptions as exc
 
 

@@ -18,7 +18,7 @@ import argparse
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_neutron_client, metric,
-                         status_err, status_ok, metric_bool)
+                         status_err, status_ok, metric_bool, print_output)
 from neutronclient.client import exceptions as exc
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from maas_common import metric, status_err, status_ok
+from maas_common import metric, status_err, status_ok, print_output
 import shlex
 import subprocess
 

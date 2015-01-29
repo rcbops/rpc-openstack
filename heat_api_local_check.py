@@ -18,7 +18,7 @@ import argparse
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_auth_ref, get_heat_client, metric_bool,
-                         metric, status_ok, status_err)
+                         metric, status_ok, status_err, print_output)
 from heatclient import exc
 
 

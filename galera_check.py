@@ -18,7 +18,7 @@ import optparse
 import subprocess
 import shlex
 
-from maas_common import status_err, status_ok, metric
+from maas_common import status_err, status_ok, metric, print_output
 
 
 def galera_status_check(arg):

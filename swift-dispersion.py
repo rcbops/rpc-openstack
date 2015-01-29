@@ -125,5 +125,5 @@ def main():
 # > metric container_total_copies uint64 6
 
 if __name__ == '__main__':
-    with print_output():
+    with maas_common.print_output():
         main()

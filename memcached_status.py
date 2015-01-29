@@ -19,7 +19,8 @@ import argparse
 import memcache
 from ipaddr import IPv4Address
 
-from maas_common import status_ok, status_err, metric, metric_bool
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         print_output)
 
 
 VERSION_RE = re.compile('STAT version (\d+\.\d+\.\d+)(?![-+0-9\\.])')

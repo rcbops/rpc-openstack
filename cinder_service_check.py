@@ -18,7 +18,7 @@ import argparse
 import requests
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, get_keystone_client,
-                         metric_bool, get_auth_ref)
+                         metric_bool, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 # NOTE(mancdaz): until https://review.openstack.org/#/c/111051/

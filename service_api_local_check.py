@@ -15,7 +15,7 @@
 # limitations under the License.
 
 from maas_common import (status_ok, metric, metric_bool,
-                         get_keystone_client, get_auth_ref)
+                         get_keystone_client, get_auth_ref, print_output)
 import argparse
 from ipaddr import IPv4Address
 import requests

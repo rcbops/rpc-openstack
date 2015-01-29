@@ -18,7 +18,7 @@ import argparse
 import collections
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, metric, metric_bool,
-                         get_keystone_client, get_auth_ref)
+                         get_keystone_client, get_auth_ref, print_output)
 from requests import Session
 from requests import exceptions as exc
 

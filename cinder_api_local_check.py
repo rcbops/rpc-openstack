@@ -19,7 +19,7 @@ import collections
 import requests
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, metric, metric_bool,
-                         get_keystone_client, get_auth_ref)
+                         get_keystone_client, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 VOLUME_STATUSES = ['available', 'in-use', 'error']

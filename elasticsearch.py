@@ -20,7 +20,7 @@ import os
 import re
 import requests
 
-from maas_common import metric, status_ok, status_err
+from maas_common import metric, status_ok, status_err, print_output
 
 
 def get_elasticsearch_bind_host():
