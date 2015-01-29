@@ -30,54 +30,93 @@ var horizonApp = angular.module('hz', dependencies)
 (function () {
   'use strict';
   horizonApp.
-    controller('rpc_heat', function ($scope, $sce, $modal, $log) {
+    controller('rpc_heat', function ($scope, $sce, $modal, $log, $http) {
+      $scope.alerts = []
       $scope.parameters = {};
       $scope.parameters.details = {}
       
+       $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+      };
+      
       $scope.parse_parameter = function (parameter) {
         var parameter_details;
+        
+        function safe_input_name(input_name) {
+          return input_name.replace(/-/g,'_');
+        }
       
         function comma_delimited_list_parameter(parameter) {
+          var input_name = safe_input_name(parameter.name);
+
           $scope.parameters.details[parameter.name] = parameter['default'];
 
-          var item = '<div>' +
+          var item = '<div class="control-group" ' +
+            'ng-class="{ error: templateForm.' + input_name + '.$error.required}"' +
+            '>' + 
             '<label>' + parameter.label + ':</label>' +
-            '<select name="' + parameter.name + '" ' +
-              'value="' + parameter.default + '" ' +
-              'tooltip="' + parameter.description + '" ' +
-              'ng-model="parameters.details[\'' + parameter.name + '\']">';
+            '<select name="' + input_name + '" ' +
+              ' class="form-control"' +
+              ' value="' + parameter.default + '" ' +
+              ' tooltip="' + parameter.description + '" ' +
+              ' ng-model="parameters.details[\'' + parameter.name + '\']" required>';
               
           for (var i=0;i<parameter.constraints[0].allowed_values.length;i++) {
             item += '<option>' + parameter.constraints[0].allowed_values[i] + '</option>'
           }
               
           item += '</select>' +
+          //'        <tt>templateForm.'+ input_name +'.$valid = {$templateForm.' + input_name + '.$valid$}</tt><br/>' +
+          //'        <tt>templateForm.'+ input_name +'.$required = {$templateForm.' + input_name + '.$required$}</tt><br/>' +
             '</div>';
             
           return item;
         };
         
         function number_parameter(parameter) {
+          var input_name = safe_input_name(parameter.name);
+
           $scope.parameters.details[parameter.name] = parameter['default'];
 
-          return '<div>' + 
-          '<label>' + parameter.label + ':</label>' +
-          '<input type="number" name="' + parameter.name + '"' + 
-            'value="' + parameter.default + '"' +
-            'tooltip="' + parameter.description + 
-            '" ng-model="parameters.details[\'' + parameter.name + '\']"></div>';
+          return '<div class="control-group" ' +
+          'ng-class="{ error: (templateForm.' + input_name + '.$error.required || templateForm.' + input_name + '.$error.number)}"' +
+          '>' + 
+          '<label for="' + input_name + '">' + parameter.label + ':</label>' +
+          //'<div class="control-group">' +
+          '    <input type="number" id="' + input_name + '" name="' + input_name + '"' + 
+          '      class="form-control"' +
+          '      value="' + parameter.default + '"' +
+          '      placeholder="' + parameter.description + '"' +
+          '      tooltip="' + parameter.description + '"' +
+          '      ng-model="parameters.details[\'' + parameter.name + '\']"' +
+          '      required' +
+          '    >' +
+          '    <span class="help-inline" ng-show="templateForm.' + input_name + '.$error.required">' + parameter.label + ' is a required field.</span>' +
+          '    <span class="help-inline" ng-show="templateForm.' + input_name + '.$error.number">Please enter a valid number.</span>' +
+          //'</div>' +
+          '</div>';
           
         };
         
         function string_parameter(parameter) {
-          $scope.parameters.details[parameter.name] = parameter['default'];
+          var input_name = safe_input_name(parameter.name);
 
-          return '<div>' + 
+          $scope.parameters.details[parameter.name] = parameter['default'];
+          
+          var input_name = parameter.name.replace('-','_');
+
+          return '<div class="control-group" ' +
+          'ng-class="{ error: (templateForm.' + input_name + '.$error.required || templateForm.' + input_name + '.$error.number)}"' +
+          '>' + 
           '<label>' + parameter.label + ':</label>' +
-          '<input name="' + parameter.name + '"' + 
-            'value="' + parameter.default + '"' +
-            'tooltip="' + parameter.description + 
-            '" ng-model="parameters.details[\'' + parameter.name + '\']"></div>';
+          '<input name="' + input_name + '"' + 
+            ' class="form-control"' +
+            ' value="' + parameter.default + '"' +
+            ' placeholder="' + parameter.description + '"' +
+            ' tooltip="' + parameter.description + 
+            '" ng-model="parameters.details[\'' + parameter.name + '\']" required>' +
+            '  <span class="help-inline" ng-show="templateForm.' + input_name + '.$error.required">' + parameter.label + ' is a required field.</span>' +
+            '</div>';
           
         };
                 
@@ -113,17 +152,23 @@ var horizonApp = angular.module('hz', dependencies)
             
         var templateBody = '' +
             '<div class="modal-body">' +
-            '    <span ng-bind-html="table.long_desc_safe"></span>';
+            '    <span ng-bind-html="table.long_desc_safe"></span>' +
+            '    <form name="templateForm">';
             
             for (var i=0;i<table.parameters.length;i++) {
               templateBody += $scope.parse_parameter(table.parameters[i]);
             }
             
-        templateBody += '</div>';
+        templateBody += '    </form>' +
+          //'        <tt>templateForm.input.$valid = {$templateForm.input.$valid$}</tt><br/>' +
+          //'        <tt>templateForm.input.$error = {$templateForm.input.$error$}</tt><br/>' +
+          //'        <tt>templateForm.$valid = {$templateForm.$valid$}</tt><br/>' +
+          //'        <tt>templateForm.$error.required = {$!!templateForm.$error.required$}</tt><br/>'
+          '</div>';
             
         var templateFooter = '' +
             '<div class="modal-footer">' +
-            '    <button class="btn btn-primary" ng-click="ok()">OK</button>' +
+            '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">OK</button>' +
             '    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>' +
             '</div>';
         
@@ -143,10 +188,21 @@ var horizonApp = angular.module('hz', dependencies)
           }
         });
     
-        modalInstance.result.then(function (parameters) {
-          $log.debug(parameters);
+        modalInstance.result.then(function (solution) {
+          $http.post(solution.launch_url, solution.details).
+            success(function(data, status, headers, config) {
+              // this callback will be called asynchronously
+              // when the response is available
+              //$log.debug('Solution Launched');
+              $scope.alerts.push({ type: 'success', msg: 'Solution launched.' });
+            }).
+            error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+              //$log.error('Failed to launch solution');
+              $scope.alerts.push({type: 'danger', msg: 'Failed to launch solution.'});
+            });
         }, function () {
-          $log.info('Modal dismissed at: ' + new Date());
         });
       };
 
@@ -163,9 +219,19 @@ var horizonApp = angular.module('hz', dependencies)
           }
         });
     
-        modalInstance.result.then(function (parameters) {
-          $log.debug(parameters)
-        });
+        //modalInstance.result.then(function (solution) {
+          ////$log.debug(solution);
+          ////$http.post(solution.launch_url, solution.details).
+            ////success(function(data, status, headers, config) {
+              ////// this callback will be called asynchronously
+              ////// when the response is available
+              ////$log.debug('Solution Launched')
+            ////}).
+            ////error(function(data, status, headers, config) {
+              ////// called asynchronously if an error occurs
+              ////// or server returns response with an error status.
+            ////});
+        //});
       };
 
     });   
@@ -178,6 +244,8 @@ var horizonApp = angular.module('hz', dependencies)
     $scope.parameters = parameters;
   
     $scope.ok = function () {
+      $scope.parameters['id'] = table.id;
+      $scope.parameters['launch_url'] = table.launch_url;
       $modalInstance.close($scope.parameters);
     };
   

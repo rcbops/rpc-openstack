@@ -35,6 +35,7 @@ class IndexView(DataTableView):
             if name.endswith('_table'):
                 del context[name]
                 table.data.paramater_types = json.dumps(table.data.get_parameter_types(self.request))
+                table.data.launch_url = urlresolvers.reverse('horizon:rackspace:heat_store:launch', args=[table.data.id])
                 tables.append(table)
 
         context['tables'] = tables
@@ -80,3 +81,6 @@ def load_templates():
     return Catalog(
         os.path.join(basedir, 'catalog/test_data/catalog.yml')
     )
+
+
+#def templates_as_json():
