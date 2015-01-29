@@ -57,10 +57,10 @@ def check(args):
                'uint32',
                '%.3f' % milliseconds,
                'ms')
-        metric('neutron_networks', 'uint32', networks)
-        metric('neutron_agents', 'uint32', agents)
-        metric('neutron_routers', 'uint32', routers)
-        metric('neutron_subnets', 'uint32', subnets)
+        metric('neutron_networks', 'uint32', networks, 'networks')
+        metric('neutron_agents', 'uint32', agents, 'agents')
+        metric('neutron_routers', 'uint32', routers, 'agents')
+        metric('neutron_subnets', 'uint32', subnets, 'subnets')
 
 
 def main(args):
