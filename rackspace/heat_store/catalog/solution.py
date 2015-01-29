@@ -2,6 +2,7 @@ import os
 import hashlib
 import re
 import uuid
+import threading
 import time
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
@@ -76,12 +77,12 @@ class Solution(object):
                                                  self.basedir)[0]
         # in all the following fields, newlines are suppressed because they
         # are not rendered properly in Javascript strings by Django
-        self.short_description = markdown.convert(info['short_desc'])
-            .replace('\n', '')
-        self.long_description = markdown.convert(info['long_desc'])
-            .replace('\n', '')
-        self.architecture = markdown.convert(info['architecture'])
-            .replace('\n', '')
+        self.short_description = \
+            markdown.convert(info['short_desc']).replace('\n', '')
+        self.long_description = \
+            markdown.convert(info['long_desc']).replace('\n', '')
+        self.architecture = \
+            markdown.convert(info['architecture']).replace('\n', '')
         self.design_specs = info.get('design_specs', [])
         self.heat_template = info['heat_template']
         self.env_file = info.get('env_file')  # environments are optional
@@ -269,7 +270,7 @@ class Catalog(object):
                     # catalog was updated
                     del self.cache[catalog]
                 elif self.cache[catalog]['atime'] + 3600 < time.time():
-                    # one hour with being used, discard cached copy
+                    # one hour without being used, discard cached copy
                     del self.cache[catalog]
             if catalog in self.cache:
                 self.solutions += self.cache[catalog]['solutions']
@@ -281,10 +282,19 @@ class Catalog(object):
                     self.cache[catalog] = {'mtime': os.stat(catalog).st_mtime,
                                            'atime': time.time(),
                                            'solutions': []}
-                    for solution_url in solutions:
-                        solution = Solution(solution_url, basedir)
+
+                    def read_solution(url):
+                        solution = Solution(url, basedir)
                         self.cache[catalog]['solutions'].append(solution)
                         self.solutions.append(solution)
+
+                    threads = [threading.Thread(target=read_solution,
+                                                args=[url])
+                               for url in solutions]
+                    for t in threads:
+                        t.start()
+                    for t in threads:
+                        t.join()
 
     def __iter__(self):
         return iter(self.solutions)
