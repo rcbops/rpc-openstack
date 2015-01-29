@@ -4,7 +4,7 @@ from rackspace import dashboard
 
 
 class HeatStorePanel(horizon.Panel):
-    name = 'Stacks'
+    name = 'Solutions'
     slug = 'heat_store'
 
 

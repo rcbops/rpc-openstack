@@ -140,8 +140,10 @@ var horizonApp = angular.module('hz', dependencies)
       $scope.templates = rpc_templates;
 
       for (var i=0;i<$scope.templates.length;i++) {
+        $scope.templates[i].title_safe = $sce.trustAsHtml($scope.templates[i].title);
         $scope.templates[i].short_desc_safe = $sce.trustAsHtml($scope.templates[i].short_desc);
         $scope.templates[i].long_desc_safe = $sce.trustAsHtml($scope.templates[i].long_desc);
+        $scope.templates[i].architecture_safe = $sce.trustAsHtml($scope.templates[i].architecture);
       }
       
       $scope.more_info = function (table) {
@@ -152,12 +154,20 @@ var horizonApp = angular.module('hz', dependencies)
             
         var templateBody = '' +
             '<div class="modal-body">' +
-            '    <span ng-bind-html="table.long_desc_safe"></span>' +
-            '    <form name="templateForm">';
+            '    <h2 ng-bind-html="table.title_safe"></h2><div ng-bind-html="table.long_desc_safe"></div>' +
+            '    <h3>Architecture</h3><div ng-bind-html="table.architecture_safe"></div>' +
+            '    <h3>Design Specs</h3><ul style="list-style-type: disc">'
+        
+        for (var i=0;i<table.design_specs.length;i++) {
+            templateBody += '<li>' + table.design_specs[i] + '</li>'
+        }
+
+        templateBody += '    </ul><h3>Parameters</h3>' +
+            '<form name="templateForm">';
             
-            for (var i=0;i<table.parameters.length;i++) {
-              templateBody += $scope.parse_parameter(table.parameters[i]);
-            }
+        for (var i=0;i<table.parameters.length;i++) {
+            templateBody += $scope.parse_parameter(table.parameters[i]);
+        }
             
         templateBody += '    </form>' +
           //'        <tt>templateForm.input.$valid = {$templateForm.input.$valid$}</tt><br/>' +
@@ -168,7 +178,7 @@ var horizonApp = angular.module('hz', dependencies)
             
         var templateFooter = '' +
             '<div class="modal-footer">' +
-            '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">OK</button>' +
+            '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">Launch Solution</button>' +
             '    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>' +
             '</div>';
         
