@@ -19,7 +19,7 @@ import collections
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_nova_client, status_err, metric,
-                         status_ok, metric_bool)
+                         status_ok, metric_bool, print_output)
 from novaclient.client import exceptions as exc
 
 SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']

@@ -18,7 +18,7 @@ import re
 import sys
 import subprocess
 
-from maas_common import status_err, status_ok, metric_bool
+from maas_common import status_err, status_ok, metric_bool, print_output
 
 SUPPORTED_VERSIONS = set([ "7.1.0", "7.4.0" ])
 OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'

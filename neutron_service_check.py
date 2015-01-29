@@ -16,7 +16,8 @@
 
 import argparse
 from ipaddr import IPv4Address
-from maas_common import get_neutron_client, status_err, status_ok, metric_bool
+from maas_common import (get_neutron_client, status_err, status_ok,
+                         metric_bool, print_output)
 
 
 def check(args):

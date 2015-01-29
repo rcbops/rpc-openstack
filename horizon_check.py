@@ -19,7 +19,7 @@ from ipaddr import IPv4Address
 import requests
 import re
 from maas_common import (get_auth_details, metric, metric_bool, status_err,
-                         status_ok)
+                         status_ok, print_output)
 from requests import exceptions as exc
 from lxml import html
 

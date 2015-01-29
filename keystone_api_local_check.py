@@ -18,7 +18,7 @@ import argparse
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_keystone_client, status_err, status_ok, metric,
-                         metric_bool)
+                         metric_bool, print_output)
 from keystoneclient.openstack.common.apiclient import exceptions as exc
 
 
