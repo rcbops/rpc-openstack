@@ -124,7 +124,7 @@
                     </div>
                     <div class="solution-body">
                         <div>
-                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" style="max-width: 240px">
+                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)" style="max-width: 240px">
                         </div>
                         <div>
                             <span ng-bind-html="table.short_desc_safe"></span>
