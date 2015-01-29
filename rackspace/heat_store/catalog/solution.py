@@ -2,6 +2,7 @@ import os
 import hashlib
 import re
 import uuid
+import time
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
@@ -12,8 +13,8 @@ try:
     from openstack_dashboard import api
 except:
     from mockapi import api  # used for unit tests
+#from mockapi import api
 
-from mockapi import api
 
 class _RebasedImageLinkPattern(ImagePattern):
     """This class adds a base URL to any relative image links seen by the
@@ -170,7 +171,7 @@ class Solution(object):
                     'name': name,
                     'type': param_type,
                     'constraints': param_constraints,
-                    'label': param['label'] if param.has_key('label') else name,
+                    'label': param['label'] if 'label' in param else name,
                     'description': param.get('description'),
                     'default': param_default
                 }
@@ -253,15 +254,32 @@ class Catalog(object):
                  yaml file containing a list of solution URLs. Each solution
                  URL must point at the info.yaml file for the solution.
     """
+    cache = {}
+
     def __init__(self, *args):
         self.solutions = []
         for catalog in args:
-            solutions = yaml.load(open(catalog).read())
-            basedir = os.path.abspath(os.path.dirname(catalog))
-            if solutions and len(solutions) > 0:
-                for solution_url in solutions:
-                    print solution_url
-                    self.solutions.append(Solution(solution_url, basedir))
+            if catalog in self.cache:
+                if self.cache[catalog]['mtime'] != os.stat(catalog).st_mtime:
+                    # catalog was updated
+                    del self.cache[catalog]
+                elif self.cache[catalog]['atime'] + 3600 < time.time():
+                    # one hour with being used, discard cached copy
+                    del self.cache[catalog]
+            if catalog in self.cache:
+                self.solutions += self.cache[catalog]['solutions']
+                self.cache[catalog]['atime'] = time.time()
+            else:
+                solutions = yaml.load(open(catalog).read())
+                basedir = os.path.abspath(os.path.dirname(catalog))
+                if solutions and len(solutions) > 0:
+                    self.cache[catalog] = {'mtime': os.stat(catalog).st_mtime,
+                                           'atime': time.time(),
+                                           'solutions': []}
+                    for solution_url in solutions:
+                        solution = Solution(solution_url, basedir)
+                        self.cache[catalog]['solutions'].append(solution)
+                        self.solutions.append(solution)
 
     def __iter__(self):
         return iter(self.solutions)
