@@ -204,7 +204,8 @@ var horizonApp = angular.module('hz', dependencies)
               // this callback will be called asynchronously
               // when the response is available
               //$log.debug('Solution Launched');
-              $scope.alerts.push({ type: 'success', msg: 'Solution launched.' });
+              //$scope.alerts.push({ type: 'success', msg: 'Solution launched.'+data });
+              window.location = data; // server sends redirect URL in body
             }).
             error(function(data, status, headers, config) {
               // called asynchronously if an error occurs
