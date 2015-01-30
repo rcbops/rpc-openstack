@@ -15,8 +15,8 @@
 import json
 
 from django.core import urlresolvers
-from django.views.generic import TemplateView
-from django.views.generic.base import RedirectView
+from django.views.generic.base import View
+from django.http import HttpResponse
 from horizon.tables import DataTableView
 
 from rackspace.heat_store.catalog import Catalog
@@ -46,33 +46,18 @@ class IndexView(DataTableView):
                     for t in load_templates())
 
 
-class MoreInformationView(TemplateView):
-    template_name = 'rackspace/heat_store/_modal.html'
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        catalog = load_templates()
-        template_id = context['template_id']
-        context['template'] = catalog.find_by_id(template_id)
-        context['hide'] = True
-        context['launch_link'] = urlresolvers.reverse(
-            'horizon:rackspace:heat_store:launch', args=[template_id]
-        )
-        return self.render_to_response(context)
-
-
-class LaunchView(RedirectView):
-    permanent = False
+class LaunchView(View):
     pattern_name = 'horizon:project:stacks:index'
 
-    def get_redirect_url(self, *args, **kwargs):
-        catalog = load_templates()
-        template_id = kwargs['template_id']
-        template = catalog.find_by_id(template_id)
-        if template is not None:
-            print("Launching template {0}".format(template.id))
-            template.launch(self.request)
-        return urlresolvers.reverse(self.pattern_name)
+    def post(self, request, *args, **kwargs):
+        # TODO
+        #catalog = load_templates()
+        #template_id = kwargs['template_id']
+        #template = catalog.find_by_id(template_id)
+        #if template is not None:
+        #    args = json.loads(request.body)
+        #    template.launch(request, args)
+        return HttpResponse(urlresolvers.reverse(self.pattern_name))
 
 
 def load_templates():
@@ -81,6 +66,3 @@ def load_templates():
     return Catalog(
         os.path.join(basedir, 'catalog/test_data/catalog.yml')
     )
-
-
-#def templates_as_json():

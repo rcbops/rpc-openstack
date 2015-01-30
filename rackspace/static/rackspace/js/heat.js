@@ -192,7 +192,7 @@ var horizonApp = angular.module('hz', dependencies)
                 modalInstance.result.then(function (solution) {
                     $http.post(solution.launch_url, solution.details).
                         success(function () {
-                            $scope.alerts.push({ type: 'success', msg: 'Solution launched.' });
+                            window.location = data; // server sends redirect URL in body
                         }).
                         error(function () {
                             $scope.alerts.push({type: 'danger', msg: 'Failed to launch solution.'});
