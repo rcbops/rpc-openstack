@@ -14,7 +14,7 @@ try:
     from openstack_dashboard import api
 except:
     from mockapi import api  # used for unit tests
-#from mockapi import api
+from mockapi import api
 
 
 class _RebasedImageLinkPattern(ImagePattern):

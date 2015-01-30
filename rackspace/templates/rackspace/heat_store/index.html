@@ -7,91 +7,6 @@
 {% endblock page_header %}
 
 {% block main %}
-    <style>
-        .solution {
-            min-width: 245px;
-        }
-        
-     .solution-title {
-        background-color: #f1f1f1;
-        border: 1px solid #dddddd;
-        border-bottom-width: 2px;
-        border-collapse: collapse;
-        border-top-style: none;
-        border-top-width: 0px;
-        color: #333333;
-        vertical-align: middle;
-        //width: 254px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        }
-        
-    .solution-title-text {
-        font-size: 13px;
-        font-weight: bold;
-        height: 36px;
-        text-align: left;
-        padding: 8px;
-    }
-        
-    .solution-footer {
-            background-color: #dcdcdc;
-            height: 47px;
-            border-bottom-left-radius: 3px;
-            border-bottom-right-radius: 3px;
-            margin-bottom: 0px;
-            padding-bottom: 5px;
-            padding-left: 45px;
-            padding-right: 10px;
-            padding-top: 15px;
-    }
-    
-    .solution-footer a {
-        background-color: white;
-        border: 1px solid #cccccc;
-        color: #333333;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 12px;
-        font-weight: normal;
-        height: 30px;
-        line-height: 18px;
-        text-align: center;
-        text-decoration: none;
-        vertical-align: middle;
-        white-space: nowrap;
-        padding: 5px;
-    }
-        
-    .solution-body {
-        padding: 8px;
-        border-left: 1px solid #cccccc;
-        border-right: 1px solid #cccccc;
-    }
-    
-    .template {
-        display: inline-block;
-        padding-bottom: 15px;
-        width: 285px;
-        margin: 0 auto;
-        vertical-align: top;
-        float: inherit;
-    }
-    
-    .error {
-        color: #b94a48;
-    }
-
-    .error label {
-        color: #b94a48;
-    }
-
-    .error input {
-        border-color: #b94a48;
-        color: #b94a48;
-    }
-        
-
-    </style>
 <div class="row-fluid">
     <div class="span12">
         <h1>Rackspace Private Cloud Solutions</h1>
@@ -106,15 +21,15 @@
         </p>
     </div>
 
-    <div class="container" ng-controller="rpc_heat">
+    <div ng-cloak class="ng-cloak container" ng-controller="rpc_heat">
         <div>
             <alert ng-repeat="alert in alerts" type="{$alert.type$}" close="closeAlert($index)">{$alert.msg$}</alert>
         </div>
-        <div style="margin: 0px; height=100px">
-            <div style="margin: 20px; float: right;">
+        <div>
+            <div class="filter-solutions">
                 <input type="search" ng-model="q" placeholder="filter solutions..." />
             </div>
-            <div style="clear: right;"></div>
+            <div class="clear-right"></div>
         </div>
         <div>
             <div ng-repeat="table in templates | filter:q" class="template col-sm-3 table_wrapper">
@@ -124,7 +39,7 @@
                     </div>
                     <div class="solution-body">
                         <div>
-                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)" style="max-width: 240px">
+                            <img class="solution-body-logo" ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)">
                         </div>
                         <div>
                             <span ng-bind-html="table.short_desc_safe"></span>
@@ -136,17 +51,6 @@
                 </div>
             </div>
         </div>
-        <!--
-        <div id="filter-templates" style="clear: both">
-            Search: <input type="text">
-        </div>
-        <div class="row">
-            {% for table in tables %}
-            {{ table.render }}
-            {% endfor %}
-        </div>-->
-
-        <div style="clear: both;"></div>
     </div><!-- end controller-->
 </div>
 
