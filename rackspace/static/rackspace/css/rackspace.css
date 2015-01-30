@@ -80,4 +80,23 @@
     color: #b94a48;
 }
     
+.filter-solutions {
+    margin: 20px;
+    float: right;
+}
 
+.clear-right {
+    clear: right;
+}
+
+.solution-body-logo {
+    max-width: 240px;
+}
+
+.launch-logo {
+    max-width: 850px;
+}
+
+.launch-design-specs {
+    list-style-type: disc;
+}

@@ -25,11 +25,11 @@
         <div>
             <alert ng-repeat="alert in alerts" type="{$alert.type$}" close="closeAlert($index)">{$alert.msg$}</alert>
         </div>
-        <div style="margin: 0px; height=100px">
-            <div style="margin: 20px; float: right;">
+        <div>
+            <div class="filter-solutions">
                 <input type="search" ng-model="q" placeholder="filter solutions..." />
             </div>
-            <div style="clear: right;"></div>
+            <div class="clear-right"></div>
         </div>
         <div>
             <div ng-repeat="table in templates | filter:q" class="template col-sm-3 table_wrapper">
@@ -39,7 +39,7 @@
                     </div>
                     <div class="solution-body">
                         <div>
-                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)" style="max-width: 240px">
+                            <img class="solution-body-logo" ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)">
                         </div>
                         <div>
                             <span ng-bind-html="table.short_desc_safe"></span>
@@ -51,17 +51,6 @@
                 </div>
             </div>
         </div>
-        <!--
-        <div id="filter-templates" style="clear: both">
-            Search: <input type="text">
-        </div>
-        <div class="row">
-            {% for table in tables %}
-            {{ table.render }}
-            {% endfor %}
-        </div>-->
-
-        <div style="clear: both;"></div>
     </div><!-- end controller-->
 </div>
 

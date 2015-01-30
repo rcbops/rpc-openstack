@@ -145,13 +145,13 @@ var horizonApp = angular.module('hz', dependencies)
                 var modalInstance,
                     templateHeader = ' ' +
                         '<div class="modal-header">' +
-                        '    <img ng-if="table.logo!=\'None\'" ng-src="{$table.logo$}" style="max-width: 850px">' +
+                        '    <img ng-if="table.logo!=\'None\'" ng-src="{$table.logo$}" class="launch-logo">' +
                         '</div>',
                     templateBody = ' ' +
                         '<div class="modal-body">' +
                         '    <h2 ng-bind-html="table.title_safe"></h2><div ng-bind-html="table.long_desc_safe"></div>' +
                         '    <h3>Architecture</h3><div ng-bind-html="table.architecture_safe"></div>' +
-                        '    <h3>Design Specs</h3><ul style="list-style-type: disc">',
+                        '    <h3>Design Specs</h3><ul class="launch-design-specs">',
                     templateFooter = ' ' +
                         '<div class="modal-footer">' +
                         '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">Launch Solution</button>' +
@@ -191,7 +191,7 @@ var horizonApp = angular.module('hz', dependencies)
 
                 modalInstance.result.then(function (solution) {
                     $http.post(solution.launch_url, solution.details).
-                        success(function () {
+                        success(function (data) {
                             window.location = data; // server sends redirect URL in body
                         }).
                         error(function () {
