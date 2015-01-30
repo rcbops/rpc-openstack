@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import json
 
 from django.core import urlresolvers
@@ -21,6 +22,10 @@ from horizon.tables import DataTableView
 
 from rackspace.heat_store.catalog import Catalog
 from rackspace.heat_store import tables
+
+
+RAX_CONFIG = '/etc/rackspace/solutions.yaml'
+USER_CONFIG = '/etc/rackspace/solutions-user.yaml'
 
 
 class IndexView(DataTableView):
@@ -65,8 +70,12 @@ class LaunchView(View):
 
 
 def load_templates():
-    import os
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    return Catalog(
-        os.path.join(basedir, 'catalog/test_data/catalog.yml')
-    )
+    catalogs = []
+    if os.path.isfile(RAX_CONFIG):
+        catalogs.append(RAX_CONFIG)
+        if os.path.isfile(USER_CONFIG):
+            catalogs.append(USER_CONFIG)
+    else:
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        catalogs.append(os.path.join(basedir, 'catalog/test_data/catalog.yml'))
+    return Catalog(*catalogs)
