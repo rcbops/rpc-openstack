@@ -200,32 +200,6 @@ var horizonApp = angular.module('hz', dependencies)
                 });
             };
 
-            //$scope.open = function (size) {
-
-            //var modalInstance = $modal.open({
-                //templateUrl: 'myModalContent.html',
-                //controller: 'ModalInstanceCtrl',
-                //size: size,
-                //resolve: {
-                    //items: function () {
-                        //return $scope.items;
-                    //}
-                //}
-            //});
-
-            //modalInstance.result.then(function (solution) {
-                ////$log.debug(solution);
-                ////$http.post(solution.launch_url, solution.details).
-                    ////success(function(data, status, headers, config) {
-                        ////// this callback will be called asynchronously
-                        ////// when the response is available
-                        ////$log.debug('Solution Launched')
-                    ////}).
-                    ////error(function(data, status, headers, config) {
-                        ////// called asynchronously if an error occurs
-                        ////// or server returns response with an error status.
-                    ////});
-        //});
         });
 
     horizonApp.
