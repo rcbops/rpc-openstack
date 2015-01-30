@@ -51,7 +51,8 @@ var horizonApp = angular.module('hz', dependencies)
                 }
 
                 function comma_delimited_list_parameter(parameter) {
-                    var input_name = safe_input_name(parameter.name),
+                    var j,
+                        input_name = safe_input_name(parameter.name),
                         item = '<div class="control-group" ' +
                             'ng-class="{ error: templateForm.' + input_name + '.$error.required}"' +
                             '>' +
@@ -64,8 +65,8 @@ var horizonApp = angular.module('hz', dependencies)
 
                     $scope.parameters.details[parameter.name] = parameter['default'];
 
-                    for (i = 0; i < parameter.constraints[0].allowed_values.length; i++) {
-                        item += '<option>' + parameter.constraints[0].allowed_values[i] + '</option>';
+                    for (j = 0; j < parameter.constraints[0].allowed_values.length; j++) {
+                        item += '<option>' + parameter.constraints[0].allowed_values[j] + '</option>';
                     }
 
                     item += '</select>' +
@@ -148,14 +149,22 @@ var horizonApp = angular.module('hz', dependencies)
                         '</div>',
                     templateBody = ' ' +
                         '<div class="modal-body">' +
-                        '    <span ng-bind-html="table.long_desc_safe"></span>' +
-                        '    <form name="templateForm">',
+                        '    <h2 ng-bind-html="table.title_safe"></h2><div ng-bind-html="table.long_desc_safe"></div>' +
+                        '    <h3>Architecture</h3><div ng-bind-html="table.architecture_safe"></div>' +
+                        '    <h3>Design Specs</h3><ul style="list-style-type: disc">',
                     templateFooter = ' ' +
                         '<div class="modal-footer">' +
-                        '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">OK</button>' +
+                        '    <button class="btn btn-primary" ng-disabled="!templateForm.$valid" ng-click="ok()">Launch Solution</button>' +
                         '    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>' +
                         '</div>',
                     templateText;
+
+                for (i = 0; i < table.design_specs.length; i++) {
+                    templateBody += '<li>' + table.design_specs[i] + '</li>';
+                }
+
+                templateBody += '    </ul><h3>Parameters</h3>' +
+                    '<form name="templateForm">';
 
                 for (i = 0; i < table.parameters.length; i++) {
                     templateBody += $scope.parse_parameter(table.parameters[i]);
