@@ -34,7 +34,7 @@ class IndexView(DataTableView):
         for (name, table) in list(context.items()):
             if name.endswith('_table'):
                 del context[name]
-                table.data.paramater_types = json.dumps(table.data.get_parameter_types(self.request))
+                table.data.parameters = json.dumps(table.data.get_parameter_types(self.request))
                 table.data.launch_url = urlresolvers.reverse('horizon:rackspace:heat_store:launch', args=[table.data.id])
                 tables.append(table)
 

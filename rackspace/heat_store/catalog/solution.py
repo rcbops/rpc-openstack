@@ -2,6 +2,8 @@ import os
 import hashlib
 import re
 import uuid
+import threading
+import time
 import yaml
 from six.moves.urllib.parse import urlparse, urlunparse
 import six.moves.urllib.request as urlrequest
@@ -12,8 +14,8 @@ try:
     from openstack_dashboard import api
 except:
     from mockapi import api  # used for unit tests
+#from mockapi import api
 
-from mockapi import api
 
 class _RebasedImageLinkPattern(ImagePattern):
     """This class adds a base URL to any relative image links seen by the
@@ -73,9 +75,14 @@ class Solution(object):
         if 'logo' in info:
             self.logo = self._make_absolute_path(info.get('logo'),
                                                  self.basedir)[0]
-        self.short_description = markdown.convert(info['short_desc'])
-        self.long_description = markdown.convert(info['long_desc'])
-        self.architecture = markdown.convert(info['architecture'])
+        # in all the following fields, newlines are suppressed because they
+        # are not rendered properly in Javascript strings by Django
+        self.short_description = \
+            markdown.convert(info['short_desc']).replace('\n', '')
+        self.long_description = \
+            markdown.convert(info['long_desc']).replace('\n', '')
+        self.architecture = \
+            markdown.convert(info['architecture']).replace('\n', '')
         self.design_specs = info.get('design_specs', [])
         self.heat_template = info['heat_template']
         self.env_file = info.get('env_file')  # environments are optional
@@ -170,7 +177,7 @@ class Solution(object):
                     'name': name,
                     'type': param_type,
                     'constraints': param_constraints,
-                    'label': param['label'] if param.has_key('label') else name,
+                    'label': param['label'] if 'label' in param else name,
                     'description': param.get('description'),
                     'default': param_default
                 }
@@ -253,15 +260,41 @@ class Catalog(object):
                  yaml file containing a list of solution URLs. Each solution
                  URL must point at the info.yaml file for the solution.
     """
+    cache = {}
+
     def __init__(self, *args):
         self.solutions = []
         for catalog in args:
-            solutions = yaml.load(open(catalog).read())
-            basedir = os.path.abspath(os.path.dirname(catalog))
-            if solutions and len(solutions) > 0:
-                for solution_url in solutions:
-                    print solution_url
-                    self.solutions.append(Solution(solution_url, basedir))
+            if catalog in self.cache:
+                if self.cache[catalog]['mtime'] != os.stat(catalog).st_mtime:
+                    # catalog was updated
+                    del self.cache[catalog]
+                elif self.cache[catalog]['atime'] + 3600 < time.time():
+                    # one hour without being used, discard cached copy
+                    del self.cache[catalog]
+            if catalog in self.cache:
+                self.solutions += self.cache[catalog]['solutions']
+                self.cache[catalog]['atime'] = time.time()
+            else:
+                solutions = yaml.load(open(catalog).read())
+                basedir = os.path.abspath(os.path.dirname(catalog))
+                if solutions and len(solutions) > 0:
+                    self.cache[catalog] = {'mtime': os.stat(catalog).st_mtime,
+                                           'atime': time.time(),
+                                           'solutions': []}
+
+                    def read_solution(url):
+                        solution = Solution(url, basedir)
+                        self.cache[catalog]['solutions'].append(solution)
+                        self.solutions.append(solution)
+
+                    threads = [threading.Thread(target=read_solution,
+                                                args=[url])
+                               for url in solutions]
+                    for t in threads:
+                        t.start()
+                    for t in threads:
+                        t.join()
 
     def __iter__(self):
         return iter(self.solutions)

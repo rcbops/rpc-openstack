@@ -1,9 +1,9 @@
 {% extends 'rackspace/base.html' %}
 {% load i18n %}
-{% block title %}Heat Templates{% endblock %}
+{% block title %}Rackspace Private Cloud Solutions{% endblock %}
 
 {% block page_header %}
-  {% include "horizon/common/_page_header.html" with title="Stacks" %}
+  {% include "horizon/common/_page_header.html" with title="Solutions" %}
 {% endblock page_header %}
 
 {% block main %}
@@ -100,8 +100,9 @@
         purpose built to be deployed in your Rackspace Private Cloud. The
         Open Source application stacks are configured to follow best practice
         industry standards for cloud scaling applications, and are provided 
-        As-is without Rackspace Support. For more information, please visit
-        &lt;MARKETING PAGE&gt;
+        as-is without Rackspace Support. For more information, please visit
+        <a href="http://rcbops.github.io/templates/" target="_blank">
+            http://rcbops.github.io/templates/</a>.
         </p>
     </div>
 
@@ -123,7 +124,7 @@
                     </div>
                     <div class="solution-body">
                         <div>
-                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" style="max-width: 240px">
+                            <img ng-if="table.logo!='None'" ng-src="{$table.logo$}" ng-click="more_info(table)" style="max-width: 240px">
                         </div>
                         <div>
                             <span ng-bind-html="table.short_desc_safe"></span>
@@ -159,8 +160,11 @@ var rpc_templates = [{% for table in tables %}
             logo:'{{table.data.logo}}',
             basedir:'{{table.data.basedir}}',
             short_desc:'{{table.data.short_description|addslashes|safe}}',
+            long_desc:'{{table.data.long_description|addslashes|safe}}',
+            architecture:'{{table.data.architecture|escapejs|safe}}',
+            design_specs:{{table.data.design_specs|safe}},
             actions:'more_info/{{table.data.title|addslashes}}',
-            parameters: {{table.data.parameter_types|safe}}
+            parameters: {{table.data.parameters|safe}}
                         },
     {% endfor %}];
 </script>
