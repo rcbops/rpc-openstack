@@ -190,11 +190,14 @@ var horizonApp = angular.module('hz', dependencies)
                 });
 
                 modalInstance.result.then(function (solution) {
+                    horizon.modals.modal_spinner(gettext("Working"));
                     $http.post(solution.launch_url, solution.details).
                         success(function (data) {
+                            horizon.modals.spinner.modal('hide');
                             window.location = data; // server sends redirect URL in body
                         }).
                         error(function () {
+                            horizon.modals.spinner.modal('hide');
                             $scope.alerts.push({type: 'danger', msg: 'Failed to launch solution.'});
                         });
                 });
