@@ -16,7 +16,7 @@ import json
 
 from django.core import urlresolvers
 from django.views.generic.base import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from horizon.tables import DataTableView
 
 from rackspace.heat_store.catalog import Catalog
@@ -34,8 +34,11 @@ class IndexView(DataTableView):
         for (name, table) in list(context.items()):
             if name.endswith('_table'):
                 del context[name]
-                table.data.parameters = json.dumps(table.data.get_parameter_types(self.request))
-                table.data.launch_url = urlresolvers.reverse('horizon:rackspace:heat_store:launch', args=[table.data.id])
+                table.data.parameters = json.dumps(
+                    table.data.get_parameter_types(self.request))
+                table.data.launch_url = urlresolvers.reverse(
+                    'horizon:rackspace:heat_store:launch',
+                    args=[table.data.id])
                 tables.append(table)
 
         context['tables'] = tables
@@ -50,13 +53,14 @@ class LaunchView(View):
     pattern_name = 'horizon:project:stacks:index'
 
     def post(self, request, *args, **kwargs):
-        # TODO
-        #catalog = load_templates()
-        #template_id = kwargs['template_id']
-        #template = catalog.find_by_id(template_id)
-        #if template is not None:
-        #    args = json.loads(request.body)
-        #    template.launch(request, args)
+        catalog = load_templates()
+        template_id = kwargs['template_id']
+        template = catalog.find_by_id(template_id)
+        if template is None:
+            return HttpResponseBadRequest('Solution not found.')
+        args = json.loads(request.body)
+        if not template.launch(request, args):
+            return HttpResponseBadRequest('Heat failed to launch template.')
         return HttpResponse(urlresolvers.reverse(self.pattern_name))
 
 

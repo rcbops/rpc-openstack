@@ -14,7 +14,7 @@ try:
     from openstack_dashboard import api
 except:
     from mockapi import api  # used for unit tests
-from mockapi import api
+#from mockapi import api
 
 
 class _RebasedImageLinkPattern(ImagePattern):
@@ -186,9 +186,11 @@ class Solution(object):
                 self.parameter_types.append(p)
         return self.parameter_types
 
-    def map_parameter(self, param, value):
+    def map_parameter(self, request, name, value):
         """Map the value provided by the user to the value needed by Heat."""
-        if '_mapping' not in param:
+        param = next((p for p in self.get_parameter_types(request)
+                      if p['name'] == name), None)
+        if param is None or '_mapping' not in param:
             return value
         return param['_mapping'].get(value, value)
 
@@ -197,14 +199,18 @@ class Solution(object):
         if not api or not api.heat:
             raise RuntimeError('Heat API is not available.')
 
+        mapped_params = dict(
+            (name, self.map_parameter(request, name, value))
+            for (name, value) in params.items())
+
         fields = {
             'stack_name': (re.sub('[\W\d]+', '_', self.title.strip()) +
                            '_' + str(uuid.uuid4())),
             'timeout_mins': 60,
-            'disable_rollback': False,
-            'parameters': params,
+            'disable_rollback': True,
+            'parameters': mapped_params,
             'template_url': self._make_absolute_path(self.heat_template,
-                                                     self.basedir),
+                                                     self.basedir)[0],
             'environment': self._get_environment_data()  # can't use URL here
         }
         api.heat.stack_create(request, **fields)
