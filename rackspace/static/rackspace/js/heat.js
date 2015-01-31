@@ -137,8 +137,10 @@ var horizonApp = angular.module('hz', dependencies)
             $scope.templates = rpc_templates;
 
             for (i = 0; i < $scope.templates.length; i++) {
+                $scope.templates[i].title_safe = $sce.trustAsHtml($scope.templates[i].title);
                 $scope.templates[i].short_desc_safe = $sce.trustAsHtml($scope.templates[i].short_desc);
                 $scope.templates[i].long_desc_safe = $sce.trustAsHtml($scope.templates[i].long_desc);
+                $scope.templates[i].architecture_safe = $sce.trustAsHtml($scope.templates[i].architecture);
             }
 
             $scope.more_info = function (table) {
