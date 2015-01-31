@@ -214,6 +214,7 @@ class Solution(object):
             'environment': self._get_environment_data()  # can't use URL here
         }
         api.heat.stack_create(request, **fields)
+        return True
 
     def _make_absolute_path(self, file_or_url, basedir=''):
         """Return an absolute file or URL.
