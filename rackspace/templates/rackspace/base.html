@@ -4,8 +4,5 @@
   {% include "_stylesheets.html" %}
 
   {% load compress %}
-  {% compress css %}
-      <link href='{{ STATIC_URL }}rackspace/scss/rackspace.scss' type='text/scss' media='screen' rel='stylesheet' />
-  {% endcompress %}
   <link href='{{ STATIC_URL }}rackspace/css/rackspace.css' type='text/css' media='screen' rel='stylesheet' />
 {% endblock %}
