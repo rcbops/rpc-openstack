@@ -14,12 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import contextlib
 import datetime
 import errno
 import json
+import logging
 import os
 import re
 import sys
+import traceback
 
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
@@ -391,7 +394,11 @@ def force_reauth():
     return keystone_auth(auth_details)
 
 
-def status(status, message):
+STATUS = ''
+
+
+def status(status, message, force_print=False):
+    global STATUS
     if status in ('ok', 'warn', 'err'):
         raise ValueError('The status "%s" is not allowed because it creates a '
                          'metric called legacy_state' % status)
@@ -399,26 +406,63 @@ def status(status, message):
     if message is not None:
         status_line = ' '.join((status_line, str(message)))
     status_line = status_line.replace('\n', '\\n')
-    print status_line
+    STATUS = status_line
+    if force_print:
+        print STATUS
 
 
-def status_err(message=None):
-    status('error', message)
+def status_err(message=None, force_print=False, exception=None):
+    if exception:
+        # a status message cannot exceed 256 characters
+        # 'error ' plus up to 250 from the end of the exception
+        message = message[-250:]
+    status('error', message, force_print=force_print)
+    if exception:
+        raise exception
     sys.exit(1)
 
 
-def status_ok(message=None):
-    status('okay', message)
+def status_ok(message=None, force_print=False):
+    status('okay', message, force_print=force_print)
+
+
+METRICS = []
 
 
 def metric(name, metric_type, value, unit=None):
+    global METRICS
+    if len(METRICS) > 29:
+        status_err('Maximum of 30 metrics per check')
     metric_line = 'metric %s %s %s' % (name, metric_type, value)
     if unit is not None:
         metric_line = ' '.join((metric_line, unit))
     metric_line = metric_line.replace('\n', '\\n')
-    print metric_line
+    METRICS.append(metric_line)
 
 
 def metric_bool(name, success):
     value = success and 1 or 0
     metric(name, 'uint32', value)
+
+
+logging.basicConfig(filename='/var/log/maas_plugins.log',
+                    format='%(asctime)s %(levelname)s: %(message)s')
+
+
+@contextlib.contextmanager
+def print_output():
+    try:
+        yield
+    except SystemExit as e:
+        if STATUS:
+            print STATUS
+        raise
+    except Exception as e:
+        logging.exception('The plugin %s has failed with an unhandled '
+                          'exception', sys.argv[0])
+        status_err(traceback.format_exc(), force_print=True, exception=e)
+    else:
+        if STATUS:
+            print STATUS
+        for metric in METRICS:
+            print metric

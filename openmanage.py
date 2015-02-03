@@ -18,7 +18,7 @@ import re
 import sys
 import subprocess
 
-from maas_common import status_err, status_ok, metric_bool
+from maas_common import status_err, status_ok, metric_bool, print_output
 
 SUPPORTED_VERSIONS = set([ "7.1.0", "7.4.0" ])
 OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'
@@ -68,7 +68,7 @@ def check_openmanage_version():
     version = match.groups()[0]
     if version not in SUPPORTED_VERSIONS:
         status_err(
-            'Expected version in %s to be installed but found %s' 
+            'Expected version in %s to be installed but found %s'
             % (SUPPORTED_VERSIONS, version)
         )
 
@@ -97,4 +97,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    with print_output():
+        main()

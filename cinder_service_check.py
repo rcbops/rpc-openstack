@@ -18,7 +18,7 @@ import argparse
 import requests
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, get_keystone_client,
-                         metric_bool, get_auth_ref)
+                         metric_bool, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 # NOTE(mancdaz): until https://review.openstack.org/#/c/111051/
@@ -76,12 +76,13 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check cinder services')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='cinder API IP address')
-    parser.add_argument('--host',
-                        type=str,
-                        help='Only return metrics for the specified host')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check cinder services')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='cinder API IP address')
+        parser.add_argument('--host',
+                            type=str,
+                            help='Only return metrics for the specified host')
+        args = parser.parse_args()
+        main(args)

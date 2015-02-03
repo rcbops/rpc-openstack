@@ -17,7 +17,8 @@
 import argparse
 import requests
 from ipaddr import IPv4Address
-from maas_common import (status_ok, status_err, metric, metric_bool)
+from maas_common import (status_ok, status_err, metric, metric_bool,
+                         print_output)
 from requests import exceptions as exc
 
 
@@ -55,9 +56,11 @@ def main(args):
     check(args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check nova-api-metdata API')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='nova-api-metadata IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(
+            description='Check nova-api-metdata API')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='nova-api-metadata IP address')
+        args = parser.parse_args()
+        main(args)

@@ -361,4 +361,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    with maas_common.print_output():
+        main()
