@@ -19,7 +19,7 @@ from ipaddr import IPv4Address
 import requests
 import re
 from maas_common import (get_auth_details, metric, metric_bool, status_err,
-                         status_ok)
+                         status_ok, print_output)
 from requests import exceptions as exc
 from lxml import html
 
@@ -100,9 +100,10 @@ def main(args):
     check(args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check horizon dashboard')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='horizon dashboard IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check horizon dashboard')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='horizon dashboard IP address')
+        args = parser.parse_args()
+        main(args)

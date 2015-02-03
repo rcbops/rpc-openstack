@@ -19,7 +19,8 @@ import optparse
 import requests
 import subprocess
 
-from maas_common import metric, metric_bool, status_ok, status_err
+from maas_common import (metric, metric_bool, status_ok, status_err,
+                         print_output)
 
 OVERVIEW_URL = "http://%s:%s/api/overview"
 NODES_URL = "http://%s:%s/api/nodes"
@@ -161,4 +162,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    with print_output():
+        main()

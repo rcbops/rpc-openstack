@@ -17,7 +17,7 @@
 import argparse
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, metric, get_keystone_client,
-                         get_auth_ref, metric_bool)
+                         get_auth_ref, metric_bool, print_output)
 from requests import Session
 from requests import exceptions as exc
 
@@ -59,9 +59,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check glance registry')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='glance registry IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check glance registry')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='glance registry IP address')
+        args = parser.parse_args()
+        main(args)

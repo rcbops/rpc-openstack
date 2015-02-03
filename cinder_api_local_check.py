@@ -19,7 +19,7 @@ import collections
 import requests
 from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, metric, metric_bool,
-                         get_keystone_client, get_auth_ref)
+                         get_keystone_client, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 VOLUME_STATUSES = ['available', 'in-use', 'error']
@@ -92,9 +92,10 @@ def main(args):
     check(auth_ref, args)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check cinder API')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='cinder API IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check cinder API')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='cinder API IP address')
+        args = parser.parse_args()
+        main(args)

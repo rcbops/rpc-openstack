@@ -18,7 +18,7 @@ import argparse
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_neutron_client, metric,
-                         status_err, status_ok, metric_bool)
+                         status_err, status_ok, metric_bool, print_output)
 from neutronclient.client import exceptions as exc
 
 
@@ -68,9 +68,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check neutron API')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='neutron API IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check neutron API')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='neutron API IP address')
+        args = parser.parse_args()
+        main(args)

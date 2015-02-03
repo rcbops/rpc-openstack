@@ -18,7 +18,7 @@ import argparse
 from time import time
 from ipaddr import IPv4Address
 from maas_common import (get_auth_ref, get_heat_client, metric_bool,
-                         metric, status_ok, status_err)
+                         metric, status_ok, status_err, print_output)
 from heatclient import exc
 
 
@@ -59,9 +59,10 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Check heat API')
-    parser.add_argument('ip',
-                        type=IPv4Address,
-                        help='heat API IP address')
-    args = parser.parse_args()
-    main(args)
+    with print_output():
+        parser = argparse.ArgumentParser(description='Check heat API')
+        parser.add_argument('ip',
+                            type=IPv4Address,
+                            help='heat API IP address')
+        args = parser.parse_args()
+        main(args)
