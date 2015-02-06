@@ -87,13 +87,9 @@ class Solution(object):
         self.heat_template = info['heat_template']
         self.env_file = info.get('env_file')  # environments are optional
 
-        # initialize parameters
-        self.parameter_types = []
-
     def get_parameter_types(self, request):
         """Return the parameter list for this solution."""
-        if self.parameter_types:
-            return self.parameter_types
+        parameter_types = []
 
         # import heat template to obtain its parameters
         f, url_parts = self._open(self.heat_template, self.basedir)
@@ -183,13 +179,12 @@ class Solution(object):
                 }
                 if param_mapping:
                     p['_mapping'] = param_mapping
-                self.parameter_types.append(p)
-        return self.parameter_types
+                parameter_types.append(p)
+        return parameter_types
 
-    def map_parameter(self, request, name, value):
+    def map_parameter(self, parameter_types, name, value):
         """Map the value provided by the user to the value needed by Heat."""
-        param = next((p for p in self.get_parameter_types(request)
-                      if p['name'] == name), None)
+        param = next((p for p in parameter_types if p['name'] == name), None)
         if param is None or '_mapping' not in param:
             return value
         return param['_mapping'].get(value, value)
@@ -199,8 +194,9 @@ class Solution(object):
         if not api or not api.heat:
             raise RuntimeError('Heat API is not available.')
 
+        parameter_types = self.get_parameter_types(request)
         mapped_params = dict(
-            (name, self.map_parameter(request, name, value))
+            (name, self.map_parameter(parameter_types, name, value))
             for (name, value) in params.items())
 
         fields = {
