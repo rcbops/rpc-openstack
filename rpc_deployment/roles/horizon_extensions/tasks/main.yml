@@ -24,6 +24,7 @@
   args:
     chdir: '{{ horizon_extensions_dest_dir }}'
   sudo: yes
+  notify: Restart apache
 
 - name: Install python dependencies
   pip:
@@ -60,3 +61,4 @@
   with_items:
     - horizon-manage.py collectstatic --noinput
     - horizon-manage.py compress --force
+  notify: Restart apache
