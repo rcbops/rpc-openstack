@@ -21,7 +21,7 @@
         </p>
     </div>
 
-    <div ng-cloak class="ng-cloak container" ng-controller="rpc_heat">
+    <div ng-cloak class="ng-cloak" ng-controller="rpc_heat">
         <div>
             <alert ng-repeat="alert in alerts" type="{$alert.type$}" close="closeAlert($index)">{$alert.msg$}</alert>
         </div>
