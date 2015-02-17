@@ -28,6 +28,14 @@ import re
 import subprocess
 
 
+class ParseError(maas_common.MaaSException):
+    pass
+
+
+class CommandNotRecognized(maas_common.MaaSException):
+    pass
+
+
 def recon_output(for_ring, options=None):
     """Run swift-recon and filter out extraneous printed lines.
 
@@ -79,7 +87,7 @@ def _parse_into_dict(line, parsed_by):
     if match:
         return match.groupdict()
     else:
-        return {}
+        raise ParseError("Cannot parse '{0}' for statistics.".format(line))
 
 
 def recon_stats_dicts(for_ring, options, starting_with, parsed_by):
@@ -335,10 +343,7 @@ def make_parser():
     return parser
 
 
-def main():
-    parser = make_parser()
-    args = parser.parse_args()
-
+def get_stats_from(args):
     stats = {}
     if args.recon == 'async-pendings':
         stats = swift_async()
@@ -351,9 +356,19 @@ def main():
             maas_common.status_err('no ring provided to check')
         stats = swift_replication(args.ring)
     else:
-        maas_common.status_err(
-            'unrecognized command "{0}"'.format(args.recon)
-            )
+        raise CommandNotRecognized('unrecognized command "{0}"'.format(
+            args.recon))
+    return stats
+
+
+def main():
+    parser = make_parser()
+    args = parser.parse_args()
+
+    try:
+        stats = get_stats_from(args)
+    except (ParseError, CommandNotRecognized) as e:
+        maas_common.status_error(str(e))
 
     if stats:
         maas_common.status_ok()
