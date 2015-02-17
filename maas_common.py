@@ -322,6 +322,10 @@ else:
         return heat
 
 
+class MaaSException(Exception):
+    """Base MaaS plugin exception."""
+
+
 def is_token_expired(token):
     expires = datetime.datetime.strptime(token['expires'],
                                          '%Y-%m-%dT%H:%M:%SZ')
