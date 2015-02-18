@@ -1,9 +1,9 @@
 ---
-- https://github.com/miguelgrinberg/RPC-Heat-Drupal/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-Magento/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-MongoDB/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-Galera/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-ELK/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-HDP/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-Gitlab/raw/master/wizard.yaml
-- https://github.com/miguelgrinberg/RPC-Heat-Gerrit-CI/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-Drupal/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-Magento/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-MongoDB/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-Galera/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-ELK/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-HDP/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-Gitlab/raw/master/wizard.yaml
+- https://github.com/rcbops/RPC-Heat-Gerrit-CI/raw/master/wizard.yaml
