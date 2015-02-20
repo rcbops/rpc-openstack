@@ -1,0 +1,3 @@
+# This is a placeholder file, do not edit.
+# The keystone module is retrieved from the os-ansible-deployment repo.
+# This happens as part of the keystone_module role in rpc-extras.
