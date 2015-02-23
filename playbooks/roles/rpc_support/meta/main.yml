@@ -13,19 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
-  hosts: localhost
-  user: root
-  vars:
-    module_name: "keystone"
-  roles:
-    - { role: "module_import", tags: [ "keystone-module" ] }
-
-- name: Install MaaS
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
-  vars_files:
-    - "{{ rpc_repo_path }}/playbooks/inventory/group_vars/all.yml"
-    - "{{ rpc_repo_path }}/playbooks/roles/os_cinder/defaults/main.yml"
+galaxy_info:
+  author: rcbops
+  description: Server configuration for Rackspace support
+  company: Rackspace
+  license: Apache2
+  min_ansible_version: 1.6.6
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+  categories:
+    - support
+    - rackspace
+    - backups

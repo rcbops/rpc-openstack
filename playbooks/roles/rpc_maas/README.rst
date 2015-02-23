@@ -12,7 +12,7 @@ This role will install the following:
 .. code-block:: yaml
 
     - name: Installation and setup of rpc-maas
-      hosts: hosts
+      hosts: hosts:all_containers
       user: root
       roles:
         - { role: "rpc_maas", tags: [ "rpc-maas" ] }

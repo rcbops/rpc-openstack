@@ -13,19 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
+- name: Copy memcached module
   hosts: localhost
   user: root
   vars:
-    module_name: "keystone"
+    module_name: "memcached"
   roles:
     - { role: "module_import", tags: [ "keystone-module" ] }
 
-- name: Install MaaS
+- name: Setup hosts for rpc-support
   hosts: hosts:all_containers
   user: root
   roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
-  vars_files:
-    - "{{ rpc_repo_path }}/playbooks/inventory/group_vars/all.yml"
-    - "{{ rpc_repo_path }}/playbooks/roles/os_cinder/defaults/main.yml"
+    - { role: "rpc_support", tags: [ "rpc-support" ] }
