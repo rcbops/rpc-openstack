@@ -5,7 +5,7 @@ import subprocess
 import yaml
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-vars_yaml = os.path.join(basedir, '/etc/openstack_deploy/user_maas_settings.yml')
+vars_yaml = os.path.join(basedir, '../group_vars/all.yml')
 rpc_repo_path = yaml.load(open(vars_yaml, 'r'))['rpc_repo_path']
 
 rpc_inventory = os.path.join(rpc_repo_path,
