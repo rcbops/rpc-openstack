@@ -13,19 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
-  hosts: localhost
-  user: root
-  vars:
-    module_name: "keystone"
-  roles:
-    - { role: "module_import", tags: [ "keystone-module" ] }
+- name: Check default editor
+  shell:
+    echo '' | update-alternatives --config editor | grep 'mode' | grep '*'
+  register: editor
+  failed_when: false
+  tags:
+    - set_vim_editor
 
-- name: Install MaaS
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
-  vars_files:
-    - "{{ rpc_repo_path }}/playbooks/inventory/group_vars/all.yml"
-    - "{{ rpc_repo_path }}/playbooks/roles/os_cinder/defaults/main.yml"
+- name: Set vim as default
+  command: update-alternatives --set editor /usr/bin/vim.basic
+  when: editor.rc != 0 and not editor.stdout|search('vim')
+  tags:
+    - set_vim_editor

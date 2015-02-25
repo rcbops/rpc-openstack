@@ -13,5 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
-  command: "/bin/cp {{ rpc_repo_path}}/playbooks/library/keystone library/keystone"
+- name: Retrieve authorized keys
+  memcached:
+    name: "{{ item.name }}"
+    file_path: "{{ item.src }}"
+    state: "retrieve"
+    file_mode: "{{ item.file_mode }}"
+    dir_mode: "{{ item.dir_mode }}"
+    server: "{{ hostvars[groups['memcached'][0]]['ansible_ssh_host'] }}:11211"
+    encrypt_string: "{{ memcached_encryption_key }}"
+  with_items:
+    - { src: "/root/.ssh/rpc_support", name: "rpc_support", file_mode: "0600", dir_mode: "0755" }
+    - { src: "/root/.ssh/rpc_support.pub", name: "rpc_support_pub", file_mode: "0640", dir_mode: "0755" }

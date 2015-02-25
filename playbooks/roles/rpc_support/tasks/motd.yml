@@ -13,19 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
-  hosts: localhost
-  user: root
-  vars:
-    module_name: "keystone"
-  roles:
-    - { role: "module_import", tags: [ "keystone-module" ] }
+- name: Ensude motd is not printed in ssh
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^PrintMotd"
+    line: "PrintMotd yes"
+    state: "present"
+  notify: SSH restart
+  tags:
+    - set_motd
 
-- name: Install MaaS
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
-  vars_files:
-    - "{{ rpc_repo_path }}/playbooks/inventory/group_vars/all.yml"
-    - "{{ rpc_repo_path }}/playbooks/roles/os_cinder/defaults/main.yml"
+- name: Setup support motd
+  template:
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    src: "20-openstack.j2"
+    dest: "/etc/update-motd.d/20-openstack"
+  tags:
+    - set_motd

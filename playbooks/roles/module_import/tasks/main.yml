@@ -13,19 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy keystone module
-  hosts: localhost
-  user: root
-  vars:
-    module_name: "keystone"
-  roles:
-    - { role: "module_import", tags: [ "keystone-module" ] }
-
-- name: Install MaaS
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
-  vars_files:
-    - "{{ rpc_repo_path }}/playbooks/inventory/group_vars/all.yml"
-    - "{{ rpc_repo_path }}/playbooks/roles/os_cinder/defaults/main.yml"
+- name: Copy {{ module_name }} module
+  command: "/bin/cp {{ rpc_repo_path}}/playbooks/library/{{ module_name }} library/{{ module_name }}"
