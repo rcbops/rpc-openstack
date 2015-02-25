@@ -1,3 +1,4 @@
 ---
 - include: horizon-extensions.yml
+- include: rpc-support.yml
 - include: setup-maas.yml
