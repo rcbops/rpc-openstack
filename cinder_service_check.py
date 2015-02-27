@@ -16,7 +16,6 @@
 
 import argparse
 import requests
-from ipaddr import IPv4Address
 from maas_common import (status_ok, status_err, get_keystone_client,
                          metric_bool, get_auth_ref, print_output)
 from requests import exceptions as exc
@@ -30,8 +29,9 @@ def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
     auth_token = keystone.auth_token
-    VOLUME_ENDPOINT = 'http://{ip}:8776/v1/{tenant}' \
-                      .format(ip=args.ip, tenant=keystone.tenant_id)
+    VOLUME_ENDPOINT = 'http://{hostname}:8776/v1/{tenant}' \
+                      .format(hostname=args.hostname,
+                              tenant=keystone.tenant_id)
 
     s = requests.Session()
 
@@ -78,9 +78,9 @@ def main(args):
 if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check cinder services')
-        parser.add_argument('ip',
-                            type=IPv4Address,
-                            help='cinder API IP address')
+        parser.add_argument('hostname',
+                            type=str,
+                            help='Cinder API hostname or IP address')
         parser.add_argument('--host',
                             type=str,
                             help='Only return metrics for the specified host')
