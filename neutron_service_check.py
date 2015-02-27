@@ -15,14 +15,13 @@
 # limitations under the License.
 
 import argparse
-from ipaddr import IPv4Address
 from maas_common import (get_neutron_client, status_err, status_ok,
                          metric_bool, print_output)
 
 
 def check(args):
 
-    NETWORK_ENDPOINT = 'http://{ip}:9696'.format(ip=args.ip)
+    NETWORK_ENDPOINT = 'http://{hostname}:9696'.format(hostname=args.hostname)
     try:
         neutron = get_neutron_client(endpoint_url=NETWORK_ENDPOINT)
 
@@ -63,9 +62,9 @@ def main(args):
 if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check neutron agents')
-        parser.add_argument('ip',
-                            type=IPv4Address,
-                            help='neutron API IP address')
+        parser.add_argument('hostname',
+                            type=str,
+                            help='Neutron API hostname or IP address')
         parser.add_argument('--host',
                             type=str,
                             help='Only return metrics for specified host',
