@@ -31,7 +31,7 @@
 
 - include: raxmon_agent_install.yml
   vars:
-    entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension }}"
+    entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension|default('') }}"
   when: >
     inventory_hostname in groups['hosts']
 
