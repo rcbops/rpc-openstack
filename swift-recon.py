@@ -368,7 +368,7 @@ def main():
     try:
         stats = get_stats_from(args)
     except (ParseError, CommandNotRecognized) as e:
-        maas_common.status_error(str(e))
+        maas_common.status_err(str(e))
 
     if stats:
         maas_common.status_ok()
