@@ -88,6 +88,7 @@ maas_apt_repos:
 
 maas_apt_packages:
   - rackspace-monitoring-agent
+  - mariadb-client
 
 maas_pip_requirements_file: "/usr/lib/rackspace-monitoring-agent/plugins/requirements.txt"
 

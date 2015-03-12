@@ -25,6 +25,10 @@
   when: >
     inventory_hostname in groups['hosts']
 
+- include: create_my_cnf.yml
+  when: >
+    inventory_hostname in groups['galera']
+
 - include: raxmon_cli_config.yml
   when: >
     inventory_hostname in groups['hosts']
