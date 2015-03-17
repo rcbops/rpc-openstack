@@ -64,7 +64,8 @@ maas_monitoring_zones:
   - mzhkg
 
 # Set the fqdn extension if required, sample only
-# maas_fqdn_extenstion: .example.com
+# maas_fqdn_extension: .example.com
+maas_fqdn_extension:
 
 # Set the following to skip creating alarms for this device for disk utilisation monitoring
 # maas_excluded_devices: ['xvde']
