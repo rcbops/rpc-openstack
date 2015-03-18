@@ -21,6 +21,12 @@
 
 - include: motd.yml
 
+- include: spice_console.yml
+  when: >
+    inventory_hostname in groups['nova_spice_console']
+  tags:
+    - nova_spice_console
+
 - include: support_key_pair.yml
   when: >
     inventory_hostname == groups['utility'][0]
