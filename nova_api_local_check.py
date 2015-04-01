@@ -46,7 +46,7 @@ def check(args):
 
         # gather some metrics
         status_count = collections.Counter(
-            [s.status for s in nova.servers.list()]
+            [s.status for s in nova.servers.list(search_opts={'all_tenants': 1})]
         )
 
     status_ok()
