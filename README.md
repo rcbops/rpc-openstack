@@ -294,3 +294,15 @@ connects to an individual member of a galera cluster and checks various statuses
     metric wsrep_cluster_status string primary
     metric wsrep_local_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
     metric wsrep_local_state_comment string synced
+
+***
+#### conntrack_count.py
+
+#### Description:
+Returns as metrics the values of /proc/sys/net/netfilter/nf_conntrack_count and /proc/sys/net/netfilter/nf_conntrack_max.
+
+#### Example output:
+
+    status okay
+    metric nf_conntrack_max uint32 262144
+    metric nf_conntrack_count uint32 354
