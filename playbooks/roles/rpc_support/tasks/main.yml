@@ -50,3 +50,7 @@
 - include: holland_config.yml
   when: >
     inventory_hostname in groups['galera']
+
+- include: pccommon_get.yml
+  when: >
+    inventory_hostname in groups['utility'] or inventory_hostname in groups['neutron_agent']
