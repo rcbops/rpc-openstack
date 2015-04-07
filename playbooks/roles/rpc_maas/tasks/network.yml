@@ -20,5 +20,5 @@
     check_period: "{{ maas_check_period }}"
     check_timeout: "{{ maas_check_timeout }}"
     alarms:
-      - { 'name': 'conntrack_count_status', 'criteria': ':set consecutiveCount={{ maas_alarm_local_consecutive_count }} if (percentage(metric["ip_conntrack_count"], metric["ip_conntrack_max"]) > 90) { return new AlarmStatus(CRITICAL, "Connection count is > 90% of maximum allowed."); }' }
+      - { 'name': 'conntrack_count_status', 'criteria': ':set consecutiveCount={{ maas_alarm_local_consecutive_count }} if (percentage(metric["nf_conntrack_count"], metric["nf_conntrack_max"]) > 90) { return new AlarmStatus(CRITICAL, "Connection count is > 90% of maximum allowed."); }' }
   user: root
