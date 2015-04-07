@@ -70,3 +70,7 @@
 - include: network.yml
   when: >
     inventory_hostname in groups['hosts']
+
+- include: hp.yml
+  when: >
+    inventory_hostname in groups['hosts'] and hp_check == true

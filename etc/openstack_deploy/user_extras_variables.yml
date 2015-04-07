@@ -45,6 +45,7 @@ maas_target_alias: public0_v4
 ssl_check: false
 dell_check: false
 remote_check: true
+hp_check: false
 
 # Set the LB device name in CORE
 lb_name: 'unspecified'

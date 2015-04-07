@@ -100,6 +100,7 @@ dell_check: false
 # remote_check: This flag indicates if the remote.http checks and alarms should be deployed.
 #
 remote_check: true
+hp_check: false
 
 #
 # lb_name: Defines the entity name of the load balancing device against which the remote MaaS
