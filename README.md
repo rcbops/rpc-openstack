@@ -308,3 +308,16 @@ The kernel modules nf_conntrack_ipv4 and/or nf_conntrack_ipv6 must be loaded for
     status okay
     metric nf_conntrack_max uint32 262144
     metric nf_conntrack_count uint32 354
+
+***
+#### hp_monitoring.py
+
+#### Description:
+Returns metrics indicating the status of parts of HP hardware.
+
+#### Example output:
+
+    status okay
+    metric hardware_memory_status uint32 1
+    metric hardware_processors_status uint32 1
+    metric hardware_disk_status uint32 1
