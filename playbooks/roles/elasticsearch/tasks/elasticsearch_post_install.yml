@@ -1,0 +1,75 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Deploy ElasticSearch configuration files
+  template:
+    src: "{{ item }}"
+    dest: "/etc/elasticsearch/{{ item }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - elasticsearch.yml
+    - logging.yml
+  notify: Restart ElasticSearch
+  tags:
+    - elasticsearch-post-install
+
+- name: Deploy ElasticSearch service configuration file
+  template:
+    src: "{{ item }}"
+    dest: "/etc/default/{{ item }}"
+    owner: "root"
+    group: "root"
+  with_items:
+    - elasticsearch
+  notify: Restart ElasticSearch
+  tags:
+    - elasticsearch-post-install
+
+- name: Restart ElasticSearch before proceeding
+  meta: flush_handlers
+
+- name: Wait for ElasticSearch port
+  wait_for:
+    host: "{{ ansible_ssh_host }}"
+    port: "9200"
+  tags:
+    - elasticsearch-post-install
+
+- name: Deploy ElasticSearch schema mapping script
+  template:
+    src: "mapping.sh.j2"
+    dest: "/opt/mapping.sh"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  tags:
+    - elasticsearch-post-install
+
+- name: Run ElasticSearch schema mapping script
+  shell: /opt/mapping.sh
+  tags:
+    - elasticsearch-post-install
+
+- name: Setup the ElasticSearch Curator cron job
+  cron:
+    name: "ElasticSearch Curator"
+    minute: 0
+    hour: 0
+    user: "root"
+    job: "/usr/local/bin/curator --host {{ hostvars[inventory_hostname]['container_address'] }} delete --older_than {{ elasticsearch_prune_days }}"
+    cron_file: "elasticsearch_curator"
+  tags:
+    - elasticsearch-post-install
