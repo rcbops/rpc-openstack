@@ -203,7 +203,7 @@
       - { 'name': 'neutron_metering_agent_status', 'criteria': ':set consecutiveCount={{ maas_alarm_local_consecutive_count }} if (metric["neutron-metering-agent_status"] != 1) { return new AlarmStatus(CRITICAL, "neutron-metering-agent down"); }' }
   user: root
   when: >
-    inventory_hostname in groups['neutron_l3_agent']
+    inventory_hostname in groups['neutron_metering_agent']
 
 - include: local_setup.yml
   vars:
