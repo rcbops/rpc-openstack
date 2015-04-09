@@ -1,3 +1,0 @@
-# This is a placeholder file, do not edit.
-# The memcached module is retrieved from the os-ansible-deployment repo.
-# This happens as part of the module_import role in rpc-extras.

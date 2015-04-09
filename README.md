@@ -32,18 +32,20 @@ Basic Setup:
 [os-ansible-deployment](https://github.com/stackforge/os-ansible-deployment)
 as per the standard mechanism described there.
 2. Clone this repository.
-3. Copy `rpc-extras/etc/openstack_deploy/*` to
+3. Recursively copy `rpc-extras/etc/openstack_deploy/*` to
 `/etc/openstack_deploy/`.
 4. Set the `rpc_repo_path` in
 `/etc/openstack_deploy/user_extras_variables.yml` to the path of the
 `os-ansible-deployment` repository clone directory.
-5. Set all other variables in
+5. Edit `playbooks/ansible.cfg` and ensure the paths to the roles, playbooks and
+inventory are correct.
+6. Set all other variables in
 `/etc/openstack_deploy/user_extras_variables.yml` appropriately.
-6. Generate the random passwords for the extras by executing
+7. Generate the random passwords for the extras by executing
 `scripts/pw-token-gen.py --file
 /etc/openstack_deploy/user_extras_secrets.yml` from the
 `os-ansible-deployment` clone directory.
-7. Change to the `rpc-extras/playbooks/` directory and execute your
+8. Change to the `rpc-extras/playbooks/` directory and execute your
 desired plays.  IE:
 
 ```bash
@@ -53,6 +55,5 @@ openstack-ansible setup-everything.yml
 # Ansible Roles
 
 * `horizon_extensions`
-* `module_import`
 * `rpc_maas`
 * `rpc_support`
