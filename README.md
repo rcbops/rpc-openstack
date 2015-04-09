@@ -299,7 +299,9 @@ connects to an individual member of a galera cluster and checks various statuses
 #### conntrack_count.py
 
 #### Description:
-Returns as metrics the values of /proc/sys/net/netfilter/nf_conntrack_count and /proc/sys/net/netfilter/nf_conntrack_max.
+Returns, as metrics, the values of /proc/sys/net/netfilter/nf_conntrack_count and /proc/sys/net/netfilter/nf_conntrack_max.
+
+The kernel modules nf_conntrack_ipv4 and/or nf_conntrack_ipv6 must be loaded for this plugin to work.
 
 #### Example output:
 
