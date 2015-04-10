@@ -14,12 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import errno
 import maas_common
 
 
+class MissingModuleError(maas_common.MaaSException):
+    pass
+
 def get_value(path):
-    with open(path) as f:
-        value = f.read()
+    try:
+        with open(path) as f:
+            value = f.read()
+    except IOError as e:
+        if e.errno == errno.ENOENT:
+            msg = ('Unable to read "%s", the appropriate kernel module is '
+                   'probably not loaded.' % path)
+            raise MissingModuleError(msg)
+
     return value.strip()
 
 
@@ -37,10 +48,14 @@ def get_metrics():
 
 
 def main():
-    metrics = get_metrics()
-    maas_common.status_ok()
-    for name, data in metrics.viewitems():
-        maas_common.metric(name, 'uint32', data['value'])
+    try:
+        metrics = get_metrics()
+    except maas_common.MaaSException as e:
+        maas_common.status_err(str(e))
+    else:
+        maas_common.status_ok()
+        for name, data in metrics.viewitems():
+            maas_common.metric(name, 'uint32', data['value'])
 
 
 if __name__ == '__main__':
