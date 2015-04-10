@@ -14,49 +14,168 @@
 # limitations under the License.
 
 ## MaaS Options
-# Set maas_auth_method to 'token' to use maas_auth_token/maas_api_url
-# instead of maas_username/maas_api_key
+#
+# maas_auth_method: Specifies how to authenticate against Rackspace Cloud Monitoring.
+#
+#   This can be set to one of the following two options:
+#     - password: authorization uses the variables set in maas_auth_url, maas_api_key and
+#                 maas_username
+#     - token: authorization uses the maas_api_url and maas_auth_token key
+#
 maas_auth_method: password
+
+#
+# maas_auth_url: Rackspace Cloud auth URL.
+#
 maas_auth_url: https://identity.api.rackspacecloud.com/v2.0
+
+#
+# maas_tenant_id:  Rackspace Cloud tenant ID (required when maas_auth_method is set to password).
+#
 maas_tenant_id: SomeTenantID
+
+#
+# maas_username: Rackspace Cloud user name (required when maas_auth_method is set to password).
+#
 maas_username: SomeUserName
+
+#
+# maas_username: Rackspace Cloud API key (required when maas_auth_method is set to password).
+#
 maas_api_key: SomeAPIKey
+
+#
+# maas_auth_token: Rackspace Cloud auth token (required when maas_auth_method is set to token).
+#
 maas_auth_token: some_token
+
+#
+# maas_api_url: Cloud Monitoring endpoint (required when maas_auth_method is set to token).
+#
 maas_api_url: https://monitoring.api.rackspacecloud.com/v1.0/{{ maas_tenant_id }}
+
+#
+# maas_notification_plan: The Cloud Monitoring notification plan, which defines who will be
+#                         notified, and for what.
+#
 maas_notification_plan: npManaged
+
+#
+# maas_external_ip_address:
+#
 maas_external_ip_address: "{{ external_vip_address }}"
 
-# By default we will create an agent token for each entity, however if you'd
-# prefer to use the same agent token for all entities then specify it here
+#
+# maas_agent_token: The Cloud Monitoring agent token to configure the agent with.
+#
+#   By default an agent token is created for each entity. However, you may prefer to use the same
+#   agent token for all entities. In that case, specify the agent token here.
+#
 #maas_agent_token: some_token
+
+#
+# maas_target_alias: An alias used for remote checks in the event that a device has multiple
+#                    public IP addresses or if there are other issues with the default primary IP
+#                    address.
+#
+#   For remote checks, the entity specified by lb_name in rpc_user_config has a variable that
+#   denotes the IP addresses to check against. By default, this is the public0_v4 address. Setting
+#   this variable enables checks to be performed against public1_v4 or any other variable that is
+#   in the entity for the correct IP.
+#
 maas_target_alias: public0_v4
 
-# Set whether checks should be enabled or disabled
+#
+# ssl_check: This flag indicates if the ssl-related checks and alarms should be deployed.
+#
 ssl_check: false
+
+#
+# dell_check: This flag indicates if the Dell-related hardware monitoring checks and alarms should
+#             be deployed.
+#
 dell_check: false
+
+#
+# remote_check: This flag indicates if the remote.http checks and alarms should be deployed.
+#
 remote_check: true
 
-# Set the LB device name in CORE
+#
+# lb_name: Defines the entity name of the load balancing device against which the remote MaaS
+#          checks and alarms are configured.
+#
 lb_name: 'unspecified'
 
-# Set the maas_scheme
+#
+# maas_scheme: The scheme (http/https) to use when creating remote.http checks.
+#
 maas_scheme: http
-# Specify per service if required, sample only
-# maas_nova_scheme
 
+#
+# maas_*_scheme: Override the scheme (http/https) for an indivual service.
+#
+# maas_cinder_scheme: https
+# maas_glance_scheme: https
+# maas_keystone_scheme: https
+# maas_neutron_scheme: https
+# maas_nova_scheme: https
+# maas_horizon_scheme: https
+# maas_heat_api_scheme: https
+# maas_heat_cfn_scheme: https
+# maas_heat_cloudwatch_scheme: https
+# maas_swift_proxy_scheme: https
+
+#
+# maas_keystone_user: The keystone user to use/create to allow monitoring plugins to query
+#                     OpenStack APIs.
+#
 maas_keystone_user: maas
 
-# Set the cehck time settings/count
-# Check this number of times before registering state change
+#
+# maas_alarm_local_consecutive_count: The number of consecutive failures before an alert is
+#                                     generated for local checks.
+#
+#   WARNING: Changing this variable affects a customer's SLA, DO NOT change unless you are sure you
+#            are sure you know what you're doing!
+#
 maas_alarm_local_consecutive_count: 3
+
+#
+# maas_alarm_remote_consecutive_count: The number of consecutive failures before an alert is
+#                                      generate for remote checks.
+#
+#   WARNING: Changing this variable affects a customer's SLA, DO NOT change unless you are sure you
+#            are sure you know what you're doing!
+#
 maas_alarm_remote_consecutive_count: 1
 
-# Period and timeout times (seconds) for a check
-# Timeout must be less than period
-# NB Changing these 3 variables affects SLA's
-# Don't change unless you are sure you know what you're doing!
+#
+# maas_check_period: The polling interval, defined in seconds
+#
+#   WARNING: Changing this variable affects a customer's SLA, DO NOT change unless you are sure you
+#            are sure you know what you're doing!
+#
 maas_check_period: 60
+
+#
+# maas_check_timeout: Time that will elapse before timeout, defined in seconds. This period must be
+#                     less than the maas_check_period.
+#
+#   WARNING: Changing this variable affects a customer's SLA, DO NOT change unless you are sure you
+#            are sure you know what you're doing!
+#
 maas_check_timeout: 30
+
+#
+# maas_monitoring_zones: Specifies the list of data centers (DCs) to poll from for remote
+#                        (non-agent) checks.
+#
+# The default is usually sufficient; for example, if three out of five zones return without failure,
+# the check will complete successfully. If for some reason one DC consistently could not perform
+# the checks, or if you want to explicitly exclude a DC, set this variable to a list of zones that
+# does not include the blocked DC.
+#
 maas_monitoring_zones:
   - mzdfw
   - mziad
@@ -64,17 +183,38 @@ maas_monitoring_zones:
   - mzlon
   - mzhkg
 
-# Set the fqdn extension if required, sample only
+#
+# maas_fqdn_extension: Sets the fully-qualified domain name (FQDN) extension that will be appended
+#                      to the short names for hosts that are specified in rpc_user_config. This
+#                      avoids the need to specify extremely long container names.
+#
+#   For example, if this variable was not set, a device called 12345-node1.mytestcluster.com would
+#   have to be named in openstack_user_config.yml as 12345-node1.mytestcluster.com for MaaS checks
+#   to be created correctly. However, if maas_fqdn_extension is set as .mytestcluster.com, the
+#   device can be named 12345-node1 in openstack_user_config.yml. This enables shorter container
+#   names while still enabling MaaS checks and alarms to be created properly.
+#
 # maas_fqdn_extension: .example.com
 maas_fqdn_extension:
 
-# Set the following to skip creating alarms for this device for disk utilisation monitoring
+#
+# maas_excluded_devices: Specifies devices that will be skipped when creating alarms for disk
+#                        utilisation monitoring.
+#
 # maas_excluded_devices: ['xvde']
 
-# Set the threshold for filesystem monitoring when you are not specifying specific filesystems.
+#
+# maas_filesystem_threshold: Sets the threshold (%) for filesystem monitoring when you are not
+#                            specifying specific filesystems.
+#
 maas_filesystem_threshold: 90.0
-# Explicitly set the filesystems to set up monitors/alerts for.
-# NB You can override these in rpc_user_config per device using "maas_filesystem_overrides"
+
+#
+# maas_filesystem_monitors: Explicitly set the filesystems to set up monitors/alerts for.
+#
+#   NOTE: You can override these in your openstack_user_config.yml per device using
+#         "maas_filesystem_overrides".
+#
 # maas_filesystem_monitors:
 #  - filesystem: /
 #    threshold: 90.0
