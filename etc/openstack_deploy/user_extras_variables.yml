@@ -13,17 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## Rackspace Cloud Details
+rackspace_cloud_auth_url: https://identity.api.rackspacecloud.com/v2.0
+rackspace_cloud_tenant_id: SomeTenantID
+rackspace_cloud_username: SomeUserName
+rackspace_cloud_password: SomeUsersPassword
+rackspace_cloud_api_key: SomeAPIKey
+
 ## MaaS Options
 # rpc_maas/defaults/main.yml contains vars that can be overridden here.
 
 # Set maas_auth_method to 'token' to use maas_auth_token/maas_api_url
 # instead of maas_username/maas_api_key
 maas_auth_method: password
+maas_tenant_id: "{{ rackspace_cloud_tenant_id }}"
 maas_auth_url: "{{ rackspace_cloud_auth_url }}"
 maas_username: "{{ rackspace_cloud_username }}"
 maas_api_key: "{{ rackspace_cloud_api_key }}"
 maas_auth_token: some_token
-maas_api_url: https://monitoring.api.rackspacecloud.com/v1.0/{{ rackspace_cloud_tenant_id }}
 maas_notification_plan: npManaged
 
 # Where is the os-ansible deployment repo?

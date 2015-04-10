@@ -17,11 +17,12 @@
 # Set maas_auth_method to 'token' to use maas_auth_token/maas_api_url
 # instead of maas_username/maas_api_key
 maas_auth_method: password
-maas_auth_url: "{{ rackspace_cloud_auth_url }}"
-maas_username: "{{ rackspace_cloud_username }}"
-maas_api_key: "{{ rackspace_cloud_api_key }}"
+maas_auth_url: https://identity.api.rackspacecloud.com/v2.0
+maas_tenant_id: SomeTenantID
+maas_username: SomeUserName
+maas_api_key: SomeAPIKey
 maas_auth_token: some_token
-maas_api_url: https://monitoring.api.rackspacecloud.com/v1.0/{{ rackspace_cloud_tenant_id }}
+maas_api_url: https://monitoring.api.rackspacecloud.com/v1.0/{{ maas_tenant_id }}
 maas_notification_plan: npManaged
 maas_external_ip_address: "{{ external_vip_address }}"
 
