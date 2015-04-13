@@ -28,28 +28,35 @@ for Rackspace Private Clouds.
 
 Basic Setup:
 
-1. Complete an installation of
-[os-ansible-deployment](https://github.com/stackforge/os-ansible-deployment)
-as per the standard mechanism described there.
-2. Clone this repository.
-3. Recursively copy `rpc-extras/etc/openstack_deploy/*` to
+1. Clone 
+[os-ansible-deployment](https://github.com/stackforge/os-ansible-deployment).
+2. Clone [rpc-extras](https://github.com/rcbops/rpc-extras).
+3. Prepare the os-ansible-deployment configuration. If you're building an AIO
+you can simply execute `scripts/bootstrap-aio.sh` from the root of the
+os-ansible-deployment clone.
+4. From the root of the os-ansible-deployment clone, execute
+`scripts/bootstrap-ansible.sh`.
+5. Recursively copy `rpc-extras/etc/openstack_deploy/*` to
 `/etc/openstack_deploy/`.
-4. Set the `rpc_repo_path` in
+6. Set the `rpc_repo_path` in
 `/etc/openstack_deploy/user_extras_variables.yml` to the path of the
 `os-ansible-deployment` repository clone directory.
-5. Edit `playbooks/ansible.cfg` and ensure the paths to the roles, playbooks and
-inventory are correct.
-6. Set all other variables in
+7. Set all other variables in
 `/etc/openstack_deploy/user_extras_variables.yml` appropriately.
-7. Generate the random passwords for the extras by executing
+7. Edit `rpc-extras/playbooks/ansible.cfg` and ensure the paths to the roles, playbooks and
+inventory are correct.
+9. Generate the random passwords for the extras by executing
 `scripts/pw-token-gen.py --file
 /etc/openstack_deploy/user_extras_secrets.yml` from the
 `os-ansible-deployment` clone directory.
-8. Change to the `rpc-extras/playbooks/` directory and execute your
+10. Change to the `os-ansible-deployment/playbooks` directory and execute the
+plays. You can optionally execute `scripts/run-playbooks.sh` from the root of
+os-ansible-deployment clone.
+11. Change to the `rpc-extras/playbooks` directory and execute your
 desired plays.  IE:
 
 ```bash
-openstack-ansible setup-everything.yml
+openstack-ansible site.yml
 ```
 
 # Ansible Roles
