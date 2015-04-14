@@ -20,6 +20,7 @@ Plays:
 as well as adding a Rackspace tab and a Solutions tab, which provides
 Heat templates for commonly deployed applications.
 * `kibana.yml` - Setup Kibana on the Kibana hosts for the logging dashboard.
+* `logstash.yml` - deploys a logstash host
 * `rpc-support.yml` - provides holland backup service, support SSH key
 distribution, custom security group rules, bashrc settings, and other
 miscellaneous tasks helpful to support personnel.
@@ -66,5 +67,6 @@ openstack-ansible site.yml
 * `elasticsearch`
 * `horizon_extensions`
 * `kibana`
+* `logstash`
 * `rpc_maas`
 * `rpc_support`
