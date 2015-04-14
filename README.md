@@ -154,7 +154,7 @@ Port of service to test
 polls the nova api and gets a list of all nova services running in the environment, then checks the output to see if each one is up or not. If a service is marked as administratively down, the check will skip it.
 
 ##### mandatory args:
-IP address of service to test
+Hostname or IP address of service to test
 ##### example output:
 
     metric nova-scheduler_on_host_aio1_nova_scheduler_container-e7b92e0f uint32 1
@@ -169,7 +169,7 @@ IP address of service to test
 polls the cinder api and gets a list of all cinder services running in the environment, then checks the output to see if each one is up or not. If a service is marked as administratively down, the check will skip it.
 
 ##### mandatory args:
-IP address of service to test
+Hostname or IP address of service to test
 ##### example output:
 
     metric cinder-scheduler_on_host_aio1_cinder_volumes_container-b6ad3de7 uint32 1
@@ -183,7 +183,7 @@ IP address of service to test
 polls the neutron api and gets a list of all neutron agents running in the environment, then checks the output to see if each one is up or not. If an agent is marked as administratively down, the check will skip it.
 
 ##### mandatory args:
-IP address of service to test
+Hostname or IP address of service to test
 ##### example output:
 
     metric neutron-metadata-agent_8a1a5b16-8546-4801-a31f-e07dce8c068b_on_host_big3.localdomain uint32 1
