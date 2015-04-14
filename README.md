@@ -294,3 +294,16 @@ connects to an individual member of a galera cluster and checks various statuses
     metric wsrep_cluster_status string primary
     metric wsrep_local_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
     metric wsrep_local_state_comment string synced
+
+***
+#### hp_monitoring.py
+
+#### Description:
+Returns metrics indicating the status of parts of HP hardware.
+
+#### Example output:
+
+    status okay
+    metric hardware_memory_status uint32 1
+    metric hardware_processors_status uint32 1
+    metric hardware_disk_status uint32 1
