@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-maas_keystone_password:
-rpc_support_holland_password:
-kibana_password:
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted
+    pattern: apache2
