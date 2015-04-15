@@ -307,3 +307,17 @@ Returns metrics indicating the status of parts of HP hardware.
     metric hardware_memory_status uint32 1
     metric hardware_processors_status uint32 1
     metric hardware_disk_status uint32 1
+
+***
+#### conntrack_count.py
+
+#### Description:
+Returns, as metrics, the values of /proc/sys/net/netfilter/nf_conntrack_count and /proc/sys/net/netfilter/nf_conntrack_max.
+
+The kernel modules nf_conntrack_ipv4 and/or nf_conntrack_ipv6 must be loaded for this plugin to work.
+
+#### Example output:
+
+    status okay
+    metric nf_conntrack_max uint32 262144
+    metric nf_conntrack_count uint32 354
