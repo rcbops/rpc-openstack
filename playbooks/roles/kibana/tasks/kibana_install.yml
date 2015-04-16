@@ -18,6 +18,7 @@
     url: "{{ kibana_url }}"
     dest: "/tmp/kibana.tar.gz"
     mode: "0644"
+    sha256sum: "{{ kibana_sha256sum }}"
   tags: kibana-install
 
 - name: Extract Kibana
