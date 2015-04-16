@@ -19,6 +19,7 @@
     dest: "/tmp/kibana.tar.gz"
     mode: "0644"
     sha256sum: "{{ kibana_sha256sum }}"
+    force: yes
   tags: kibana-install
 
 - name: Extract Kibana
