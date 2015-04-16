@@ -1,0 +1,13 @@
+frontend kibana_ssl-front
+bind *:8443
+    option tcplog
+    mode tcp
+    default_backend kibana_ssl-back
+
+backend kibana_ssl-back
+    mode tcp
+    balance source
+    option ssl-hello-chk
+{% for host_name in groups['kibana'] %}
+    server {{ host_name }} {{ hostvars[host_name]['ansible_ssh_host'] }}:8443 check port 8443 inter 12000 rise 2 fall 2
+{% endfor %}

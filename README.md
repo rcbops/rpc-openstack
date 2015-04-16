@@ -16,6 +16,7 @@ OpenStack cloud.
 Plays:
 
 * `elasticsearch.yml` - deploys an elasticsearch host
+* `haproxy` - deploys haproxy configurations for elasticsearch and kibana
 * `horizon_extensions.yml` - rebrands the horizon dashboard for Rackspace,
 as well as adding a Rackspace tab and a Solutions tab, which provides
 Heat templates for commonly deployed applications.
