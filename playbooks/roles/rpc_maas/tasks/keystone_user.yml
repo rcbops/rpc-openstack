@@ -19,10 +19,8 @@
 - name: Create keystone user for monitoring
   keystone:
     command: "ensure_user"
-    login_user: "{{ keystone_service_user_name }}"
-    login_tenant_name: "{{ keystone_service_tenant_name }}"
-    login_password: "{{ keystone_auth_admin_password }}"
-    endpoint: "{{ keystone_service_internalurl }}"
+    token: "{{ keystone_auth_admin_token }}"
+    endpoint: "{{ keystone_service_adminurl }}"
     user_name: "{{ maas_keystone_user }}"
     tenant_name: "{{ keystone_admin_tenant_name }}"
     password: "{{ maas_keystone_password }}"
@@ -30,10 +28,8 @@
 - name: Add monitoring keystone user to admin role
   keystone:
     command: "ensure_user_role"
-    login_user: "{{ keystone_service_user_name }}"
-    login_tenant_name: "{{ keystone_service_tenant_name }}"
-    login_password: "{{ keystone_auth_admin_password }}"
-    endpoint: "{{ keystone_service_internalurl }}"
+    token: "{{ keystone_auth_admin_token }}"
+    endpoint: "{{ keystone_service_adminurl }}"
     user_name: "{{ maas_keystone_user }}"
     tenant_name: "{{ keystone_admin_tenant_name }}"
     role_name: "admin"
