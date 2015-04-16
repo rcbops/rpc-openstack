@@ -15,16 +15,20 @@
 # limitations under the License.
 
 import argparse
-from maas_common import (get_nova_client, status_err, status_ok, metric_bool,
-                         print_output)
+from maas_common import (get_auth_ref, get_nova_client, status_err, status_ok,
+                         metric_bool, print_output)
 
 
 def check(args):
+    auth_ref = get_auth_ref()
+    auth_token = auth_ref['token']['id']
+    tenant_id = auth_ref['token']['tenant']['id']
 
-    COMPUTE_ENDPOINT = 'http://{hostname}:8774/v3' \
-                       .format(hostname=args.hostname)
+    COMPUTE_ENDPOINT = 'http://{hostname}:8774/v2.1/{tenant_id}' \
+                       .format(hostname=args.hostname, tenant_id=tenant_id)
     try:
-        nova = get_nova_client(bypass_url=COMPUTE_ENDPOINT)
+        nova = get_nova_client(auth_token=auth_token,
+                               bypass_url=COMPUTE_ENDPOINT)
 
     # not gathering api status metric here so catch any exception
     except Exception as e:

@@ -18,7 +18,7 @@ import argparse
 import collections
 from time import time
 from ipaddr import IPv4Address
-from maas_common import (get_nova_client, status_err, metric,
+from maas_common import (get_auth_ref, get_nova_client, status_err, metric,
                          status_ok, metric_bool, print_output)
 from novaclient.client import exceptions as exc
 
@@ -26,11 +26,16 @@ SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
 
 
 def check(args):
+    auth_ref = get_auth_ref()
+    auth_token = auth_ref['token']['id']
+    tenant_id = auth_ref['token']['tenant']['id']
 
-    COMPUTE_ENDPOINT = 'http://{ip}:8774/v3'.format(ip=args.ip)
+    COMPUTE_ENDPOINT = 'http://{ip}:8774/v2.1/{tenant_id}' \
+                       .format(ip=args.ip, tenant_id=tenant_id)
 
     try:
-        nova = get_nova_client(bypass_url=COMPUTE_ENDPOINT)
+        nova = get_nova_client(auth_token=auth_token,
+                               bypass_url=COMPUTE_ENDPOINT)
         is_up = True
     except exc.ClientException:
         is_up = False
