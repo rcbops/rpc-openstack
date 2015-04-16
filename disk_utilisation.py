@@ -7,7 +7,7 @@ import subprocess
 def utilisation(time):
     output = subprocess.check_output(shlex.split('iostat -x -d %s 2' % time))
     device_lines = output.split('\nDevice:')[-1].strip().split('\n')[1:]
-    devices = [d for d in device_lines if not d.startswith('dm-') and not d.startswith('nb') ]
+    devices = [d for d in device_lines if not d.startswith(('dm-', 'nb')) ]
     devices = [d.split() for d in devices]
     utils = [(d[0], d[-1]) for d in devices]
     return utils
