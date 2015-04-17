@@ -1,0 +1,17 @@
+frontend elasticsearch-front
+bind *:9200
+    option httplog
+    option forwardfor except 127.0.0.0/8
+    option http-server-close
+    mode http
+    default_backend elasticsearch-back
+
+backend elasticsearch-back
+    mode http
+    balance leastconn
+    option forwardfor
+    option httpchk
+    option httplog
+{% for host_name in groups['elasticsearch'] %}
+    server {{ host_name }} {{ hostvars[host_name]['ansible_ssh_host'] }}:9200 check port 9200 inter 12000 rise 2 fall 2
+{% endfor %}
