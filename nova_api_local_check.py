@@ -30,7 +30,7 @@ def check(args):
     auth_token = auth_ref['token']['id']
     tenant_id = auth_ref['token']['tenant']['id']
 
-    COMPUTE_ENDPOINT = 'http://{ip}:8774/v2.1/{tenant_id}' \
+    COMPUTE_ENDPOINT = 'http://{ip}:8774/v2/{tenant_id}' \
                        .format(ip=args.ip, tenant_id=tenant_id)
 
     try:
