@@ -14,9 +14,9 @@
 # limitations under the License.
 
 kibana_root: /opt/kibana
-kibana_version: "kibana-3.1.0"
+kibana_version: "kibana-3.1.2"
 kibana_url: "https://download.elasticsearch.org/kibana/kibana/{{ kibana_version }}.tar.gz"
-kibana_sha256sum: "059a4b6b507b9ff771901d12035e499b0e8d1cae7d9e5284633e19da6c294e07"
+kibana_sha256sum: "480562733c2c941525bfa26326b6fae5faf83109b452a6c4e283a5c37e3086ee"
 
 elasticsearch_http_port: 9200
 elasticsearch_vip: "{{ internal_lb_vip_address }}"
