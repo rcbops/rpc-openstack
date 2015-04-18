@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # RPC release version
-rpc_release: 11.0.0rc1
+rpc_release: 11.0.0rc2
 
 # Packages required for support
 support_util_packages:
