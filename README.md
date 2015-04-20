@@ -67,17 +67,19 @@ os-ansible-deployment clone.
 11. If you are planning to include the logstash play in the deployment, 
 uncomment the related yml block in user_extras_variables.yml now. 
 12. Change to the `rpc-extras/playbooks` directory and execute your
-desired plays.  IE: 
+desired plays.  EG:
+
 ```bash
 openstack-ansible site.yml
 ```
 
 13. __Optional__ If the logstash play is included in the deployment, from the
-os-ansible-deployment/playbooks directory, run 
+os-ansible-deployment/playbooks directory, run the following to apply the
+needed changes to rsyslog configurations in order to ship logs to logstash.
+
 ```bash
 openstack-ansible setup-everything.yml --tags rsyslog-client
-``` to apply 
-the needed changes to rsyslog configurations to ship logs to logstash. 
+```
 
 # Ansible Roles
 
