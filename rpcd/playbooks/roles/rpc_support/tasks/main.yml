@@ -15,6 +15,14 @@
 
 - include: rpc_release.yml
 
+- include: host_kernel_modules.yml
+  when: >
+    inventory_hostname in groups['hosts']
+
+- include: host_kernel_tuning.yml
+  when: >
+    inventory_hostname in groups['hosts']
+
 - include: support_preinstall.yml
 
 - include: bashrc.yml

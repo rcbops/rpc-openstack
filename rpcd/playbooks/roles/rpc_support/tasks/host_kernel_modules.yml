@@ -1,5 +1,5 @@
 ---
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2015, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install packages required for support
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-    cache_valid_time: 600
-  with_items: support_util_packages
+- name: "Ensure kernel module(s)"
+  modprobe:
+    name: "{{ item }}"
+  with_items: rpc_host_kernel_modules
+  when: rpc_host_kernel_modules is defined
   tags:
-    - support_packages
+    - rpc-host-kernel-modules
+
+- name: "Ensure kernel module(s) loaded at boot"
+  lineinfile:
+    dest: /etc/modules
+    line: "{{ item }}"
+  with_items: rpc_host_kernel_modules
+  when: rpc_host_kernel_modules is defined
+  tags:
+    - rpc-host-kernel-modules
