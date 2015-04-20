@@ -1,5 +1,5 @@
 ---
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2015, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,12 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install packages required for support
-  apt:
-    pkg: "{{ item }}"
-    state: present
-    update_cache: yes
-    cache_valid_time: 600
-  with_items: support_util_packages
-  tags:
-    - support_packages
+- name: Host kernel sysctl tuning
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: "{{ item.set|default('yes') }}"
+    state: "{{ item.state|default('present') }}"
+    reload: "{{ item.reload|default('yes') }}"
+  ignore_errors: true
+  with_items: rpc_host_kernel_sysctl
+  when: rpc_host_kernel_sysctl is defined
