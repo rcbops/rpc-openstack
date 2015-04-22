@@ -16,4 +16,3 @@
 - include: logstash_pre_install.yml
 - include: logstash_install.yml
 - include: logstash_post_install.yml
-- include: logstash_web_disable.yml
