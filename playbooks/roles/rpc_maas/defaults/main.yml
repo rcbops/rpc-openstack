@@ -239,4 +239,4 @@ maas_pip_dependencies:
   - rackspace-monitoring-cli
 
 maas_git_repo: https://github.com/rcbops/rpc-maas.git
-maas_git_install_branch: 11.0.0rc2
+maas_git_install_branch: 11.0.0rc3
