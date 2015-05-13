@@ -46,18 +46,21 @@ above.
 
 Basic Setup:
 
-1. From ```/opt```, clone [rpc-extras](https://github.com/rcbops/rpc-extras)
-with the ```--recursive``` option to get all the submodules.
+1. From `/opt`, clone [rpc-extras](https://github.com/rcbops/rpc-extras)
+with the `--recursive` option to get all the submodules.
 2. Unless doing an AIO build, prepare the os-ansible-deployment configuration.
-  1. copy everything from ```os-ansible-deployment/etc/openstack_deploy```
-  into ```/etc/openstack_deploy```
-  2. copy everything from ```rpcd/etc/openstack_deploy``` into
-  ```/etc/openstack_deploy```
-  3. Edit configurations in ```/etc/openstack_deploy``` for example:
-    1. ```openstack_user_variables.yml.example``` and
-    ```openstack_user_variables.yml.aio```
+  1. copy everything from `os-ansible-deployment/etc/openstack_deploy` 
+     into `/etc/openstack_deploy`
+  2. copy everything from `rpcd/etc/openstack_deploy` into
+     `/etc/openstack_deploy`
+  3. Edit configurations in `/etc/openstack_deploy` for example:
+    1. `openstack_user_variables.yml.example` and
+       `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
-    it will need to be coded by hand.
-3. Run ```scripts/deploy.sh``` within ```/opt/rpc-extras```
-  1. If building AIO, set ```RPCD_AIO=yes``` before running
-  2. If building with Logstash, set ```RPCD_LOGSTASH=yes``` before running
+       it will need to be coded by hand.
+3. Run `scripts/deploy.sh` within `/opt/rpc-extras`
+  1. If building AIO, set `RPCD_AIO=yes` before running
+  2. If building with Logstash, set `RPCD_LOGSTASH=yes` before running
+4. If you want MaaS working with AIO, do the following:
+  1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
+  2. in `/opt/rpc-extras/rpcd/playbooks` run `openstack-ansible setup-maas.yml`
