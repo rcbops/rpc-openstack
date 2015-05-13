@@ -40,7 +40,11 @@ install_bits setup-infrastructure.yml setup-openstack.yml
 
 # setup the rest
 cd "${RPCD_DIR}"/playbooks/
-install_bits horizon_extensions.yml rpc-support.yml setup-maas.yml
+install_bits horizon_extensions.yml rpc-support.yml
+# maas doesn't work with aio directly
+if [[ "${RPCD_AIO}" != "yes" ]]; then
+  install_bits setup-maas.yml
+fi
 if [[ "${RPCD_LOGSTASH}" == "yes" ]]; then
   install_bits setup-logging.yml
 fi
