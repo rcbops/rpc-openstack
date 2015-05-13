@@ -12,11 +12,24 @@ RPCD_DIR='/opt/rpc-extras/rpcd'
 # setup the things
 cd "${OSAD_DIR}"
 if [ "${RPCD_AIO}" == "yes" ]; then
-  ./scripts/bootstrap-aio.sh
-  cp -R "${RPCD_DIR}"/etc/openstack_deploy/* /etc/openstack_deploy/
+  if [ ! -d /etc/openstack_deploy/ ]; then
+    ./scripts/bootstrap-aio.sh
+    cp -R "${RPCD_DIR}"/etc/openstack_deploy/* /etc/openstack_deploy/
+  fi
 fi
-./scripts/bootstrap-ansible.sh
-./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_extras_secrets.yml
+
+# bootstrap ansible only if not installed
+which openstack-ansible
+if [ $? -ne 0 ]; then
+  ./scripts/bootstrap-ansible.sh
+fi
+
+# only set up the passwords once
+grep -E '^kibana_password:$' /etc/openstack_deploy/user_extras_secrets.yml
+if [ $? -ne 0 ]; then
+  ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_extras_secrets.yml
+fi
+
 cd "${OSAD_DIR}"/playbooks/
 install_bits setup-hosts.yml
 if [ "${RPCD_AIO}" == "yes" ]; then
