@@ -44,7 +44,7 @@ hosts and containers in the deployment using the related plays mentioned
 above.
 * `site.yml` - deploys all the above playbooks.
 
-Basic Setup:
+# Basic Setup:
 
 1. From `/opt`, clone [rpc-extras](https://github.com/rcbops/rpc-extras)
 with the `--recursive` option to get all the submodules.
