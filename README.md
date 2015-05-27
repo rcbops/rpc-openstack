@@ -15,6 +15,11 @@ OpenStack cloud.
 
 Plays:
 
+* `repo-build.yml` - scans throug the YAML files in the source tree and builds
+any packages or git sources into wheels and deploys them to the local repo
+server(s).
+* `repo-pip-setup.yml` - updates the pip configuration on all of the containers
+to include the rpc-extras source that was created by `repo-build.yml`.
 * `elasticsearch.yml` - deploys an elasticsearch host
 * `haproxy` - deploys haproxy configurations for elasticsearch and kibana
 * `horizon_extensions.yml` - rebrands the horizon dashboard for Rackspace,
