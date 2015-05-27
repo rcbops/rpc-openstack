@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# RPC release version
-rpc_release: 11.0.0rc3
-
 # Packages required for support
 support_util_packages:
   - vim
