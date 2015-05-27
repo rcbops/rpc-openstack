@@ -27,7 +27,7 @@
     - name: Add new pip link
       lineinfile:
         dest: "{{ ansible_env.HOME }}/.pip/links.d/rpc_release.link"
-        line: "{{ openstack_repo_url }}/rpc-releases/{{ rpc_release }}"
+        line: "{{ openstack_repo_url }}/rpc-releases/{{ rpc_release }}/"
         create: "yes"
       tags:
         - lock-pip-files
