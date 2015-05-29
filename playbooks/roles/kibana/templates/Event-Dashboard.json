@@ -102,7 +102,7 @@
         "0": {
           "type": "time",
           "field": "@timestamp",
-          "from": "now-5m",
+          "from": "now-15m",
           "to": "now",
           "mandate": "must",
           "active": true,
@@ -367,7 +367,7 @@
           "editable": true,
           "type": "terms",
           "loadingEditor": false,
-          "field": "os_level",
+          "field": "loglevel",
           "exclude": [],
           "missing": false,
           "other": false,
@@ -408,7 +408,7 @@
           "editable": true,
           "type": "terms",
           "loadingEditor": false,
-          "field": "os_program",
+          "field": "module",
           "exclude": [],
           "missing": false,
           "other": false,
@@ -516,10 +516,9 @@
           "overflow": "min-height",
           "fields": [
             "@timestamp",
-            "os_program",
-            "os_level",
             "host",
-            "openstack_message"
+            "module",
+            "logmessage"
           ],
           "localTime": true,
           "timeField": "@timestamp",
