@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+
+[{{item.log_file}}]
+{% if item.multiline_regex_after is defined %}
+multiline_regex_after: {{ item.multiline_regex_after }}
+{% endif %}
+{% if item.multiline_regex_before is defined %}
+multiline_regex_before: {{ item.multiline_regex_before }}
+{% endif %}
+{% if item.tags is defined %}
+tags: {{ item.tags }}
+{% endif %}
+{% if item.add_field is defined %}
+add_field: {{ item.add_field }}
+{% endif %}

@@ -1,5 +1,5 @@
 ---
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2015, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,20 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: prevent logstash-web from starting on boot
-  copy: 
-    dest: "/etc/init/logstash-web.override"
-    content: "manual\n"
-    owner: root
-    group: root
-    mode: 644
+- name: Deploy beaver logfile conf files
+  template:
+    src: "logfile.conf.j2"
+    dest: "/etc/beaver/conf.d/{{ item.name }}"
+    owner: "{{ beaver_daemon_user }}"
+    group: "{{ beaver_daemon_group }}"
+  with_items: beaver_log_monitors
+  when: beaver_log_monitors is defined
+  notify: Restart beaver
   tags:
-    - logstash-web-disable
-
-- name: stop logstash-web
-  service: 
-    name: logstash-web
-    state: stopped
-    enabled: no
-  tags:
-    - logstash-web-disable
+    - beaver-post-install
+    - beaver-conf
