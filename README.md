@@ -60,7 +60,7 @@ with the `--recursive` option to get all the submodules.
        it will need to be coded by hand.
 3. Run `scripts/deploy.sh` within `/opt/rpc-extras`
   1. If building AIO, set `RPCD_AIO=yes` before running
-  2. If building with Logstash, set `RPCD_LOGSTASH=yes` before running
+  2. If building with Logstash, set `RPCD_LOGGING=yes` before running
 4. If you want MaaS working with AIO, do the following:
   1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
   2. in `/opt/rpc-extras/rpcd/playbooks` run `openstack-ansible setup-maas.yml`
