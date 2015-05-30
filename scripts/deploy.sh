@@ -4,7 +4,7 @@ set -e -u -x
 set -o pipefail
 source /opt/rpc-extras/os-ansible-deployment/scripts/scripts-library.sh
 
-export RPCD_LOGSTASH=${RPCD_LOGSTASH:-"FALSE"}
+export RPCD_LOGGING=${RPCD_LOGGING:-"FALSE"}
 export RPCD_AIO=${RPCD_AIO:-"FALSE"}
 
 OSAD_DIR='/opt/rpc-extras/os-ansible-deployment'
@@ -45,6 +45,6 @@ install_bits horizon_extensions.yml rpc-support.yml
 if [[ "${RPCD_AIO}" != "yes" ]]; then
   install_bits setup-maas.yml
 fi
-if [[ "${RPCD_LOGSTASH}" == "yes" ]]; then
+if [[ "${RPCD_LOGGING}" == "yes" ]]; then
   install_bits setup-logging.yml
 fi
