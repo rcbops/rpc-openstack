@@ -49,18 +49,19 @@ above.
 1. Clone the RPC repository:
    `cd /opt && git clone --recursive https://github.com/rcbops/rpc-extras`
 2. Unless doing an AIO build, prepare the os-ansible-deployment configuration.
-  1. recursively copy everything from
-     `os-ansible-deployment/etc/openstack_deploy` into `/etc/openstack_deploy`
-  2. recursively copy everything from `rpcd/etc/openstack_deploy` into
-     `/etc/openstack_deploy`
+  1. recursively copy the openstack-ansible-deployment configuration files:
+     `cp -R os-ansible-deployment/etc/openstack_deploy /etc/openstack_deploy`
+  2. recursively copy the RPC configuration files:
+     `cp -R rpcd/etc/openstack_deploy /etc/openstack_deploy`
   3. Edit configurations in `/etc/openstack_deploy` for example:
     1. `openstack_user_variables.yml.example` or
        `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
-3. Run `scripts/deploy.sh` within `/opt/rpc-extras`
+3. Run the RPC deploy script: `cd /opt/rpc-extras && ./scripts/deploy.sh`
   1. If building AIO, set `RPCD_AIO=yes` before running
-  2. If building with Logstash, set `RPCD_LOGGING=yes` before running
+  2. If building without the ELK stack, set `RPCD_LOGGING=no` before running
 4. If you want MaaS working with AIO, do the following:
   1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
-  2. in `/opt/rpc-extras/rpcd/playbooks` run `openstack-ansible setup-maas.yml`
+  2. run the MaaS setup plays: 
+     `cd /opt/rpc-extras/rpcd/playbooks && openstack-ansible openstack-ansible setup-maas.yml`
