@@ -91,4 +91,3 @@ maas_filesystem_threshold: 90.0
 #   - { package: "libvirt-bin", version: "1.2.2-0ubuntu13.1.9" }
 #   - { package: "rabbitmq-server", origin: "www.rabbitmq.com" }
 #   - { package: "*", release: "MariaDB" }
-

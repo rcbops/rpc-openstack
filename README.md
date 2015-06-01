@@ -63,5 +63,5 @@ above.
   2. If building without the ELK stack, set `RPCD_LOGGING=no` before running
 4. If you want MaaS working with AIO, do the following:
   1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
-  2. run the MaaS setup plays: 
-     `cd /opt/rpc-extras/rpcd/playbooks && openstack-ansible openstack-ansible setup-maas.yml`
+  2. run the MaaS setup plays:
+     `cd /opt/rpc-extras/rpcd/playbooks && openstack-ansible setup-maas.yml`
