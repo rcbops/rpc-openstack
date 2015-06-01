@@ -81,4 +81,4 @@ maas_filesystem_critical_threshold: 90.0
 
 # For an AIO it's recommended to set the following to limit the expected RAM
 # usage of elasticsearch.
-elasticsearch_heap_size_mb: 1024
+# elasticsearch_heap_size_mb: 1024
