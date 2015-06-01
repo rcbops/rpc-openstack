@@ -16,7 +16,7 @@ if [[ "${RPCD_AIO}" == "yes" ]]; then
   if [[ ! -d /etc/openstack_deploy/ ]]; then
     ./scripts/bootstrap-aio.sh
     cp -R "${RPCD_DIR}"/etc/openstack_deploy/* /etc/openstack_deploy/
-    sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' etc/openstack_deploy/user_extras_variables.yml
+    sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' /etc/openstack_deploy/user_extras_variables.yml
   fi
 fi
 
