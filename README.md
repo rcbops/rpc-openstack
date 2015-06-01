@@ -46,15 +46,15 @@ above.
 
 # Basic Setup:
 
-1. From `/opt`, clone [rpc-extras](https://github.com/rcbops/rpc-extras)
-with the `--recursive` option to get all the submodules.
+1. Clone the RPC repository:
+   `cd /opt && git clone --recursive https://github.com/rcbops/rpc-extras`
 2. Unless doing an AIO build, prepare the os-ansible-deployment configuration.
-  1. copy everything from `os-ansible-deployment/etc/openstack_deploy` 
-     into `/etc/openstack_deploy`
-  2. copy everything from `rpcd/etc/openstack_deploy` into
+  1. recursively copy everything from
+     `os-ansible-deployment/etc/openstack_deploy` into `/etc/openstack_deploy`
+  2. recursively copy everything from `rpcd/etc/openstack_deploy` into
      `/etc/openstack_deploy`
   3. Edit configurations in `/etc/openstack_deploy` for example:
-    1. `openstack_user_variables.yml.example` and
+    1. `openstack_user_variables.yml.example` or
        `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
