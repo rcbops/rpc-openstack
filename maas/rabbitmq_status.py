@@ -24,7 +24,7 @@ from maas_common import (metric, metric_bool, status_ok, status_err,
 
 OVERVIEW_URL = "http://%s:%s/api/overview"
 NODES_URL = "http://%s:%s/api/nodes"
-CHANNEL_URL = "http://%s:%s/api/channels"
+CONNECTIONS_URL = "http://%s:%s/api/connections?columns=channels"
 
 CLUSTERED = True
 CLUSTER_SIZE = 3
@@ -50,6 +50,8 @@ NODES_METRICS = {"proc_used": "processes",
                  "mem_alarm": "status",
                  "disk_free_alarm": "status",
                  "uptime": "ms"}
+
+CONNECTIONS_METRICS = {"max_channels_per_conn": "channels"}
 
 
 def hostname():
@@ -87,18 +89,18 @@ def main():
     s.auth = (options.username, options.password)
 
     try:
-        r = s.get(CHANNEL_URL % (options.host, options.port))
+        r = s.get(CONNECTIONS_URL % (options.host, options.port))
     except requests.exceptions.ConnectionError as e:
         status_err(str(e))
 
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
-        if any(channel['number'] > 1 for channel in resp_json):
-            status_err('Detected RabbitMQ connections with multiple channels. Please check RabbitMQ and all Openstack consumers')
+        max_chans = max(connection['channels'] for connection in resp_json if 'channels' in connection)
+        for k in CONNECTIONS_METRICS:
+            metrics[k] = {'value': max_chans, 'unit': CONNECTIONS_METRICS[k]}
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))
-
 
     try:
         r = s.get(OVERVIEW_URL % (options.host, options.port))
@@ -149,8 +151,6 @@ def main():
             status_err('cluster too small')
         if not is_cluster_member:
             status_err('{0} not a member of the cluster'.format(name))
-
-
 
     status_ok()
 
