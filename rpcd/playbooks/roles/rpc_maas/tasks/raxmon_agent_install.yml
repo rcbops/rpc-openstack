@@ -46,6 +46,15 @@
   shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l"
   register: entity_count
 
+- name: Create missing entities
+  shell: "raxmon-entities-create --label={{ entity_name }}"
+  when: entity_count.stdout|int == 0
+
+- name: Entity {{ entity_name }} count
+  shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l"
+  register: entity_count
+  when: entity_count.stdout|int == 0
+
 - name: At most one {{ entity_name }} entity exists
   fail:
     msg: "Entity count of {{ entity_count.stdout }} != 1 for entity with the label {{ entity_name }}"
