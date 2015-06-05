@@ -16,8 +16,8 @@
 # (c) 2015, Nolan Brubaker <nolan.brubaker@rackspace.com>
 set -eux pipefail
 
-OSAD_DIR='/opt/rpc-extras/os-ansible-deployment'
-RPCD_DIR='/opt/rpc-extras/rpcd'
+OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
+RPCD_DIR='/opt/rpc-openstack/rpcd'
 
 # Do the upgrade for os-ansible-deployment components
 cd ${OSAD_DIR}

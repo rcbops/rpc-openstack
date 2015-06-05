@@ -2,7 +2,7 @@
 
 set -e -u -x
 set -o pipefail
-source /opt/rpc-extras/os-ansible-deployment/scripts/scripts-library.sh
+source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
 
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
@@ -11,8 +11,8 @@ export DEPLOY_OSAD=${DEPLOY_OSAD:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"yes"}
 
-OSAD_DIR='/opt/rpc-extras/os-ansible-deployment'
-RPCD_DIR='/opt/rpc-extras/rpcd'
+OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
+RPCD_DIR='/opt/rpc-openstack/rpcd'
 
 # begin the bootstrap process
 cd ${OSAD_DIR}
