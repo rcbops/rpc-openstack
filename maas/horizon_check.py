@@ -26,7 +26,8 @@ from lxml import html
 
 def check(args):
     # disable warning for insecure cert on horizon
-    requests.packages.urllib3.disable_warnings()
+    if requests.__build__ >= 0x020400:
+        requests.packages.urllib3.disable_warnings()
 
     splash_status_code = 0
     splash_milliseconds = 0.0
