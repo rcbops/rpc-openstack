@@ -19,15 +19,14 @@ set -eux pipefail
 OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
 
-# Do the actual upgrade
-cd /opt/rpc-openstack/os-ansible-deployment
-/opt/rpc-openstack/os-ansible-deployment/scripts/run-upgrade.sh
+# Do the upgrade for os-ansible-deployment components
+cd ${OSAD_DIR}
+${OSAD_DIR}/scripts/run-upgrade.sh
 
-# install RPC-specific stuff
-source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
-cd "${RPCD_DIR}"/playbooks/
+# Prevent the deployment script from re-running the OSAD playbooks
+export DEPLOY_OSAD="no"
 
-# TODO(nolan) need to remove the stuff in the maas directory. Maybe make a
-# play for upgrade-maas?
-
-install_bits site.yml
+# Do the upgrade for the RPC components
+source ${OSAD_DIR}/scripts/scripts-library.sh
+cd ${RPCD_DIR}
+${RPCD_DIR}/scripts/deploy.sh
