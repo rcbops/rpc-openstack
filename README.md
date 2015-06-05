@@ -1,9 +1,9 @@
-# rpc-extras
+# rpc-openstack
 Optional add-ons for Rackspace Private Cloud
 
 # os-ansible-deploy integration
 
-The rpc-extras repo includes add-ons for the Rackspace Private Cloud product
+The rpc-openstack repo includes add-ons for the Rackspace Private Cloud product
 that integrate with the 
 [os-ansible-deployment](https://github.com/stackforge/os-ansible-deployment)
 set of Ansible playbooks and roles.
@@ -31,7 +31,7 @@ for more.
 any packages or git sources into wheels and deploys them to the local repo
 server(s).
 * `repo-pip-setup.yml` - updates the pip configuration on all of the containers
-to include the rpc-extras source that was created by `repo-build.yml`.
+to include the rpc-openstack source that was created by `repo-build.yml`.
 * `rpc-support.yml` - provides holland backup service, support SSH key
 distribution, custom security group rules, bashrc settings, and other
 miscellaneous tasks helpful to support personnel.
@@ -47,7 +47,7 @@ above.
 # Basic Setup:
 
 1. Clone the RPC repository:
-   `cd /opt && git clone --recursive https://github.com/rcbops/rpc-extras`
+   `cd /opt && git clone --recursive https://github.com/rcbops/rpc-openstack`
 2. Unless doing an AIO build, prepare the os-ansible-deployment configuration.
   1. recursively copy the openstack-ansible-deployment configuration files:
      `cp -R os-ansible-deployment/etc/openstack_deploy /etc/openstack_deploy`
@@ -58,13 +58,13 @@ above.
        `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
-3. Run the RPC deploy script: `cd /opt/rpc-extras && ./scripts/deploy.sh`
+3. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
   1. If building AIO, set `RPCD_AIO=yes` before running
   2. If building without the ELK stack, set `RPCD_LOGGING=no` before running
 4. If you want MaaS working with AIO, do the following:
   1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
   2. run the MaaS setup plays:
-     `cd /opt/rpc-extras/rpcd/playbooks && openstack-ansible setup-maas.yml`
+     `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible setup-maas.yml`
 
 # Upgrading
 
