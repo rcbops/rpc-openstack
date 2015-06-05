@@ -1,7 +1,7 @@
 # rpc-openstack
 Optional add-ons for Rackspace Private Cloud
 
-# os-ansible-deploy integration
+# os-ansible-deployment integration
 
 The rpc-openstack repo includes add-ons for the Rackspace Private Cloud product
 that integrate with the 
@@ -53,7 +53,10 @@ above.
      `cp -R os-ansible-deployment/etc/openstack_deploy /etc/openstack_deploy`
   2. recursively copy the RPC configuration files:
      `cp -R rpcd/etc/openstack_deploy /etc/openstack_deploy`
-  3. Edit configurations in `/etc/openstack_deploy` for example:
+  3. If the ELK stack is not going to be used, remove the container
+     configurations from the environment:
+     `rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml`
+  4. Edit configurations in `/etc/openstack_deploy` for example:
     1. `openstack_user_variables.yml.example` or
        `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
