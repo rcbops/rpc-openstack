@@ -54,13 +54,13 @@ if [[ "${DEPLOY_OSAD}" == "yes" ]]; then
     rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
   fi
 
-  # setup the hosts and build the basic containers
-  install_bits setup-hosts.yml
-
   # setup the haproxy load balancer
   if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
     install_bits haproxy-install.yml
   fi
+
+  # setup the hosts and build the basic containers
+  install_bits setup-hosts.yml
 
   # setup the infrastructure
   install_bits setup-infrastructure.yml
