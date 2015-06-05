@@ -26,8 +26,12 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   if [[ ! -d /etc/openstack_deploy/ ]]; then
     ./scripts/bootstrap-aio.sh
     cp -R ${RPCD_DIR}/etc/openstack_deploy/* /etc/openstack_deploy/
+    # ensure that the elasticsearch JVM heap size is limited
     sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' /etc/openstack_deploy/user_extras_variables.yml
+    # set the kibana admin password
     sed -i "s/kibana_password:.*/kibana_password: ${ADMIN_PASSWORD}/" /etc/openstack_deploy/user_extras_secrets.yml
+    # set the load balancer name to the host's name
+    sed -i "s/lb_name: .*/lb_name: '$(hostname)'/" /etc/openstack_deploy/user_extras_variables.yml
   fi
 fi
 
