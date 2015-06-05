@@ -39,6 +39,12 @@ which openstack-ansible || ./scripts/bootstrap-ansible.sh
 # begin the openstack installation
 cd "${OSAD_DIR}"/playbooks/
 
+# ensure that the ELK containers aren't created if they're not
+# going to be used
+if [[ "${DEPLOY_ELK}" != "yes" ]]; then
+  rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
+fi
+
 # setup the hosts and build the basic containers
 install_bits setup-hosts.yml
 
