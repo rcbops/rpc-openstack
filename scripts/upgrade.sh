@@ -16,15 +16,15 @@
 # (c) 2015, Nolan Brubaker <nolan.brubaker@rackspace.com>
 set -eux pipefail
 
-OSAD_DIR='/opt/rpc-extras/os-ansible-deployment'
-RPCD_DIR='/opt/rpc-extras/rpcd'
+OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
+RPCD_DIR='/opt/rpc-openstack/rpcd'
 
 # Do the actual upgrade
-cd /opt/rpc-extras/os-ansible-deployment
-/opt/rpc-extras/os-ansible-deployment/scripts/run-upgrade.sh
+cd /opt/rpc-openstack/os-ansible-deployment
+/opt/rpc-openstack/os-ansible-deployment/scripts/run-upgrade.sh
 
 # install RPC-specific stuff
-source /opt/rpc-extras/os-ansible-deployment/scripts/scripts-library.sh
+source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
 cd "${RPCD_DIR}"/playbooks/
 
 # TODO(nolan) need to remove the stuff in the maas directory. Maybe make a

@@ -257,4 +257,4 @@ maas_pip_dependencies:
   - python-novaclient
   - python-memcached
 
-maas_plugin_dir: /opt/rpc-extras/maas/
+maas_plugin_dir: /opt/rpc-openstack/maas/
