@@ -208,7 +208,8 @@ maas_fqdn_extension:
 # maas_filesystem_threshold: Sets the threshold (%) for filesystem monitoring when you are not
 #                            specifying specific filesystems.
 #
-maas_filesystem_threshold: 90.0
+maas_filesystem_warning_threshold: 80.0
+maas_filesystem_critical_threshold: 90.0
 
 #
 # maas_filesystem_monitors: Explicitly set the filesystems to set up monitors/alerts for.
@@ -218,9 +219,11 @@ maas_filesystem_threshold: 90.0
 #
 # maas_filesystem_monitors:
 #  - filesystem: /
-#    threshold: 90.0
+#    warning_threshold: 80.0
+#    critical_threshold: 90.0
 #  - filesystem: /boot
-#    threshold: 90.0
+#    warning_threshold: 80.0
+#    critical_threshold: 90.0
 
 raxmon_repo_url: "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-14.04-x86_64"
 maas_apt_keys:

@@ -48,7 +48,8 @@
     check_timeout: "{{ maas_check_timeout }}"
     agent_type: "agent.filesystem"
     drives: "{{ mounted_drives.split(',') }}"
-    threshold: "{{ maas_filesystem_threshold }}"
+    warning_threshold: "{{ maas_filesystem_warning_threshold }}"
+    critical_threshold: "{{ maas_filesystem_critical_threshold }}"
   user: root
   when: >
     maas_filesystem_overrides is not defined and maas_filesystem_monitors is not defined
