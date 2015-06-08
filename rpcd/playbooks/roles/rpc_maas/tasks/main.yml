@@ -60,6 +60,9 @@
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"
+  when:
+    - defined groups['swift_proxy'][0]
+    - inventory_hostname == groups['swift_proxy'][0]
 
 - include: ssl_check.yml
   vars:
