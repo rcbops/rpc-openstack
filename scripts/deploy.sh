@@ -7,6 +7,7 @@ source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
 export DEPLOY_HAPROXY=${DEPLOY_HAPROXY:-"no"}
+export DEPLOY_OSAD=${DEPLOY_OSAD:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"yes"}
 
@@ -14,7 +15,7 @@ OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
 
 # begin the bootstrap process
-cd "${OSAD_DIR}"
+cd ${OSAD_DIR}
 
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
@@ -24,9 +25,16 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   export DEPLOY_MAAS="no"
   if [[ ! -d /etc/openstack_deploy/ ]]; then
     ./scripts/bootstrap-aio.sh
-    cp -R "${RPCD_DIR}"/etc/openstack_deploy/* /etc/openstack_deploy/
+    cp -R ${RPCD_DIR}/etc/openstack_deploy/* /etc/openstack_deploy/
+    # ensure that the elasticsearch JVM heap size is limited
     sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' /etc/openstack_deploy/user_extras_variables.yml
+    # set the kibana admin password
     sed -i "s/kibana_password:.*/kibana_password: ${ADMIN_PASSWORD}/" /etc/openstack_deploy/user_extras_secrets.yml
+    # set the load balancer name to the host's name
+    sed -i "s/lb_name: .*/lb_name: '$(hostname)'/" /etc/openstack_deploy/user_extras_variables.yml
+    # set the ansible inventory hostname to the host's name
+    sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
+    sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
   fi
 fi
 
@@ -37,24 +45,32 @@ which openstack-ansible || ./scripts/bootstrap-ansible.sh
 ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_extras_secrets.yml
 
 # begin the openstack installation
-cd "${OSAD_DIR}"/playbooks/
+if [[ "${DEPLOY_OSAD}" == "yes" ]]; then
+  cd ${OSAD_DIR}/playbooks/
 
-# setup the hosts and build the basic containers
-install_bits setup-hosts.yml
+  # ensure that the ELK containers aren't created if they're not
+  # going to be used
+  if [[ "${DEPLOY_ELK}" != "yes" ]]; then
+    rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
+  fi
 
-# setup the haproxy load balancer
-if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-  install_bits haproxy-install.yml
+  # setup the haproxy load balancer
+  if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
+    install_bits haproxy-install.yml
+  fi
+
+  # setup the hosts and build the basic containers
+  install_bits setup-hosts.yml
+
+  # setup the infrastructure
+  install_bits setup-infrastructure.yml
+
+  # setup openstack
+  install_bits setup-openstack.yml
 fi
 
-# setup the infrastructure
-install_bits setup-infrastructure.yml
-
-# setup openstack
-install_bits setup-openstack.yml
-
 # begin the RPC installation
-cd "${RPCD_DIR}"/playbooks/
+cd ${RPCD_DIR}/playbooks/
 
 # build the RPC python package repository
 install_bits repo-build.yml
