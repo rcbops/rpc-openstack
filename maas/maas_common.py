@@ -138,7 +138,7 @@ else:
                 'compute',
                 auth_ref['serviceCatalog'])
 
-        nova = nova_client('3', auth_token=auth_token, bypass_url=bypass_url)
+        nova = nova_client('2', auth_token=auth_token, bypass_url=bypass_url)
 
         try:
             flavors = nova.flavors.list()
