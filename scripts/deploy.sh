@@ -32,6 +32,8 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/kibana_password:.*/kibana_password: ${ADMIN_PASSWORD}/" /etc/openstack_deploy/user_extras_secrets.yml
     # set the load balancer name to the host's name
     sed -i "s/lb_name: .*/lb_name: '$(hostname)'/" /etc/openstack_deploy/user_extras_variables.yml
+    # set the notification_plan to the default for Rackspace Cloud Servers
+    sed -i "s/maas_notification_plan: .*/maas_notification_plan: npTechnicalContactsEmail/" /etc/openstack_deploy/user_extras_variables.yml
     # set the ansible inventory hostname to the host's name
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
