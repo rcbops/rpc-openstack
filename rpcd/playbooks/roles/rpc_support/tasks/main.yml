@@ -70,3 +70,5 @@
 - include: neutron_debug.yml
   when: >
     inventory_hostname in groups['neutron_agent']
+
+- include: autocompletion.yml
