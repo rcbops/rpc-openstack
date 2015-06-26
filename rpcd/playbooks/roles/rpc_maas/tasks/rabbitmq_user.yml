@@ -13,7 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-maas_keystone_password:
-rpc_support_holland_password:
-kibana_password:
-maas_rabbitmq_password:
+- name: Ensure MaaS rabbitmq user as administrator
+  rabbitmq_user:
+    user: "{{ maas_rabbitmq_user }}"
+    password: "{{ maas_rabbitmq_password }}"
+    vhost: "/"
+    configure_priv: ".*"
+    read_priv: ".*"
+    write_priv: ".*"
+    tags: "administrator"
+    state: "present"
+  tags:
+    - rabbitmq-user
