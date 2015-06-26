@@ -17,13 +17,13 @@
 
 - include: package_install.yml
 
-- include: network.yml
-
 - include: raxmon_cli_config.yml
 
 - include: raxmon_agent_install.yml
   vars:
     entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension }}"
+
+- include: network.yml
 
 - include: cdm.yml
 
