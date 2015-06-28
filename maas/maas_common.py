@@ -327,8 +327,14 @@ class MaaSException(Exception):
 
 
 def is_token_expired(token):
-    expires = datetime.datetime.strptime(token['expires'],
-                                         '%Y-%m-%dT%H:%M:%SZ')
+    for fmt in ('%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.%fZ'):
+        try:
+            expires = datetime.datetime.strptime(token['expires'], fmt)
+            break
+        except ValueError as e:
+            pass
+    else:
+        raise e
     return datetime.datetime.now() >= expires
 
 
