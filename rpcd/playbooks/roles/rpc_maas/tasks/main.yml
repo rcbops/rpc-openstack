@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: repo_setup.yml
+- include: host_only.yml
   when: >
     inventory_hostname in groups['hosts']
 
@@ -21,23 +21,9 @@
   when: >
     inventory_hostname == groups['utility'][0]
 
-- include: package_install.yml
-  when: >
-    inventory_hostname in groups['hosts']
-
 - include: create_my_cnf.yml
   when: >
     inventory_hostname in groups['galera']
-
-- include: raxmon_cli_config.yml
-  when: >
-    inventory_hostname in groups['hosts']
-
-- include: raxmon_agent_install.yml
-  vars:
-    entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension }}"
-  when: >
-    inventory_hostname in groups['hosts']
 
 - include: local.yml
   vars:
@@ -49,14 +35,6 @@
   when: >
     remote_check == true
 
-- include: cdm.yml
-  when: >
-    inventory_hostname in groups['hosts']
-
-- include: dell.yml
-  when: >
-    inventory_hostname in groups['hosts'] and dell_check == true
-
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"
@@ -66,11 +44,3 @@
     external_vip_address: "{{ external_lb_vip_address }}"
   when: >
     inventory_hostname == groups['utility'][0] and ssl_check == true
-
-- include: network.yml
-  when: >
-    inventory_hostname in groups['hosts']
-
-- include: hp.yml
-  when: >
-    inventory_hostname in groups['hosts'] and hp_check == true
