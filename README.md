@@ -11,6 +11,22 @@ These add-ons extend the 'vanilla' OpenStack environment with value-added
 features that Rackspace has found useful, but are not core to deploying an
 OpenStack cloud.
 
+# Juno Support
+
+In Juno, the MaaS plugins code is contained in a separate repo,
+[rpc-maas](https://github.com/rcbops/rpc-maas), and the Ansible code to deploy
+and configure the checks and alarms using these plugins is contained in tree
+with the
+[os-ansible-deployment](http://git.openstack.org/cgit/stackforge/os-ansible-deployment/tree/?h=juno)
+repo with the Juno branch.
+
+As of Kilo, both the Maas plugins, and the Ansible code to deploy and
+configure the checks and alarms, are contained in the
+[rpc-openstack](https://github.com/rcbops/rpc-openstack) repo.
+
+The Kilo branch of os-ansible-deployment does not include any rpc-maas
+support directly any longer.
+
 # Ansible Playbooks
 
 Plays:
