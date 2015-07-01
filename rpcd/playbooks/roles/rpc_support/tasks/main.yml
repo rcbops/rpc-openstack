@@ -23,6 +23,8 @@
   when: >
     inventory_hostname in groups['hosts']
 
+- include: disable_unattended_upgrades.yml
+
 - include: support_preinstall.yml
 
 - include: bashrc.yml
