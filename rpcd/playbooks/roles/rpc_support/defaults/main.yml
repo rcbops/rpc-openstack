@@ -32,6 +32,10 @@ support_util_packages:
   - vim
   - vlan
 
+support_neutron_debug_packages:
+  - arping
+  - ethtool
+
 # kernel modules required on hosts
 rpc_host_kernel_modules:
   - bonding
