@@ -15,13 +15,33 @@
 
 # Packages required for support
 support_util_packages:
-  - vim
-  - linux-crashdump
-  - iotop
+  - bridge-utils
+  - debootstrap
   - dstat
-  - tcpdump
-  - lsof
   - htop
+  - iotop
+  - iptables-persistent
+  - linux-crashdump
+  - lsof
+  - lvm2
+  - ntp
+  - ntpdate
+  - openssh-server
+  - sudo
+  - tcpdump
+  - vim
+  - vlan
+
+# kernel modules required on hosts
+rpc_host_kernel_modules:
+  - bonding
+  - 8021q
+
+# sysctl parameters required on hosts
+rpc_host_kernel_sysctl:
+  - { key: 'net.ipv4.ip_forward', value: 1 }
+  - { key: 'net.ipv4.conf.all.rp_filter', value: 0 }
+  - { key: 'net.ipv4.conf.default.rp_filter', value: 0 }
 
 holland_repo_package_name: holland
 holland_service_name: holland
