@@ -134,6 +134,12 @@ maas_scheme: http
 maas_keystone_user: maas
 
 #
+# maas_rabbitmq_user: The rabbitmq user that is created for rabbitmq tests to use.
+#
+#
+maas_rabbitmq_user: maas_user
+
+#
 # maas_alarm_local_consecutive_count: The number of consecutive failures before an alert is
 #                                     generated for local checks.
 #
