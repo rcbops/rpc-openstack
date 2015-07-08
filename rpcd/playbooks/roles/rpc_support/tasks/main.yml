@@ -33,8 +33,6 @@
 
 - include: motd.yml
 
-- include: disable_unattended_upgrades.yml
-
 - include: spice_console.yml
   when: >
     inventory_hostname in groups['nova_console']
