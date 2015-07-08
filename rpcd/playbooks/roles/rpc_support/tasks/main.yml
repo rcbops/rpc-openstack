@@ -33,7 +33,7 @@
 
 - include: motd.yml
 
-- inculde: disable_unattended_upgrades.yml
+- include: disable_unattended_upgrades.yml
 
 - include: spice_console.yml
   when: >
