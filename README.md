@@ -67,12 +67,18 @@ above.
 2. Unless doing an AIO build, prepare the os-ansible-deployment configuration.
   1. recursively copy the openstack-ansible-deployment configuration files:
      `cp -R os-ansible-deployment/etc/openstack_deploy /etc/openstack_deploy`
-  2. recursively copy the RPC configuration files:
-     `cp -R rpcd/etc/openstack_deploy /etc/openstack_deploy`
-  3. If the ELK stack is not going to be used, remove the container
+  2. merge /etc/openstack_deploy/user_variables.yml with rpcd/etc/openstack_deploy/user_variables.yml:
+
+     ```
+     scripts/update-yaml.py /etc/openstack_deploy/user_variables.yml rpcd/etc/openstack_deploy/user_variables.yml
+     ```
+  3. copy the RPC configuration files:
+     1. `cp rpcd/etc/openstack_deploy/user_extras_*.yml /etc/openstack_deploy`
+     2. `cp rpcd/etc/openstack_deploy/env.d/* /etc/openstack_deploy/env.d`
+  4. If the ELK stack is not going to be used, remove the container
      configurations from the environment:
      `rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml`
-  4. Edit configurations in `/etc/openstack_deploy` for example:
+  5. Edit configurations in `/etc/openstack_deploy` for example:
     1. `openstack_user_variables.yml.example` or
        `openstack_user_variables.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
