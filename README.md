@@ -84,8 +84,8 @@ above.
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
 3. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
-  1. If building AIO, set `RPCD_AIO=yes` before running
-  2. If building without the ELK stack, set `RPCD_LOGGING=no` before running
+  1. If building AIO, set `DEPLOY_AIO=yes` before running
+  2. If building without the ELK stack, set `DEPLOY_ELK=no` before running
 4. If you want MaaS working with AIO, do the following:
   1. edit `/etc/openstack_deploy/user_extras_variables.yml` to add credentials
   2. run the MaaS setup plays:
