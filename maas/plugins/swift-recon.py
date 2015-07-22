@@ -23,9 +23,10 @@
 # python swift-recon.py quarantine
 
 import argparse
-import maas_common
 import re
 import subprocess
+
+import maas_common
 
 
 class ParseError(maas_common.MaaSException):
@@ -43,12 +44,18 @@ def recon_output(for_ring, options=None):
 
         >>> recon_output('account', '-r')
         ['[2014-11-21 00:25:16] Checking on replication',
-         '[replication_failure] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_success] low: 2, high: 4, avg: 3.0, total: 6, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_time] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_attempted] low: 1, high: 2, avg: 1.5, total: 3, Failed: 0.0%, no_result: 0, reported: 2',
-         'Oldest completion was 2014-11-21 00:24:51 (25 seconds ago) by 192.168.31.1:6002.',
-         'Most recent completion was 2014-11-21 00:24:56 (20 seconds ago) by 192.168.31.2:6002.']
+         '[replication_failure] low: 0, high: 0, avg: 0.0, total: 0, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_success] low: 2, high: 4, avg: 3.0, total: 6, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_time] low: 0, high: 0, avg: 0.0, total: 0, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_attempted] low: 1, high: 2, avg: 1.5, total: 3, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         'Oldest completion was 2014-11-21 00:24:51 (25 seconds ago) by \
+                 192.168.31.1:6002.',
+         'Most recent completion was 2014-11-21 00:24:56 (20 seconds ago) by \
+                 192.168.31.2:6002.']
 
     :param str for_ring: Which ring to run swift-recon on
     :param list options: Command line options with which to run swift-recon
@@ -67,7 +74,8 @@ def stat_regexp_generator(data):
 
     Lines printed by swift-recon look like::
 
-        [data] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 0
+        [data] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, \
+                no_result: 0, reported: 0
 
     Where data above is the value of the ``data`` parameter passed to the
     function.
@@ -95,7 +103,8 @@ def recon_stats_dicts(for_ring, options, starting_with, parsed_by):
 
     Swift-recon has a standard format for it's statistics:
 
-    [name] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 0
+    [name] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, \
+            reported: 0
 
     Using the regular expression passed by the user in ``parsed_by``, we parse
     this out and return dictionaries of lines that start with

@@ -6,8 +6,11 @@ import yaml
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('base', help='The path to the yaml file with the base configuration.')
-    parser.add_argument('overrides', help='The path to the yaml file with overrides.')
+    parser.add_argument('base',
+                        help='The path to the yaml file with the base '
+                             'configuration.')
+    parser.add_argument('overrides',
+                        help='The path to the yaml file with overrides.')
     return parser.parse_args()
 
 

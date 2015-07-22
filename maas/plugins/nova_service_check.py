@@ -15,8 +15,13 @@
 # limitations under the License.
 
 import argparse
-from maas_common import (get_auth_ref, get_nova_client, status_err, status_ok,
-                         metric_bool, print_output)
+
+from maas_common import get_auth_ref
+from maas_common import get_nova_client
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 
 
 def check(args):
@@ -24,9 +29,10 @@ def check(args):
     auth_token = auth_ref['auth_token']
     tenant_id = auth_ref['project']['id']
 
-    COMPUTE_ENDPOINT = 'http://{hostname}:8774/v2/{tenant_id}' \
-                       .format(hostname=args.hostname, tenant_id=tenant_id)
-
+    COMPUTE_ENDPOINT = (
+        'http://{hostname}:8774/v2/{tenant_id}'.format(hostname=args.hostname,
+                                                       tenant_id=tenant_id)
+    )
     try:
         nova = get_nova_client(auth_token=auth_token,
                                bypass_url=COMPUTE_ENDPOINT)

@@ -15,10 +15,13 @@
 # limitations under the License.
 
 import optparse
-import subprocess
 import shlex
+import subprocess
 
-from maas_common import status_err, status_ok, metric, print_output
+from maas_common import metric
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 
 
 def galera_status_check(arg):

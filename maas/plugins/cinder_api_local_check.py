@@ -16,10 +16,18 @@
 
 import argparse
 import collections
+
+import ipaddr
+# Technically maas_common isn't third-party but our own thing but hacking
+# consideres it third-party
+from maas_common import get_auth_ref
+from maas_common import get_keystone_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 import requests
-from ipaddr import IPv4Address
-from maas_common import (status_ok, status_err, metric, metric_bool,
-                         get_keystone_client, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 VOLUME_STATUSES = ['available', 'in-use', 'error']
@@ -56,7 +64,7 @@ def check(auth_ref, args):
             exc.Timeout) as e:
         is_up = False
     except Exception as e:
-           status_err(str(e))
+        status_err(str(e))
     else:
         # gather some metrics
         vol_statuses = [v['status'] for v in vol.json()['volumes']]
@@ -95,7 +103,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check cinder API')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='cinder API IP address')
         args = parser.parse_args()
         main(args)
