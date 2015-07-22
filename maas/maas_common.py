@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 
 import contextlib
 import datetime
@@ -34,7 +35,7 @@ TOKEN_FILE = '/root/.auth_ref.json'
 
 
 try:
-    from cinderclient.client import Client as c_client
+    from cinderclient import client as c_client
     from cinderclient import exceptions as c_exc
 
 except ImportError:
@@ -52,11 +53,11 @@ else:
         # lands
 
         auth_details = get_auth_details()
-        cinder = c_client('2',
-                          auth_details['OS_USERNAME'],
-                          auth_details['OS_PASSWORD'],
-                          auth_details['OS_TENANT_NAME'],
-                          auth_details['OS_AUTH_URL'])
+        cinder = c_client.Client('2',
+                                 auth_details['OS_USERNAME'],
+                                 auth_details['OS_PASSWORD'],
+                                 auth_details['OS_TENANT_NAME'],
+                                 auth_details['OS_AUTH_URL'])
 
         try:
             # Do something just to ensure we actually have auth'd ok
@@ -71,7 +72,7 @@ else:
         return cinder
 
 try:
-    from glanceclient import Client as g_client
+    import glanceclient as g_client
     from glanceclient import exc as g_exc
 except ImportError:
     def get_glance_client(*args, **kwargs):
@@ -92,7 +93,7 @@ else:
                 'image',
                 auth_ref['catalog'])
 
-        glance = g_client('1', endpoint=endpoint, token=token)
+        glance = g_client.Client('1', endpoint=endpoint, token=token)
 
         try:
             # We don't want to be pulling massive lists of images every time we
@@ -117,7 +118,7 @@ else:
         return glance
 
 try:
-    from novaclient.client import Client as nova_client
+    from novaclient import client as nova_client
     from novaclient.client import exceptions as nova_exc
 except ImportError:
     def get_nova_client(*args, **kwargs):
@@ -138,7 +139,8 @@ else:
                 'compute',
                 auth_ref['catalog'])
 
-        nova = nova_client('2', auth_token=auth_token, bypass_url=bypass_url)
+        nova = nova_client.Client('2', auth_token=auth_token,
+                                  bypass_url=bypass_url)
 
         try:
             flavors = nova.flavors.list()
@@ -169,8 +171,8 @@ else:
         return nova
 
 try:
-    from keystoneclient.v3 import client as k_client
     from keystoneclient.openstack.common.apiclient import exceptions as k_exc
+    from keystoneclient.v3 import client as k_client
 except ImportError:
     def keystone_auth(*args, **kwargs):
         status_err('Cannot import keystoneclient')
@@ -231,8 +233,8 @@ else:
 
 
 try:
-    from neutronclient.neutron import client as n_client
     from neutronclient.common import exceptions as n_exc
+    from neutronclient.neutron import client as n_client
 except ImportError:
     def get_neutron_client(*args, **kwargs):
         status_err('Cannot import neutronclient')
@@ -429,7 +431,7 @@ def status(status, message, force_print=False):
     status_line = status_line.replace('\n', '\\n')
     STATUS = status_line
     if force_print:
-        print STATUS
+        print(STATUS)
 
 
 def status_err(message=None, force_print=False, exception=None):
@@ -476,7 +478,7 @@ def print_output():
         yield
     except SystemExit as e:
         if STATUS:
-            print STATUS
+            print(STATUS)
         raise
     except Exception as e:
         logging.exception('The plugin %s has failed with an unhandled '
@@ -484,6 +486,6 @@ def print_output():
         status_err(traceback.format_exc(), force_print=True, exception=e)
     else:
         if STATUS:
-            print STATUS
+            print(STATUS)
         for metric in METRICS:
-            print metric
+            print(metric)

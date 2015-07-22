@@ -23,9 +23,10 @@
 # python swift-recon.py quarantine
 
 import argparse
-import maas_common
 import re
 import subprocess
+
+import maas_common
 
 
 class ParseError(maas_common.MaaSException):
@@ -43,12 +44,18 @@ def recon_output(for_ring, options=None):
 
         >>> recon_output('account', '-r')
         ['[2014-11-21 00:25:16] Checking on replication',
-         '[replication_failure] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_success] low: 2, high: 4, avg: 3.0, total: 6, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_time] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 2',
-         '[replication_attempted] low: 1, high: 2, avg: 1.5, total: 3, Failed: 0.0%, no_result: 0, reported: 2',
-         'Oldest completion was 2014-11-21 00:24:51 (25 seconds ago) by 192.168.31.1:6002.',
-         'Most recent completion was 2014-11-21 00:24:56 (20 seconds ago) by 192.168.31.2:6002.']
+         '[replication_failure] low: 0, high: 0, avg: 0.0, total: 0, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_success] low: 2, high: 4, avg: 3.0, total: 6, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_time] low: 0, high: 0, avg: 0.0, total: 0, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         '[replication_attempted] low: 1, high: 2, avg: 1.5, total: 3, \
+                 Failed: 0.0%, no_result: 0, reported: 2',
+         'Oldest completion was 2014-11-21 00:24:51 (25 seconds ago) by \
+                 192.168.31.1:6002.',
+         'Most recent completion was 2014-11-21 00:24:56 (20 seconds ago) by \
+                 192.168.31.2:6002.']
 
     :param str for_ring: Which ring to run swift-recon on
     :param list options: Command line options with which to run swift-recon
@@ -67,7 +74,8 @@ def stat_regexp_generator(data):
 
     Lines printed by swift-recon look like::
 
-        [data] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 0
+        [data] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, \
+                no_result: 0, reported: 0
 
     Where data above is the value of the ``data`` parameter passed to the
     function.
@@ -95,7 +103,8 @@ def recon_stats_dicts(for_ring, options, starting_with, parsed_by):
 
     Swift-recon has a standard format for it's statistics:
 
-    [name] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, reported: 0
+    [name] low: 0, high: 0, avg: 0.0, total: 0, Failed: 0.0%, no_result: 0, \
+            reported: 0
 
     Using the regular expression passed by the user in ``parsed_by``, we parse
     this out and return dictionaries of lines that start with
@@ -196,7 +205,7 @@ def swift_async():
         # If we didn't find a non-empty dict, error out
         maas_common.status_err(
             'No data could be collected about pending async operations'
-            )
+        )
     return {'async': stats}
 
 
@@ -256,7 +265,7 @@ def swift_md5():
     error_re = re.compile('https?://(?P<address>[^:]+):\d+')
     result_re = re.compile(
         '(?P<success>\d+)/(?P<total>\d+)[^\d]+(?P<errors>\d+).*'
-        )
+    )
     output = recon_output('--md5')  # We need to pass --md5 as a string here
     md5_statistics = {}
     checking_dict = {}
@@ -272,7 +281,7 @@ def swift_md5():
             error_dict = error_re.search(line).groupdict()
             maas_common.status_err('md5 mismatch for {0} on host {1}'.format(
                 checking_dict.get('check'), error_dict['address']
-                ))
+            ))
         results_match = result_re.match(line)
         if results_match:
             check_name = checking_dict['check'].replace('.', '_')
@@ -315,7 +324,7 @@ def print_nested_stats(statistics):
 metrics_per_stat = {
     'avg': lambda name, val: maas_common.metric(name, 'double', val),
     'failed': lambda name, val: maas_common.metric(name, 'double', val[:-1])
-    }
+}
 
 DEFAULT_METRIC = lambda name, val: maas_common.metric(name, 'uint64', val)
 
@@ -332,7 +341,7 @@ def print_stats(prefix, statistics):
 def make_parser():
     parser = argparse.ArgumentParser(
         description='Process and print swift-recon statistics'
-        )
+    )
     parser.add_argument('recon',
                         help='Which statistics to collect. Acceptable recon: '
                              '"async-pendings", "md5", "quarantine", '

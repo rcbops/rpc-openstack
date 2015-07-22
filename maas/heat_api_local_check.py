@@ -15,11 +15,17 @@
 # limitations under the License.
 
 import argparse
-from time import time
-from ipaddr import IPv4Address
-from maas_common import (get_auth_ref, get_heat_client, metric_bool,
-                         metric, status_ok, status_err, print_output)
+import time
+
 from heatclient import exc
+import ipaddr
+from maas_common import get_auth_ref
+from maas_common import get_heat_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 
 
 def check(args, tenant_id):
@@ -37,9 +43,9 @@ def check(args, tenant_id):
         status_err(str(e))
     else:
         # time something arbitrary
-        start = time()
+        start = time.time()
         heat.build_info.build_info()
-        end = time()
+        end = time.time()
         milliseconds = (end - start) * 1000
 
     status_ok()
@@ -62,7 +68,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check heat API')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='heat API IP address')
         args = parser.parse_args()
         main(args)

@@ -15,10 +15,16 @@
 # limitations under the License.
 
 import argparse
-from ipaddr import IPv4Address
-from maas_common import (status_ok, status_err, metric, get_keystone_client,
-                         get_auth_ref, metric_bool, print_output)
-from requests import Session
+
+import ipaddr
+from maas_common import get_auth_ref
+from maas_common import get_keystone_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
+import requests
 from requests import exceptions as exc
 
 
@@ -29,7 +35,7 @@ def check(auth_ref, args):
     auth_token = keystone.auth_token
     registry_endpoint = 'http://{ip}:9191'.format(ip=args.ip)
 
-    s = Session()
+    s = requests.Session()
 
     s.headers.update(
         {'Content-type': 'application/json',
@@ -62,7 +68,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check glance registry')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='glance registry IP address')
         args = parser.parse_args()
         main(args)

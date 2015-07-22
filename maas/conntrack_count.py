@@ -15,11 +15,13 @@
 # limitations under the License.
 
 import errno
+
 import maas_common
 
 
 class MissingModuleError(maas_common.MaaSException):
     pass
+
 
 def get_value(path):
     try:

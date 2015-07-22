@@ -14,10 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from maas_common import (status_ok, metric, metric_bool,
-                         get_keystone_client, get_auth_ref, print_output)
 import argparse
-from ipaddr import IPv4Address
+
+import ipaddr
+from maas_common import get_auth_ref
+from maas_common import get_keystone_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_ok
 import requests
 from requests import exceptions as exc
 
@@ -76,12 +81,13 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check service is up.')
         parser.add_argument('name', help='Service name.')
-        parser.add_argument('ip', type=IPv4Address, help='Service IP address.')
+        parser.add_argument('ip', type=ipaddr.IPv4Address,
+                            help='Service IP address.')
         parser.add_argument('port', type=int, help='Service port.')
         parser.add_argument('--path', default='',
                             help='Service API path, this should include '
-                                 'placeholders for the version "{version}" and '
-                                 'project ID "{project_id}" if required.')
+                                 'placeholders for the version "{version}" and'
+                                 ' tenant ID "{tenant_id}" if required.')
         parser.add_argument('--auth', action='store_true', default=False,
                             help='Does this API check require auth?')
         parser.add_argument('--ssl', action='store_true', default=False,

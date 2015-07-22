@@ -43,7 +43,7 @@ PARSE_RE = re.compile(
     # Last line for both types
     "Sample represents (?P<partition_percent>\d+.\d+)% of the \w+ "
     "partition space"
-    )
+)
 
 
 def generate_report(on):
