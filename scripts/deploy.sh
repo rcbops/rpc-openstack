@@ -10,6 +10,7 @@ export DEPLOY_HAPROXY=${DEPLOY_HAPROXY:-"no"}
 export DEPLOY_OSAD=${DEPLOY_OSAD:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"yes"}
+export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
 
 OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
