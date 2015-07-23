@@ -2,7 +2,6 @@
 
 set -e -u -x
 set -o pipefail
-source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
 
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
@@ -12,7 +11,9 @@ export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
 export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
+export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 
+source /opt/rpc-openstack/os-ansible-deployment/scripts/scripts-library.sh
 OSAD_DIR='/opt/rpc-openstack/os-ansible-deployment'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
 
