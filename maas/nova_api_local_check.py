@@ -27,8 +27,8 @@ SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
 
 def check(args):
     auth_ref = get_auth_ref()
-    auth_token = auth_ref['token']['id']
-    tenant_id = auth_ref['token']['tenant']['id']
+    auth_token = auth_ref['auth_token']
+    tenant_id = auth_ref['project']['id']
 
     COMPUTE_ENDPOINT = 'http://{ip}:8774/v2/{tenant_id}' \
                        .format(ip=args.ip, tenant_id=tenant_id)
@@ -51,7 +51,8 @@ def check(args):
 
         # gather some metrics
         status_count = collections.Counter(
-            [s.status for s in nova.servers.list(search_opts={'all_tenants': 1})]
+            [s.status for s in nova.servers.list(
+             search_opts={'all_tenants': 1})]
         )
 
     status_ok()

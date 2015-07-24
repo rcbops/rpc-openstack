@@ -29,9 +29,9 @@ def check(args):
         auth_ref = get_auth_ref()
         keystone = get_keystone_client(auth_ref)
         auth_token = keystone.auth_token
-        tenant_id = keystone.tenant_id
+        project_id = keystone.project_id
         headers['auth_token'] = auth_token
-        path_options['tenant_id'] = tenant_id
+        path_options['project_id'] = project_id
 
     scheme = args.ssl and 'https' or 'http'
     endpoint = '{scheme}://{ip}:{port}'.format(ip=args.ip, port=args.port,
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         parser.add_argument('--path', default='',
                             help='Service API path, this should include '
                                  'placeholders for the version "{version}" and '
-                                 'tenant ID "{tenant_id}" if required.')
+                                 'project ID "{project_id}" if required.')
         parser.add_argument('--auth', action='store_true', default=False,
                             help='Does this API check require auth?')
         parser.add_argument('--ssl', action='store_true', default=False,

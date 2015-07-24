@@ -86,11 +86,11 @@ else:
         auth_ref = get_auth_ref()
 
         if not token:
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
         if not endpoint:
             endpoint = get_endpoint_url_for_service(
                 'image',
-                auth_ref['serviceCatalog'])
+                auth_ref['catalog'])
 
         glance = g_client('1', endpoint=endpoint, token=token)
 
@@ -102,7 +102,7 @@ else:
             [i.id for i in image]
         except g_exc.HTTPUnauthorized:
             auth_ref = force_reauth()
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
 
             glance = get_glance_client(token, endpoint, previous_tries + 1)
         # we only want to pass HTTPException back to the calling poller
@@ -132,11 +132,11 @@ else:
         auth_ref = get_auth_ref()
 
         if not auth_token:
-            auth_token = auth_ref['token']['id']
+            auth_token = auth_ref['auth_token']
         if not bypass_url:
             bypass_url = get_endpoint_url_for_service(
                 'compute',
-                auth_ref['serviceCatalog'])
+                auth_ref['catalog'])
 
         nova = nova_client('2', auth_token=auth_token, bypass_url=bypass_url)
 
@@ -153,7 +153,7 @@ else:
 
         except AttributeError:
             auth_ref = force_reauth()
-            auth_token = auth_ref['token']['id']
+            auth_token = auth_ref['auth_token']
 
             nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
 
@@ -169,7 +169,7 @@ else:
         return nova
 
 try:
-    from keystoneclient.v2_0 import client as k_client
+    from keystoneclient.v3 import client as k_client
     from keystoneclient.openstack.common.apiclient import exceptions as k_exc
 except ImportError:
     def keystone_auth(*args, **kwargs):
@@ -207,8 +207,8 @@ else:
             auth_ref = get_auth_ref()
         if not endpoint:
             endpoint = get_endpoint_url_for_service('identity',
-                                                    auth_ref['serviceCatalog'],
-                                                    'adminURL')
+                                                    auth_ref['catalog'],
+                                                    'admin')
 
         keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
 
@@ -246,11 +246,11 @@ else:
         auth_ref = get_auth_ref()
 
         if not token:
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
         if not endpoint_url:
             endpoint_url = get_endpoint_url_for_service(
                 'network',
-                auth_ref['serviceCatalog'])
+                auth_ref['catalog'])
 
         neutron = n_client.Client('2.0',
                                   token=token,
@@ -268,7 +268,7 @@ else:
         # local token) we'll just catch the exception it throws and move on
         except n_exc.NoAuthURLProvided:
             auth_ref = force_reauth()
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
 
             neutron = get_neutron_client(token, endpoint_url,
                                          previous_tries + 1)
@@ -301,18 +301,18 @@ else:
         auth_ref = get_auth_ref()
 
         if not token:
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
         if not endpoint:
             endpoint = get_endpoint_url_for_service(
                 'orchestration',
-                auth_ref['serviceCatalog'])
+                auth_ref['catalog'])
 
         heat = heat_client.Client('1', endpoint=endpoint, token=token)
         try:
             heat.build_info.build_info()
         except h_exc.HTTPUnauthorized:
             auth_ref = force_reauth()
-            token = auth_ref['token']['id']
+            token = auth_ref['auth_token']
             heat = get_heat_client(token, endpoint, previous_tries + 1)
         except h_exc.HTTPException:
             raise
@@ -329,7 +329,7 @@ class MaaSException(Exception):
 def is_token_expired(token):
     for fmt in ('%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.%fZ'):
         try:
-            expires = datetime.datetime.strptime(token['expires'], fmt)
+            expires = datetime.datetime.strptime(token['expires_at'], fmt)
             break
         except ValueError as e:
             pass
@@ -344,7 +344,7 @@ def get_auth_ref():
     if auth_ref is None:
         auth_ref = keystone_auth(auth_details)
 
-    if is_token_expired(auth_ref['token']):
+    if is_token_expired(auth_ref):
         auth_ref = keystone_auth(auth_details)
 
     return auth_ref
@@ -393,10 +393,12 @@ def get_auth_details(openrc_file=OPENRC):
 
 
 def get_endpoint_url_for_service(service_type, service_catalog,
-                                 url_type='publicURL'):
-    for i in service_catalog:
-        if i['type'] == service_type:
-            return i['endpoints'][0][url_type]
+                                 url_type='public'):
+    for service in service_catalog:
+        if service['type'] == service_type:
+            for endpoint in service['endpoints']:
+                if endpoint['interface'] == url_type:
+                    return endpoint['url']
 
 
 def force_reauth():
