@@ -21,11 +21,12 @@ from maas_common import (get_auth_ref, get_nova_client, status_err, status_ok,
 
 def check(args):
     auth_ref = get_auth_ref()
-    auth_token = auth_ref['token']['id']
-    tenant_id = auth_ref['token']['tenant']['id']
+    auth_token = auth_ref['auth_token']
+    tenant_id = auth_ref['project']['id']
 
     COMPUTE_ENDPOINT = 'http://{hostname}:8774/v2/{tenant_id}' \
                        .format(hostname=args.hostname, tenant_id=tenant_id)
+
     try:
         nova = get_nova_client(auth_token=auth_token,
                                bypass_url=COMPUTE_ENDPOINT)
