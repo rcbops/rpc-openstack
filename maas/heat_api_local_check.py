@@ -54,7 +54,7 @@ def check(args, tenant_id):
 
 def main(args):
     auth_ref = get_auth_ref()
-    tenant_id = auth_ref['token']['tenant']['id']
+    tenant_id = auth_ref['project']['id']
     check(args, tenant_id)
 
 

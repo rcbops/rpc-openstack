@@ -24,7 +24,7 @@ from keystoneclient.openstack.common.apiclient import exceptions as exc
 
 def check(args):
 
-    IDENTITY_ENDPOINT = 'http://{ip}:35357/v2.0'.format(ip=args.ip)
+    IDENTITY_ENDPOINT = 'http://{ip}:35357/v3'.format(ip=args.ip)
 
     try:
         keystone = get_keystone_client(endpoint=IDENTITY_ENDPOINT)
@@ -42,7 +42,7 @@ def check(args):
         milliseconds = (end - start) * 1000
 
         # gather some vaguely interesting metrics to return
-        tenant_count = len(keystone.tenants.list())
+        project_count = len(keystone.projects.list())
         user_count = len(keystone.users.list())
 
     status_ok()
@@ -54,7 +54,8 @@ def check(args):
                '%.3f' % milliseconds,
                'ms')
         metric('keystone_user_count', 'uint32', user_count, 'users')
-        metric('keystone_tenant_count', 'uint32', tenant_count, 'tenants')
+        metric('keystone_tenant_count', 'uint32', project_count, 'tenants')
+        metric('keystone_tenant_count', 'uint32', project_count, 'tenants')
 
 
 def main(args):
