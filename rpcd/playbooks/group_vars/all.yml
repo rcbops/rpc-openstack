@@ -16,7 +16,7 @@
 rpc_repo_path: /opt/rpc-openstack/os-ansible-deployment
 
 # RPC Extras version
-rpc_release: 11.0.0rc8
+rpc_release: 11.0.0rc10
 
 # Definitions for the repo server, these should match your OSAD
 # deployment
