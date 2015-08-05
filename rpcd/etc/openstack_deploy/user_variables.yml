@@ -34,3 +34,6 @@ ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AE
 # Keystone overrides
 keystone_token_provider: "keystone.token.providers.uuid.Provider"
 keystone_token_driver: "keystone.token.persistence.backends.sql.Token"
+
+# Galera overrides
+galera_cluster_name: rpc_galera_cluster
