@@ -121,7 +121,7 @@ maas_scheme: http
 # maas_keystone_scheme: https
 # maas_neutron_scheme: https
 # maas_nova_scheme: https
-# maas_horizon_scheme: https
+maas_horizon_scheme: https
 # maas_heat_api_scheme: https
 # maas_heat_cfn_scheme: https
 # maas_heat_cloudwatch_scheme: https
