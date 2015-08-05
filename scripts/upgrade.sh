@@ -18,6 +18,13 @@ set -eux pipefail
 
 BASE_DIR=$( cd "$( dirname ${0} )" && cd ../ && pwd )
 OSAD_DIR="$BASE_DIR/os-ansible-deployment"
+RPCD_DIR="$BASE_DIR/rpcd"
+
+# Merge new overrides into existing user_variables before upgrade
+# contents of existing user_variables take precedence over new overrides
+cp ${RPCD_DIR}/etc/openstack_deploy/user_variables.yml /tmp/upgrade_user_variables.yml
+${BASE_DIR}/scripts/update-yaml.py /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
+mv /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
 
 # Do the upgrade for os-ansible-deployment components
 cd ${OSAD_DIR}
