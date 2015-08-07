@@ -37,3 +37,7 @@ export DEPLOY_OSAD="no"
 source ${OSAD_DIR}/scripts/scripts-library.sh
 cd ${BASE_DIR}
 ${BASE_DIR}/scripts/deploy.sh
+
+# the auth_ref on disk is now not usable by the new plugins
+cd ${RPCD_DIR}/playbooks 
+ansible hosts -m shell -a 'rm /root/.auth_ref.json'
