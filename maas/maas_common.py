@@ -208,7 +208,7 @@ else:
         if not endpoint:
             endpoint = get_endpoint_url_for_service('identity',
                                                     auth_ref['catalog'],
-                                                    'admin')
+                                                    'admin', version='v3')
 
         keystone = k_client.Client(auth_ref=auth_ref, endpoint=endpoint)
 
@@ -393,12 +393,21 @@ def get_auth_details(openrc_file=OPENRC):
 
 
 def get_endpoint_url_for_service(service_type, service_catalog,
-                                 url_type='public'):
+                                 url_type='public', version=None):
+    # version = the version identifier on the end of the url. eg:
+    # for keystone admin api v3:
+    # http://172.29.236.3:35357/v3
+    # so you'd pass version='v3'
+
     for service in service_catalog:
         if service['type'] == service_type:
             for endpoint in service['endpoints']:
                 if endpoint['interface'] == url_type:
-                    return endpoint['url']
+                    if version:
+                        if endpoint['url'].endswith(version):
+                            return endpoint['url']
+                    else:
+                        return endpoint['url']
 
 
 def force_reauth():
