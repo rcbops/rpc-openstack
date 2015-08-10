@@ -1175,7 +1175,7 @@
                 "timeout": 30,
                 "type": "agent.plugin"
             },
-            "nova_spice_console_check--CONTROLLER_nova_console_container-UID": {
+            "nova_console_check--CONTROLLER_nova_console_container-UID": {
                 "active_suppressions": [],
                 "alarms": {
                     "nova_spice_api_local_status--CONTROLLER_nova_console_container-UID": {
