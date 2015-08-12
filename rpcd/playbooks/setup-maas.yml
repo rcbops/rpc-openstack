@@ -13,6 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Gather mons facts for ceph.conf template
+  hosts: mons
+
+- name: Install Ceph dependencies
+  hosts: osds_all:mons_all:&hosts
+  roles:
+    - role: ceph-common
+
 - name: Install MaaS
   hosts: hosts:all_containers
   user: root

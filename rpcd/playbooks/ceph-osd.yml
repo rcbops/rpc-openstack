@@ -19,28 +19,6 @@
 - name: Deploy osds
   hosts: osds
   user: root
-  pre_tasks:
-    - name: Create log dir
-      file:
-        path: "{{ item.path }}"
-        state: directory
-      with_items:
-        - { path: "/openstack/log/{{ inventory_hostname }}-ceph" }
-      when: is_metal | bool
-      tags:
-        - ceph-logs
-        - ceph-log-dirs
-    - name: Create log aggregation links
-      file:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        state: "{{ item.state }}"
-        force: "yes"
-      with_items:
-        - { src: "/openstack/log/{{ inventory_hostname }}-ceph", dest: "/var/log/ceph", state: "link" }
-      when: is_metal | bool
-      tags:
-        - ceph-logs
   roles:
     - ceph-osd
   vars:
