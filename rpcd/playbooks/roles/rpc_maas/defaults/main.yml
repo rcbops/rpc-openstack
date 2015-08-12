@@ -88,7 +88,7 @@ maas_target_alias: public0_v4
 #
 # ssl_check: This flag indicates if the ssl-related checks and alarms should be deployed.
 #
-ssl_check: false
+ssl_check: true
 
 #
 # dell_check: This flag indicates if the Dell-related hardware monitoring checks and alarms should
