@@ -1,0 +1,89 @@
+--- a/playbooks/roles/os_keystone/defaults/main.yml
++++ b/playbooks/roles/os_keystone/defaults/main.yml
+@@ -124,6 +124,8 @@ keystone_service_adminurl: "{{ keystone_service_adminurl_v3 }}"
+ 
+ ## Apache setup
+ keystone_apache_log_level: info
++keystone_wsgi_threads: "{{ ansible_processor_vcpus | default(2) // 2 }}"
++keystone_wsgi_processes: "{{ ansible_processor_vcpus | default(1) }}"
+ 
+ keystone_ssl_enabled: false
+ keystone_ssl_cert_path: /etc/ssl/certs
+--- a/playbooks/roles/os_keystone/templates/keystone-httpd.conf.j2	2015-08-14 20:26:08.660413962 +0000
++++ b/playbooks/roles/os_keystone/templates/keystone-httpd.conf.j2	2015-08-14 21:08:13.036642173 +0000
+@@ -1,10 +1,16 @@
+ # {{ ansible_managed }}
+ 
+-{% set threads = ansible_processor_vcpus|default(2) // 2 %}
+-
+-WSGIDaemonProcess keystone user={{ keystone_system_user_name }} group=nogroup processes={{ ansible_processor_cores|default(1) }} threads={{ threads if threads > 0 else 1 }}
+-
+ <VirtualHost *:{{ keystone_service_port }}>
++    WSGIDaemonProcess     keystone-service user={{ keystone_system_user_name }} group={{ keystone_system_group_name }} processes={{ keystone_wsgi_processes }} threads={{ keystone_wsgi_threads }} display-name=%{GROUP}
++    WSGIProcessGroup      keystone-service
++    WSGIScriptAlias       / /var/www/cgi-bin/keystone/main
++    WSGIApplicationGroup  %{GLOBAL}
++    WSGIPassAuthorization On
++
++    <IfVersion >= 2.4>
++      ErrorLogFormat "%{cu}t %M"
++    </IfVersion>
++
+     LogLevel  {{  keystone_apache_log_level }}
+     ErrorLog  /var/log/keystone/keystone-apache-error.log
+     CustomLog /var/log/keystone/ssl_access.log combined
+@@ -25,11 +31,44 @@
+     SSLOptions +StdEnvVars +ExportCertData
+     {% endif %}
+ 
+-    WSGIScriptAlias /  /var/www/cgi-bin/keystone/main
+-    WSGIProcessGroup keystone
++    {% if keystone_sp is defined -%}
++    ShibURLScheme {{ keystone_service_publicuri_proto }}
++
++    <Location /Shibboleth.sso>
++        SetHandler shib
++    </Location>
++
++    <Location /v3/auth/OS-FEDERATION/websso/saml2>
++        AuthType shibboleth
++        ShibRequestSetting requireSession 1
++        ShibRequestSetting exportAssertion 1
++        ShibRequireSession On
++        ShibExportAssertion On
++        Require valid-user
++    </Location>
++
++    <LocationMatch /v3/OS-FEDERATION/identity_providers/.*?/protocols/saml2/auth>
++        ShibRequestSetting requireSession 1
++        AuthType shibboleth
++        ShibExportAssertion Off
++        Require valid-user
++    </LocationMatch>
++
++    WSGIScriptAliasMatch ^(/v3/OS-FEDERATION/identity_providers/.*?/protocols/.*?/auth)$ /var/www/cgi-bin/keystone/main/$1
++    {%- endif %}
+ </VirtualHost>
+ 
+ <VirtualHost *:{{ keystone_admin_port }}>
++    WSGIDaemonProcess     keystone-admin user={{ keystone_system_user_name }} group={{ keystone_system_group_name }} processes={{ keystone_wsgi_processes }} threads={{ keystone_wsgi_threads }} display-name=%{GROUP}
++    WSGIProcessGroup      keystone-admin
++    WSGIScriptAlias       / /var/www/cgi-bin/keystone/admin
++    WSGIApplicationGroup  %{GLOBAL}
++    WSGIPassAuthorization On
++
++    <IfVersion >= 2.4>
++      ErrorLogFormat "%{cu}t %M"
++    </IfVersion>
++
+     LogLevel  {{  keystone_apache_log_level }}
+     ErrorLog  /var/log/keystone/keystone-apache-error.log
+     CustomLog /var/log/keystone/ssl_access.log combined
+@@ -49,7 +88,4 @@
+     SSLCipherSuite {{ keystone_ssl_cipher_suite }}
+     SSLOptions +StdEnvVars +ExportCertData
+     {% endif %}
+-
+-    WSGIScriptAlias / /var/www/cgi-bin/keystone/admin
+-    WSGIProcessGroup keystone
+ </VirtualHost>
