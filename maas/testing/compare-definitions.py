@@ -57,7 +57,8 @@ def compare(reference, new, ignored_keys=None):
                 missing_from_new[key1] = value1
             else:
                 try:
-                    rec_comp = compare(value1, value2, ignored_keys=ignored_keys)
+                    rec_comp = compare(value1, value2,
+                                       ignored_keys=ignored_keys)
                     if rec_comp:
                         modified[key1] = rec_comp
                 except AttributeError:
@@ -78,12 +79,14 @@ def load_definitions(definitions, directory=None):
     """Return the reference MaaS definitions data."""
     checks_by_host_type = {}
     for definition in definitions:
-        template = definition.endswith('.yml') and definition[:-4] or definition
+        template = (definition.endswith('.yml') and definition[:-4]
+                    or definition)
         data = load_data(template, directory)
         for entity_label, entity in data.viewitems():
             if entity_label in checks_by_host_type:
                 # combine entities, first pass only update checks.
-                checks_by_host_type[entity_label]['checks'].update(entity['checks'])
+                checks = checks_by_host_type[entity_label]['checks']
+                checks.update(entity['checks'])
             else:
                 checks_by_host_type[entity_label] = entity
 
@@ -114,7 +117,8 @@ def translate_reference_entities(ref_entities, mappings=None):
             json_blob = re.sub(label, test_label, json_blob)
             entity = json.loads(json_blob)
             if test_label in checks_by_host_type:
-                checks_by_host_type[test_label]['checks'].update(entity['checks'])
+                checks = checks_by_host_type[test_label]['checks']
+                checks.update(entity['checks'])
             else:
                 checks_by_host_type[test_label] = entity
     return checks_by_host_type
@@ -122,10 +126,12 @@ def translate_reference_entities(ref_entities, mappings=None):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--definitions', nargs='+', help='A list of the definitions to test.')
+    parser.add_argument('--definitions', nargs='+',
+                        help='A list of the definitions to test.')
     parser.add_argument('--directory', default='.')
     parser.add_argument('--test_file')
-    parser.add_argument('--mappings', nargs='+', help='Example, "TestNode1:CONTROLLER,LOADBALANCER"')
+    parser.add_argument('--mappings', nargs='+',
+                        help='Example, "TestNode1:CONTROLLER,LOADBALANCER"')
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -137,4 +143,5 @@ if __name__ == '__main__':
 
     output = compare(trans_ref, new)
     if output:
-        sys.exit(json.dumps(output, indent=4, separators=(',', ': '), sort_keys=True))
+        sys.exit(json.dumps(output, indent=4, separators=(',', ': '),
+                            sort_keys=True))

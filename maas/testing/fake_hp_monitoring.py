@@ -18,10 +18,11 @@ import sys
 args = sys.argv[1:]
 
 if args == ['-s', 'show server']:
-    print 'Status Ok'
+    print('Status Ok')
 elif args == ['-s', 'show dimm']:
-    print 'Status Ok'
+    print('Status Ok')
 elif args == ['ctrl', 'all', 'show', 'config']:
-    print 'logicaldrive OK)'
+    print('logicaldrive OK')
 else:
-    sys.exit('fake_hp_monitoring.py has received the following unexpected arguments - "%s".' % str(args))
+    sys.exit('fake_hp_monitoring.py has received the following '
+             'unexpected arguments - "%s".' % str(args))
