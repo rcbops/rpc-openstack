@@ -15,8 +15,12 @@
 # limitations under the License.
 
 import argparse
-from maas_common import (get_neutron_client, status_err, status_ok,
-                         metric_bool, print_output)
+
+from maas_common import get_neutron_client
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 
 
 def check(args):

@@ -15,10 +15,15 @@
 # limitations under the License.
 
 import argparse
-from time import time
-from ipaddr import IPv4Address
-from maas_common import (get_neutron_client, metric,
-                         status_err, status_ok, metric_bool, print_output)
+import time
+
+import ipaddr
+from maas_common import get_neutron_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 from neutronclient.client import exceptions as exc
 
 
@@ -38,9 +43,9 @@ def check(args):
         status_err(str(e))
     else:
         # time something arbitrary
-        start = time()
+        start = time.time()
         neutron.list_agents()
-        end = time()
+        end = time.time()
         milliseconds = (end - start) * 1000
 
         # gather some metrics
@@ -71,7 +76,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check neutron API')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='neutron API IP address')
         args = parser.parse_args()
         main(args)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from rackspace_monitoring.drivers.rackspace import RackspaceMonitoringValidationError
+from rackspace_monitoring.drivers import rackspace
 from rackspace_monitoring.providers import get_driver
 from rackspace_monitoring.types import Provider
 
@@ -48,7 +48,7 @@ def check(args, conn):
         for check in conn.list_checks(entity):
             try:
                 result = conn.test_existing_check(check)
-            except RackspaceMonitoringValidationError as e:
+            except rackspace.RackspaceMonitoringValidationError as e:
                 print('Entity %s (%s):' % (entity.id, entity.label))
                 print(' - %s' % e)
                 break
@@ -77,7 +77,6 @@ def delete(args, conn):
             return
 
     for entity in _get_entities(args, conn):
-        error = 0
         for check in conn.list_checks(entity):
             conn.delete_check(check)
             count += 1
@@ -107,7 +106,8 @@ def remove_defunct_alarms(args, conn):
         for alarm in conn.list_alarms(entity):
             for container in defunct_alarms:
                 for defunct_alarm in defunct_alarms[container]:
-                    if re.match('%s--.*%s' % (defunct_alarm, container), alarm.label):
+                    if re.match('%s--.*%s' % (defunct_alarm, container),
+                                alarm.label):
                         conn.delete_alarm(alarm)
                         alarm_count += 1
 

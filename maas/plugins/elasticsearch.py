@@ -18,9 +18,12 @@ import json
 import optparse
 import os
 import re
-import requests
 
-from maas_common import metric, status_ok, status_err, print_output
+from maas_common import metric
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
+import requests
 
 
 def get_elasticsearch_bind_host():

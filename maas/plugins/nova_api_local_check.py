@@ -16,10 +16,16 @@
 
 import argparse
 import collections
-from time import time
-from ipaddr import IPv4Address
-from maas_common import (get_auth_ref, get_nova_client, status_err, metric,
-                         status_ok, metric_bool, print_output)
+import time
+
+import ipaddr
+from maas_common import get_auth_ref
+from maas_common import get_nova_client
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 from novaclient.client import exceptions as exc
 
 SERVER_STATUSES = ['ACTIVE', 'STOPPED', 'ERROR']
@@ -30,8 +36,10 @@ def check(args):
     auth_token = auth_ref['auth_token']
     tenant_id = auth_ref['project']['id']
 
-    COMPUTE_ENDPOINT = 'http://{ip}:8774/v2/{tenant_id}' \
-                       .format(ip=args.ip, tenant_id=tenant_id)
+    COMPUTE_ENDPOINT = (
+        'http://{ip}:8774/v2/{tenant_id}'.format(ip=args.ip,
+                                                 tenant_id=tenant_id)
+    )
 
     try:
         nova = get_nova_client(auth_token=auth_token,
@@ -44,16 +52,14 @@ def check(args):
         status_err(str(e))
     else:
         # time something arbitrary
-        start = time()
+        start = time.time()
         nova.services.list()
-        end = time()
+        end = time.time()
         milliseconds = (end - start) * 1000
 
+        servers = nova.servers.list(search_opts={'all_tenants': 1})
         # gather some metrics
-        status_count = collections.Counter(
-            [s.status for s in nova.servers.list(
-             search_opts={'all_tenants': 1})]
-        )
+        status_count = collections.Counter([s.status for s in servers])
 
     status_ok()
     metric_bool('nova_api_local_status', is_up)
@@ -77,7 +83,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check nova API')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='nova API IP address')
         args = parser.parse_args()
         main(args)
