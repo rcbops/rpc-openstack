@@ -72,15 +72,18 @@ def get_api_data(labels):
         checks = CM.list_checks(entity)
         alarms = CM.list_alarms(entity)
         for check in checks:
-            c_json = CM.connection.request("/entities/%s/checks/%s" % (entity.id, check.id)).body
+            c_json = CM.connection.request("/entities/%s/checks/%s" %
+                                           (entity.id, check.id)).body
             c = json.loads(c_json)
             c['alarms'] = []
             for alarm in alarms:
                 if alarm.check_id == check.id:
-                    a_json = CM.connection.request("/entities/%s/alarms/%s" % (entity.id, alarm.id)).body
+                    a_json = CM.connection.request("/entities/%s/alarms/%s" %
+                                                   (entity.id, alarm.id)).body
                     a = json.loads(a_json)
                     c['alarms'].append(a)
-            m_json = CM.connection.request("/entities/%s/checks/%s/metrics" % (entity.id, check.id)).body
+            m_json = CM.connection.request("/entities/%s/checks/%s/metrics" %
+                                           (entity.id, check.id)).body
             c['metrics'] = json.loads(m_json)['values']
 
             d['checks'].append(c)
@@ -175,12 +178,18 @@ if __name__ == '__main__':
 
         if entity['ip_addresses']:
             ip_addrs = []
-            IP_Entry = collections.namedtuple('IPEntry', ('name', 'number', 'version', 'ip_address'))
+            IP_Entry = collections.namedtuple('IPEntry',
+                                              ('name', 'number',
+                                               'version', 'ip_address'))
             for label, ip_address in entity['ip_addresses'].viewitems():
-                match = re.match('(?P<name>[a-z_]+)(?P<number>[0-9]+)_v(?P<version>[46])', label).groups()
+                regex = ('(?P<name>[a-z_]+)'
+                         '(?P<number>[0-9]+)_v(?P<version>[46])')
+                match = re.match(regex, label).groups()
                 entry = IP_Entry(*match, ip_address=ip_address)
                 ip_addrs.append(entry)
-            ip_addrs = sorted(sorted(ip_addrs, key=lambda x: x.version), key=lambda x: x.name)
+            ip_addrs = sorted(
+                sorted(ip_addrs, key=lambda x: x.version),
+                key=lambda x: x.name)
             previous_name = None
             count = None
             for entry in ip_addrs:
@@ -188,14 +197,12 @@ if __name__ == '__main__':
                     count += 1
                 else:
                     count = 0
-                # This needs improving. For now mark all IP addresses as IP_ADDRESS
-                #if entry.name != 'access_ip':
-                #    label = '%s%s_V%s' % (entry.name.upper(), count, entry.version)
-                #    json_bit = re.sub('(?<![0-9]){ip}(?![0-9])'.format(ip=entry.ip_address),
-                #                      'IP_ADDRESS', json_bit)
-                #                      label, json_bit)
-                json_bit = re.sub('%s%s_v%s' % (entry.name, entry.number, entry.version),
-                                  '%s%s_v%s' % (entry.name, count, entry.version),
+                json_bit = re.sub('%s%s_v%s' % (entry.name,
+                                                entry.number,
+                                                entry.version),
+                                  '%s%s_v%s' % (entry.name,
+                                                count,
+                                                entry.version),
                                   json_bit)
                 previous_name = entry.name
         json_bits.extend(('"', entity_label, '":', json_bit, ','))
@@ -205,8 +212,11 @@ if __name__ == '__main__':
     json_blob = re.sub(r'container-[0-9a-f]{8}', 'container-UID', json_blob)
     json_blob = re.sub(r'[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}',
                        'IP_ADDRESS', json_blob)
-    json_blob = re.sub(r'[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}',
-                       'IP_ADDRESS', json_blob)
+    regex = (r'[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:'
+             '[0-9a-f]{1,4}:[0-9a-f]{1,4}:[0-9a-f]{1,4}:'
+             '[0-9a-f]{1,4}:[0-9a-f]{1,4}')
+
+    json_blob = re.sub(regex, 'IP_ADDRESS', json_blob)
 
     filename = args.tasks
     path = os.path.join(directory, filename)

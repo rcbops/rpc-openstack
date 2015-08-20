@@ -205,7 +205,7 @@ def swift_async():
         # If we didn't find a non-empty dict, error out
         maas_common.status_err(
             'No data could be collected about pending async operations'
-            )
+        )
     return {'async': stats}
 
 
@@ -265,7 +265,7 @@ def swift_md5():
     error_re = re.compile('https?://(?P<address>[^:]+):\d+')
     result_re = re.compile(
         '(?P<success>\d+)/(?P<total>\d+)[^\d]+(?P<errors>\d+).*'
-        )
+    )
     output = recon_output('--md5')  # We need to pass --md5 as a string here
     md5_statistics = {}
     checking_dict = {}
@@ -281,7 +281,7 @@ def swift_md5():
             error_dict = error_re.search(line).groupdict()
             maas_common.status_err('md5 mismatch for {0} on host {1}'.format(
                 checking_dict.get('check'), error_dict['address']
-                ))
+            ))
         results_match = result_re.match(line)
         if results_match:
             check_name = checking_dict['check'].replace('.', '_')
@@ -324,7 +324,7 @@ def print_nested_stats(statistics):
 metrics_per_stat = {
     'avg': lambda name, val: maas_common.metric(name, 'double', val),
     'failed': lambda name, val: maas_common.metric(name, 'double', val[:-1])
-    }
+}
 
 DEFAULT_METRIC = lambda name, val: maas_common.metric(name, 'uint64', val)
 
@@ -341,7 +341,7 @@ def print_stats(prefix, statistics):
 def make_parser():
     parser = argparse.ArgumentParser(
         description='Process and print swift-recon statistics'
-        )
+    )
     parser.add_argument('recon',
                         help='Which statistics to collect. Acceptable recon: '
                              '"async-pendings", "md5", "quarantine", '

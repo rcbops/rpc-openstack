@@ -16,18 +16,18 @@
 import argparse
 import collections
 import json
-import tabulate
 import re
+import tabulate
 
 
 def print_tables(data, data_type=None):
     for host, lines in data.viewitems():
         if lines:
             title = '{dt} - {host}'.format(dt=data_type, host=host)
-            print title
-            print '-' * len(title)
-            print tabulate.tabulate(lines, headers='keys', tablefmt='rst')
-            print
+            print(title)
+            print('-' * len(title))
+            print(tabulate.tabulate(lines, headers='keys', tablefmt='rst'))
+            print('\n')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -40,7 +40,10 @@ if __name__ == '__main__':
     MetricDocLine = collections.namedtuple(
         'MetricDocLine', ('Check', 'Metric_Name', 'Metric_Unit'))
 
-    criteria_pattern = re.compile(r'if\s+\((?P<condition>.+?)\s*\)\s*\{\s*return\s+new\s+AlarmStatus\((?P<status>[A-Z]+)')
+    regex = (r'if\s+\((?P<condition>.+?)\s*\)\s*\{\s*return\s+new\s+'
+             'AlarmStatus\((?P<status>[A-Z]+)')
+
+    criteria_pattern = re.compile(regex)
     metrics_by_entity = collections.defaultdict(set)
     alarms_by_entity = collections.defaultdict(set)
 

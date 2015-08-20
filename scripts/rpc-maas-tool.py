@@ -1,11 +1,24 @@
 #!/usr/bin/env python
-
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 from rackspace_monitoring.drivers import rackspace
 from rackspace_monitoring.providers import get_driver
 from rackspace_monitoring.types import Provider
 
-import ConfigParser
 import argparse
+import ConfigParser
 import re
 import sys
 
@@ -39,7 +52,7 @@ def alarms(args, conn):
         if alarms:
             print('Entity %s (%s):' % (entity.id, entity.label))
             for alarm in alarms:
-                print ' - %s' % alarm.label
+                print(' - %s' % alarm.label)
 
 
 def check(args, conn):
@@ -72,7 +85,7 @@ def delete(args, conn):
     count = 0
 
     if args.force is False:
-        print "*** Proceeding WILL delete ALL your checks (and data) ****"
+        print("*** Proceeding WILL delete ALL your checks (and data) ****")
         if raw_input("Type 'from orbit' to continue: ") != 'from orbit':
             return
 
@@ -81,7 +94,7 @@ def delete(args, conn):
             conn.delete_check(check)
             count += 1
 
-    print "Number of checks deleted: %s" % count
+    print("Number of checks deleted: %s" % count)
 
 
 def remove_defunct_checks(args, conn):
@@ -93,7 +106,7 @@ def remove_defunct_checks(args, conn):
                 conn.delete_check(check)
                 check_count += 1
 
-    print "Number of checks deleted: %s" % check_count
+    print("Number of checks deleted: %s" % check_count)
 
 
 def remove_defunct_alarms(args, conn):
@@ -111,7 +124,7 @@ def remove_defunct_alarms(args, conn):
                         conn.delete_alarm(alarm)
                         alarm_count += 1
 
-    print "Number of alarms deleted: %s" % alarm_count
+    print("Number of alarms deleted: %s" % alarm_count)
 
 
 def _get_conn(config, driver):
@@ -122,7 +135,7 @@ def _get_conn(config, driver):
             user = config.get('credentials', 'username')
             api_key = config.get('credentials', 'api_key')
         except Exception as e:
-            print e
+            print(e)
         else:
             conn = driver(user, api_key)
     if not conn and config.has_section('api'):
@@ -130,7 +143,7 @@ def _get_conn(config, driver):
             url = config.get('api', 'url')
             token = config.get('api', 'token')
         except Exception as e:
-            print e
+            print(e)
         else:
             conn = driver(None, None, ex_force_base_url=url,
                           ex_force_auth_token=token)
