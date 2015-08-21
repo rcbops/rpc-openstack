@@ -16,11 +16,14 @@
 
 
 import optparse
-import requests
 import subprocess
 
-from maas_common import (metric, metric_bool, status_ok, status_err,
-                         print_output)
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
+import requests
 
 OVERVIEW_URL = "http://%s:%s/api/overview"
 NODES_URL = "http://%s:%s/api/nodes"
@@ -95,7 +98,8 @@ def main():
 
     if r.ok:
         resp_json = r.json()  # Parse the JSON once
-        max_chans = max(connection['channels'] for connection in resp_json if 'channels' in connection)
+        max_chans = max(connection['channels'] for connection in resp_json
+                        if 'channels' in connection)
         for k in CONNECTIONS_METRICS:
             metrics[k] = {'value': max_chans, 'unit': CONNECTIONS_METRICS[k]}
     else:
@@ -141,7 +145,7 @@ def main():
         # Check that all other queues are equal to it
         if not all(first == q for q in queues):
             # If they're not, the queues are not synchronized
-            print "status err cluster not replicated across all nodes"
+            print("status err cluster not replicated across all nodes")
     else:
         status_err('Received status {0} from RabbitMQ API'.format(
             r.status_code))

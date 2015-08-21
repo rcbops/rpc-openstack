@@ -15,13 +15,18 @@
 # limitations under the License.
 
 import argparse
-from ipaddr import IPv4Address
-import requests
 import re
-from maas_common import (get_auth_details, metric, metric_bool, status_err,
-                         status_ok, print_output)
-from requests import exceptions as exc
+
+import ipaddr
 from lxml import html
+from maas_common import get_auth_details
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
+import requests
+from requests import exceptions as exc
 
 
 def check(args):
@@ -104,7 +109,7 @@ if __name__ == "__main__":
     with print_output():
         parser = argparse.ArgumentParser(description='Check horizon dashboard')
         parser.add_argument('ip',
-                            type=IPv4Address,
+                            type=ipaddr.IPv4Address,
                             help='horizon dashboard IP address')
         args = parser.parse_args()
         main(args)

@@ -15,21 +15,28 @@
 # limitations under the License.
 
 import re
-import sys
 import subprocess
+import sys
 
-from maas_common import status_err, status_ok, metric_bool, print_output
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 
-SUPPORTED_VERSIONS = set([ "7.1.0", "7.4.0" ])
+SUPPORTED_VERSIONS = set(["7.1.0", "7.4.0"])
 OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'
-CHASSIS = re.compile(OM_PATTERN % {'field': '^Health', 'group_pattern': '\w+'}, re.MULTILINE)
-STORAGE = re.compile(OM_PATTERN % {'field': '^Status', 'group_pattern': '\w+'}, re.MULTILINE)
+CHASSIS = re.compile(OM_PATTERN % {'field': '^Health', 'group_pattern': '\w+'},
+                     re.MULTILINE)
+STORAGE = re.compile(OM_PATTERN % {'field': '^Status', 'group_pattern': '\w+'},
+                     re.MULTILINE)
 regex = {'storage': STORAGE, 'chassis': CHASSIS}
 
 
 def hardware_report(report_type, report_request):
     """Return the report as a string."""
-    return subprocess.check_output(['/opt/dell/srvadmin/bin/omreport', report_type, report_request])
+    return subprocess.check_output(['/opt/dell/srvadmin/bin/omreport',
+                                    report_type,
+                                    report_request])
 
 
 def all_okay(report, regex_find):
@@ -51,7 +58,8 @@ def check_openmanage_version():
         # https://github.com/rcbops/rcbops-maas/issues/82#issuecomment-52315709
         # we need to redirect sdterr to stdout just so MaaS does not see any
         # extra output
-        output = subprocess.check_output(['/opt/dell/srvadmin/bin/omconfig', 'about'],
+        output = subprocess.check_output(['/opt/dell/srvadmin/bin/omconfig',
+                                          'about'],
                                          stderr=subprocess.STDOUT)
     except OSError:
         # OSError happens when subprocess cannot find the executable to run

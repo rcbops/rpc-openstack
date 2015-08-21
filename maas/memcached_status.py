@@ -14,13 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
 import argparse
-import memcache
-from ipaddr import IPv4Address
+import re
 
-from maas_common import (status_ok, status_err, metric, metric_bool,
-                         print_output)
+import ipaddr
+from maas_common import metric
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
+import memcache
 
 
 VERSION_RE = re.compile('STAT version (\d+\.\d+\.\d+)(?![-+0-9\\.])')
@@ -53,7 +56,7 @@ def main(args):
     try:
         stats = item_stats(bind_ip, port)
         current_version = stats['version']
-    except TypeError, IndexError:
+    except (TypeError, IndexError):
         is_up = False
     else:
         is_up = True
@@ -72,7 +75,8 @@ def main(args):
 if __name__ == '__main__':
     with print_output():
         parser = argparse.ArgumentParser(description='Check memcached status')
-        parser.add_argument('ip', type=IPv4Address, help='memcached IP address.')
+        parser.add_argument('ip', type=ipaddr.IPv4Address,
+                            help='memcached IP address.')
         parser.add_argument('--port', type=int,
                             default=11211, help='memcached port.')
         args = parser.parse_args()

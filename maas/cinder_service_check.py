@@ -15,9 +15,16 @@
 # limitations under the License.
 
 import argparse
+
+# Technically maas_common isn't third-party but our own thing but hacking
+# consideres it third-party
+from maas_common import get_auth_ref
+from maas_common import get_keystone_client
+from maas_common import metric_bool
+from maas_common import print_output
+from maas_common import status_err
+from maas_common import status_ok
 import requests
-from maas_common import (status_ok, status_err, get_keystone_client,
-                         metric_bool, get_auth_ref, print_output)
 from requests import exceptions as exc
 
 # NOTE(mancdaz): until https://review.openstack.org/#/c/111051/
@@ -29,9 +36,10 @@ def check(auth_ref, args):
 
     keystone = get_keystone_client(auth_ref)
     auth_token = keystone.auth_token
-    VOLUME_ENDPOINT = 'http://{hostname}:8776/v1/{tenant}' \
-                      .format(hostname=args.hostname,
-                              tenant=keystone.tenant_id)
+    VOLUME_ENDPOINT = (
+        'http://{hostname}:8776/v1/{tenant}'.format(hostname=args.hostname,
+                                                    tenant=keystone.tenant_id)
+    )
 
     s = requests.Session()
 
@@ -52,6 +60,13 @@ def check(auth_ref, args):
         status_err('could not get response from cinder api')
 
     services = r.json()['services']
+
+    # We need to match against a host of X and X@lvm (or whatever backend)
+    if args.host:
+        backend = ''.join((args.host, '@'))
+        services = [service for service in services
+                    if (service['host'].startswith(backend) or
+                        service['host'] == args.host)]
 
     if len(services) == 0:
         status_err('No host(s) found in the service list')
