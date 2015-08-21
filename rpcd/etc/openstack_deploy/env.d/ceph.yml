@@ -30,6 +30,7 @@ container_skel:
       - mons
     properties:
       container_release: trusty
+      service_name: ceph
   ceph_osd_container:
     belongs_to:
       - osds_containers
@@ -38,6 +39,7 @@ container_skel:
     properties:
       is_metal: true
       container_release: trusty
+      service_name: ceph
 
 
 physical_skel:
