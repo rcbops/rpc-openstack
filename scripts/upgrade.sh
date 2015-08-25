@@ -47,5 +47,5 @@ cd ${BASE_DIR}
 ${BASE_DIR}/scripts/deploy.sh
 
 # the auth_ref on disk is now not usable by the new plugins
-cd ${RPCD_DIR}/playbooks 
-ansible hosts -m shell -a 'rm /root/.auth_ref.json'
+cd ${RPCD_DIR}/playbooks
+ansible hosts -m file -a 'path=/root/.auth_ref.json state=absent'
