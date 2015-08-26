@@ -1,7 +1,7 @@
-diff --git c/playbooks/galera-install.yml w/playbooks/galera-install.yml
+diff --git a/playbooks/galera-install.yml b/playbooks/galera-install.yml
 index 77958f8..c8a74e3 100644
---- c/playbooks/galera-install.yml
-+++ w/playbooks/galera-install.yml
+--- a/playbooks/galera-install.yml
++++ b/playbooks/galera-install.yml
 @@ -67,6 +67,15 @@
    max_fail_percentage: 20
    user: root
@@ -27,10 +27,26 @@ index 77958f8..c8a74e3 100644
        tags:
          - galera-mysql-dir
      - name: Flush net cache
-diff --git c/playbooks/memcached-install.yml w/playbooks/memcached-install.yml
+diff --git a/playbooks/inventory/group_vars/hosts.yml b/playbooks/inventory/group_vars/hosts.yml
+index b3de426..f78a515 100644
+--- a/playbooks/inventory/group_vars/hosts.yml
++++ b/playbooks/inventory/group_vars/hosts.yml
+@@ -172,6 +172,11 @@ horizon_service_region: "{{ service_region }}"
+ heat_service_region: "{{ service_region }}"
+
+
++## Cinder
++# cinder_backend_lvm_inuse: True if current host has an lvm backend
++cinder_backend_lvm_inuse: '{{ (cinder_backends|default("")|to_json).find("cinder.volume.drivers.lvm.LVMVolumeDriver") != -1 }}'
++
++
+ ## OpenStack Openrc
+ openrc_os_auth_url: "{{ keystone_service_internalurl_v3 }}"
+ openrc_os_password: "{{ keystone_auth_admin_password }}"
+diff --git a/playbooks/memcached-install.yml b/playbooks/memcached-install.yml
 index f0b51b4..1140da1 100644
---- c/playbooks/memcached-install.yml
-+++ w/playbooks/memcached-install.yml
+--- a/playbooks/memcached-install.yml
++++ b/playbooks/memcached-install.yml
 @@ -17,6 +17,16 @@
    hosts: memcached
    max_fail_percentage: 20
@@ -48,10 +64,10 @@ index f0b51b4..1140da1 100644
    roles:
      - { role: "memcached_server", tags: [ "memcached-server" ] }
      - role: "system_crontab_coordination"
-diff --git c/playbooks/os-ceilometer-install.yml w/playbooks/os-ceilometer-install.yml
+diff --git a/playbooks/os-ceilometer-install.yml b/playbooks/os-ceilometer-install.yml
 index 7fb4a6c..6e06ffc 100644
---- c/playbooks/os-ceilometer-install.yml
-+++ w/playbooks/os-ceilometer-install.yml
+--- a/playbooks/os-ceilometer-install.yml
++++ b/playbooks/os-ceilometer-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -86,10 +102,10 @@ index 7fb4a6c..6e06ffc 100644
        tags:
          - ceilometer-logs
    roles:
-diff --git c/playbooks/os-cinder-install.yml w/playbooks/os-cinder-install.yml
-index a05040b..76bd4cc 100644
---- c/playbooks/os-cinder-install.yml
-+++ w/playbooks/os-cinder-install.yml
+diff --git a/playbooks/os-cinder-install.yml b/playbooks/os-cinder-install.yml
+index a05040b..92b8f38 100644
+--- a/playbooks/os-cinder-install.yml
++++ b/playbooks/os-cinder-install.yml
 @@ -18,6 +18,17 @@
    max_fail_percentage: 20
    user: root
@@ -129,7 +145,8 @@ index a05040b..76bd4cc 100644
 -          - "lxc.aa_profile=unconfined"
 +          - "lxc.autodev=0"
            - "lxc.cgroup.devices.allow=a *:* rmw"
-           - "lxc.mount.entry = udev dev devtmpfs defaults 0 0"
+-          - "lxc.mount.entry = udev dev devtmpfs defaults 0 0"
++          - "lxc.mount.entry=udev dev devtmpfs defaults 0 0"
        delegate_to: "{{ physical_host }}"
 -      when: (is_metal == false or is_metal == "False") and inventory_hostname in groups['cinder_volume']
 +      when: >
@@ -157,10 +174,10 @@ index a05040b..76bd4cc 100644
        tags:
          - cinder-logs
    roles:
-diff --git c/playbooks/os-glance-install.yml w/playbooks/os-glance-install.yml
+diff --git a/playbooks/os-glance-install.yml b/playbooks/os-glance-install.yml
 index 226d442..ceb5244 100644
---- c/playbooks/os-glance-install.yml
-+++ w/playbooks/os-glance-install.yml
+--- a/playbooks/os-glance-install.yml
++++ b/playbooks/os-glance-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -204,10 +221,10 @@ index 226d442..ceb5244 100644
        tags:
          - glance-logs
    roles:
-diff --git c/playbooks/os-heat-install.yml w/playbooks/os-heat-install.yml
+diff --git a/playbooks/os-heat-install.yml b/playbooks/os-heat-install.yml
 index 641be0e..ec3f3da 100644
---- c/playbooks/os-heat-install.yml
-+++ w/playbooks/os-heat-install.yml
+--- a/playbooks/os-heat-install.yml
++++ b/playbooks/os-heat-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -242,10 +259,10 @@ index 641be0e..ec3f3da 100644
        tags:
          - heat-logs
    roles:
-diff --git c/playbooks/os-horizon-install.yml w/playbooks/os-horizon-install.yml
+diff --git a/playbooks/os-horizon-install.yml b/playbooks/os-horizon-install.yml
 index 295c9af..da71cd2 100644
---- c/playbooks/os-horizon-install.yml
-+++ w/playbooks/os-horizon-install.yml
+--- a/playbooks/os-horizon-install.yml
++++ b/playbooks/os-horizon-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -280,10 +297,10 @@ index 295c9af..da71cd2 100644
        tags:
          - horizon-logs
    roles:
-diff --git c/playbooks/os-keystone-install.yml w/playbooks/os-keystone-install.yml
+diff --git a/playbooks/os-keystone-install.yml b/playbooks/os-keystone-install.yml
 index 3911dab..2392570 100644
---- c/playbooks/os-keystone-install.yml
-+++ w/playbooks/os-keystone-install.yml
+--- a/playbooks/os-keystone-install.yml
++++ b/playbooks/os-keystone-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -318,10 +335,10 @@ index 3911dab..2392570 100644
        tags:
          - keystone-logs
    roles:
-diff --git c/playbooks/os-neutron-install.yml w/playbooks/os-neutron-install.yml
+diff --git a/playbooks/os-neutron-install.yml b/playbooks/os-neutron-install.yml
 index 503ff4a..b1712fc 100644
---- c/playbooks/os-neutron-install.yml
-+++ w/playbooks/os-neutron-install.yml
+--- a/playbooks/os-neutron-install.yml
++++ b/playbooks/os-neutron-install.yml
 @@ -18,17 +18,29 @@
    max_fail_percentage: 20
    user: root
@@ -372,10 +389,10 @@ index 503ff4a..b1712fc 100644
        tags:
          - neutron-logs
      - name: Create the neutron provider networks facts
-diff --git c/playbooks/os-nova-install.yml w/playbooks/os-nova-install.yml
+diff --git a/playbooks/os-nova-install.yml b/playbooks/os-nova-install.yml
 index 0deb1b6..7b605d7 100644
---- c/playbooks/os-nova-install.yml
-+++ w/playbooks/os-nova-install.yml
+--- a/playbooks/os-nova-install.yml
++++ b/playbooks/os-nova-install.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -428,10 +445,10 @@ index 0deb1b6..7b605d7 100644
        tags:
          - nova-logs
    roles:
-diff --git c/playbooks/rabbitmq-install.yml w/playbooks/rabbitmq-install.yml
+diff --git a/playbooks/rabbitmq-install.yml b/playbooks/rabbitmq-install.yml
 index c8370e5..45adad9 100644
---- c/playbooks/rabbitmq-install.yml
-+++ w/playbooks/rabbitmq-install.yml
+--- a/playbooks/rabbitmq-install.yml
++++ b/playbooks/rabbitmq-install.yml
 @@ -17,6 +17,16 @@
    hosts: rabbitmq_all
    max_fail_percentage: 0
@@ -449,10 +466,10 @@ index c8370e5..45adad9 100644
    roles:
      - role: "rabbitmq_server"
        tags:
-diff --git c/playbooks/repo-server.yml w/playbooks/repo-server.yml
+diff --git a/playbooks/repo-server.yml b/playbooks/repo-server.yml
 index 34acb6a..20e49d9 100644
---- c/playbooks/repo-server.yml
-+++ w/playbooks/repo-server.yml
+--- a/playbooks/repo-server.yml
++++ b/playbooks/repo-server.yml
 @@ -18,6 +18,15 @@
    max_fail_percentage: 20
    user: root
@@ -478,10 +495,10 @@ index 34acb6a..20e49d9 100644
        tags:
          - repo-dirs
      - name: Flush net cache
-diff --git c/playbooks/roles/lxc_container_create/tasks/container_create.yml w/playbooks/roles/lxc_container_create/tasks/container_create.yml
+diff --git a/playbooks/roles/lxc_container_create/tasks/container_create.yml b/playbooks/roles/lxc_container_create/tasks/container_create.yml
 index b5ab225..e30c699 100644
---- c/playbooks/roles/lxc_container_create/tasks/container_create.yml
-+++ w/playbooks/roles/lxc_container_create/tasks/container_create.yml
+--- a/playbooks/roles/lxc_container_create/tasks/container_create.yml
++++ b/playbooks/roles/lxc_container_create/tasks/container_create.yml
 @@ -76,8 +76,7 @@
        mkdir -p /var/log/{{ properties.service_name }}
      container_config:
@@ -492,10 +509,19 @@ index b5ab225..e30c699 100644
    when: properties.service_name is defined
    delegate_to: "{{ physical_host }}"
    tags:
-diff --git c/playbooks/rsyslog-install.yml w/playbooks/rsyslog-install.yml
+diff --git a/playbooks/roles/os_cinder/tasks/main.yml b/playbooks/roles/os_cinder/tasks/main.yml
+index c93e1b1..959048e 100644
+--- a/playbooks/roles/os_cinder/tasks/main.yml
++++ b/playbooks/roles/os_cinder/tasks/main.yml
+@@ -37,3 +37,4 @@
+ - include: cinder_lvm_config.yml
+   when: >
+     inventory_hostname in groups['cinder_volume']
++    and cinder_backend_lvm_inuse
+diff --git a/playbooks/rsyslog-install.yml b/playbooks/rsyslog-install.yml
 index 0a51d52..29d1520 100644
---- c/playbooks/rsyslog-install.yml
-+++ w/playbooks/rsyslog-install.yml
+--- a/playbooks/rsyslog-install.yml
++++ b/playbooks/rsyslog-install.yml
 @@ -18,12 +18,21 @@
    max_fail_percentage: 20
    user: root
@@ -528,10 +554,10 @@ index 0a51d52..29d1520 100644
        tags:
          - rsyslog-storage-dirs
      - name: Flush net cache
-diff --git c/playbooks/utility-install.yml w/playbooks/utility-install.yml
+diff --git a/playbooks/utility-install.yml b/playbooks/utility-install.yml
 index 53555a2..c160d89 100644
---- c/playbooks/utility-install.yml
-+++ w/playbooks/utility-install.yml
+--- a/playbooks/utility-install.yml
++++ b/playbooks/utility-install.yml
 @@ -17,6 +17,16 @@
    hosts: utility_all
    max_fail_percentage: 20
