@@ -18,5 +18,6 @@
     basedir: "{{ patcher_dest_dir}}"
     strip: 1
   with_items: patcher_files
+  when: patcher_files is defined
   tags:
     - apply-patches

@@ -19,8 +19,7 @@ patcher_dest_dir: "/opt/rpc-openstack/os-ansible-deployment"
 # The directory we want to apply patches from
 patcher_src_dir: "/opt/rpc-openstack/rpcd/patches"
 
-
-# The files we want to apply.
-patcher_files:
-  - keystone-httpd-lp-bug-1481339.patch
-  - lxc-container-config-lp-bug-1487130.patch
+# The files we want to apply
+# This is a list of files in patcher_src_dir, and will be applied
+# in the order that they are defined in the list.
+# patcher_files:
