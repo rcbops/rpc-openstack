@@ -49,11 +49,11 @@
 
 - include: distribute_auth_key.yml
   when: >
-    inventory_hostname == groups['utility'][0]
+    groups['nova_api_os_compute']|length > 0 and inventory_hostname == groups['utility'][0]
 
 - include: retrieve_auth_key.yml
   when: >
-    inventory_hostname != groups['utility'][0] and (inventory_hostname in groups['utility'] or inventory_hostname in groups['neutron_all'])
+    groups['nova_api_os_compute']|length > 0 and inventory_hostname != groups['utility'][0] and (inventory_hostname in groups['utility'] or inventory_hostname in groups['neutron_all'])
 
 - include: holland_preinstall.yml
   when: >
