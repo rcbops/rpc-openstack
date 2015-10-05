@@ -264,3 +264,8 @@ maas_pip_dependencies:
   - python-memcached
 
 maas_plugin_dir: /opt/rpc-openstack/maas/plugins/
+
+#
+# maas_excluded_checks: List of checks and alarms to exclude from this deploy
+#
+maas_excluded_checks: []

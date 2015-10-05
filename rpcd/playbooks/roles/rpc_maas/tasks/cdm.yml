@@ -13,27 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: cdm_setup.yml
+- include: ensure_local_checks.yml
   vars:
-    check_name: cpu
-    check_details: "{}"
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    agent_type: "agent.cpu"
-    alarms:
-      - { 'name': 'idle_percent_average', 'criteria': ':set consecutiveCount={{ maas_alarm_local_consecutive_count }} if (metric["idle_percent_average"] <= 10.0) { return new AlarmStatus(WARNING, "CPU time spent idle has dropped to <= 10%"); }' }
-  user: root
-
-- include: cdm_setup.yml
-  vars:
-    check_name: memory
-    check_details: "{}"
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    agent_type: "agent.memory"
-    alarms:
-      - { 'name': 'Memory used', 'criteria': ':set consecutiveCount={{ maas_alarm_local_consecutive_count }} if (percentage(metric["actual_used"], metric["total"]) >= 95.0) { return new AlarmStatus(WARNING, "Memory is 95%+ in use."); }' }
-  user: root
+    checks:
+      - { name: "cpu_check" group: "all" }
+      - { name: "memory_check" group: "all" }
 
 - name: Gathering facts for mounted drives
   set_fact:
