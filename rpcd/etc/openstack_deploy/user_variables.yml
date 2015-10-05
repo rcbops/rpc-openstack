@@ -37,3 +37,13 @@ keystone_token_driver: "keystone.token.persistence.backends.sql.Token"
 
 # Galera overrides
 galera_cluster_name: rpc_galera_cluster
+
+# Ceph overrides
+ceph_mons: >
+  {% set _var = [] -%}
+  {% if 'mons' in groups -%}
+  {% for mon in groups.mons -%}
+  {% if _var.append(hostvars[mon]['ansible_ssh_host']) -%}{% endif -%}
+  {% endfor -%}
+  {% endif -%}
+  {{ _var }}
