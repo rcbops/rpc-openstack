@@ -32,7 +32,7 @@
     alarm_name: lb_api_alarm_cinder
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '200') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['cinder_api'][0]
+    groups['cinder_api']|length > 0 and inventory_hostname == groups['cinder_api'][0]
 
 - include: remote_setup.yml
   user: root
@@ -53,7 +53,7 @@
     alarm_name: lb_api_alarm_glance
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '300') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['glance_api'][0]
+    groups['glance_api']|length > 0 and inventory_hostname == groups['glance_api'][0]
 
 - include: remote_setup.yml
   user: root
@@ -74,7 +74,7 @@
     alarm_name: lb_api_alarm_keystone
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '300') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['keystone'][0]
+    groups['keystone']|length > 0 and inventory_hostname == groups['keystone'][0]
 
 - include: remote_setup.yml
   user: root
@@ -95,7 +95,7 @@
     alarm_name: lb_api_alarm_neutron
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '200') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['neutron_server'][0]
+    groups['neutron_server']|length > 0 and inventory_hostname == groups['neutron_server'][0]
 
 - include: remote_setup.yml
   user: root
@@ -116,7 +116,7 @@
     alarm_name: lb_api_alarm_nova
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '200') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['nova_api_os_compute'][0]
+    groups['nova_api_os_compute']|length > 0 and inventory_hostname == groups['nova_api_os_compute'][0]
 
 - include: remote_setup.yml
   user: root
@@ -137,7 +137,7 @@
     alarm_name: lb_api_alarm_horizon
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '200') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['horizon'][0]
+    groups['horizon']|length > 0 and inventory_hostname == groups['horizon'][0]
 
 - include: remote_setup.yml
   user: root
@@ -158,7 +158,7 @@
     alarm_name: lb_api_alarm_heat_api
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '300') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['heat_api'][0]
+    groups['heat_api']|length > 0 and inventory_hostname == groups['heat_api'][0]
 
 - include: remote_setup.yml
   user: root
@@ -179,7 +179,7 @@
     alarm_name: lb_api_alarm_heat_cfn
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '300') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['heat_api_cfn'][0]
+    groups['heat_api_cfn']|length > 0 and inventory_hostname == groups['heat_api_cfn'][0]
 
 - include: remote_setup.yml
   user: root
@@ -200,4 +200,4 @@
     alarm_name: lb_api_alarm_heat_cloudwatch
     criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '300') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
   when: >
-    inventory_hostname == groups['heat_api_cloudwatch'][0]
+    groups['heat_api_cloudwatch']|length > 0 and inventory_hostname == groups['heat_api_cloudwatch'][0]
