@@ -334,3 +334,58 @@ Returns metrics indicating the status of parts of HP hardware.
     metric hardware_memory_status uint32 1
     metric hardware_processors_status uint32 1
     metric hardware_disk_status uint32 1
+
+***
+#### ceph_monitoring.py
+
+##### Description:
+Connects to a Ceph cluster with the specified user/key and returns a number of metrics which can be used to monitor general health and availability of that cluster
+
+##### Mandatory Arguments:
+- {cluster,mon,osd}: Specify the type of data to return
+- --name NAME: Ceph client name to use when connecting to cluster
+- --keyring KEYRING: Ceph client keyring to use when connecting to cluster
+
+##### Mandatory Arguments (when osd argument given):
+- --osd_ids OSD_IDS: Space-separated list of OSDs, required when `--type osd`
+
+##### Mandatory Arguments (when mon argument given):
+- --host HOST: Specific MON to connect to, required when `--type mon`
+
+##### Example Output:
+Cluster:
+
+    metric cluster_health uint32 2
+    metric monmap_epoch uint32 1
+    metric osdmap_epoch uint32 16
+    metric osds_total uint32 3
+    metric osds_up uint32 3
+    metric osds_in uint32 3
+    metric osds_kb uint64 495007068
+    metric osds_kb_avail uint64 284983032
+    metric osds_kb_used uint64 189214596
+    metric pgs_active_clean uint32 512
+    metric pgs_total uint32 512
+
+MON:
+
+    metric mon_in_quorum uint32 1
+    metric mon_health uint32 2
+
+OSDs:
+
+    metric osd.0_up uint32 1
+    metric osd.0_in uint32 1
+    metric osd.0_kb uint64 165002356
+    metric osd.0_kb_used uint64 63071532
+    metric osd.0_kb_avail uint64 94994344
+    metric osd.1_up uint32 1
+    metric osd.1_in uint32 1
+    metric osd.1_kb uint64 165002356
+    metric osd.1_kb_used uint64 63071532
+    metric osd.1_kb_avail uint64 94994344
+    metric osd.2_up uint32 1
+    metric osd.2_in uint32 1
+    metric osd.2_kb uint64 165002356
+    metric osd.2_kb_used uint64 63071532
+    metric osd.2_kb_avail uint64 94994344
