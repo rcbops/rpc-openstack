@@ -89,3 +89,10 @@
       - name: "auth"
         log_file: "/var/log/auth.log"
         tags: "auth,infrastructure"
+      - name: "ceph-mon"
+        log_file: "/var/log/ceph/ceph-mon.{{ inventory_hostname }}.log"
+        multiline_regex_before: '^[a-z_]*\s'
+        tags: "ceph-mon,ceph,infrastructure"
+      - name: "ceph-osd"
+        log_file: "/var/log/ceph/ceph-osd.*.log"
+        tags: "ceph-osd,ceph,infrastructure"

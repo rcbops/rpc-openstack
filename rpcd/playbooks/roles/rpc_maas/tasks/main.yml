@@ -48,3 +48,7 @@
     external_vip_address: "{{ external_lb_vip_address }}"
   when: >
     inventory_hostname == groups['utility'][0] and ssl_check == true
+
+- include: ceph.yml
+  when:
+    inventory_hostname in groups['ceph_all']
