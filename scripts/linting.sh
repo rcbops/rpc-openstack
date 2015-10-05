@@ -48,6 +48,10 @@ pushd rpcd/playbooks
   echo "Running Syntax Check"
   ansible-playbook -i <(echo $LOCAL_INVENTORY) --syntax-check *.yml --list-tasks || failed=1
 
+  # Remove the third-party Ceph roles because they fail ansible-lint
+  rm -r roles/ceph-common
+  rm -r roles/ceph-mon
+  rm -r roles/ceph-osd
   # Perform a lint check on all playbooks and roles.
   echo "Running Lint Check"
   ansible-lint --version || failed=1

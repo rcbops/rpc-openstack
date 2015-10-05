@@ -30,9 +30,9 @@ The contents of this file would look something like this:
 
 ##### Description:
 Polls a nova API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     status okay
     metric nova_api_local_status uint32 1
@@ -47,9 +47,9 @@ IP address of service to test
 ##### Description:
 Polls a cinder API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return--
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     status okay
     metric cinder_api_local_status uint32 1
@@ -68,9 +68,9 @@ IP address of service to test
 
 ##### Description:
 Polls a keystone API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return--
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     status okay
     metric keystone_api_local_status uint32 1
@@ -83,9 +83,9 @@ IP address of service to test
 
 ##### Description:
 Polls a neutron API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return--
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     status okay
     metric neutron_api_local_status uint32 1
@@ -101,9 +101,9 @@ IP address of service to test
 ##### Description:
 Polls a glance API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return--
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     status okay
     metric glance_api_local_status uint32 1
@@ -118,9 +118,9 @@ IP address of service to test
 ##### Description:
 Polls a (native) heat API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return--
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     metric heat_api_local_status uint32 1
     metric heat_api_local_response_time double 22.752 ms
@@ -128,17 +128,17 @@ IP address of service to test
 ***
 #### service_api_local_check.py
 
-##### mandatory args:
-<name> of service to test
-IP address of service to test
-Port of service to test
-##### optional args:
---path: path to tag on to the end of the url
---auth: whether to authenticate with keystone before the request
---ssl: use https or not
---version: hit a specific version of the api
+##### Mandatory Arguments:
+- Name of service to test
+- IP address of service to test
+- Port of service to test
+##### Optional Arguments:
+- --path: path to tag on to the end of the url
+- --auth: whether to authenticate with keystone before the request
+- --ssl: use https or not
+- --version: hit a specific version of the api
 
-##### example output:
+##### Example Output:
 
     metric <name>_api_local_status uint32 1
     metric <name>_api_local_response_time double 6.222 ms
@@ -153,9 +153,9 @@ Port of service to test
 ##### Description:
 polls the nova api and gets a list of all nova services running in the environment, then checks the output to see if each one is up or not. If a service is marked as administratively down, the check will skip it.
 
-##### mandatory args:
+##### Mandatory Arguments:
 Hostname or IP address of service to test
-##### example output:
+##### Example Output:
 
     metric nova-scheduler_on_host_aio1_nova_scheduler_container-e7b92e0f uint32 1
     metric nova-conductor_on_host_aio1_nova_conductor_container-dcddd54a uint32 1
@@ -168,9 +168,9 @@ Hostname or IP address of service to test
 ##### Description:
 polls the cinder api and gets a list of all cinder services running in the environment, then checks the output to see if each one is up or not. If a service is marked as administratively down, the check will skip it.
 
-##### mandatory args:
+##### Mandatory Arguments:
 Hostname or IP address of service to test
-##### example output:
+##### Example Output:
 
     metric cinder-scheduler_on_host_aio1_cinder_volumes_container-b6ad3de7 uint32 1
     metric cinder-volume_on_host_aio1_cinder_volumes_container-b6ad3de7 uint32 1
@@ -182,9 +182,9 @@ Hostname or IP address of service to test
 ##### Description:
 polls the neutron api and gets a list of all neutron agents running in the environment, then checks the output to see if each one is up or not. If an agent is marked as administratively down, the check will skip it.
 
-##### mandatory args:
+##### Mandatory Arguments:
 Hostname or IP address of service to test
-##### example output:
+##### Example Output:
 
     metric neutron-metadata-agent_8a1a5b16-8546-4801-a31f-e07dce8c068b_on_host_big3.localdomain uint32 1
     metric neutron-linuxbridge-agent_cac1fd39-e23d-47ea-aa20-99f0accf5584_on_host_aio1_nova_compute_container-19824c74 uint32 1
@@ -198,9 +198,9 @@ Hostname or IP address of service to test
 ##### Description:
 polls the neutron metadata agent proxies in each network namespace with DHCP enabled to ensure the agent is responsive.
 
-##### mandatory args:
+##### Mandatory Arguments:
 Hostname or IP address of Neutron API service
-##### example output:
+##### Example Output:
 
     metric neutron-metadata-agent-proxy_status uint32 1
     ...
@@ -214,10 +214,10 @@ Hostname or IP address of Neutron API service
 ##### Description:
 Connects directly to the glance registry and tests status by calling an arbitry url
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
 
-##### example output:
+##### Example Output:
 
     metric glance_registry_local_status uint32 1
     metric glance_registry_local_response_time uint32 356.917 ms
@@ -228,13 +228,13 @@ IP address of service to test
 ##### Description:
 Connects to a memcached server
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of memcached server
 
-##### optional args:
+##### Optional Arguments:
 --port: port of service to test (default '15672')
 
-##### example output:
+##### Example Output:
 
     metric memcache_api_local_status uint32 1
     metric memcache_total_items uint64 563324 items
@@ -248,9 +248,9 @@ IP address of memcached server
 ##### Description:
 Checks the status of the horizon dashboard. First checks that the login page is available, then uses the creds from the openrc-maas file to actually log in.
 
-##### mandatory args:
+##### Mandatory Arguments:
 IP address of service to test
-##### example output:
+##### Example Output:
 
     metric splash_status_code uint32 200
     metric splash_milliseconds double 83.557 ms
@@ -263,13 +263,13 @@ IP address of service to test
 ##### Description:
 connects to an individual member of a rabbit cluster and grabs statistics from the rabbit status API
 
-##### optional args:
---host: IP of service to test (default 'localhost')
---port: port of service to test (default '15672')
---username: username to test with (default 'guest')
---password: password to test with (default 'guest')
+##### Optional Arguments:
+- --host: IP of service to test (default 'localhost')
+- --port: port of service to test (default '15672')
+- --username: username to test with (default 'guest')
+- --password: password to test with (default 'guest')
 
-##### example output:
+##### Example Output:
 
     metric rabbitmq_uptime int64 73439448 ms
     metric rabbitmq_proc_total int64 1048576 processes
@@ -292,11 +292,11 @@ connects to an individual member of a rabbit cluster and grabs statistics from t
 ##### Description:
 connects to an individual member of a galera cluster and checks various statuses to ensure the member is fully synced and considered active
 
-##### optional args:
---host: IP of service to test (default 'localhost')
---port: port of service to test (default '15672')
+##### Optional Arguments:
+- --host: IP of service to test (default 'localhost')
+- --port: port of service to test (default '15672')
 
-##### example output:
+##### Example Output:
 
     metric wsrep_replicated_bytes int64 320737952 bytes
     metric wsrep_received_bytes int64 33470 bytes
@@ -311,26 +311,79 @@ connects to an individual member of a galera cluster and checks various statuses
 ***
 #### conntrack_count.py
 
-#### Description:
+##### Description:
 Returns, as metrics, the values of /proc/sys/net/netfilter/nf_conntrack_count and /proc/sys/net/netfilter/nf_conntrack_max.
 
 The kernel modules nf_conntrack_ipv4 and/or nf_conntrack_ipv6 must be loaded for this plugin to work.
 
-#### Example output:
+##### Example Output:
 
-    status okay
     metric nf_conntrack_max uint32 262144
     metric nf_conntrack_count uint32 354
 
 ***
 #### hp_monitoring.py
 
-#### Description:
+##### Description:
 Returns metrics indicating the status of parts of HP hardware.
 
-#### Example output:
+##### Example Output:
 
-    status okay
     metric hardware_memory_status uint32 1
     metric hardware_processors_status uint32 1
     metric hardware_disk_status uint32 1
+
+***
+#### ceph_monitoring.py
+
+##### Description:
+Connects to a Ceph cluster with the specified user/key and returns a number of metrics which can be used to monitor general health and availability of that cluster
+
+##### Mandatory Arguments:
+- {cluster,mon,osd}: Specify the type of data to return
+- --name NAME: Ceph client name to use when connecting to cluster
+- --keyring KEYRING: Ceph client keyring to use when connecting to cluster
+
+##### Mandatory Arguments (when osd argument given):
+- --osd_ids OSD_IDS: Space-separated list of OSDs, required when `--type osd`
+
+##### Mandatory Arguments (when mon argument given):
+- --host HOST: Specific MON to connect to, required when `--type mon`
+
+##### Example Output:
+Cluster:
+
+    metric cluster_health uint32 2
+    metric monmap_epoch uint32 1
+    metric osdmap_epoch uint32 16
+    metric osds_total uint32 3
+    metric osds_up uint32 3
+    metric osds_in uint32 3
+    metric osds_kb uint64 495007068
+    metric osds_kb_avail uint64 284983032
+    metric osds_kb_used uint64 189214596
+    metric pgs_active_clean uint32 512
+    metric pgs_total uint32 512
+
+MON:
+
+    metric mon_in_quorum uint32 1
+    metric mon_health uint32 2
+
+OSDs:
+
+    metric osd.0_up uint32 1
+    metric osd.0_in uint32 1
+    metric osd.0_kb uint64 165002356
+    metric osd.0_kb_used uint64 63071532
+    metric osd.0_kb_avail uint64 94994344
+    metric osd.1_up uint32 1
+    metric osd.1_in uint32 1
+    metric osd.1_kb uint64 165002356
+    metric osd.1_kb_used uint64 63071532
+    metric osd.1_kb_avail uint64 94994344
+    metric osd.2_up uint32 1
+    metric osd.2_in uint32 1
+    metric osd.2_kb uint64 165002356
+    metric osd.2_kb_used uint64 63071532
+    metric osd.2_kb_avail uint64 94994344
