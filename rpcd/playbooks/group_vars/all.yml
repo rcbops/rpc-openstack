@@ -15,7 +15,7 @@
 # This is the location where the rpc repository was checked out
 rpc_repo_path: /opt/rpc-openstack/openstack-ansible
 
-# RPC Extras version
+# rpc-openstack version
 rpc_release: master
 
 # Definitions for the repo server, these should match your openstack-ansible
