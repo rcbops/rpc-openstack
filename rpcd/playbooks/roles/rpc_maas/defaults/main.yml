@@ -231,6 +231,12 @@ maas_filesystem_critical_threshold: 90.0
 #    warning_threshold: 80.0
 #    critical_threshold: 90.0
 
+# Set the threshold for the "Max Channels per Connection" Rabbitmq alarm
+rabbitmq_max_channels_per_con_threshold: 10
+
+# Set the threshold for the "Disk utilisation" MaaS alarms
+maas_disk_utilisation_threshold: 90
+
 raxmon_repo_url: "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-14.04-x86_64"
 maas_apt_keys:
   - { url: "https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc", state: "present" }
