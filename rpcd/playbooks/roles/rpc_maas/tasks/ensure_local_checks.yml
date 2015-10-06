@@ -16,7 +16,7 @@
 - name: Install local checks
   template:
     src: "{{ item.name }}.yaml.j2"
-    dest: "/etc/rackspace-monitoring-agent.conf.d/{{ item.name }}.yaml"
+    dest: "/etc/rackspace-monitoring-agent.conf.d/{{ item.name }}--{{ inventory_hostname }}.yaml"
     owner: "root"
     group: "root"
     mode: "0755"
@@ -25,6 +25,3 @@
   when: inventory_hostname in groups["{{ item.group }}"]
         and {{ item.name }} not in {{ maas_excluded_checks }}
   delegate_to: "{{ physical_host }}"
-
-#  with_flattened:
-#    - "{{ maas_custom_checks }}"
