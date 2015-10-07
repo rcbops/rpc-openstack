@@ -237,6 +237,19 @@ rabbitmq_max_channels_per_con_threshold: 10
 # Set the threshold for the "Disk utilisation" MaaS alarms
 maas_disk_utilisation_threshold: 90
 
+# Swift MaaS thresholds
+maas_object_quarntine_failed_percentage_threshold: 5.0
+maas_object_quarantine_average_threshold: 25.0
+maas_object_replication_failure_percentage_threshold: 5.0
+maas_account_quarantine_failed_percentage_threshold: 5.0
+maas_account_quarantine_average_threshold: 25.0
+maas_account_replication_failure_percentage_threshold: 5.0
+maas_container_quarantine_failed_percentage_threshold: 5.0
+maas_container_quarantine_average_threshold: 25.0
+maas_container_replication_failure_percentage_threshold: 5.0
+maas_async_pending_failure_percentage_threshold: 5.0
+maas_async_pending_average_threshold: 25.0
+
 raxmon_repo_url: "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-14.04-x86_64"
 maas_apt_keys:
   - { url: "https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc", state: "present" }
