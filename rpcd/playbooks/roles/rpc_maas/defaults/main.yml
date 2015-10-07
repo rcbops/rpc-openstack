@@ -237,6 +237,9 @@ rabbitmq_max_channels_per_con_threshold: 10
 # Set the threshold for the "Disk utilisation" MaaS alarms
 maas_disk_utilisation_threshold: 90
 
+# nf_conntrack threshold
+maas_nf_conntrack_threshold: 90
+
 # Swift MaaS thresholds
 maas_object_quarntine_failed_percentage_threshold: 5.0
 maas_object_quarantine_average_threshold: 25.0

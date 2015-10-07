@@ -29,6 +29,8 @@
   when: >
     inventory_hostname in groups['galera']
 
+- include: network.yml
+
 - include: local.yml
   vars:
     internal_vip_address: "{{ internal_lb_vip_address }}"
