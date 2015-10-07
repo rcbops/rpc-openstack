@@ -25,36 +25,20 @@
   when: >
     maas_filesystem_overrides is not defined and maas_filesystem_monitors is not defined
 
-- include: filesystem_autosetup.yml
+- include: ensure_filesystem_auto_checks.yml
   vars:
-    check_name: filesystem
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    agent_type: "agent.filesystem"
     drives: "{{ mounted_drives.split(',') }}"
-    warning_threshold: "{{ maas_filesystem_warning_threshold }}"
-    critical_threshold: "{{ maas_filesystem_critical_threshold }}"
-  user: root
   when: >
     maas_filesystem_overrides is not defined and maas_filesystem_monitors is not defined
 
-- include: filesystem_setup.yml
+- include: ensure_filesystem_checks.yml
   vars:
-    check_name: filesystem
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    agent_type: "agent.filesystem"
     drives: "{{ maas_filesystem_monitors }}"
-  user: root
   when: >
     maas_filesystem_overrides is not defined and maas_filesystem_monitors is defined
 
-- include: filesystem_setup.yml
+- include: ensure_filesystem_checks.yml
   vars:
-    check_name: filesystem
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    agent_type: "agent.filesystem"
     drives: "{{ maas_filesystem_overrides }}"
   user: root
   when: >
