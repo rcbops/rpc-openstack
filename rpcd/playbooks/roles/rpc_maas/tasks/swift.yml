@@ -68,29 +68,6 @@
   when: >
     inventory_hostname in groups['swift_proxy']
 
-# Setup swift-proxy remote LB API healthcheck
-- include: remote_setup.yml
-  user: root
-  vars:
-    entity_name: "{{ lb_name }}"
-    target_alias: "{{ maas_target_alias }}"
-    check_type: remote.http
-    check_name: lb_api_check_swift_proxy
-    check_period: "{{ maas_check_period }}"
-    check_timeout: "{{ maas_check_timeout }}"
-    monitoring_zones: "{{ maas_monitoring_zones }}"
-    notification_plan: "{{ maas_notification_plan }}"
-    scheme: "{{ maas_swift_proxy_scheme | default(maas_scheme)}}"
-    ip_address: "{{ external_vip_address }}"
-    port: 8080
-    path: "/healthcheck"
-    url: "{{ scheme }}://{{ ip_address }}:{{ port }}{{ path }}"
-    alarm_name: lb_api_alarm_swift_proxy
-    criteria: ":set consecutiveCount={{ maas_alarm_remote_consecutive_count }} if (metric['code'] != '200') { return new AlarmStatus(CRITICAL, 'API unavailable.'); }"
-  when:
-    - groups['swift_proxy'][0] is defined
-    - inventory_hostname == groups['swift_proxy'][0]
-
 # Setup swift host local swift-recon checks
 - include: local_setup.yml
   vars:

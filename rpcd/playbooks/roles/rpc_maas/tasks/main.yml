@@ -19,11 +19,11 @@
 
 - include: keystone_user.yml
   when: >
-    inventory_hostname == groups['utility'][0]
+    groups['utility']|length > 0 and inventory_hostname == groups['utility'][0]
 
 - include: rabbitmq_user.yml
   when: >
-    inventory_hostname == groups['rabbitmq_all'][0]
+    groups['rabbitmq_all']|length > 0 and inventory_hostname == groups['rabbitmq_all'][0]
 
 - include: create_my_cnf.yml
   when: >
@@ -35,19 +35,13 @@
 
 - include: remote.yml
   vars:
-    external_vip_address: "{{ external_lb_vip_address }}"
+    ip_address: "{{ external_lb_vip_address }}"
   when: >
     remote_check == true
 
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"
-
-- include: ssl_check.yml
-  vars:
-    external_vip_address: "{{ external_lb_vip_address }}"
-  when: >
-    inventory_hostname == groups['utility'][0] and ssl_check == true
 
 - include: ceph.yml
   when:

@@ -1,0 +1,17 @@
+type              : remote.http
+label             : lb_api_check_swift_proxy
+disabled          : false
+period            : "{{ maas_check_period }}"
+timeout           : "{{ maas_check_timeout }}"
+target-alias      : "{{ maas_target_alias }}"
+details           :
+    url           : "{{ maas_swift_proxy_scheme | default(maas_scheme)}}://{{ ip_address }}:8080/healthcheck"
+alarms            :
+    lb_api_alarm_swift_proxy:
+        notification-plan   : "{{ maas_notification_plan }}"
+        label               : lb_api_alarm_swift_proxy
+        criteria            : |
+            consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (metric['code'] != '200') {
+                return new AlarmStatus(CRITICAL, 'API unavailable.');
+            }
