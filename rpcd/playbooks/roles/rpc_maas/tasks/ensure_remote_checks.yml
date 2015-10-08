@@ -20,7 +20,7 @@
     owner: "root"
     group: "root"
     mode: "0755"
-  with:
+  with_items:
     - "{{ checks }}"
   when: groups["{{ item.group }}"]|length > 0
         and inventory_hostname in groups["{{ item.group }}"][0]

@@ -241,7 +241,7 @@ maas_disk_utilisation_threshold: 90
 maas_nf_conntrack_threshold: 90
 
 # Swift MaaS thresholds
-maas_object_quarntine_failed_percentage_threshold: 5.0
+maas_object_quarantine_failed_percentage_threshold: 5.0
 maas_object_quarantine_average_threshold: 25.0
 maas_object_replication_failure_percentage_threshold: 5.0
 maas_account_quarantine_failed_percentage_threshold: 5.0

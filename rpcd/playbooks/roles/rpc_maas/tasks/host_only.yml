@@ -27,8 +27,8 @@
   vars:
     ip_address: "{{ external_lb_vip_address }}"
     checks:
-      - { service: "cinder" group: "cinder_api" }
-      - { service: "glance" group: "glance_api" }
+      - { service: "cinder", group: "cinder_api" }
+      - { service: "glance", group: "glance_api" }
   when: >
     remote_check == true and inventory_hostname == groups['hosts'][0]
 

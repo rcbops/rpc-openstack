@@ -44,7 +44,11 @@
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"
+  when: >
+    inventory_hostname in groups['swift_all']
 
 - include: ceph.yml
-  when:
-    inventory_hostname in groups['ceph_all']
+  when: >
+    inventory_hostname in groups['ceph_all'] and
+    groups['ceph_all'] is defined
+    

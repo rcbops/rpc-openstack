@@ -16,6 +16,6 @@
 - include: ensure_local_checks.yml
   vars:
     checks:
-      - { name: "hp-memory" group: "all" }
-      - { name: "hp-processors" group: "all" }
-      - { name: "hp-vdisk" group: "all" }
+      - { name: "hp-memory", group: "all" }
+      - { name: "hp-processors", group: "all" }
+      - { name: "hp-vdisk", group: "all" }

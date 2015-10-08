@@ -20,7 +20,7 @@
     owner: "root"
     group: "root"
     mode: "0755"
-  with:
+  with_items:
     - "{{ checks }}"
   when: inventory_hostname in groups["{{ item.group }}"]
         and {{ item.name }} not in {{ maas_excluded_checks }}
