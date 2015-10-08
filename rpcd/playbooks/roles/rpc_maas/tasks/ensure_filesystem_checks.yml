@@ -19,8 +19,9 @@
     dest: "/etc/rackspace-monitoring-agent.conf.d/{{ item.filesystem|replace('/', '_') }}--{{ inventory_hostname }}.yaml"
     owner: "root"
     group: "root"
-    mode: "0755"
+    mode: "0644"
   with_items:
-    - drives
+    - "{{ drives }}"
   when: inventory_hostname in groups["hosts"]
   delegate_to: "{{ physical_host }}"
+  notify: Restart raxmon agent

@@ -19,10 +19,12 @@
     dest: "/etc/rackspace-monitoring-agent.conf.d/{{ item.name }}.yaml"
     owner: "root"
     group: "root"
-    mode: "0755"
+    mode: "0644"
   with_items:
     - "{{ checks }}"
-  when: groups["{{ item.group }}"]|length > 0
-        and inventory_hostname in groups["{{ item.group }}"][0]
-        and {{ item.name }} not in {{ maas_excluded_checks }}
+  when:
+    - groups["{{item.group}}"]|length > 0
+    - inventory_hostname == groups["{{item.group}}"][0]
+    - item.name not in maas_excluded_checks
   delegate_to: "{{ physical_host }}"
+  notify: Restart raxmon agent

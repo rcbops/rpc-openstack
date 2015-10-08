@@ -23,15 +23,6 @@
   vars:
     entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension }}"
 
-- include: ensure_remote_checks.yml
-  vars:
-    ip_address: "{{ external_lb_vip_address }}"
-    checks:
-      - { service: "cinder", group: "cinder_api" }
-      - { service: "glance", group: "glance_api" }
-  when: >
-    remote_check == true and inventory_hostname == groups['hosts'][0]
-
 - include: cdm.yml
 
 - include: dell.yml

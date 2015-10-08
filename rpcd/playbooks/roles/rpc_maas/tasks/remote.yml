@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: ensure_local_checks.yml
+- include: ensure_remote_checks.yml
   vars:
     checks:
       - { name: "lb_api_check_cinder", group: "cinder_api" }
@@ -26,11 +26,11 @@
       - { name: "lb_api_check_heat_cfn", group: "heat_api_cfn" }
       - { name: "lb_api_check_heat_cloudwatch", group: "heat_api_cloudwatch" }
       - { name: "lb_api_check_swift_proxy", group: "swift_proxy" }
-      - { name: "lb_ssl_cert_expiry_check", group: "all"}
 
-- include: ensure_local_checks.yml
+- include: ensure_remote_checks.yml
   vars:
     checks:
-      - { name: "lb_ssl_cert_expiry_check", group: "all"}
+      - { name: "lb_ssl_cert_expiry_check", group: "utility"}
   when: >
-    groups['utility']|length > 0 and inventory_hostname == groups['utility'][0] and ssl_check == true
+    - {{ groups['utility']|length }} > 0
+    - ssl_check == true

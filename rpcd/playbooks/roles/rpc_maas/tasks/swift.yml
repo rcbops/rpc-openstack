@@ -16,11 +16,17 @@
 - name: Set Storage address fact for host
   set_fact:
     storage_bridge: "{{ 'ansible_' + swift.storage_network|replace('-', '_') }}"
-  when: swift is defined and swift.storage_network is defined
+  when:
+    - swift is defined
+    - swift.storage_network is defined
+    - inventory_hostname in groups['swift_hosts']
 
 - name: Set Storage_address fact for host
   set_fact:
     storage_address: "{{ hostvars[inventory_hostname][storage_bridge]['ipv4']['address'] | default(container_address) }}"
+  when:
+    - inventory_hostname in groups['swift_hosts']
+  
 
 # Setup Swift Server healthchecks
 - include: ensure_local_checks.yml

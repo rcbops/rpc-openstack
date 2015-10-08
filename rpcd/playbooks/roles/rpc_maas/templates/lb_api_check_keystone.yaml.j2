@@ -3,7 +3,8 @@ label             : lb_api_check_keystone
 disabled          : false
 period            : "{{ maas_check_period }}"
 timeout           : "{{ maas_check_timeout }}"
-target-alias      : "{{ maas_target_alias }}"
+target_resolver   : "IPv4"
+target_hostname   : "{{ ip_address }}"
 details           :
     url           : "{{ maas_keystone_scheme | default(maas_scheme)}}://{{ ip_address }}:{{ keystone_service_port }}"
 alarms            :
