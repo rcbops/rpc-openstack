@@ -7,9 +7,13 @@ target_resolver   : "IPv4"
 target_hostname   : "{{ ip_address }}"
 details           :
     url           : "{{ maas_heat_api_scheme | default(maas_scheme)}}://{{ ip_address }}:8004"
+monitoring_zones_poll:
+{% for zone in maas_monitoring_zones %}
+  - {{ zone }}
+{% endfor %}
 alarms            :
     lb_api_alarm_heat_api   :
-        notification-plan   : "{{ maas_notification_plan }}"
+        notification_plan_id: "{{ maas_notification_plan }}"
         label               : lb_api_alarm_heat_api
         criteria            : |
             consecutiveCount={{ maas_alarm_local_consecutive_count }}
