@@ -16,7 +16,7 @@ alarms            :
         notification_plan_id: "{{ maas_notification_plan }}"
         label               : lb_api_alarm_glance
         criteria            : |
-            consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric['code'] != '300') {
                 return new AlarmStatus(CRITICAL, 'API unavailable.');
             }
