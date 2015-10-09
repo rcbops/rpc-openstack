@@ -9,54 +9,54 @@ details     :
 alarms      :
     swift_quarantine_object_failed :
         label                   : swift_quarantine_object_failed--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["objects_failed"] > {{ maas_object_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Quarantine Percentage Above Threshold");
             }
 
     swift_quarantine_object_avg :
         label                   : swift_quarantine_object_avg--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["objects_avg"] > {{ maas_object_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Quarantine Average Above Threshold");
             }
 
     swift_quarantine_account_failed :
         label                   : swift_quarantine_account_failed--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["accounts_failed"] > {{ maas_account_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Account Quarantine Percentage Above Threshold");
             }
 
     swift_quarantine_account_avg :
         label                   : swift_quarantine_account_avg--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["accounts_avg"] > {{ maas_account_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Account Quarantine Average Above Threshold");
             }
 
     swift_quarantine_container_failed :
         label                   : swift_quarantine_container_failed--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["containers_failed"] > {{ maas_container_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Container Quarantine Percentage Above Threshold");
             }
 
     swift_quarantine_container_avg :
         label                   : swift_quarantine_container_avg--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["containers_avg"] > {{ maas_container_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Container Quarantine Average Above Threshold");
             }

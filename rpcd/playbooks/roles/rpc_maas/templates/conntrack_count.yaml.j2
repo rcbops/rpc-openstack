@@ -9,9 +9,9 @@ details     :
 alarms      :
     conntrack_count_status :
         label                   : conntrack_count_status--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (percentage(metric["nf_conntrack_count"] , metric["nf_conntrack_max"]) > {{ maas_nf_conntrack_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Connection count is > {{ maas_nf_conntrack_threshold }}% of maximum allowed.");
             }

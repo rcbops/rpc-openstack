@@ -9,18 +9,18 @@ details     :
 alarms      :
     mon_health_err :
         label                   : mon_health_err--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["mon_health"] == 0) {
                 return new AlarmStatus(CRITICAL, "Ceph mon error.");
             }
 
     mon_health_warn :
         label                   : mon_health_warn--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["mon_health"] == 1) {
                 return new AlarmStatus(WARNING, "Ceph mon warning.");
             }

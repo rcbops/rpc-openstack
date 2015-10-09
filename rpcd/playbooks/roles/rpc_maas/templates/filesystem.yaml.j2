@@ -8,9 +8,9 @@ details     :
 alarms      :
     filesystem_{{ item.filesystem }}_check :
         label                   : "Disk space used on {{ item.filesystem }}--{{ ansible_hostname }}"
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (percentage(metric['used'], metric['total']) >= {{ item.critical_threshold }}) {
                 return new AlarmStatus(CRITICAL, "{{ item }} filesystem is >= {{ item.critical_threshold }}% full.");
             }

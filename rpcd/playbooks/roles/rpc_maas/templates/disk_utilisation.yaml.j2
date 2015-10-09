@@ -10,9 +10,9 @@ alarms      :
 {% for device in devices %}
     percentage_disk_utilisation_{{ device }}:
         label                   : percentage_disk_utilisation_{{ device }}--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["disk_utilisation_{{ device }}"] > {{ maas_disk_utilisation_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Disk utilisation for {{ device }} >= {{ maas_disk_utilisation_threshold }}%");
             }

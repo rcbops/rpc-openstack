@@ -9,9 +9,9 @@ details     :
 alarms      :
     swift_object_replication_check :
         label                   : swift_object_replication_check--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["time_failed"] > {{ maas_object_replication_failure_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Replication Failure Percentage Above Threshold");
             }

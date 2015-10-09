@@ -1,5 +1,5 @@
 type: agent.plugin
-label: nova_cert_check--{{ ansible_hostname }}
+label: nova_conductor_check--{{ ansible_hostname }}
 disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
@@ -7,11 +7,11 @@ details     :
     file    : nova_service_check.py
     args    : ["--host", "{{ ansible_nodename }}", "{{ internal_vip_address }}"]
 alarms      :
-    nova_cert_status :
-        label                   : nova_cert_status--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+    nova_conductor_status :
+        label                   : nova_conductor_status--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["nova-cert_status"] != 1) {
-                return new AlarmStatus(CRITICAL, "nova-cert down");
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (metric["nova-conductor_status"] != 1) {
+                return new AlarmStatus(CRITICAL, "nova-conductor down");
             }

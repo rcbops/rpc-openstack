@@ -9,9 +9,9 @@ details     :
 alarms      :
     cinder_api_local_status :
         label                   : cinder_api_local_status--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["cinder_api_local_status"] != 1) {
                 return new AlarmStatus(CRITICAL, "API unavailable");
             }

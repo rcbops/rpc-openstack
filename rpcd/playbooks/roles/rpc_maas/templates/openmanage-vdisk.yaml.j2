@@ -5,13 +5,13 @@ period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
     file    : openmanage.py
-    args    : ["{{ chassis }}", "{{ vdisk }}"]
+    args    : ["chassis", "vdisk"]
 alarms      :
     openmanage-vdisk :
         label                   : openmanage-vdisk--{{ inventory_hostname|quote }}
-        notification-plan       :{{ maas_notification_plan }}
+        notification_plan_id    : {{ maas_notification_plan }}
         criteria                : |
-            consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["hardware_vdisk_status"] != 1) {
                 return new AlarmStatus(CRITICAL, "Physical Disk Error");
             }

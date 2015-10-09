@@ -9,18 +9,18 @@ details     :
 alarms      :
     swift_async_failure_check :
         label                   : swift_async_failure_check--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["async_failed"] > {{ maas_async_pending_failure_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Async Pending Failure Percentage Above Threshold");
             }
 
     swift_async_avg_check :
         label                   : swift_async_avg_check--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["async_avg"] > {{ maas_async_pending_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Async Pending Average above threshold");
             }

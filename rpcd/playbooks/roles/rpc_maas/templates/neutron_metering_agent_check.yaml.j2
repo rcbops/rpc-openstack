@@ -9,9 +9,9 @@ details     :
 alarms      :
     neutron_metering_agent_status :
         label                   : neutron_metering_agent_status--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["neutron-metering-agent_status"] != 1) {
                 return new AlarmStatus(CRITICAL, "neutron-metering-agent down");
             }

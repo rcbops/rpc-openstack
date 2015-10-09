@@ -10,9 +10,9 @@ alarms      :
 {% for osd_id in ceph_osd_host['osd_ids'] %}
     ceph_warn_osd.{{ osd_id }} :
         label                   : ceph_warn_osd.{{ osd_id }}--{{ ansible_hostname }}
-        notification-plan       : "{{ maas_notification_plan }}"
+        notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
-            :set ConsecutiveCount={{ maas_alarm_local_consecutive_count }}
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["osd.{{ osd_id }}"] == 0) {
                 return new AlarmStatus(CRITICAL, "Ceph osd error.");
             }
