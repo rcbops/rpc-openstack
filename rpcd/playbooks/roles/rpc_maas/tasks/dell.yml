@@ -16,6 +16,6 @@
 - include: ensure_local_checks.yml
   vars:
     checks:
-      - { name: "openmanage-memory", group: "all" }
-      - { name: "openmanage-processors", group: "all" }
-      - { name: "openmanage-vdisk", group: "all" }
+      - { name: "openmanage-memory", group: "hosts" }
+      - { name: "openmanage-processors", group: "hosts" }
+      - { name: "openmanage-vdisk", group: "hosts" }

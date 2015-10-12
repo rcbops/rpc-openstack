@@ -16,8 +16,8 @@
 - include: ensure_local_checks.yml
   vars:
     checks:
-      - { name: "cpu_check", group: "all" }
-      - { name: "memory_check", group: "all" }
+      - { name: "cpu_check", group: "hosts" }
+      - { name: "memory_check", group: "hosts" }
 
 - name: Gathering facts for mounted drives
   set_fact:

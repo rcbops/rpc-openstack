@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: host_only.yml
+- include: host_setup.yml
   when: >
     inventory_hostname in groups['hosts']
 
@@ -28,6 +28,10 @@
 - include: create_my_cnf.yml
   when: >
     inventory_hostname in groups['galera']
+
+- include: host_monitoring.yml
+  when: >
+    inventory_hostname in groups['hosts']
 
 - include: network.yml
 
