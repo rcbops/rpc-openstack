@@ -13,7 +13,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["disk_utilisation_{{ device }}"] > {{ maas_disk_utilisation_threshold }}) {
-                return new AlarmStatus(CRITICAL, "Disk utilisation for {{ device }} >= {{ maas_disk_utilisation_threshold }}%");
+            if (metric["disk_utilisation_{{ device }}"] > {{ disk_utilisation_threshold }}) {
+                return new AlarmStatus(CRITICAL, "Disk utilisation for {{ device }} >= {{ disk_utilisation_threshold }}%");
             }
 {% endfor %}

@@ -12,7 +12,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["objects_failed"] > {{ maas_object_quarantine_failed_percentage_threshold }}) {
+            if (metric["objects_failed"] > {{ swift_object_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Quarantine Percentage Above Threshold");
             }
 
@@ -21,7 +21,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["objects_avg"] > {{ maas_object_quarantine_average_threshold }}) {
+            if (metric["objects_avg"] > {{ swift_object_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Quarantine Average Above Threshold");
             }
 
@@ -30,7 +30,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["accounts_failed"] > {{ maas_account_quarantine_failed_percentage_threshold }}) {
+            if (metric["accounts_failed"] > {{ swift_account_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Account Quarantine Percentage Above Threshold");
             }
 
@@ -39,7 +39,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["accounts_avg"] > {{ maas_account_quarantine_average_threshold }}) {
+            if (metric["accounts_avg"] > {{ swift_account_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Account Quarantine Average Above Threshold");
             }
 
@@ -48,7 +48,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["containers_failed"] > {{ maas_container_quarantine_failed_percentage_threshold }}) {
+            if (metric["containers_failed"] > {{ swift_container_quarantine_failed_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Container Quarantine Percentage Above Threshold");
             }
 
@@ -57,6 +57,6 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["containers_avg"] > {{ maas_container_quarantine_average_threshold }}) {
+            if (metric["containers_avg"] > {{ swift_container_quarantine_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Container Quarantine Average Above Threshold");
             }

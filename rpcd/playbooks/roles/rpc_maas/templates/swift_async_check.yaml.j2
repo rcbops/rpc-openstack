@@ -12,7 +12,7 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["async_failed"] > {{ maas_async_pending_failure_percentage_threshold }}) {
+            if (metric["async_failed"] > {{ swift_async_pending_failure_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Async Pending Failure Percentage Above Threshold");
             }
 
@@ -21,6 +21,6 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["async_avg"] > {{ maas_async_pending_average_threshold }}) {
+            if (metric["async_avg"] > {{ swift_async_pending_average_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Async Pending Average above threshold");
             }

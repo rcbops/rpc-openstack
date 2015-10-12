@@ -12,6 +12,6 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (percentage(metric["nf_conntrack_count"] , metric["nf_conntrack_max"]) > {{ maas_nf_conntrack_threshold }}) {
-                return new AlarmStatus(CRITICAL, "Connection count is > {{ maas_nf_conntrack_threshold }}% of maximum allowed.");
+            if (percentage(metric["nf_conntrack_count"] , metric["nf_conntrack_max"]) > {{ nf_conntrack_threshold }}) {
+                return new AlarmStatus(CRITICAL, "Connection count is > {{ nf_conntrack_threshold }}% of maximum allowed.");
             }

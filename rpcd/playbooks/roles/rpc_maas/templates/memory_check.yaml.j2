@@ -9,6 +9,6 @@ alarms            :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (percentage(metric["actual_used"], metric["total"]) >= 95.0) {
-                return new AlarmStatus(WARNING, "Memory is 95%+ in use.");
+            if (percentage(metric["actual_used"], metric["total"]) >= {{ memory_used_percentage_threshold }}) {
+                return new AlarmStatus(WARNING, "Memory is {{ memory_used_percentage_threshold }}%+ in use.");
             }

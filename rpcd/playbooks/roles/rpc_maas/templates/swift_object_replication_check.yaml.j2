@@ -12,6 +12,6 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["time_failed"] > {{ maas_object_replication_failure_percentage_threshold }}) {
+            if (metric["time_failed"] > {{ swift_object_replication_failure_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Object Replication Failure Percentage Above Threshold");
             }
