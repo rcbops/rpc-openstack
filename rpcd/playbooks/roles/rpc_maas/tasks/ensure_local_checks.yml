@@ -27,3 +27,14 @@
     - item.name not in maas_excluded_checks
   delegate_to: "{{ physical_host }}"
   notify: Restart raxmon agent 
+
+- name: Remove checks that are excluded
+  file:
+    path: "/etc/rackspace-monitoring-agent.conf.d/{{ item.name }}--{{ inventory_hostname }}.yaml"
+    state: absent
+  with_items:
+    - "{{ checks }}"
+  when:
+    - item.name in maas_excluded_checks
+  delegate_to: "{{ physical_host }}"
+  notify: Restart raxmon agent
