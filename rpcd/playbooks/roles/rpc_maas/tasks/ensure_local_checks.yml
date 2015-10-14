@@ -26,7 +26,7 @@
     - inventory_hostname in groups["{{ item.group }}"]
     - item.name not in maas_excluded_checks
   delegate_to: "{{ physical_host }}"
-  notify: Restart raxmon agent 
+  notify: Restart raxmon agent
 
 - name: Remove checks that are excluded
   file:

@@ -55,4 +55,3 @@
   when: >
     inventory_hostname in groups['ceph_all'] and
     groups['ceph_all'] is defined
-    

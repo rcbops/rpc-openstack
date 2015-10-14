@@ -26,7 +26,7 @@
     storage_address: "{{ hostvars[inventory_hostname][storage_bridge]['ipv4']['address'] | default(container_address) }}"
   when:
     - inventory_hostname in groups['swift_hosts']
-  
+
 
 # Setup Swift Server healthchecks
 - include: ensure_local_checks.yml
