@@ -15,22 +15,11 @@
 
 - include: ensure_remote_checks.yml
   vars:
-    checks:
-      - { name: "lb_api_check_cinder", group: "cinder_api" }
-      - { name: "lb_api_check_glance", group: "glance_api" }
-      - { name: "lb_api_check_keystone", group: "keystone" }
-      - { name: "lb_api_check_neutron", group: "neutron_server" }
-      - { name: "lb_api_check_nova", group: "nova_api_os_compute" }
-      - { name: "lb_api_check_horizon", group: "horizon" }
-      - { name: "lb_api_check_heat_api", group: "heat_api" }
-      - { name: "lb_api_check_heat_cfn", group: "heat_api_cfn" }
-      - { name: "lb_api_check_heat_cloudwatch", group: "heat_api_cloudwatch" }
-      - { name: "lb_api_check_swift_proxy", group: "swift_proxy" }
+    checks: "{{ openstack_service_remote_checks_list }}"
 
 - include: ensure_remote_checks.yml
   vars:
-    checks:
-      - { name: "lb_ssl_cert_expiry_check", group: "utility"}
+    checks: "{{ ssl_cert_checks_list }}"
   when: >
     - {{ groups['utility']|length }} > 0
     - ssl_check == true

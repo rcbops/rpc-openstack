@@ -15,6 +15,4 @@
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "conntrack_count", group: "hosts" }
-
+    checks: "{{ network_checks_list }}"

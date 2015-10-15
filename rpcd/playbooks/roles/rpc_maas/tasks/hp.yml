@@ -15,7 +15,4 @@
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "hp-memory", group: "hosts" }
-      - { name: "hp-processors", group: "hosts" }
-      - { name: "hp-vdisk", group: "hosts" }
+    checks: "{{ hp_checks_list }}"

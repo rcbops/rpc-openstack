@@ -32,7 +32,4 @@
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "ceph_osd_stats", group: "osds" }
-      - { name: "ceph_mon_stats", group: "mons" }
-      - { name: "ceph_cluster_stats", group: "mons" }
+    checks: "{{ ceph_checks_list }}"

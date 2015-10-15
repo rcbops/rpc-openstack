@@ -15,7 +15,4 @@
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "openmanage-memory", group: "hosts" }
-      - { name: "openmanage-processors", group: "hosts" }
-      - { name: "openmanage-vdisk", group: "hosts" }
+    checks: "{{ dell_checks_list }}"

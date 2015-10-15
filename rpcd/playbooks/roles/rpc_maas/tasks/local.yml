@@ -15,38 +15,8 @@
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "cinder_api_local_check", group: "cinder_api" }
-      - { name: "cinder_scheduler_check", group: "cinder_scheduler" }
-      - { name: "cinder_volume_check", group: "cinder_volume" }
-      - { name: "glance_api_local_check", group: "glance_api" }
-      - { name: "glance_registry_local_check", group: "glance_registry" }
-      - { name: "heat_api_local_check", group: "heat_api" }
-      - { name: "heat_cfn_api_check", group: "heat_api_cfn" }
-      - { name: "heat_cw_api_check", group: "heat_api_cloudwatch" }
-      - { name: "horizon_local_check", group: "horizon" }
-      - { name: "keystone_api_local_check", group: "keystone" }
-      - { name: "neutron_api_local_check", group: "neutron_server" }
-      - { name: "neutron_dhcp_agent_check", group: "neutron_dhcp_agent" }
-      - { name: "neutron_l3_agent_check", group: "neutron_l3_agent" }
-      - { name: "neutron_linuxbridge_agent_check", group: "neutron_linuxbridge_agent" }
-      - { name: "neutron_metadata_agent_check", group: "neutron_metadata_agent" }
-      - { name: "neutron_metadata_agent_proxy_check", group: "neutron_metadata_agent" }
-      - { name: "neutron_metering_agent_check", group: "neutron_metering_agent" }
-      - { name: "nova_api_metadata_local_check", group: "nova_api_metadata" }
-      - { name: "nova_api_local_check", group: "nova_api_os_compute" }
-      - { name: "nova_compute_check", group: "nova_compute" }
-      - { name: "nova_cert_check", group: "nova_cert" }
-      - { name: "nova_conductor_check", group: "nova_conductor" }
-      - { name: "nova_scheduler_check", group: "nova_scheduler" }
-      - { name: "nova_consoleauth_check", group: "nova_console" }
-      - { name: "nova_spice_console_check", group: "nova_console" }
-      - { name: "rabbitmq_status", group: "rabbitmq" }
-      - { name: "galera_check", group: "galera" }
-      - { name: "memcached_status", group: "memcached" }
-
+    checks: "{{ openstack_service_local_checks_list }}"
 
 - include: ensure_local_checks.yml
   vars:
-    checks:
-      - { name: "disk_utilisation", group: "hosts" }
+    checks: "{{ infra_service_local_checks_list }}"
