@@ -5,7 +5,7 @@ period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
     file    : openmanage.py
-    args    : ["chassis", "vdisk"]
+    args    : ["storage", "vdisk"]
 alarms      :
     openmanage-vdisk :
         label                   : openmanage-vdisk--{{ inventory_hostname|quote }}
