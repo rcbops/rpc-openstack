@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -171,11 +171,19 @@ def _get_entities(args, conn):
 def _write(args, entity, objects):
     if args.tab:
         for o in objects:
-            print("\t".join([entity.id, entity.label, o.label, o.id]))
+            if o.confd_name:
+                import ast
+
+                keys = ast.literal_eval(o.confd_name)
+            else:
+                keys = {"check": "default", "filename": ""}
+            print("\t".join([entity.id, entity.label, o.label, o.id,
+                             keys["filename"]]))
     else:
         print('Entity %s (%s):' % (entity.id, entity.label))
         for o in objects:
             print(' - %s' % o.label)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test MaaS checks')

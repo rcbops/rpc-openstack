@@ -37,23 +37,23 @@
     - maas-verify
 
 - name: Verify presence of expected checks
-  fail: msg="Expected check ({{ item|replace('.', '/') }}) not found"
+  fail: msg="Expected check ({{ item }}) not found"
   with_items:
     - "{{ expected_checks.stdout_lines }}"
   when:
     - maas_after_checks is defined
-    - maas_after_checks.stdout.find("{{ item|replace('.', '/') }}") == -1
+    - maas_after_checks.stdout.find("{{ item }}") == -1
   tags:
     - maas-install
     - maas-verify
 
 - name: Verify absence of excluded checks
-  fail: msg="Excluded check ({{ item|replace('.', '/') }}) found"
+  fail: msg="Excluded check ({{ item }}) found"
   with_items:
     - "{{ maas_excluded_checks }}"
   when:
     - maas_after_checks is defined
-    - maas_after_checks.stdout.find("{{ item|replace('.', '/') }}") != -1
+    - maas_after_checks.stdout.find("{{ item }}") != -1
   tags:
     - maas-install
     - maas-verify
