@@ -16,7 +16,7 @@
 - name: Install fileystem auto checks
   template:
     src: "filesystem.yaml.j2"
-    dest: "/etc/rackspace-monitoring-agent.conf.d/{{ item.filesystem|replace('/', '_') }}--{{ inventory_hostname }}.yaml"
+    dest: "/etc/rackspace-monitoring-agent.conf.d/filesystem_{{ item.filesystem|replace('/', '.') }}--{{ inventory_hostname }}.yaml"
     owner: "root"
     group: "root"
     mode: "0644"

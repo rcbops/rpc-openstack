@@ -55,3 +55,7 @@
   when: >
     inventory_hostname in groups['ceph_all'] and
     groups['ceph_all'] is defined
+
+- meta: flush_handlers
+
+- include: validate_checks.yml

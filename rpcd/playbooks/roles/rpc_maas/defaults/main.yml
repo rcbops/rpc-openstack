@@ -345,6 +345,7 @@ infra_service_local_checks_list:
   - { name: "memcached_status", group: "memcached" }
 
 raxmon_repo_url: "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-14.04-x86_64"
+
 maas_apt_keys:
   - { url: "https://monitoring.api.rackspacecloud.com/pki/agent/linux.asc", state: "present" }
 
@@ -378,6 +379,7 @@ maas_pip_dependencies:
 
 maas_plugin_dir: /opt/rpc-openstack/maas/plugins/
 
+maas_rpc_dir: /opt/rpc-openstack/
 #
 # maas_excluded_checks: List of checks and alarms to exclude from this deploy
 #
