@@ -1,6 +1,6 @@
 type              : remote.http
 label             : lb_api_check_nova
-disabled          : false
+disabled          : "{{ check_disabled }}"
 period            : "{{ maas_check_period }}"
 timeout           : "{{ maas_check_timeout }}"
 target_resolver   : "IPv4"

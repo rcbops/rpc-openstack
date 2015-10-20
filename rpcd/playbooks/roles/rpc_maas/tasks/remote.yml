@@ -16,6 +16,12 @@
 - include: ensure_remote_checks.yml
   vars:
     checks: "{{ openstack_service_remote_checks_list }}"
+    check_disabled: "false"
+
+- include: ensure_remote_backup_checks.yml
+  vars:
+    checks: "{{ openstack_service_remote_checks_list }}"
+    check_disabled: "{{ lb_check_on_single_host | bool }}"
 
 - include: ensure_remote_checks.yml
   vars:

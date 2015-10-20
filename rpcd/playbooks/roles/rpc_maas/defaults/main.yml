@@ -344,6 +344,10 @@ infra_service_local_checks_list:
   - { name: "galera_check", group: "galera" }
   - { name: "memcached_status", group: "memcached" }
 
+# Set this to 'false' to set the lb checks against ALL service infra hosts.
+# Checks will be setup but disabled on all but host[0] when this is 'true'.
+lb_check_on_single_host: true
+
 raxmon_repo_url: "http://stable.packages.cloudmonitoring.rackspace.com/ubuntu-14.04-x86_64"
 
 maas_apt_keys:

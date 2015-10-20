@@ -24,7 +24,8 @@
     - "{{ checks }}"
   when:
     - groups["{{ item.group }}"]|length > 0
-    - inventory_hostname == groups["{{ item.group }}"][0]
+    - inventory_hostname in groups["{{ item.group }}"]
+    - inventory_hostname != groups["{{ item.group }}"][0]
     - item.name not in maas_excluded_checks
   delegate_to: "{{ physical_host }}"
   notify: Restart raxmon agent
