@@ -177,7 +177,7 @@ def _write(args, entity, objects):
                 keys = ast.literal_eval(o.confd_name)
             else:
                 keys = {"check": "default", "filename": ""}
-            print("\t".join([entity.id, entity.label, o.label, o.id,
+            print("\t".join([entity.id, entity.label, o.id, o.label,
                              keys["filename"]]))
     else:
         print('Entity %s (%s):' % (entity.id, entity.label))
