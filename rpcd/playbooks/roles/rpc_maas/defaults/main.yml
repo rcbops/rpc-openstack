@@ -106,7 +106,7 @@ hp_check: false
 # lb_name: Defines the entity name of the load balancing device against which the remote MaaS
 #          checks and alarms are configured.
 #
-lb_name: 'unspecified'
+lb_name: 'unspecified_lb'
 
 #
 # maas_scheme: The scheme (http/https) to use when creating remote.http checks.

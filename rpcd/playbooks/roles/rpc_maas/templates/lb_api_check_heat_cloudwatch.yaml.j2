@@ -1,5 +1,5 @@
 type              : remote.http
-label             : lb_api_check_heat_cloudwatch
+label             : lb_api_check_heat_cloudwatch--{{ lb_name }}
 disabled          : "{{ check_disabled }}"
 period            : "{{ maas_check_period }}"
 timeout           : "{{ maas_check_timeout }}"
