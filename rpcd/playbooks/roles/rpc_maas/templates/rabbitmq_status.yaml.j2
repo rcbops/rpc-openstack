@@ -33,3 +33,30 @@ alarms      :
             if (metric["rabbitmq_max_channels_per_conn"] > {{ rabbitmq_max_channels_per_con_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Detected RabbitMQ connections with > {{ rabbitmq_max_channels_per_con_threshold }} channels, check RabbitMQ and all Openstack consumers");
             }
+
+    rabbitmq_fd_used_alarm_status :
+        label                   : rabbitmq_fd_used_alarm_status-{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (percentage(metric["rabbitmq_fd_used"],metric["rabbitmq_fd_total"]) >= {{ rabbitmq_fd_used_threshold }}) {
+                return new AlarmStatus(CRITICAL, "RabbitMQ file descriptors is reaching configured limit. Currently above {{ rabbitmq_fd_used_threshold }} % used");
+            }
+
+    rabbitmq_proc_used_alarm_status :
+        label                   : rabbitmq_proc_used_alarm_status--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (percentage(metric["rabbitmq_proc_used"],metric["rabbitmq_proc_total"]) >= {{ rabbitmq_proc_used_threshold }}) {
+                return new AlarmStatus(CRITICAL, "RabbitMQ processes is reaching configured limit. Currently above {{ rabbitmq_proc_used_threshold }} % used");
+            }
+
+    rabbitmq_socket_used_alarm_status :
+        label                   : rabbitmq_socket_used_alarm_status--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (percentage(metric["rabbitmq_socket_used"],metric["rabbitmq_socket_total"]) >= {{ rabbitmq_socket_used_threshold }}) {
+                return new AlarmStatus(CRITICAL, "RabbitMQ sockets is reaching configured limit. Currently above {{ rabbitmq_socket_used_threshold }} % used");
+            }
