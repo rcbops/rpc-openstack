@@ -13,12 +13,16 @@ export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
+export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 
-source /opt/rpc-openstack/openstack-ansible/scripts/scripts-library.sh
 OA_DIR='/opt/rpc-openstack/openstack-ansible'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
 RPCD_VARS='/etc/openstack_deploy/user_extras_variables.yml'
 RPCD_SECRETS='/etc/openstack_deploy/user_extras_secrets.yml'
+
+function run_ansible {
+  openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
+}
 
 # begin the bootstrap process
 cd ${OA_DIR}
@@ -90,27 +94,27 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   # setup the haproxy load balancer
   if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-    install_bits haproxy-install.yml
+    run_ansible haproxy-install.yml
   fi
 
   # setup the hosts and build the basic containers
-  install_bits setup-hosts.yml
+  run_ansible setup-hosts.yml
 
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
     pushd ${RPCD_DIR}/playbooks/
-      install_bits ceph-all.yml
+      run_ansible ceph-all.yml
     popd
   fi
 
   # setup the infrastructure
-  install_bits setup-infrastructure.yml
+  run_ansible setup-infrastructure.yml
 
   # setup openstack
-  install_bits setup-openstack.yml
+  run_ansible setup-openstack.yml
 
   if [[ "${DEPLOY_TEMPEST}" == "yes" ]]; then
     # Deploy tempest
-    install_bits os-tempest-install.yml
+    run_ansible os-tempest-install.yml
   fi
 
 fi
@@ -119,28 +123,28 @@ fi
 cd ${RPCD_DIR}/playbooks/
 
 # build the RPC python package repository
-install_bits repo-build.yml
+run_ansible repo-build.yml
 
 # configure all hosts and containers to use the RPC python packages
-install_bits repo-pip-setup.yml
+run_ansible repo-pip-setup.yml
 
 # configure everything for RPC support access
-install_bits rpc-support.yml
+run_ansible rpc-support.yml
 
 # configure the horizon extensions
-install_bits horizon_extensions.yml
+run_ansible horizon_extensions.yml
 
 # deploy and configure RAX MaaS
 if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  install_bits setup-maas.yml
+  run_ansible setup-maas.yml
 fi
 
 # deploy and configure the ELK stack
 if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-  install_bits setup-logging.yml
+  run_ansible setup-logging.yml
 
   # deploy the LB required for the ELK stack
   if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-    install_bits haproxy.yml
+    run_ansible haproxy.yml
   fi
 fi
