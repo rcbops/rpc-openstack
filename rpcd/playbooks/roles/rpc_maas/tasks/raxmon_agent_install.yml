@@ -87,6 +87,15 @@
     group: root
   notify: Restart raxmon agent
 
+- name: Ensure raspace-monitoring-agent config directory exists
+  file:
+    name: /etc/rackspace-monitoring-agent.conf.d
+    state: directory
+    group: root
+    owner: root
+  tags:
+    - rackspace-monitoring-agent-setup
+
 - name: Start raxmon agent
   service:
     name: rackspace-monitoring-agent
