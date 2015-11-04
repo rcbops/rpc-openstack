@@ -236,6 +236,11 @@ maas_filesystem_critical_threshold: 90.0
 mysql_connection_warning_threshold: 80
 mysql_connection_critical_threshold: 90
 
+# cinder-volumes volume group thresholds
+cinder_volumes_vg_warning_threshold: 80.0
+cinder_volumes_vg_critical_threshold: 90.0
+cinder_vg_name: "{{ cinder_backends['lvm']['volume_group'] }}"
+
 # MaaS CPU idle threshold
 cpu_idle_percent_avg_threshold: 10.0
 
@@ -323,6 +328,9 @@ openstack_service_local_checks_list:
   - { name: "nova_scheduler_check", group: "nova_scheduler" }
   - { name: "nova_consoleauth_check", group: "nova_console" }
   - { name: "nova_spice_console_check", group: "nova_console" }
+
+cinder_vg_checks_list:
+  - { name: "cinder_vg_check", group: "cinder_volume", cinder_vg_name: "{{ cinder_vg_name }}" }
 
 swift_checks_list:
   - { name: "swift_object_server_check", group: "swift_obj" }
