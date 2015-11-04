@@ -40,3 +40,8 @@
       when: >
        raxmon is defined and not raxmon.stat.exists
 
+- name: Ensure MaaS token is updated on hosts
+  hosts: hosts
+  user: root
+  roles:
+    - { role: "rpc_maas", tags: [ "drop-raxrc-config" ] }
