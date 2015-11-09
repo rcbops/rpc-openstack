@@ -20,3 +20,7 @@
     mode: 0600
     owner: root
     group: root
+  tags:
+    - drop-raxrc-config
+    - setup-raxmon-cli
+    - setup-rpc-maas-tool-config
