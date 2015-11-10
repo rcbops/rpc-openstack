@@ -85,7 +85,6 @@
     mode: 0600
     owner: root
     group: root
-  notify: Restart raxmon agent
 
 - name: Ensure raspace-monitoring-agent config directory exists
   file:

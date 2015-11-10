@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install fileystem auto checks
-  template:
-    src: "filesystem_auto.yaml.j2"
-    dest: "/etc/rackspace-monitoring-agent.conf.d/filesystem_{{ item|replace('/', '.') }}--{{ inventory_hostname }}.yaml"
-    owner: "root"
-    group: "root"
-    mode: "0644"
-  with_items:
-    - "{{ drives }}"
-  when: inventory_hostname in groups["hosts"]
-  delegate_to: "{{ physical_host }}"
+- name: Restart rackspace-monitoring-agent service
+  service:
+    name: rackspace-monitoring-agent
+    state: restarted
+  tags:
+    - maas-setup
+    - rackspace-monitoring-agent-setup
+    - rackspace-monitoring-agent-restart

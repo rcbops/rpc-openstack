@@ -24,4 +24,3 @@
     - "{{ drives }}"
   when: inventory_hostname in groups["hosts"]
   delegate_to: "{{ physical_host }}"
-  notify: Restart raxmon agent
