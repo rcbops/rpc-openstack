@@ -36,7 +36,12 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   if [[ ! -d /etc/openstack_deploy/ ]]; then
     ./scripts/bootstrap-aio.sh
     pushd ${RPCD_DIR}
-        for i in $(find etc/openstack_deploy/ -type f -iname '*.yml'); do ../scripts/update-yaml.py /$i $i; done
+      for filename in $(find etc/openstack_deploy/ -type f -iname '*.yml');
+        if [[ ! -a "/${filename}" ]]; then
+          cp "${filename}" "/${filename}";
+        fi
+        do ../scripts/update-yaml.py "/${filename}" "${filename}";
+      done
     popd
     # ensure that the elasticsearch JVM heap size is limited
     sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' $RPCD_VARS
