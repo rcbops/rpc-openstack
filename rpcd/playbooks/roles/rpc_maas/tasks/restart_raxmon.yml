@@ -17,6 +17,7 @@
   service:
     name: rackspace-monitoring-agent
     state: restarted
+  delegate_to: "{{ physical_host }}"
   tags:
     - maas-setup
     - rackspace-monitoring-agent-setup
