@@ -29,7 +29,7 @@ function (Settings) {
      *  +elasticsearch: {server: "http://localhost:9200", withCredentials: true}+
      *
      */
-    elasticsearch: "https://{{ external_lb_vip_address }}:8443/elasticsearch/",
+    elasticsearch: "{{ elasticsearch_public_url }}",
 
     /** @scratch /configuration/config.js/5
      *
