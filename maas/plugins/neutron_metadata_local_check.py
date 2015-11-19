@@ -27,7 +27,7 @@ from maas_common import status_ok
 # identify the first active neutron agents container on this host
 # network namespaces can only be accessed from within neutron agents container
 FIND_CONTAINER = shlex.split('lxc-ls -1 --running .*neutron_agents')
-SERVICE_CHECK = 'ip netns exec %s curl -fvs 127.0.0.1:80'
+SERVICE_CHECK = 'ip netns exec %s curl -fvs 169.254.169.254:80'
 
 
 def check(args):
