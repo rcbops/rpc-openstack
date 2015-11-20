@@ -57,6 +57,6 @@ alarms      :
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (percentage(metric["rabbitmq_socket_used"],metric["rabbitmq_socket_total"]) >= {{ rabbitmq_socket_used_threshold }}) {
+            if (percentage(metric["rabbitmq_sockets_used"],metric["rabbitmq_sockets_total"]) >= {{ rabbitmq_socket_used_threshold }}) {
                 return new AlarmStatus(CRITICAL, "RabbitMQ sockets is reaching configured limit. Currently above {{ rabbitmq_socket_used_threshold }} % used");
             }
