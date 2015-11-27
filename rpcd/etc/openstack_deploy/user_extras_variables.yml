@@ -95,18 +95,32 @@ maas_filesystem_critical_threshold: 90.0
 #   - { package: "rabbitmq-server", origin: "www.rabbitmq.com" }
 #   - { package: "*", release: "MariaDB" }
 
-# Ceph
+# Ceph options
+# fsid is the unique identifier for your object store.
 fsid: '{{ fsid_uuid }}'
+# directory for backing up ceph keys.
 fetch_directory: /etc/openstack_deploy/ceph_fetch
+# Use stable version of ceph
 ceph_stable: true
+# Specify ceph release name
 ceph_stable_release: hammer
+# Enable OpenStack support inside the ceph-ansible playbooks
 openstack_config: true
+# Use raw journal devices
 raw_multi_journal: true
+# Set the journal size to: "Size of journal device / number of devices for which it is a journal"
+# E.g. Given a 400G journal disk with 5 disks using it as their journal device, the journal size should be 80G each or 80000
 journal_size: 80000
+# Default number of replicas for a pool
 pool_default_size: 3
+# Default min number of replicas for ceph to consider the state to be not degraded.
 pool_default_min_size: 2
+# The % of disk used before an osd is considered full - Ceph will be marked critical and stop functioning if an OSD reaches this %
 mon_osd_full_ratio: .90
+# The % of disk used before an osd is considered nearfull - Ceph will still work but will return a HEALTH_WARN.
 mon_osd_nearfull_ratio: .80
+# Determines whether we use secure cluster flags.
 secure_cluster: true
+# List of secure flags to set on for a pool (options for the list are nodelete, nopgchange, nosizechange - prevents deletion, pg from changing and size from changing respectively).
 secure_cluster_flags:
   - nodelete
