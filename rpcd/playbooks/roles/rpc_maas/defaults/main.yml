@@ -309,7 +309,6 @@ openstack_service_local_checks_list:
   - { name: "neutron_l3_agent_check", group: "neutron_l3_agent" }
   - { name: "neutron_linuxbridge_agent_check", group: "neutron_linuxbridge_agent" }
   - { name: "neutron_metadata_agent_check", group: "neutron_metadata_agent" }
-  - { name: "neutron_metadata_agent_proxy_check", group: "neutron_metadata_agent" }
   - { name: "neutron_metering_agent_check", group: "neutron_metering_agent" }
   - { name: "nova_api_metadata_local_check", group: "nova_api_metadata" }
   - { name: "nova_api_local_check", group: "nova_api_os_compute" }
