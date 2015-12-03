@@ -8,7 +8,7 @@ details     :
     args    : ["--host", "{{ ansible_nodename }}", "{{ internal_vip_address }}"]
 alarms      :
     neutron_linuxbridge_agent_status :
-        label                   : neutron_dhcp_agent_status--{{ ansible_hostname }}
+        label                   : neutron_linuxbridge_agent_status--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
