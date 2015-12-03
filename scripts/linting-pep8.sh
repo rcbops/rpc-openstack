@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2015, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,4 +16,11 @@
 ## Shell Opts ----------------------------------------------------------------
 set -euo pipefail
 
-python -m tox
+## Main ----------------------------------------------------------------------
+if [[ -z "$VIRTUAL_ENV" ]] ; then
+    echo "WARNING: Not running hacking inside a virtual environment."
+fi
+
+flake8 $(grep -rln -e '^#!/usr/bin/env python' \
+                   -e '^#!/bin/python' \
+                   -e '^#!/usr/bin/python' * )
