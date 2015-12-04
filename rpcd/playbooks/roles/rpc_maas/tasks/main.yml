@@ -45,6 +45,12 @@
   when: >
     remote_check == true
 
+- include: ensure_local_checks.yml
+  vars:
+    checks: "{{ cinder_vg_checks_list }}"
+  when: >
+    cinder_backends['lvm'] is defined
+
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"

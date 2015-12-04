@@ -177,6 +177,21 @@ Hostname or IP address of service to test
     ...
 
 ***
+#### vg_check.py
+
+##### Description:
+Checks the free/used/total space on an lvm volume group and reports as metrics
+##### Mandatory Arguments:
+Name of volume group to check
+##### Example Output:
+
+    status okay
+    metric cinder-volumes_vg_total_space int64 107369 Megabytes
+    metric cinder-volumes_vg_free_space int64 107369 Megabytes
+    metric cinder-volumes_vg_used_space int64 0 Megabytes
+    ...
+
+***
 #### neutron_service_check.py
 
 ##### Description:
