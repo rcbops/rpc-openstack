@@ -21,6 +21,14 @@
   max_fail_percentage: 20
   gather_facts: true
   user: root
+  pre_tasks:
+    - name: Discover rpc-openstack version
+      git_repo_info:
+        path: "/opt/rpc-openstack"
+      delegate_to: localhost
+      run_once: true
+      tags:
+        - lock-pip-files
   roles:
     - pip_lock_down
   post_tasks:
