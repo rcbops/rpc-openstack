@@ -42,9 +42,14 @@
   shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l"
   register: entity_count
 
+- name: Zero entities with label {{ entity_name }} exist
+  fail:
+    msg: "Zero entities with the label {{ entity_name }} exist. Entities should be created as part of the hardware provisioning process, if missing, please consult the internal documentation for associating one with the device."
+  when: entity_count.stdout|int == 0
+
 - name: At most one {{ entity_name }} entity exists
   fail:
-    msg: "Entity count of {{ entity_count.stdout }} != 1 for entity with the label {{ entity_name }}"
+    msg: "Entity count of {{ entity_count.stdout }} != 1 for entity with the label {{ entity_name }}. Reduce the entity count to one by deleting or re-labelling the duplicate entities."
   when: entity_count.stdout|int != 1
 
 - name: Get entity {{ entity_name }}
