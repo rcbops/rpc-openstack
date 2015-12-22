@@ -31,8 +31,6 @@ cd ${OA_DIR}
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # force the deployment of haproxy for an AIO
   export DEPLOY_HAPROXY="yes"
-  # disable the deployment of MAAS for an AIO
-  export DEPLOY_MAAS="no"
   if [[ ! -d /etc/openstack_deploy/ ]]; then
     ./scripts/bootstrap-aio.sh
     pushd ${RPCD_DIR}
