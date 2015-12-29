@@ -30,19 +30,11 @@ pushd rpcd/playbooks/
   ansible-playbook -i <(echo $LOCAL_INVENTORY) --syntax-check *.yml --list-tasks
   # Perform a lint check on all playbooks and roles.
   ansible-lint --version
-  # Skip ceph roles because they're submodules and not ours to lint
-  # NOTE(sigmavirus24): If
-  # https://github.com/willthames/ansible-lint/issues/80 is accepted and
-  # merged, get rid of these awful hacks around removing directories and
-  # re-placing them.
-  rm -r roles/ceph-common
-  rm -r roles/ceph-mon
-  rm -r roles/ceph-osd
   echo "Running ansible-lint"
-  # Lint playbooks and roles
-  ansible-lint *.yml
-  # Revert changes to deleting submodules
-  git checkout .
-  # Re-clone the submodules for the next run
-  git submodule update >/dev/null
+  # Lint playbooks and roles while skipping the ceph-* roles. They are not
+  # ours and so we do not wish to lint them and receive errors about code we
+  # do not maintain.
+  ansible-lint *.yml --exclude roles/ceph-common \
+                     --exclude roles/ceph-mon \
+                     --exclude roles/ceph-osd
 popd
