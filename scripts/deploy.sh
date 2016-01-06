@@ -49,6 +49,9 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/lb_name: .*/lb_name: '$(hostname)'/" $RPCD_VARS
     # set the notification_plan to the default for Rackspace Cloud Servers
     sed -i "s/maas_notification_plan: .*/maas_notification_plan: npTechnicalContactsEmail/" $RPCD_VARS
+    # set network speed for vms
+    echo "net_max_speed: 1000" >>$RPCD_VARS
+
     # set the necessary bits for ceph
     if [[ "$DEPLOY_CEPH" == "yes" ]]; then
       cp -a ${RPCD_DIR}/etc/openstack_deploy/conf.d/ceph.yml.aio /etc/openstack_deploy/conf.d/ceph.yml
@@ -153,7 +156,6 @@ run_ansible horizon_extensions.yml
 # deploy and configure RAX MaaS
 if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
   run_ansible setup-maas.yml
-  sleep 30
   run_ansible verify-maas.yml
 fi
 
