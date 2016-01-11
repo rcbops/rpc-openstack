@@ -27,7 +27,7 @@ import memcache
 
 
 VERSION_RE = re.compile('STAT version (\d+\.\d+\.\d+)(?![-+0-9\\.])')
-VERSION = '1.4.14 (Ubuntu)'
+VERSIONS = ['1.4.14 (Ubuntu)', '1.4.15']
 MEMCACHE_METRICS = {'total_items': 'items',
                     'get_hits': 'cache_hits',
                     'get_misses': 'cache_misses',
@@ -60,10 +60,10 @@ def main(args):
         is_up = False
     else:
         is_up = True
-        if current_version != VERSION:
+        if current_version not in VERSIONS:
             status_err('This plugin has only been tested with version %s '
                        'of memcached, and you are using version %s'
-                       % (VERSION, current_version))
+                       % (VERSIONS, current_version))
 
     status_ok()
     metric_bool('memcache_api_local_status', is_up)

@@ -1,6 +1,18 @@
 language: python
 
-script: ./scripts/linting.sh
+before_script:
+- pip install tox
+
+script: tox
 
 notifications:
     email: false
+
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=flake8
+    - python: 2.7
+      env: TOXENV=ansible-lint
+
+sudo: false

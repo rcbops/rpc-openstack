@@ -127,6 +127,7 @@ maas_horizon_scheme: https
 # maas_heat_cloudwatch_scheme: https
 # maas_swift_proxy_scheme: https
 
+cinder_service_port: 8776
 #
 # maas_keystone_user: The keystone user to use/create to allow monitoring plugins to query
 #                     OpenStack APIs.
@@ -231,6 +232,15 @@ maas_filesystem_critical_threshold: 90.0
 #    warning_threshold: 80.0
 #    critical_threshold: 90.0
 
+# Maas mysql connection thresholds
+mysql_connection_warning_threshold: 80
+mysql_connection_critical_threshold: 90
+
+# cinder-volumes volume group thresholds
+cinder_volumes_vg_warning_threshold: 80.0
+cinder_volumes_vg_critical_threshold: 90.0
+cinder_vg_name: "{{ cinder_backends['lvm']['volume_group'] }}"
+
 # MaaS CPU idle threshold
 cpu_idle_percent_avg_threshold: 10.0
 
@@ -242,12 +252,24 @@ rabbitmq_max_channels_per_con_threshold: 10
 rabbitmq_fd_used_threshold: 90
 rabbitmq_proc_used_threshold: 90
 rabbitmq_socket_used_threshold: 90
+rabbitmq_queued_messages_excluding_notifications_threshold: 100
+
+# queued messages per check period (default = 60s)
+rabbitmq_queue_growth_rate_threshold: 15
+
 
 # Set the threshold for the "Disk utilisation" MaaS alarms
 disk_utilisation_threshold: 90
 
 # nf_conntrack threshold
 nf_conntrack_threshold: 90
+
+# net_max_speed has units of Mb/s, set to null for auto discovery
+net_max_speed: null
+net_rx_pct_warn: 40
+net_rx_pct_crit: 60
+net_tx_pct_warn: 40
+net_tx_pct_crit: 60
 
 # Swift MaaS thresholds
 swift_object_quarantine_failed_percentage_threshold: 5.0
@@ -261,6 +283,14 @@ swift_container_quarantine_average_threshold: 25.0
 swift_container_replication_failure_percentage_threshold: 5.0
 swift_async_pending_failure_percentage_threshold: 5.0
 swift_async_pending_average_threshold: 25.0
+
+# cloud level resource thresholds
+cloud_resource_warning_memory: 80.0
+cloud_resource_critical_memory: 90.0
+cloud_resource_warning_vcpus: 80.0
+cloud_resource_critical_vcpus: 90.0
+cloud_resource_warning_disk_space: 80.0
+cloud_resource_critical_disk_space: 90.0
 
 # List of checks, by type - variable:
 hp_checks_list:
@@ -286,6 +316,12 @@ ceph_checks_list:
   - { name: "ceph_cluster_stats", group: "mons" }
 
 network_checks_list:
+  - { name: "eth0", group: "hosts", max_speed: "{{ net_max_speed }}", rx_pct_warn: "{{ net_rx_pct_warn }}", rx_pct_crit: "{{ net_rx_pct_crit }}", tx_pct_warn: "{{ net_tx_pct_warn }}", tx_pct_crit: "{{ net_tx_pct_crit }}"}
+  - { name: "eth1", group: "hosts", max_speed: "{{ net_max_speed }}", rx_pct_warn: "{{ net_rx_pct_warn }}", rx_pct_crit: "{{ net_rx_pct_crit }}", tx_pct_warn: "{{ net_tx_pct_warn }}", tx_pct_crit: "{{ net_tx_pct_crit }}"}
+  - { name: "eth2", group: "hosts", max_speed: "{{ net_max_speed }}", rx_pct_warn: "{{ net_rx_pct_warn }}", rx_pct_crit: "{{ net_rx_pct_crit }}", tx_pct_warn: "{{ net_tx_pct_warn }}", tx_pct_crit: "{{ net_tx_pct_crit }}"}
+  - { name: "eth3", group: "hosts", max_speed: "{{ net_max_speed }}", rx_pct_warn: "{{ net_rx_pct_warn }}", rx_pct_crit: "{{ net_rx_pct_crit }}", tx_pct_warn: "{{ net_tx_pct_warn }}", tx_pct_crit: "{{ net_tx_pct_crit }}"}
+
+kernel_checks_list:
   - { name: "conntrack_count", group: "hosts" }
 
 openstack_service_local_checks_list:
@@ -304,7 +340,6 @@ openstack_service_local_checks_list:
   - { name: "neutron_l3_agent_check", group: "neutron_l3_agent" }
   - { name: "neutron_linuxbridge_agent_check", group: "neutron_linuxbridge_agent" }
   - { name: "neutron_metadata_agent_check", group: "neutron_metadata_agent" }
-  - { name: "neutron_metadata_agent_proxy_check", group: "neutron_metadata_agent" }
   - { name: "neutron_metering_agent_check", group: "neutron_metering_agent" }
   - { name: "nova_api_metadata_local_check", group: "nova_api_metadata" }
   - { name: "nova_api_local_check", group: "nova_api_os_compute" }
@@ -314,6 +349,10 @@ openstack_service_local_checks_list:
   - { name: "nova_scheduler_check", group: "nova_scheduler" }
   - { name: "nova_consoleauth_check", group: "nova_console" }
   - { name: "nova_spice_console_check", group: "nova_console" }
+  - { name: "nova_cloud_stats_check", group: "nova_api_os_compute" }
+
+cinder_vg_checks_list:
+  - { name: "cinder_vg_check", group: "cinder_volume", cinder_vg_name: "{{ cinder_vg_name }}" }
 
 swift_checks_list:
   - { name: "swift_object_server_check", group: "swift_obj" }
