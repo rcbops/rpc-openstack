@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: repo-pip-setup.yml
-
-- name: Setup hosts for rpc-support
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_support", tags: [ "rpc-support" ] }
+- include: ensure_local_checks.yml
+  vars:
+    checks: "{{ kernel_checks_list }}"

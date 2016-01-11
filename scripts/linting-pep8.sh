@@ -1,5 +1,5 @@
----
-# Copyright 2014, Rackspace US, Inc.
+#!/usr/bin/env bash
+# Copyright 2015, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: repo-pip-setup.yml
+## Shell Opts ----------------------------------------------------------------
+set -euo pipefail
 
-- name: Setup hosts for rpc-support
-  hosts: hosts:all_containers
-  user: root
-  roles:
-    - { role: "rpc_support", tags: [ "rpc-support" ] }
+## Main ----------------------------------------------------------------------
+if [[ -z "$VIRTUAL_ENV" ]] ; then
+    echo "WARNING: Not running hacking inside a virtual environment."
+fi
+
+flake8 $(grep -rln -e '^#!/usr/bin/env python' \
+                   -e '^#!/bin/python' \
+                   -e '^#!/usr/bin/python' * )

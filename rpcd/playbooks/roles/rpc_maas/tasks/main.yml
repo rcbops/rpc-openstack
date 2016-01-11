@@ -35,6 +35,8 @@
 
 - include: network.yml
 
+- include: kernel.yml
+
 - include: local.yml
   vars:
     internal_vip_address: "{{ internal_lb_vip_address }}"
@@ -44,6 +46,12 @@
     ip_address: "{{ external_lb_vip_address }}"
   when: >
     remote_check == true
+
+- include: ensure_local_checks.yml
+  vars:
+    checks: "{{ cinder_vg_checks_list }}"
+  when: >
+    cinder_backends['lvm'] is defined
 
 - include: swift.yml
   vars:

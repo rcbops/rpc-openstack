@@ -42,6 +42,26 @@ IP address of service to test
     metric nova_instances_in_state_ERROR uint32 0 instances
 
 ***
+#### nova_cloud_stats.py
+
+##### Description:
+Polls a nova API living on the specified IP. Checks statistics at the 'whole cloud' level and reports as metrics
+##### Mandatory Arguments:
+IP address of service to test
+##### Example Output:
+
+    status okay
+    metric cloud_resource_total_memory uint32 15704 Megabytes
+    metric cloud_resource_free_disk_space uint32 310 Gigabytes
+    metric cloud_resource_used_memory uint32 4096 Megabytes
+    metric cloud_resource_used_disk_space uint32 4 Gigabytes
+    metric cloud_resource_free_memory uint32 11608 Megabytes
+    metric cloud_resource_hypervisor_count uint32 2 hypervisors
+    metric cloud_resource_total_disk_space uint32 314 Gigabytes
+    metric cloud_resource_used_vcpus uint32 0 vcpu
+    metric cloud_resource_total_vcpus uint32 16 vcpu
+
+***
 #### cinder_api_local_check.py
 
 ##### Description:
@@ -177,6 +197,21 @@ Hostname or IP address of service to test
     ...
 
 ***
+#### vg_check.py
+
+##### Description:
+Checks the free/used/total space on an lvm volume group and reports as metrics
+##### Mandatory Arguments:
+Name of volume group to check
+##### Example Output:
+
+    status okay
+    metric cinder-volumes_vg_total_space int64 107369 Megabytes
+    metric cinder-volumes_vg_free_space int64 107369 Megabytes
+    metric cinder-volumes_vg_used_space int64 0 Megabytes
+    ...
+
+***
 #### neutron_service_check.py
 
 ##### Description:
@@ -275,6 +310,8 @@ connects to an individual member of a rabbit cluster and grabs statistics from t
     metric rabbitmq_proc_total int64 1048576 processes
     metric rabbitmq_proc_used int64 180 processes
     metric rabbitmq_messages int64 0 messages
+    metric rabbitmq_msgs_excl_notifications int64 0 messages
+    metric rabbitmq_notification_messages int64 200 messages
     metric rabbitmq_sockets_total int64 3594 fd
     metric rabbitmq_fd_used int64 24 fd
     metric rabbitmq_mem_used int64 41562432 bytes
@@ -307,6 +344,9 @@ connects to an individual member of a galera cluster and checks various statuses
     metric wsrep_cluster_status string primary
     metric wsrep_local_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
     metric wsrep_local_state_comment string synced
+    metric mysql_max_configured_connections int64 800 connections
+    metric mysql_current_connections int64 1 connections
+    metric mysql_max_seen_connections int64 2 connections
 
 ***
 #### conntrack_count.py
