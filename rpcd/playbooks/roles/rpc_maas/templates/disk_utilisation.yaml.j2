@@ -7,7 +7,7 @@ details     :
     file    : disk_utilisation.py
     args    : ["{{ ansible_ssh_host }}"]
 alarms      :
-{% for device in devices %}
+{% for device in disk_util_devices %}
     percentage_disk_utilisation_{{ device }}:
         label                   : percentage_disk_utilisation_{{ device }}--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
