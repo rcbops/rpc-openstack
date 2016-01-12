@@ -7,11 +7,27 @@ details     :
     file    : swift-recon.py
     args    : ["--ring-type", "account", "replication"]
 alarms      :
-    swift_account_replication_check :
-        label                   : swift_account_replication_check--{{ ansible_hostname }}
+    swift_account_replication_failure_check :
+        label                   : swift_account_replication_failure_check--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["time_failed"] > {{ swift_account_replication_failure_percentage_threshold }}) {
                 return new AlarmStatus(CRITICAL, "Swift Account Replication Failure Percentage Above Threshold");
+            }
+    swift_account_replication_rate_check :
+        label                   : swift_account_replication_rate_check--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (rate(metric["time_avg"]) > {{ swift_account_replication_growth_rate_threshold / maas_check_period}}) {
+                return new AlarmStatus(CRITICAL, "Swift Account Replication time growth rate is above configured threshold. Currently above {{ swift_account_replication_growth_rate_threshold }}");
+            }
+    swift_account_replication_avg_time_check :
+        label                   : swift_account_replication_avg_time_check--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (metric["time_avg"] > {{ swift_account_replication_avg_time_threshold }}) {
+                return new AlarmStatus(CRITICAL, "Swift Account Replication average time is above configured threshold. Currently above {{ swift_account_replication_avg_time_threshold }}");
             }
