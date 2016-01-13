@@ -89,9 +89,7 @@ else:
         if not token:
             token = auth_ref['auth_token']
         if not endpoint:
-            endpoint = get_endpoint_url_for_service(
-                'image',
-                auth_ref['catalog'])
+            endpoint = get_endpoint_url_for_service('image', auth_ref)
 
         glance = g_client.Client('1', endpoint=endpoint, token=token)
 
@@ -135,9 +133,7 @@ else:
         if not auth_token:
             auth_token = auth_ref['auth_token']
         if not bypass_url:
-            bypass_url = get_endpoint_url_for_service(
-                'compute',
-                auth_ref['catalog'])
+            bypass_url = get_endpoint_url_for_service('compute', auth_ref)
 
         nova = nova_client.Client('2', auth_token=auth_token,
                                   bypass_url=bypass_url)
@@ -215,8 +211,7 @@ else:
 
         auth_version = auth_ref['version']
         if not endpoint:
-            endpoint = get_endpoint_url_for_service('identity',
-                                                    auth_ref['catalog'],
+            endpoint = get_endpoint_url_for_service('identity', auth_ref,
                                                     'admin',
                                                     version=auth_version)
         if auth_version == 'v3':
@@ -261,9 +256,7 @@ else:
         if not token:
             token = auth_ref['auth_token']
         if not endpoint_url:
-            endpoint_url = get_endpoint_url_for_service(
-                'network',
-                auth_ref['catalog'])
+            endpoint_url = get_endpoint_url_for_service('network', auth_ref)
 
         neutron = n_client.Client('2.0',
                                   token=token,
@@ -316,9 +309,7 @@ else:
         if not token:
             token = auth_ref['auth_token']
         if not endpoint:
-            endpoint = get_endpoint_url_for_service(
-                'orchestration',
-                auth_ref['catalog'])
+            endpoint = get_endpoint_url_for_service('orchestration', auth_ref)
 
         heat = heat_client.Client('1', endpoint=endpoint, token=token)
         try:
@@ -342,13 +333,22 @@ class MaaSException(Exception):
 def is_token_expired(token):
     for fmt in ('%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.%fZ'):
         try:
-            expires = datetime.datetime.strptime(token['expires_at'], fmt)
+            expires_at = token.get('expires_at',
+                                   # Default back to v2.0 Keystone auth
+                                   token['token'].get('expires'))
+            expires = datetime.datetime.strptime(expires_at, fmt)
             break
         except ValueError as e:
             pass
     else:
         raise e
     return datetime.datetime.now() >= expires
+
+
+def get_service_catalog(auth_ref):
+    return auth_ref.get('catalog',
+                        # Default back to Keystone v2.0's auth-ref format
+                        auth_ref.get('serviceCatalog'))
 
 
 def get_auth_ref():
@@ -405,22 +405,32 @@ def get_auth_details(openrc_file=OPENRC):
     return auth_details
 
 
-def get_endpoint_url_for_service(service_type, service_catalog,
+def get_url_for_type(endpoint, url_type, auth_version):
+    if auth_version == 'v3':
+        return endpoint['url'] if endpoint['interface'] == url_type else None
+    else:
+        return endpoint[url_type + 'URL']
+
+
+def get_endpoint_url_for_service(service_type, auth_ref,
                                  url_type='public', version=None):
     # version = the version identifier on the end of the url. eg:
     # for keystone admin api v3:
     # http://172.29.236.3:35357/v3
     # so you'd pass version='v3'
+    service_catalog = get_service_catalog(auth_ref)
+    auth_version = auth_ref['version']
 
     for service in service_catalog:
         if service['type'] == service_type:
             for endpoint in service['endpoints']:
-                if endpoint['interface'] == url_type:
-                    if version:
-                        if endpoint['url'].endswith(version):
-                            return endpoint['url']
-                    else:
-                        return endpoint['url']
+                url = get_url_for_type(endpoint, url_type, auth_version)
+                if url is not None:
+                    # If version is not provided or it is provided and the url
+                    # ends with it, we want to return it, otherwise we want to
+                    # do nothing.
+                    if not version or url.endswith(version):
+                        return url
 
 
 def force_reauth():
