@@ -21,6 +21,16 @@
   max_fail_percentage: 20
   gather_facts: false
   user: root
+  pre_tasks:
+    - name: Discover rpc-openstack version
+      git_repo_info:
+        path: "/opt/rpc-openstack"
+      delegate_to: localhost
+      run_once: true
+      tags:
+        - repo-create-report
+        - repo-build-requirements
+        - repo-build-git-sources
   tasks:
     - name: Create a build report for all known packages within a release
       shell: |
