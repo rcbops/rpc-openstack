@@ -35,7 +35,7 @@
 
 - include: network.yml
   when: >
-    inventory_hostname in groups['hosts']
+    network_checks_list|length > 0 and inventory_hostname in groups['hosts']
 
 - include: kernel.yml
 
