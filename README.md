@@ -134,3 +134,13 @@ To run an upgrade of an existing openstack-ansible installation:
 Please note the following behaviors that are **destructive**:
     * `/etc/rpc_deploy` will be deprecated and the file structure moved to 
       `/etc/openstack_deploy`.
+
+# Linting
+
+If you would like to lint against a version of ansible that is not the
+default, set the `ANSIBLE_VERSION` environment variable to the proper pip
+version specification:
+
+```
+ANSIBLE_VERSION='>=2.0' tox -e ansible-lint
+```
