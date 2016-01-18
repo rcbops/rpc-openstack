@@ -16,61 +16,24 @@
 - name: Verify MaaS setup
   hosts: hosts
   user: root
-  pre_tasks:
-    # Raxmon client doesn't make it very easy to just get the full check or
-    # alarm names due to limited choices in formatting of output
-    - name: Enumerate all checks found
-      script: "{{ maas_rpc_scripts_dir }}/rpc-maas-tool.py --tab True --prefix {{ inventory_hostname }} checks"
-      register: maas_after_checks
-      changed_when: False
-      failed_when: maas_after_checks.rc != 0
-      tags:
-        - maas-verify
-    - name: Enumerate expected checks
-      shell: ls -1 /etc/rackspace-monitoring-agent.conf.d/ | sed -e 's/\.yaml$//'
-      when:
-        - maas_after_checks is defined
-      register: expected_checks
-      changed_when: False
-      tags:
-        - maas-verify
-    - name: Enumerate all alarms found
-      script: "{{ maas_rpc_scripts_dir }}/rpc-maas-tool.py --tab True --prefix {{ inventory_hostname }} alarms"
-      when:
-        - expected_checks is defined
-      register: maas_after_alarms
-      changed_when: False
-      failed_when: maas_after_alarms.rc != 0
-      tags:
-        - maas-verify
   tasks:
-    - name: Verify presence of expected checks
-      fail: msg="Expected check ({{ item }}) not found"
-      with_items:
-        - "{{ expected_checks.stdout_lines }}"
-      when:
-        - maas_after_checks is defined
-        - maas_after_checks.stdout.find("{{ item }}") == -1
-      tags:
-        - maas-verify
-    - name: Verify absence of excluded checks
-      fail: msg="Excluded check ({{ item }}) found"
-      with_items:
-        - "{{ maas_excluded_checks }}"
-      when:
-        - maas_after_checks is defined
-        - maas_after_checks.stdout.find("{{ item }}") != -1
-      tags:
-        - maas-verify
-    - name: Verify presence of expected alarms
-      fail: msg="Expected alarm for check ({{ item }}) not found"
-      with_items:
-        - "{{ expected_checks.stdout_lines }}"
-      when:
-        - expected_checks is defined
-        - maas_after_alarms is defined
-        - maas_after_alarms.stdout.find("{{ item }}") == -1
-      tags:
-        - maas-verify
+    - name: "Verify Checks & Alarms are registered"
+      shell: >
+        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-created
+        --entity {{ inventory_hostname }}
+        {% for ec in maas_excluded_checks %} --excludedcheck {{ec}}
+        {% endfor %}
+      register: verify_maas
+      failed_when: verify_maas.rc != 0
+      changed_when: False
+      until: verify_maas.rc == 0
+      retries: 10
+      delay: 60
+
+    - name: "Verify Check & Alarm Status"
+      shell: >
+        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status
+        --entity {{ inventory_hostname }}
+
   vars_files:
     - "roles/rpc_maas/defaults/main.yml"
