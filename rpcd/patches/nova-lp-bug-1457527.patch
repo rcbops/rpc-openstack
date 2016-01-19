@@ -1,0 +1,44 @@
+From 71b73f8472f60b870d18827a66dd35a0caa0dc72 Mon Sep 17 00:00:00 2001
+From: Kevin Carter <kevin.carter@rackspace.com>
+Date: Wed, 20 Jan 2016 02:05:14 +0000
+Subject: [PATCH 1/1] Added patch to redefine the OS nova service sha
+
+This change patches our nova service sha such that we're able to ensure
+the BDM issue [0] is resolved for our customers. The patch file pulls
+in a refspec [1] for an upstream change in the stable/kilo branch for nova
+which resolves the issue. Sadly because this change is so late in the kilo
+lifecycle its unlikely upstream will accept the changeset. To ensure all customers
+ upgrading to kilo or deploying green-field Kilo have a deployment that works as
+expected the patch has been created to redefine the nova sha git source and sha.
+This does not impact the deployment process for normal stable support workflow
+however it does ensure anyone building the wheels, locally or remotely have correct
+package sets. The change simply instructs our wheel building process to create a
+wheel using the stable sha as the base and the refspec out of gerrit cherr-picked
+on top.
+
+[0] - https://bugs.launchpad.net/nova/+bug/1457527
+[1] - https://review.openstack.org/#/c/269421
+
+Signed-off-by: Kevin Carter <kevin.carter@rackspace.com>
+---
+ playbooks/defaults/repo_packages/openstack_services.yml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/playbooks/defaults/repo_packages/openstack_services.yml b/playbooks/defaults/repo_packages/openstack_services.yml
+index 1fce9c1..47a01b6 100644
+--- a/playbooks/defaults/repo_packages/openstack_services.yml
++++ b/playbooks/defaults/repo_packages/openstack_services.yml
+@@ -92,8 +92,8 @@ neutron_fwaas_git_dest: "/opt/neutron_fwaas_{{ neutron_fwaas_git_install_branch
+
+
+ ## Nova service
+-nova_git_repo: https://git.openstack.org/openstack/nova
+-nova_git_install_branch: fc932f1fbcf6199839c31918125d7fe775c4b5f6 # HEAD of "stable/kilo" as of 21.10.2015
++nova_git_repo: https://review.openstack.org/openstack/nova
++nova_git_install_branch: fc932f1fbcf6199839c31918125d7fe775c4b5f6,refs/changes/21/269421/1
+ nova_git_dest: "/opt/nova_{{ nova_git_install_branch | replace('/', '_') }}"
+
+
+-- 
+1.9.1
+
