@@ -18,7 +18,7 @@
   user: root
   tasks:
     - name: "Verify Checks & Alarms are registered"
-      shell: >
+      script: >
         {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-created
         --entity {{ inventory_hostname }}
         {% for ec in maas_excluded_checks %} --excludedcheck {{ec}}
@@ -31,7 +31,7 @@
       delay: 60
 
     - name: "Verify Check & Alarm Status"
-      shell: >
+      script: >
         {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status
         --entity {{ inventory_hostname }}
 
