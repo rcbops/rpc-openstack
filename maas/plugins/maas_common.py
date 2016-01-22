@@ -28,7 +28,16 @@ import traceback
 AUTH_DETAILS = {'OS_USERNAME': None,
                 'OS_PASSWORD': None,
                 'OS_TENANT_NAME': None,
-                'OS_AUTH_URL': None}
+                'OS_AUTH_URL': None,
+                'OS_USER_DOMAIN_NAME': None,
+                'OS_PROJECT_DOMAIN_NAME': None,
+                'OS_IDENTITY_API_VERSION': None,
+                'OS_AUTH_VERSION': None,
+                'OS_ENDPOINT_TYPE': None,
+                'OS_API_INSECURE': False}
+
+# OS_API_INSECURE is currently hard coded to false until OSA fix
+# LP #1537117 is implemented
 
 OPENRC = '/root/openrc-maas'
 TOKEN_FILE = '/root/.auth_ref.json'
@@ -57,7 +66,9 @@ else:
                                  auth_details['OS_USERNAME'],
                                  auth_details['OS_PASSWORD'],
                                  auth_details['OS_TENANT_NAME'],
-                                 auth_details['OS_AUTH_URL'])
+                                 auth_details['OS_AUTH_URL'],
+                                 insecure=auth_details['OS_API_INSECURE'],
+                                 endpoint_type=auth_details['OS_ENDPOINT_TYPE'])
 
         try:
             # Do something just to ensure we actually have auth'd ok
@@ -85,11 +96,14 @@ else:
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
+        auth_details = get_auth_details()
 
         if not token:
             token = auth_ref['auth_token']
         if not endpoint:
-            endpoint = get_endpoint_url_for_service('image', auth_ref)
+            endpoint = get_endpoint_url_for_service('image',
+                                                    auth_ref,
+                                                    get_endpoint_type(auth_details))
 
         glance = g_client.Client('1', endpoint=endpoint, token=token)
 
@@ -129,27 +143,29 @@ else:
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
+        auth_details = get_auth_details()
 
         if not auth_token:
             auth_token = auth_ref['auth_token']
         if not bypass_url:
-            bypass_url = get_endpoint_url_for_service('compute', auth_ref)
+            bypass_url = get_endpoint_url_for_service('compute',
+                                                      auth_ref,
+                                                      get_endpoint_type(auth_details))
 
         nova = nova_client.Client('2', auth_token=auth_token,
-                                  bypass_url=bypass_url)
+                                  bypass_url=bypass_url,
+                                  insecure=auth_details['OS_API_INSECURE'])
 
         try:
             flavors = nova.flavors.list()
             # Exceptions are only thrown when we try and do something
             [flavor.id for flavor in flavors]
 
-        # except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure) as e:
+        except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure, AttributeError) as e:
         # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
         # in fact tries to re-auth, all by itself. But we didn't pass it
-        # an auth_url, so it bombs out horribly with an
-        # Attribute error. This is a bug, to be filed...
+        # an auth_url, so it bombs out horribly with an error.
 
-        except AttributeError:
             auth_ref = force_reauth()
             auth_token = auth_ref['auth_token']
 
@@ -252,15 +268,19 @@ else:
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
+        auth_details = get_auth_details()
 
         if not token:
             token = auth_ref['auth_token']
         if not endpoint_url:
-            endpoint_url = get_endpoint_url_for_service('network', auth_ref)
+            endpoint_url = get_endpoint_url_for_service('network',
+                                                        auth_ref,
+                                                        get_endpoint_type(auth_details))
 
         neutron = n_client.Client('2.0',
                                   token=token,
-                                  endpoint_url=endpoint_url)
+                                  endpoint_url=endpoint_url,
+                                  insecure=auth_details['OS_API_INSECURE'])
 
         try:
             # some arbitrary command that should always have at least 1 result
@@ -305,13 +325,19 @@ else:
         # first try to use auth details from auth_ref so we
         # don't need to auth with keystone every time
         auth_ref = get_auth_ref()
+        auth_details = get_auth_details()
 
         if not token:
             token = auth_ref['auth_token']
         if not endpoint:
-            endpoint = get_endpoint_url_for_service('orchestration', auth_ref)
+            endpoint = get_endpoint_url_for_service('orchestration',
+                                                    auth_ref,
+                                                    get_endpoint_type(auth_details))
 
-        heat = heat_client.Client('1', endpoint=endpoint, token=token)
+        heat = heat_client.Client('1',
+                                  endpoint=endpoint,
+                                  token=token,
+                                  insecure=auth_details['OS_API_INSECURE'])
         try:
             heat.build_info.build_info()
         except h_exc.HTTPUnauthorized:
@@ -330,12 +356,14 @@ class MaaSException(Exception):
     """Base MaaS plugin exception."""
 
 
-def is_token_expired(token):
+def is_token_expired(token, auth_details):
     for fmt in ('%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.%fZ'):
         try:
-            expires_at = token.get('expires_at',
-                                   # Default back to v2.0 Keystone auth
-                                   token['token'].get('expires'))
+            if auth_details['OS_AUTH_URL'].endswith('v3'):
+                expires_at = token.get('expires_at')
+            else:
+                expires_at = token.get(token['token'].get('expires'))
+
             expires = datetime.datetime.strptime(expires_at, fmt)
             break
         except ValueError as e:
@@ -351,13 +379,22 @@ def get_service_catalog(auth_ref):
                         auth_ref.get('serviceCatalog'))
 
 
+def get_endpoint_type(auth_details):
+    endpoint_type = auth_details['OS_ENDPOINT_TYPE']
+    if endpoint_type == 'publicURL':
+        return 'public'
+    if endpoint_type == 'adminURL':
+        return 'admin'
+    return 'internal'
+
+
 def get_auth_ref():
     auth_details = get_auth_details()
     auth_ref = get_auth_from_file()
     if auth_ref is None:
         auth_ref = keystone_auth(auth_details)
 
-    if is_token_expired(auth_ref):
+    if is_token_expired(auth_ref, auth_details):
         auth_ref = keystone_auth(auth_details)
 
     return auth_ref
