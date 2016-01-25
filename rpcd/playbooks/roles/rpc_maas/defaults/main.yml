@@ -433,3 +433,10 @@ maas_rpc_scripts_dir: /opt/rpc-openstack/scripts
 # maas_excluded_checks: List of checks and alarms to exclude from this deploy
 #
 maas_excluded_checks: []
+
+
+#
+# openrc definitions from OSA
+# This is necessary until LP #1537117 is implemented
+openrc_os_endpoint_type: internalURL
+openrc_insecure: "{{ (keystone_service_adminuri_insecure | bool or keystone_service_internaluri_insecure | bool) | default(false) }}"
