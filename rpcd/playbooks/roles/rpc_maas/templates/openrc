@@ -1,4 +1,6 @@
 # COMMON OPENSTACK ENVS
+export OS_ENDPOINT_TYPE={{ openrc_os_endpoint_type }}
+
 export OS_USERNAME={{ maas_keystone_user }}
 export OS_PASSWORD={{ maas_keystone_password }}
 export OS_TENANT_NAME={{ keystone_admin_tenant_name }}
