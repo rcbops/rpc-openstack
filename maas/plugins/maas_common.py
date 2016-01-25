@@ -68,7 +68,8 @@ else:
                                  auth_details['OS_TENANT_NAME'],
                                  auth_details['OS_AUTH_URL'],
                                  insecure=auth_details['OS_API_INSECURE'],
-                                 endpoint_type=auth_details['OS_ENDPOINT_TYPE'])
+                                 endpoint_type=auth_details[
+                                     'OS_ENDPOINT_TYPE'])
 
         try:
             # Do something just to ensure we actually have auth'd ok
@@ -103,7 +104,8 @@ else:
         if not endpoint:
             endpoint = get_endpoint_url_for_service('image',
                                                     auth_ref,
-                                                    get_endpoint_type(auth_details))
+                                                    get_endpoint_type(
+                                                        auth_details))
 
         glance = g_client.Client('1', endpoint=endpoint, token=token)
 
@@ -150,7 +152,8 @@ else:
         if not bypass_url:
             bypass_url = get_endpoint_url_for_service('compute',
                                                       auth_ref,
-                                                      get_endpoint_type(auth_details))
+                                                      get_endpoint_type(
+                                                          auth_details))
 
         nova = nova_client.Client('2', auth_token=auth_token,
                                   bypass_url=bypass_url,
@@ -161,20 +164,21 @@ else:
             # Exceptions are only thrown when we try and do something
             [flavor.id for flavor in flavors]
 
-        except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure, AttributeError) as e:
-        # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
-        # in fact tries to re-auth, all by itself. But we didn't pass it
-        # an auth_url, so it bombs out horribly with an error.
+        except (nova_exc.Unauthorized, nova_exc.AuthorizationFailure,
+                AttributeError) as e:
+            # NOTE(mancdaz)nova doesn't properly pass back unauth errors, but
+            # in fact tries to re-auth, all by itself. But we didn't pass it
+            # an auth_url, so it bombs out horribly with an error.
 
             auth_ref = force_reauth()
             auth_token = auth_ref['auth_token']
 
             nova = get_nova_client(auth_token, bypass_url, previous_tries + 1)
 
-        # we only want to pass ClientException back to the calling poller
-        # since this encapsulates all of our actual API failures. Other
-        # exceptions will be treated as script/environmental issues and
-        # sent to status_err
+            # we only want to pass ClientException back to the calling poller
+            # since this encapsulates all of our actual API failures. Other
+            # exceptions will be treated as script/environmental issues and
+            # sent to status_err
         except nova_exc.ClientException:
             raise
         except Exception as e:
@@ -275,7 +279,8 @@ else:
         if not endpoint_url:
             endpoint_url = get_endpoint_url_for_service('network',
                                                         auth_ref,
-                                                        get_endpoint_type(auth_details))
+                                                        get_endpoint_type(
+                                                            auth_details))
 
         neutron = n_client.Client('2.0',
                                   token=token,
@@ -332,7 +337,8 @@ else:
         if not endpoint:
             endpoint = get_endpoint_url_for_service('orchestration',
                                                     auth_ref,
-                                                    get_endpoint_type(auth_details))
+                                                    get_endpoint_type(
+                                                        auth_details))
 
         heat = heat_client.Client('1',
                                   endpoint=endpoint,
