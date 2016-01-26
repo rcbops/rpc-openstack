@@ -12,6 +12,7 @@ export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
 export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
+export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 
@@ -75,6 +76,11 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
   fi
+  # remove swift config if not deploying swift.
+  if [[ "$DEPLOY_SWIFT" != "yes" ]]
+  then
+    rm /etc/openstack_deploy/conf.d/swift.yml
+  fi
 fi
 
 # bootstrap ansible if need be
@@ -117,6 +123,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   # This section is duplicated from OSA/run-playbooks as RPC doesn't currently
   # make use of run-playbooks. (TODO: hughsaunders)
+  # Note that switching to run-playbooks may inadvertently convert to repo build from repo clone.
   # When running in an AIO, we need to drop the following iptables rule in any neutron_agent containers
   # to ensure that instances can communicate with the neutron metadata service.
   # This is necessary because in an AIO environment there are no physical interfaces involved in
