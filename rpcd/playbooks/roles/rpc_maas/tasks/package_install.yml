@@ -26,6 +26,4 @@
     name: "{{ item }}"
     state: present
     extra_args: "{{ pip_install_options | default('') }}"
-  with_flattened:
-    - maas_pip_packages
-    - maas_pip_dependencies
+  with_items: maas_pip_packages + maas_pip_dependencies
