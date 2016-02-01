@@ -29,6 +29,8 @@ mv /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
 # Upgrade Ansible in-place so we have access to the patch module.
 cd ${OA_DIR}
 ${OA_DIR}/scripts/bootstrap-ansible.sh
+ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force
+                       --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
 
 # Apply any patched files.
 cd ${RPCD_DIR}/playbooks

@@ -16,4 +16,7 @@
 ## Shell Opts ----------------------------------------------------------------
 set -euo pipefail
 
+# we need to fetch roles
+ansible-galaxy install --role-file=ansible-role-requirements.yml --force --roles-path=/home/travis/build/rcbops/rpc-openstack/rpcd/playbooks/roles
+
 python -m tox
