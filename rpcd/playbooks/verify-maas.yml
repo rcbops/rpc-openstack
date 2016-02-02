@@ -30,6 +30,10 @@
       retries: 10
       delay: 60
 
+    - name: "Allow MAAS time to run checks before verifying their status"
+      pause:
+        minutes: 2
+
     - name: "Verify Check & Alarm Status"
       script: >
         {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status
