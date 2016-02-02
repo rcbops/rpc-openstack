@@ -72,14 +72,3 @@ pkg_locations:
 
 # NOTE(mancdaz) there may be a better place to override this
 horizon_venv_tag: "{{ openstack_release }}"
-
-# NOTE(mancdaz) overriding this list here to pin setuptools==19.3, due to bug:
-#  https://bitbucket.org/pypa/setuptools/issues/491/setuptools-194-breaks-pip-install-builds
-# A follow up patch can rework this commit from kilo so that we don't need to worry about this, and the pin can be removed:
-# https://github.com/rcbops/rpc-openstack/commit/d3afe904376cbca4d299b2aa0a80156ffca479a3
-galera_pip_packages:
-  - MySQL-python
-  - python-memcached
-  - pycrypto
-  - setuptools==19.3
-
