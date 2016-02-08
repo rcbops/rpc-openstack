@@ -35,6 +35,9 @@ which openstack-ansible || ./scripts/bootstrap-ansible.sh
 ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force \
                            --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
 
+# Enable playbook callbacks from OSA to display playbook statistics
+grep -q callback_plugins playbooks/ansible.cfg || sed -i '/\[defaults\]/a callback_plugins = plugins/callbacks' playbooks/ansible.cfg
+
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # Determine the largest secondary disk device available for repartitioning

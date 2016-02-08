@@ -28,6 +28,10 @@ mv /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
 
 # Upgrade Ansible in-place so we have access to the patch module.
 cd ${OA_DIR}
+
+# Enable playbook callbacks from OSA to display playbook statistics
+grep -q callback_plugins playbooks/ansible.cfg || sed -i '/\[defaults\]/a callback_plugins = plugins/callbacks' playbooks/ansible.cfg
+
 ${OA_DIR}/scripts/bootstrap-ansible.sh
 ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force
                        --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
