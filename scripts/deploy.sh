@@ -30,6 +30,11 @@ function run_ansible {
 # begin the bootstrap process
 cd ${OA_DIR}
 
+# bootstrap ansible and install galaxy roles (needed whether AIO or multinode)
+which openstack-ansible || ./scripts/bootstrap-ansible.sh
+ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force \
+                           --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
+
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # Determine the largest secondary disk device available for repartitioning
@@ -43,7 +48,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # force the deployment of haproxy for an AIO
   export DEPLOY_HAPROXY="yes"
   if [[ ! -d /etc/openstack_deploy/ ]]; then
-    ./scripts/bootstrap-ansible.sh
     ./scripts/bootstrap-aio.sh
     pushd ${RPCD_DIR}
       for filename in $(find etc/openstack_deploy/ -type f -iname '*.yml'); do
@@ -94,8 +98,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   fi
 fi
 
-# bootstrap ansible if need be
-which openstack-ansible || ./scripts/bootstrap-ansible.sh
 
 # ensure all needed passwords and tokens are generated
 ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
