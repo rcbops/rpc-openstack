@@ -146,23 +146,14 @@ def _get_node_metrics(session, metrics, host, port, name):
             status_err('cluster too small')
         if not is_cluster_member:
             status_err('{0} not a member of the cluster'.format(name))
+        if sum([len(n['partitions']) for n in response]):
+            status_err('At least one partition found in the rabbit cluster')
+        if any([len(n['cluster_links']) != CLUSTER_SIZE - 1
+                for n in response]):
+            status_err('At least one rabbit node is missing a cluster link')
 
     for k, v in NODES_METRICS.items():
         metrics[k] = {'value': nodes_matching_name[0][k], 'unit': v}
-
-    # We don't know exactly which version introduces data for all
-    #   nodes in the cluster returned by the NODES_URL, but we know it is
-    #   in 3.5.x at least.
-    if rabbit_version(nodes_matching_name[0]) > (3, 5):
-        # Gather the queue lengths for all nodes in the cluster
-        queues = [n['run_queue'] for n in response
-                  if n.get('run_queue', None)]
-        # Grab the first queue length
-        first = queues.pop()
-        # Check that all other queues are equal to it
-        if not all(first == q for q in queues):
-            # If they're not, the queues are not synchronized
-            status_err('Cluster not replicated across all nodes')
 
 
 def _get_queue_metrics(session, metrics, host, port):
