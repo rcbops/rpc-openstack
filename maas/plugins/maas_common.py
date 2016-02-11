@@ -532,8 +532,13 @@ def metric_bool(name, success):
     metric(name, 'uint32', value)
 
 
-logging.basicConfig(filename='/var/log/maas_plugins.log',
-                    format='%(asctime)s %(levelname)s: %(message)s')
+try:
+    logging.basicConfig(filename='/var/log/maas_plugins.log',
+                        format='%(asctime)s %(levelname)s: %(message)s')
+except IOError as e:
+    logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s')
+    logging.error('An error occurred accessing /var/log/maas_plugins.log. %s' %
+                  e)
 
 
 @contextlib.contextmanager
