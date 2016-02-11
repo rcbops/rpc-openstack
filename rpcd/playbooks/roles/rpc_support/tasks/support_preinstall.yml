@@ -19,6 +19,11 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
+    force: yes
   with_items: support_util_packages
+  register: support_packge_installs
+  until: support_packge_installs|success
+  retries: 3
+  delay: 10
   tags:
     - support_packages
