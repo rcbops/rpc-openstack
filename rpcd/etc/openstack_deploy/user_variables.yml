@@ -72,3 +72,13 @@ pkg_locations:
 
 # NOTE(mancdaz) there may be a better place to override this
 horizon_venv_tag: "{{ openstack_release }}"
+
+# disable ceilometer
+cinder_ceilometer_enabled: False
+glance_ceilometer_enabled: False
+heat_ceilometer_enabled: False
+neutron_ceilometer_enabled: False
+nova_ceilometer_enabled: False
+swift_ceilometer_enabled: False
+keystone_ceilometer_enabled: False
+tempest_service_available_ceilometer: False
