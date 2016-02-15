@@ -27,3 +27,14 @@
   delay: 10
   tags:
     - support_packages
+
+- name: Install host packages required for support
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 600
+  with_items: support_host_packages
+  when: inventory_hostname in groups['hosts']
+  tags:
+    - support_packages
