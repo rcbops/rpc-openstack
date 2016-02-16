@@ -17,20 +17,22 @@
 support_util_packages:
   - bash-completion
   - bridge-utils
-  - debootstrap
   - dstat
   - htop
   - iotop
   - iptables-persistent
-  - linux-crashdump
   - lsof
-  - lvm2
-  - ntp
-  - ntpdate
   - openssh-server
   - sudo
   - tcpdump
   - vim
+
+support_host_packages:
+  - linux-crashdump
+  - debootstrap
+  - lvm2
+  - ntp
+  - ntpdate
   - vlan
 
 support_neutron_debug_packages:
