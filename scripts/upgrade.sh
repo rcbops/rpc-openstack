@@ -26,6 +26,13 @@ cp ${RPCD_DIR}/etc/openstack_deploy/user_variables.yml /tmp/upgrade_user_variabl
 ${BASE_DIR}/scripts/update-yaml.py /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
 mv /tmp/upgrade_user_variables.yml /etc/rpc_deploy/user_variables.yml
 
+# disable aodh and ceilometer
+export DEPLOY_CEILOMETER=no
+rm /etc/openstack_deploy/conf.d/aodh.yml
+rm /etc/openstack_deploy/conf.d/ceilometer.yml
+rm /etc/openstack_deploy/env.d/aodh.yml
+rm /etc/openstack_deploy/env.d/ceilometer.yml
+
 # Upgrade Ansible in-place so we have access to the patch module.
 cd ${OA_DIR}
 

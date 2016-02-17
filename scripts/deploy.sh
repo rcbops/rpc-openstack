@@ -110,6 +110,13 @@ fi
 cd ${RPCD_DIR}/playbooks
 openstack-ansible -i "localhost," patcher.yml
 
+# disable aodh and ceilometer
+export DEPLOY_CEILOMETER=no
+rm /etc/openstack_deploy/conf.d/aodh.yml
+rm /etc/openstack_deploy/conf.d/ceilometer.yml
+rm /etc/openstack_deploy/env.d/aodh.yml
+rm /etc/openstack_deploy/env.d/ceilometer.yml
+
 # begin the openstack installation
 if [[ "${DEPLOY_OA}" == "yes" ]]; then
   cd ${OA_DIR}/playbooks/
