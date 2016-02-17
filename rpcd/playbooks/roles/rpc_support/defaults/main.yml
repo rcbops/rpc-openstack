@@ -74,3 +74,15 @@ holland_packages:
 
 holland_pip_dependencies:
   - MySQL-python
+
+hwraid_apt_repo_url: "http://hwraid.le-vert.net/ubuntu"
+
+hwraid_apt_repos:
+  - { repo: "deb {{ hwraid_apt_repo_url }} {{ ansible_lsb.codename }} main", state: "present" }
+
+hwraid_apt_keys:
+  - { url: "http://hwraid.le-vert.net/debian/hwraid.le-vert.net.gpg.key", state: "present" }
+
+hwraid_apt_packages:
+  - megacli
+  - lsiutil
