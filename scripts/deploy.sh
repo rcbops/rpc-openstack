@@ -10,7 +10,7 @@ export DEPLOY_OA=${DEPLOY_OA:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
 export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
-export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
+export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
@@ -99,6 +99,8 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   then
     rm /etc/openstack_deploy/conf.d/swift.yml
   fi
+  rm -f /etc/openstack_deploy/conf.d/aodh.yml
+  rm -f /etc/openstack_deploy/conf.d/ceilometer.yml
 fi
 
 
@@ -109,13 +111,6 @@ fi
 # Apply any patched files.
 cd ${RPCD_DIR}/playbooks
 openstack-ansible -i "localhost," patcher.yml
-
-# disable aodh and ceilometer
-export DEPLOY_CEILOMETER=no
-rm /etc/openstack_deploy/conf.d/aodh.yml
-rm /etc/openstack_deploy/conf.d/ceilometer.yml
-rm /etc/openstack_deploy/env.d/aodh.yml
-rm /etc/openstack_deploy/env.d/ceilometer.yml
 
 # begin the openstack installation
 if [[ "${DEPLOY_OA}" == "yes" ]]; then
