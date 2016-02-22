@@ -80,7 +80,7 @@ class RpcMaas(object):
             user = self.config.get('credentials', 'username')
             api_key = self.config.get('credentials', 'api_key')
             self.conn = self.driver(user, api_key)
-        except ConfigParser.NoOptionError:
+        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
             url = self.config.get('api', 'url')
             token = self.config.get('api', 'token')
             self.conn = self.driver(None, None, ex_force_base_url=url,
