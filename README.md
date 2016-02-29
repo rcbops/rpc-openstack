@@ -82,8 +82,8 @@ alarm configured for it.
      configurations from the environment:
      `rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml`
   5. Edit configurations in `/etc/openstack_deploy` for example:
-    1. `openstack_user_variables.yml.example` or
-       `openstack_user_variables.yml.aio`
+    1. `openstack_user_config.yml.example` or
+       `openstack_user_config.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
 3. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
