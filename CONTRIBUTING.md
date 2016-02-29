@@ -43,14 +43,51 @@ When creating an issue, please ensure you include the following information
 6. Each time a PR is merged, the associated branch is deleted from ```rpc-openstack```.
 7. When all PRs are completed the issue is then closed.
 
-### reviewing a fix
 
-When reviewing, please ensure the fix:
+## Commits, pull requests and reviews
 
-* actually works to fix the issue
-* passes the gate checks that are configured to run
-* Contains a single commit, which itself has a good commit message describing the changes involved in the patch
-* Does not overreach - each commit should be self contained enough to only address the issue at hand, and no more.
+### commits
+
+Please avoid the following patterns within individual commits:
+
+* Mixing whitespace changes with functional code changes
+* Mixing two unrelated functional changes in the same commit
+* Sending large new features in a single giant commit
+
+Expected git commit message structure
+
+* The first line should be limited to 50 characters, should not end with a full stop and the first word should be captialised
+* Use the imperative mood in the subject line - e.g. ```Fix a typo in CONTRIBUTING.md```, ```Remove if/else block in myfile.sh```, ```Eat your dinner```
+* Insert a single blank line after the first line
+* Subsequent lines should be wrapped at 72 characters
+* Provide a detailed description of the change in the following lines, using the guidelines in the section below
+
+In your commit message please consider the following points:
+
+* The commit subject line is the most important
+* The commit message must contain all the information required to fully understand & review the patch for correctness. Less is not more. More is More
+* Do not assume the reviewer understands what the original problem was
+* Do not assume the reviewer has access to external web services/site
+* Do not assume the code is self-evident/self-documenting
+* Describe why a change is being made
+* Read the commit message to see if it hints at improved code structure - if so you may be able to split this into two or more commits
+* Ensure sufficient information to decide whether to review
+
+### pull requests
+
+* Pull Requests (PRs) should ideally contain a single commit
+* The PR title / message should contain information relevant to why the commit(s) are happening. This can be based off the commit message but does not need to be
+* The PR description should also include a reference to the original issue
+* Where absolutely necessary, related commits can be grouped into a single PR, but this should be the exception not the rule
+
+### reviewing a Pull Request (PR)
+
+When reviewing a PR, please ensure the included commit(s):
+
+* Actually works to fix the issue
+* Passes the gate checks that are configured to run
+* Contains a single commit, which itself has a good commit message describing the changes involved in the patch (on rare occasion, multiple related commits in the same PR could be considered)
+* Does not overreach - each commit should be self contained enough to only address the issue at hand, and no more (see above)
 
 ### merging a fix
 
