@@ -72,17 +72,32 @@ def check(auth_ref, args):
         status_err('No host(s) found in the service list')
 
     status_ok()
-    for service in services:
-        service_is_up = True
-        if service['status'] == 'enabled' and service['state'] != 'up':
-            service_is_up = False
 
-        if args.host:
-            name = '%s_status' % service['binary']
-        else:
+    if args.host:
+        all_services_are_up = True
+
+        for service in services:
+            service_is_up = True
+
+            if service['status'] == 'enabled' and service['state'] != 'up':
+                service_is_up = False
+                all_services_are_up = False
+
+            if '@' in service['host']:
+                [host, backend] = service['host'].split('@')
+                name = '%s-%s_status' % (service['binary'], backend)
+                metric_bool(name, service_is_up)
+
+        name = '%s_status' % service['binary']
+        metric_bool(name, all_services_are_up)
+    else:
+        for service in services:
+            service_is_up = True
+            if service['status'] == 'enabled' and service['state'] != 'up':
+                service_is_up = False
+
             name = '%s_on_host_%s' % (service['binary'], service['host'])
-
-        metric_bool(name, service_is_up)
+            metric_bool(name, service_is_up)
 
 
 def main(args):
