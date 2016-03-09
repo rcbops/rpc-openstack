@@ -27,6 +27,14 @@
 
 - include: support_preinstall.yml
 
+- include: raid_preinstall.yml
+  when: >
+    inventory_hostname in groups['hosts']
+
+- include: raid_install.yml
+  when: >
+    inventory_hostname in groups['hosts']
+
 - include: bashrc.yml
 
 - include: histformat.yml
