@@ -27,7 +27,7 @@ elasticsearch_apt_packages:
 
 elasticsearch_pip_packages:
   - elasticsearch<2.1.0
-  - elasticsearch-curator
+  - elasticsearch-curator<3.5.0
 
 # This sets the cluster name
 elasticsearch_cluster: openstack
