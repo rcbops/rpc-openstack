@@ -20,7 +20,7 @@ kibana_sha256sum: "480562733c2c941525bfa26326b6fae5faf83109b452a6c4e283a5c37e308
 
 elasticsearch_http_port: 9200
 elasticsearch_vip: "{{ internal_lb_vip_address }}"
-elasticsearch_public_url: "https://{{ external_lb_vip_address }}:8443/elasticsearch/"
+elasticsearch_public_url: '"https://"+window.location.hostname+":8443/elasticsearch/"'
 
 kibana_apt_packages:
   - apache2
