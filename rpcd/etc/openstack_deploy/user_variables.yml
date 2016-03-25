@@ -89,3 +89,8 @@ tempest_service_available_ceilometer: False
 neutron_neutron_conf_overrides:
   nova:
     endpoint_type: internal
+
+# Diasble port security binding for liberty. See https://bugs.launchpad.net/neutron/+bug/1509312
+neutron_ml2_conf_ini_overrides:
+    ml2:
+        extension_drivers: ''
