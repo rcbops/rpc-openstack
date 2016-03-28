@@ -85,3 +85,7 @@ nova_ceilometer_enabled: False
 swift_ceilometer_enabled: False
 keystone_ceilometer_enabled: False
 tempest_service_available_ceilometer: False
+
+neutron_neutron_conf_overrides:
+  nova:
+    endpoint_type: internal
