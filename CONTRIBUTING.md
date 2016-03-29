@@ -93,8 +93,9 @@ When reviewing a PR, please ensure the included commit(s):
 
 In order for a fix to be merged, the following criteria should be met:
 
-* all gate tests must have passed
+* All gate tests must have passed
 * There must be at least 2 reviewers (members of the rcbops engineering team) who have given it the thumbsup/+1 (using the review guidelines above)
+  * If a patch is being backported, the one doing the backport cannot vote on it, but the original author of the patch can
 * The second of those +1 reviewers should merge the patch
 
 
