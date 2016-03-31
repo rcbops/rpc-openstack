@@ -91,6 +91,10 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   then
     rm /etc/openstack_deploy/conf.d/swift.yml
   fi
+  if [ "${DEPLOY_CEILOMETER}" != "yes" ]; then
+    rm -f /etc/openstack_deploy/conf.d/ceilometer.yml
+    sed -i 's/swift_ceilometer_enabled:.*/swift_ceilometer_enabled: False/' /etc/openstack_deploy/user_variables.yml
+  fi
 fi
 
 # bootstrap ansible if need be
