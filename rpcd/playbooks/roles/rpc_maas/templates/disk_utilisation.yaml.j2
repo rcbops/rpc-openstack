@@ -14,6 +14,6 @@ alarms      :
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["disk_utilisation_{{ device }}"] > {{ disk_utilisation_threshold }}) {
-                return new AlarmStatus(CRITICAL, "Disk utilisation for {{ device }} >= {{ disk_utilisation_threshold }}%");
+                return new AlarmStatus(CRITICAL, "Disk IO utilisation for {{ device }} >= {{ disk_utilisation_threshold }}%");
             }
 {% endfor %}
