@@ -15,7 +15,9 @@
 ##### What is your evaluation on the importance of this issue, and why?
 
 ##### What branches / milestones do you believe this issue should target?
-The list below is what is currently supported for backports, remove branches you do not wish to target.
+###### The list below is what is currently supported for backports
+###### Remove branches (lines) you do not wish to target.
 - [ ] Master
+- [ ] liberty-12.1
 - [ ] liberty-12.0
 - [ ] kilo
