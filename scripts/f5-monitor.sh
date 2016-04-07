@@ -103,7 +103,7 @@ get_token() {
               ;;
           8774)
               #Nova API Compute
-              check_url="$check_proto://$check_ip:$check_port/v3/"
+              check_url="$check_proto://$check_ip:$check_port/v2.1/"
               ;;
           8004)
               #Heat API
