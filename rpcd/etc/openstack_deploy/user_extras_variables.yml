@@ -98,6 +98,9 @@ maas_filesystem_critical_threshold: 90.0
 # Ceph options
 # fsid is the unique identifier for your object store.
 fsid: '{{ fsid_uuid }}'
+# Since we assign our own fsid, we do not need ceph-ansible to auto-generate
+# an fsid for us.
+generate_fsid: false
 # directory for backing up ceph keys.
 fetch_directory: /etc/openstack_deploy/ceph_fetch
 # Use stable version of ceph
