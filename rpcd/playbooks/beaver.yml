@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Setup beaver log shipper
-  hosts: all
+  hosts: hosts:all_containers
   max_fail_percentage: 20
   user: root
   roles:
