@@ -13,6 +13,7 @@ export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
+export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"no"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
@@ -103,6 +104,24 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   rm -f /etc/openstack_deploy/conf.d/ceilometer.yml
 fi
 
+# Apply host security hardening with openstack-ansible-security
+# The is applied as part of setup-hosts.yml
+if [[ "$DEPLOY_HARDENING" == "yes" ]]
+then
+  if grep -q '^apply_security_hardening:' /etc/openstack_deploy/user_variables.yml
+  then
+    sed -i "s/^apply_security_hardening:.*/apply_security_hardening: true/" /etc/openstack_deploy/user_variables.yml
+  else
+    echo "apply_security_hardening: true" >> /etc/openstack_deploy/user_variables.yml
+  fi
+else
+  if grep -q '^apply_security_hardening:' /etc/openstack_deploy/user_variables.yml
+  then
+    sed -i "s/^apply_security_hardening:.*/apply_security_hardening: false/" /etc/openstack_deploy/user_variables.yml
+  else
+    echo "apply_security_hardening: false" >> /etc/openstack_deploy/user_variables.yml
+  fi
+fi
 
 # ensure all needed passwords and tokens are generated
 ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
