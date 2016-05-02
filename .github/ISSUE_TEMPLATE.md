@@ -18,6 +18,6 @@
 ###### The list below is what is currently supported for backports
 ###### Remove branches (lines) you do not wish to target.
 - [ ] Master
+- [ ] liberty-12.2
 - [ ] liberty-12.1
-- [ ] liberty-12.0
 - [ ] kilo
