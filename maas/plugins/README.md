@@ -275,7 +275,7 @@ IP address of memcached server
     metric memcache_total_items uint64 563324 items
     metric memcache_get_hits uint64 4543534 hits
     metric memcache_get_misses uint64 2346565 misses
-    metric memcache_total_connections uint64 42565 connections
+    metric memcache_curr_connections uint64 42565 connections
 
 ***
 #### horizon_check.py
