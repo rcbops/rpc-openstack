@@ -31,7 +31,7 @@ function run_ansible {
 cd ${OA_DIR}
 
 # bootstrap ansible and install galaxy roles (needed whether AIO or multinode)
-which openstack-ansible || ./scripts/bootstrap-ansible.sh
+./scripts/bootstrap-ansible.sh
 ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force \
                            --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
 
