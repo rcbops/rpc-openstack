@@ -56,8 +56,11 @@ nova_cross_az_attach: False
 rabbitmq_ulimit: 65535
 
 # Memcached overrides
-# needed so that maas can consume what was only consumable in the memcached role
-memcached_connections: 1024
+# https://github.com/rcbops/rpc-openstack/issues/1048
+# memcached_memory is calculated via https://github.com/openstack/openstack-ansible-memcached_server/blob/master/defaults/main.yml#L33
+# based on container memory but this determination it not necessarily correct,
+# since memory utilization is primarily driven by the objects placed in memcached.
+memcached_connections: 16384
 
 ## Apache SSL Settings
 # These do not need to be configured unless you're creating certificates for
