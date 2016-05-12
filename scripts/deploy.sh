@@ -26,13 +26,6 @@ function run_ansible {
   openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
 }
 
-# https://github.com/rcbops/rpc-openstack/issues/1037
-# The latest openstack-ansible kilo tag, 11.2.14, fails due to a new version of
-# paramiko (2.0.0). The upstream fix is not in a tagged release. Installing the
-# following packages resolves the issue and can be removed once the openstack-ansible
-# SHA contains 75890e2372a66a8a9be24bc147179b6f08f90e76
-apt-get update && apt-get install -y build-essential libssl-dev libffi-dev python-dev
-
 # begin the bootstrap process
 cd ${OA_DIR}
 
