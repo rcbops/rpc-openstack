@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-kibana_root: /opt/kibana
-kibana_version: "kibana-3.1.2"
-kibana_url: "https://download.elasticsearch.org/kibana/kibana/{{ kibana_version }}.tar.gz"
-kibana_sha256sum: "480562733c2c941525bfa26326b6fae5faf83109b452a6c4e283a5c37e3086ee"
+kibana_apt_repo_url: "http://packages.elastic.co/kibana/4.5/debian"
 
-elasticsearch_http_port: 9200
-elasticsearch_vip: "{{ internal_lb_vip_address }}"
-elasticsearch_public_url: '"https://"+window.location.hostname+":8443/elasticsearch/"'
+kibana_apt_repos:
+  - { repo: "deb {{ kibana_apt_repo_url }} stable main", state: "present" }
+
+kibana_apt_keys:
+  - { url: "http://packages.elastic.co/GPG-KEY-elasticsearch", state: "present" }
 
 kibana_apt_packages:
+  - kibana
   - apache2
   - python-passlib
 
@@ -32,21 +32,27 @@ kibana_apache_modules:
   - proxy
   - proxy_http
 
+elasticsearch_http_port: 9200
+elasticsearch_vip: "{{ internal_lb_vip_address }}"
+
 kibana_debug: False
 kibana_verbose: True
 
+kibana_app_port: 5601
+kibana_ssl_port: 8443
+
+# This is the user:group that kibana runs as
+kibana_service_user: kibana
+kibana_service_group: root
+
 kibana_server_name: "{{ external_lb_vip_address }}"
 kibana_self_signed: true
-kibana_ssl_port: 8443
-kibana_system_user: www-user
-kibana_system_group: www-data
 kibana_log_level: info
 kibana_ssl_cert: '/etc/ssl/certs/apache.cert'
 kibana_ssl_key: '/etc/ssl/private/apache.key'
 kibana_ssl_cert_path: '/etc/ssl/certs'
 kibana_ssl_protocol: '{{ ssl_protocol|default("ALL -SSLv2 -SSLv3") }}'
 kibana_ssl_cipher_suite: '{{ ssl_cipher_suite|default("ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS") }}'
-
 
 # Directories to create
 kibana_directories:

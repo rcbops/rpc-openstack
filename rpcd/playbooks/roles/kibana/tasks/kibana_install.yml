@@ -13,27 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Download Kibana
-  get_url:
-    url: "{{ kibana_url }}"
-    dest: "/tmp/kibana.tar.gz"
-    mode: "0644"
-    sha256sum: "{{ kibana_sha256sum }}"
-    force: yes
-  tags: kibana-install
+- name: Install apt packages
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  register: install_apt_packages
+  until: install_apt_packages|success
+  retries: 5
+  delay: 2
+  with_items: "{{ kibana_apt_packages }}"
+  tags:
+    - kibana-apt-packages
+    - kibana-install
 
-- name: Extract Kibana
-  unarchive:
-    copy: "no"
-    src: "/tmp/kibana.tar.gz"
-    dest: "/opt"
-  tags: kibana-install
-
-- name: Link Kibana Directory
-  file:
-    state: "link"
-    src: "/opt/{{ kibana_version }}"
-    dest: "{{ kibana_root }}"
-    owner: "{{ kibana_system_user }}"
-    group: "{{ kibana_system_group }}"
-  tags: kibana-install
+- name: Enable Kibana Service
+  service:
+    name: kibana
+    enabled: yes

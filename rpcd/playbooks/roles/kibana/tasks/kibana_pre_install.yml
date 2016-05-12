@@ -13,50 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install Kibana apt packages
-  apt:
-    pkg: "{{ item }}"
-    state: latest
-    update_cache: yes
-    cache_valid_time: 600
-  register: install_apt_packages
-  until: install_apt_packages|success
+- name: Add kibana apt-keys
+  apt_key:
+    url: "{{ item.url }}"
+    state: "{{ item.state }}"
+  with_items: "{{ kibana_apt_keys }}"
+  when: kibana_apt_keys is defined
+  register: add_kibana_keys_url
+  until: add_kibana_keys_url|success
   retries: 5
   delay: 2
-  with_items: kibana_apt_packages
   tags:
-    - kibana-apt-packages
+    - kibana-apt-keys
     - kibana-pre-install
 
-- name: Create the Kibana System Group
-  group:
-    name: "{{ kibana_system_group }}"
-    state: "present"
-    system: "yes"
-  when: kibana_system_group is defined
+- name: Add kibana apt repositories
+  apt_repository:
+    repo: "{{ item.repo }}"
+    state: "{{ item.state }}"
+    update_cache: yes
+  with_items: "{{ kibana_apt_repos }}"
+  register: add_kibana_repos
+  until: add_kibana_repos|success
+  retries: 5
+  delay: 2
   tags:
-    - kibana-pre-install
-
-- name: Create the Kibana System User
-  user:
-    name: "{{ kibana_system_user }}"
-    shell: "/bin/false"
-    group: "{{ kibana_system_group }}"
-    groups: adm
-    home: "/var/lib/{{ kibana_system_user }}"
-    system: "yes"
-    createhome: "yes"
-  when: kibana_system_group is defined and kibana_system_user is defined
-  tags:
-    - kibana-pre-install
-
-- name: Create Kibana Directories
-  file:
-    state: directory
-    path: "{{item.name}}"
-    mode: "{{item.mode}}"
-    owner: "{{kibana_system_user}}"
-    group: "{{kibana_system_group}}"
-  with_items: kibana_directories
-  tags:
+    - kibana-apt-repos
     - kibana-pre-install
