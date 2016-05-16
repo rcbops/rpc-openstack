@@ -15,3 +15,11 @@ alarms      :
             if (metric["memcache_api_local_status"] != 1) {
                 return new AlarmStatus(CRITICAL, "memcache unavailable");
             }
+    memcache_curr_connections :
+        label                   : memcache_curr_connections--{{ ansible_hostname }}
+        notification_plan_id    : "{{ maas_notification_plan }}"
+        criteria                : |
+            :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
+            if (metric["memcache_curr_connections"] > {{ ((memcached_connections*0.9)|round|int) }}) {
+                return new AlarmStatus(WARNING, "memcached connection count is >= 90% of max");
+            }
