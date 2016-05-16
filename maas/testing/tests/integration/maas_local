@@ -876,6 +876,15 @@
                         "disabled": false,
                         "metadata": null,
                         "scheduled_suppressions": []
+                    },
+                    "memcache_curr_connections--CONTROLLER_memcached_container_UID": {
+                        "active_suppressions": [],
+                        "confd_hash": null,
+                        "confd_name": null,
+                        "criteria": ":set consecutiveCount=3 if (metric[\"memcache_curr_connections\"] > 922) { return new AlarmStatus(WARNING, \"memcached connection count is >= 90% of max\"); }",
+                        "disabled": false,
+                        "metadata": null,
+                        "scheduled_suppressions": []
                     }
                 },
                 "confd_hash": null,
@@ -901,8 +910,8 @@
                         "name": "memcache_get_misses",
                         "unit": "cache_misses"
                     },
-                    "memcache_total_connections": {
-                        "name": "memcache_total_connections",
+                    "memcache_curr_connections": {
+                        "name": "memcache_curr_connections",
                         "unit": "connections"
                     },
                     "memcache_total_items": {
