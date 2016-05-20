@@ -29,28 +29,41 @@ def check_command(command):
     return json.loads(lines[-1])
 
 
-def get_ceph_report(client, keyring, fmt='json'):
+def get_ceph_status(client, keyring, fmt='json'):
     return check_command(('ceph', '--format', fmt, '--name', client,
-                          '--keyring', keyring, 'report'))
+                          '--keyring', keyring, 'status'))
 
 
-def get_mon_statistics(report=None, host=None):
-    mon = [m for m in report['monmap']['mons']
+def get_ceph_pg_dump_osds(client, keyring, fmt='json'):
+    return check_command(('ceph', '--format', fmt, '--name', client,
+                          '--keyring', keyring, 'pg', 'dump', 'osds'))
+
+
+def get_ceph_osd_dump(client, keyring, fmt='json'):
+    return check_command(('ceph', '--format', fmt, '--name', client,
+                          '--keyring', keyring, 'osd', 'dump'))
+
+
+def get_mon_statistics(client=None, keyring=None, host=None):
+    ceph_status = get_ceph_status(client=client, keyring=keyring)
+    mon = [m for m in ceph_status['monmap']['mons']
            if m['name'] == host]
-    mon_in = mon[0]['rank'] in report['quorum']
+    mon_in = mon[0]['rank'] in ceph_status['quorum']
     maas_common.metric_bool('mon_in_quorum', mon_in)
     health_status = 0
-    for each in report['health']['health']['health_services'][0]['mons']:
+    for each in ceph_status['health']['health']['health_services'][0]['mons']:
         if each['name'] == host:
             health_status = STATUSES[each['health']]
             break
     maas_common.metric('mon_health', 'uint32', health_status)
 
 
-def get_osd_statistics(report=None, osd_ids=None):
+def get_osd_statistics(client=None, keyring=None, osd_ids=None):
+    osd_dump = get_ceph_osd_dump(client=client, keyring=keyring)
+    pg_osds_dump = get_ceph_pg_dump_osds(client=client, keyring=keyring)
     for osd_id in osd_ids:
         osd_ref = 'osd.%s' % osd_id
-        for _osd in report['osdmap']['osds']:
+        for _osd in osd_dump['osds']:
             if _osd['osd'] == osd_id:
                 osd = _osd
                 break
@@ -61,7 +74,7 @@ def get_osd_statistics(report=None, osd_ids=None):
             name = '_'.join((osd_ref, key))
             maas_common.metric_bool(name, osd[key])
 
-        for _osd in report['pgmap']['osd_stats']:
+        for _osd in pg_osds_dump:
             if _osd['osd'] == osd_id:
                 osd = _osd
                 break
@@ -70,47 +83,50 @@ def get_osd_statistics(report=None, osd_ids=None):
             maas_common.metric(name, 'uint64', osd[key])
 
 
-def get_cluster_statistics(report=None):
+def get_cluster_statistics(client=None, keyring=None):
     metrics = []
 
+    ceph_status = get_ceph_status(client=client, keyring=keyring)
     # Get overall cluster health
-    metrics.append({'name': 'cluster_health',
-                    'type': 'uint32',
-                    'value': STATUSES[report['health']['overall_status']]})
+    metrics.append({
+        'name': 'cluster_health',
+        'type': 'uint32',
+        'value': STATUSES[ceph_status['health']['overall_status']]})
 
     # Collect epochs for the mon and osd maps
-    for map_name in ('monmap', 'osdmap'):
-        metrics.append({'name': "%(map)s_epoch" % {'map': map_name},
-                        'type': 'uint32',
-                        'value': report[map_name]['epoch']})
+    metrics.append({'name': "monmap_epoch",
+                    'type': 'uint32',
+                    'value': ceph_status['monmap']['epoch']})
+    metrics.append({'name': "osdmap_epoch",
+                    'type': 'uint32',
+                    'value': ceph_status['osdmap']['osdmap']['epoch']})
 
     # Collect OSDs per state
-    osds = {'total': 0, 'up': 0, 'in': 0}
-    for osd in report['osdmap']['osds']:
-        osds['total'] += 1
-        if osd['up'] == 1:
-            osds['up'] += 1
-        if osd['in'] == 1:
-            osds['in'] += 1
+    osds = {'total': ceph_status['osdmap']['osdmap']['num_osds'],
+            'up': ceph_status['osdmap']['osdmap']['num_up_osds'],
+            'in': ceph_status['osdmap']['osdmap']['num_in_osds']}
     for k in osds:
         metrics.append({'name': 'osds_%s' % k,
                         'type': 'uint32',
                         'value': osds[k]})
 
     # Collect cluster size & utilisation
-    osds_stats = ('kb', 'kb_avail', 'kb_used')
-    for k in report['pgmap']['osd_stats_sum']:
-        if k in osds_stats:
-            metrics.append({'name': 'osds_%s' % k,
-                            'type': 'uint64',
-                            'value': report['pgmap']['osd_stats_sum'][k]})
+    metrics.append({'name': 'osds_kb_used',
+                    'type': 'uint64',
+                    'value': ceph_status['pgmap']['bytes_used'] / 1024})
+    metrics.append({'name': 'osds_kb_avail',
+                    'type': 'uint64',
+                    'value': ceph_status['pgmap']['bytes_avail'] / 1024})
+    metrics.append({'name': 'osds_kb',
+                    'type': 'uint64',
+                    'value': ceph_status['pgmap']['bytes_total'] / 1024})
 
     # Collect num PGs and num healthy PGs
-    pgs = {'total': 0, 'active_clean': 0}
-    for pg in report['pgmap']['pg_stats']:
-        pgs['total'] += 1
-        if pg['state'] == 'active+clean':
-            pgs['active_clean'] += 1
+    pgs = {'total': ceph_status['pgmap']['num_pgs'], 'active_clean': 0}
+    for state in ceph_status['pgmap']['pgs_by_state']:
+        if state['state_name'] == 'active+clean':
+            pgs['active_clean'] = state['count']
+            break
     for k in pgs:
         metrics.append({'name': 'pgs_%s' % k,
                         'type': 'uint32',
@@ -143,8 +159,7 @@ def main(args):
     get_statistics = {'cluster': get_cluster_statistics,
                       'mon': get_mon_statistics,
                       'osd': get_osd_statistics}
-    report = get_ceph_report(client=args.name, keyring=args.keyring)
-    kwargs = {'report': report}
+    kwargs = {'client': args.name, 'keyring': args.keyring}
     if args.subparser_name == 'osd':
         kwargs['osd_ids'] = [int(i) for i in args.osd_ids.split(' ')]
     if args.subparser_name == 'mon':
