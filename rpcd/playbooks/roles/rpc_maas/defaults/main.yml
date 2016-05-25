@@ -417,6 +417,7 @@ maas_pip_packages:
 # maas_pip_dependencies: These are pip packages we depend on, but should already be built in
 #                        openstack-ansible
 maas_pip_dependencies:
+  - cryptography
   - requests
   - lxml
   - python-cinderclient
