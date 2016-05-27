@@ -38,10 +38,19 @@
   become: true
   notify: Restart apache2
 
-- name: Install python dependencies
+- name: Install pip packages
   pip:
-    requirements: "{{ horizon_extensions_pip_requirements_file }}"
+    name: "{{ item }}"
+    state: present
     extra_args: "{{ pip_install_options | default('') }}"
+  register: install_pip_packages
+  until: install_pip_packages|success
+  retries: 5
+  delay: 2
+  with_items: horizon_extensions_pip_packages
+  tags:
+    - horizon-extensions-install
+    - horizon-extensions-pip-packages
 
 - name: "Create /etc/rackspace if it doesn't exist"
   file:
