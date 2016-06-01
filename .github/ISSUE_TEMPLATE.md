@@ -6,6 +6,8 @@
 
 ##### What is actually happening?
 
+##### What were you attempting to do when you encountered this error (give as much detail as possible)? 
+
 ##### How can we reproduce this issue?
 
 ##### How can we verify your issue is addressed?
