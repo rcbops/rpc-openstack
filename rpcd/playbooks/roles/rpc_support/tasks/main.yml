@@ -67,6 +67,10 @@
   when: >
     inventory_hostname in groups['galera']
 
+- include: holland_db_setup.yml
+  when: >
+    inventory_hostname == groups['galera'][0]
+
 - include: holland_config.yml
   when: >
     inventory_hostname in groups['galera']
