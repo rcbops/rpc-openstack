@@ -43,6 +43,36 @@ When creating an issue, please ensure you include the following information
 6. Each time a PR is merged, the associated branch is deleted from ```rpc-openstack```.
 7. When all PRs are completed the issue is then closed.
 
+## Documentation impact
+
+### documenting your change
+
+When noting there is a doc impact on your change, you have two choices:
+
+1. Submit an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues)
+OR
+2. Contribute your own doc change to [docs-rpc](https://github.com/rackerlabs/docs-rpc) and tag a relevant docs person for review and merge.
+
+### what to document
+
+Document changes if:
+
+* There are changes to the way playbooks are run/named
+* Changes to the documented configuration files
+* New feature
+* Change that requires you (as the developer) to take action
+* Update impact changes
+
+### how to document
+
+The documentation work is all done in [this](https://github.com/rackerlabs/docs-rpc) repo.
+
+1. See the [Docs workflow](https://github.com/rackerlabs/docs-rpc/blob/master/GITHUBING.rst) to setup for contribution and
+   [here](https://github.com/rackerlabs/docs-rpc/blob/master/CONTRIBUTING.rst) for our Contributor guidelines.
+2. Once you have created a pull request, tag the doc team for review. See [Documentation team FAQ](https://github.com/rackerlabs/docs-rackspace/blob/master/doc/contributor-collateral/privatecloud-docteam-FAQ.rst) for clarification on who to contact.
+3. Await merge. Respond to any questions/comments/concerns.
+
+Any further questions about our github processes, contributor guidelines, or FAQ about the docs and team, refer to: [Contributor collatoral](https://github.com/rackerlabs/docs-rackspace/tree/master/doc/contributor-collateral) 
 
 ## Commits, pull requests and reviews
 
