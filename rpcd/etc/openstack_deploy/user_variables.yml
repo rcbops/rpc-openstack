@@ -54,8 +54,8 @@ ssl_protocol: "ALL -SSLv2 -SSLv3"
 ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS"
 
 # Keystone overrides
-keystone_token_provider: "keystone.token.providers.uuid.Provider"
-keystone_token_driver: "keystone.token.persistence.backends.sql.Token"
+keystone_token_provider: "uuid"
+keystone_token_driver: "sql"
 
 # Galera overrides
 galera_cluster_name: rpc_galera_cluster
