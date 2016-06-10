@@ -13,35 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create rpc_support backup user
-  mysql_user:
-    name: "{{ item.name }}"
-    host: "{{ item.host }}"
-    password: "{{ item.password }}"
-    priv: "{{ item.priv }}"
-    state: "{{ item.state }}"
-  with_items:
-    - name: "rpc_support"
-      host: "%"
-      password: "{{ rpc_support_holland_password }}"
-      priv: "*.*:ALL"
-      state: present
-    - name: "rpc_support"
-      host: "localhost"
-      password: "{{ rpc_support_holland_password }}"
-      priv: "*.*:ALL"
-      state: present
-  run_once: true
-  tags:
-    - holland_sql_user
-    - holland_all
-
 - name: Create supporting holland directories
   file:
     state: directory
     path: "{{ item }}"
   with_items:
     - "/var/backup/holland_backups"
+    - "/var/log/holland"
     - "/etc/holland"
   tags:
     - holland_dir
