@@ -23,3 +23,9 @@
 - [ ] liberty-12.2
 - [ ] liberty-12.1
 - [ ] kilo
+
+##### DocImpact: This section is to be completed by the issue owner as part of the issue's resolution.
+##### Does your change require documentation?
+- [ ] Yes, and I submitted an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues "Docs issues")
+- [ ] Yes, and I contributed a documentation patch to [docs-rpc](https://github.com/rackerlabs/docs-rpc "docs-rpc")
+- [ ] No documentation required for this change
