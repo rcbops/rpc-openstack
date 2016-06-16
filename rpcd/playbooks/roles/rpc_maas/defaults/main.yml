@@ -242,10 +242,12 @@ cinder_volumes_vg_critical_threshold: 90.0
 cinder_vg_name: "{{ cinder_backends['lvm']['volume_group'] }}"
 
 # MaaS CPU idle threshold
-cpu_idle_percent_avg_threshold: 10.0
+cpu_idle_percent_avg_warning_threshold: 10.0
+cpu_idle_percent_avg_critical_threshold: 1.0
 
 # MaaS Memory in use threshold
-memory_used_percentage_threshold: 95.0
+memory_used_percentage_warning_threshold: 90.0
+memory_used_percentage_critical_threshold: 99.0
 
 # Set the threshold for the "Max Channels per Connection" Rabbitmq alarm
 rabbitmq_max_channels_per_con_threshold: 10
@@ -259,10 +261,12 @@ rabbitmq_queue_growth_rate_threshold: 15
 
 
 # Set the threshold for the "Disk utilisation" MaaS alarms
-disk_utilisation_threshold: 90
+disk_utilisation_warning_threshold: 90
+disk_utilisation_critical_threshold: 99
 
 # nf_conntrack threshold
-nf_conntrack_threshold: 90
+nf_conntrack_warning_threshold: 80
+nf_conntrack_critical_threshold: 90
 
 # net_max_speed has units of Mb/s, set to null for auto discovery
 net_max_speed: null

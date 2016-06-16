@@ -21,5 +21,8 @@ alarms      :
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["memcache_curr_connections"] > {{ ((memcached_connections*0.9)|round|int) }}) {
-                return new AlarmStatus(WARNING, "memcached connection count is >= 90% of max");
+                return new AlarmStatus(CRITICAL, "memcached connection count is >= 90% of max");
+            }
+            if (metric["memcache_curr_connections"] > {{ ((memcached_connections*0.8)|round|int) }}) {
+                return new AlarmStatus(WARNING, "memcached connection count is >= 80% of max");
             }
