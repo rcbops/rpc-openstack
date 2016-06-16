@@ -179,6 +179,8 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
   if [ "${DEPLOY_AIO}" == "yes" ]; then
     ansible neutron_agent -m command \
                           -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 80 -j CHECKSUM --checksum-fill'
+    ansible neutron_agent -m command \
+                          -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 8000 -j CHECKSUM --checksum-fill'
     ansible neutron_agent -m shell \
                           -a 'DEBIAN_FRONTEND=noninteractive apt-get install iptables-persistent'
   fi
