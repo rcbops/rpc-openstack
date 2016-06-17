@@ -1,5 +1,5 @@
 ---
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+## Warning
+#
+# This file is controlled by the devs and will be overwritten on upgrade
+# If you wish to override the variables set here, use /etc/openstack_deploy/user_rpco_variables_overrides.yml
 
 ## Rackspace Cloud Details
 rackspace_cloud_auth_url: https://identity.api.rackspacecloud.com/v2.0
