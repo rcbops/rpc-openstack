@@ -160,6 +160,11 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
   # setup the hosts and build the basic containers
   run_ansible setup-hosts.yml
 
+  # ensure correct pip.conf
+  pushd ${RPCD_DIR}/playbooks/
+    run_ansible pip-lockdown.yml
+  popd
+
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
     pushd ${RPCD_DIR}/playbooks/
       run_ansible ceph-all.yml
