@@ -45,6 +45,9 @@ openstack-ansible -i "localhost," patcher.yml
 # are not on the repo server
 ansible repo_container -a 'rm -rf /root/.pip'
 
+# ensure correct pip.conf
+openstack-ansible pip-lockdown.yml
+
 # Do the upgrade for openstack-ansible components
 cd ${OA_DIR}
 echo 'YES' | ${OA_DIR}/scripts/run-upgrade.sh
