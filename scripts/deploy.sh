@@ -99,8 +99,7 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
   fi
   # remove swift config if not deploying swift.
-  if [[ "$DEPLOY_SWIFT" != "yes" ]]
-  then
+  if [[ "$DEPLOY_SWIFT" != "yes" ]]; then
     rm /etc/openstack_deploy/conf.d/swift.yml
   fi
   rm -f /etc/openstack_deploy/conf.d/aodh.yml
@@ -109,8 +108,7 @@ fi
 
 # Apply host security hardening with openstack-ansible-security
 # The is applied as part of setup-hosts.yml
-if [[ "$DEPLOY_HARDENING" == "yes" ]]
-then
+if [[ "$DEPLOY_HARDENING" == "yes" ]]; then
   if grep -q '^apply_security_hardening:' /etc/openstack_deploy/user_variables.yml
   then
     sed -i "s/^apply_security_hardening:.*/apply_security_hardening: true/" /etc/openstack_deploy/user_variables.yml

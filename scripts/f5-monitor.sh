@@ -39,8 +39,7 @@ EOF
     )
 
     # Exit if status is 401 (invalid username/pass)
-    if [[ "${resp[@]:(-1)}" == "401" ]]
-    then
+    if [[ "${resp[@]:(-1)}" == "401" ]]; then
         echo "Exiting after failure to get a valid token: Check user/pass."
         printf "%s\n" "${resp[@]}"
         exit -1
@@ -62,8 +61,7 @@ EOF
 # Read token from file or get new one
 get_token() {
     # If file exists
-    if [[ -f /var/tmp/keystone-token ]]
-    then
+    if [[ -f /var/tmp/keystone-token ]]; then
         # Read into token variable
         read -r token < /var/tmp/keystone-token
     else
@@ -129,19 +127,16 @@ get_token() {
 
       # Check if we've got an expected status code
       for status_code in $expected_statuses; do
-          if [[ "$status" == "$status_code" ]]
-          then
+          if [[ "$status" == "$status_code" ]]; then
               echo "Success" >&3
               exit 0
           fi
       done
 
       # Check for 401 (token expiration or unauthorized)
-      if [[ "$status" == "401" ]]
-      then
+      if [[ "$status" == "401" ]]; then
           # Exit if token is new
-          if [[ "$token_new" == "1" ]]
-          then
+          if [[ "$token_new" == "1" ]]; then
               echo "Exiting after failure to authorize with valid token $token on $check_url"
               printf "%s\n" "${resp[@]}"
               exit -1
