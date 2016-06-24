@@ -4,10 +4,7 @@
 'use strict';
 
 (function () {
-  angular
-    .module('horizon.dashboard.rackspace', [])
-
-    .controller('rpc_heat', function ($scope, $sce, $modal, $http) {
+  function rpc_heat($scope, $sce, $modal, $http) {
       var i;
 
       $scope.alerts = [];
@@ -177,9 +174,11 @@
           });
         });
       };
-    })
+  } // rpc_heat
 
-    .controller('ModalInstanceCtrl', function ($scope, $modalInstance, table, parameters) {
+  rpc_heat.$inject = ["$scope", "$sce", "$modal", "$http"];
+
+  function ModalInstanceCtrl($scope, $modalInstance, table, parameters) {
       $scope.table = table;
       $scope.parameters = parameters;
 
@@ -192,5 +191,12 @@
       $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
       };
-    });
+  } // ModalInstanceCtrl
+
+  ModalInstanceCtrl.$inject = ["$scope", "$modalInstance"];
+
+  angular
+    .module('horizon.dashboard.rackspace', [])
+    .controller('rpc_heat', rpc_heat)
+    .controller('ModalInstanceCtrl', ModalInstanceCtrl);
 }());
