@@ -448,3 +448,9 @@ maas_excluded_checks: []
 # This is necessary until LP #1537117 is implemented
 openrc_os_endpoint_type: internalURL
 openrc_insecure: "{{ (keystone_service_adminuri_insecure | bool or keystone_service_internaluri_insecure | bool) | default(false) }}"
+# Name of the virtual env to deploy into (maas)
+maas_venv: "/openstack/venvs/maas-{{ rpc_release }}"
+maas_venv_bin: "{{ maas_venv }}/bin"
+# Set this to enable or disable installing in a venv
+maas_venv_enabled: true
+

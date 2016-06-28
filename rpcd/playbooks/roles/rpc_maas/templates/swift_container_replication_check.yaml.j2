@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : swift-recon.py
-    args    : ["--ring-type", "container", "replication"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}swift-recon.py", "--ring-type", "container", "replication"]
 alarms      :
     swift_container_replication_failure_check :
         label                   : swift_container_replication_failure_check--{{ ansible_hostname }}

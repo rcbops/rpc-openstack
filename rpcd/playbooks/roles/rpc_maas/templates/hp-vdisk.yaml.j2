@@ -4,7 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : hp_monitoring.py
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}hp_monitoring.py"]
 alarms      :
     hp-disk_status :
         label                   : hp-disk--{{ inventory_hostname|quote }}

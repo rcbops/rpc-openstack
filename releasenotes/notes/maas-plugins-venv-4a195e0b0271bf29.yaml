@@ -1,0 +1,10 @@
+---
+upgrade:
+  - Deployers need to be aware of upgrading from a
+    system that isn't running the maas plugins inside
+    of a virtualenv. They need to decide if they want
+    the maas plugins to continue to run on the global
+    environment or a virtual environment.
+fixes:
+  - MaaS Plugins now run inside their own virtual
+    environment

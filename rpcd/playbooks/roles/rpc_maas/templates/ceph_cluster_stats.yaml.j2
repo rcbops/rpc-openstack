@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : ceph_monitoring.py
-    args    : ["--name", "client.raxmon", "--keyring", "/etc/ceph/ceph.client.raxmon.keyring", "cluster"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}ceph_monitoring.py", "--name", "client.raxmon", "--keyring", "/etc/ceph/ceph.client.raxmon.keyring", "cluster"]
 alarms      :
     ceph_health_err :
         label                   : ceph_health_err--{{ ansible_hostname }}

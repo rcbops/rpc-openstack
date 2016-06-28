@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : memcached_status.py
-    args    : ["{{ ansible_ssh_host }}"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}memcached_status.py", "{{ ansible_ssh_host }}"]
 alarms      :
     memcache_api_local_status :
         label                   : memcache_api_local_status--{{ ansible_hostname }}
