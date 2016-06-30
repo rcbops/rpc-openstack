@@ -118,3 +118,7 @@ horizon_custom_uploads:
   favicon:
     src: "{{ rackspace_static_files_folder }}/favicon.ico"
     dest: img/favicon.ico
+
+# Use RPC python package index
+repo_build_pip_extra_indexes:
+  - "https://rpc-repo.rackspace.com/pools"
