@@ -24,6 +24,6 @@
 - name: Install pip packages
   pip:
     name: "{{ item }}"
-    state: present
+    state: latest
     extra_args: "{{ pip_install_options | default('') }}"
   with_items: maas_pip_packages + maas_pip_dependencies
