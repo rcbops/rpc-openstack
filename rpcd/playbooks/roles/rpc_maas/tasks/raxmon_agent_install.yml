@@ -38,6 +38,11 @@
     group: "root"
     mode: "0600"
 
+- name: Verify raxmon-entities-list and MaaS API authentication does not fail
+  command: "raxmon-entities-list"
+  register: raxmon_output
+  failed_when: raxmon_output.rc != 0
+
 - name: Entity {{ entity_name }} count
   shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l"
   register: entity_count
