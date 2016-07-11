@@ -21,7 +21,7 @@ from rackspace import info
 
 if sys.version_info < (2, 6, 0):
     sys.stderr.write("This requires Python 2.6.0 or greater \n")
-    sys.exit('\nUpgrade python because your version of it is VERY deprecated\n')
+    sys.exit('\nUpgrade python, yours is VERY deprecated\n')
 
 with open('README', 'rb') as r_file:
     LDINFO = r_file.read()
