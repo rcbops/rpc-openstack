@@ -13,18 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Ensure local checks are removed
-  file:
-    path: "/etc/rackspace-monitoring-agent.conf.d/{{ item }}--{{ inventory_hostname }}.yaml"
-    state: absent
-  with_items:
-    - "{{ maas_excluded_checks }}"
-  delegate_to: "{{ physical_host }}"
-
-- name: Ensure remote checks are removed
-  file:
-    path: "/etc/rackspace-monitoring-agent.conf.d/{{ item }}.yaml"
-    state: absent
-  with_items:
-    - "{{ maas_excluded_checks }}"
+- name: Install local checks
+  template:
+    src: "cinder_volume_check.yaml.j2"
+    dest: "/etc/rackspace-monitoring-agent.conf.d/cinder_volume_{{ item.key }}_check--{{ inventory_hostname }}.yaml"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  with_dict: "{{ cinder_backends | default({}) }}"
+  when:
+    - inventory_hostname in groups["cinder_volume"]
+    - "'cinder_volume_{{ item.key }}_check' not in maas_excluded_checks"
   delegate_to: "{{ physical_host }}"
