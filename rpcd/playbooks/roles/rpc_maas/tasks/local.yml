@@ -17,6 +17,10 @@
   vars:
     checks: "{{ openstack_service_local_checks_list }}"
 
+- include: ensure_cinder_volumes_checks.yml
+  when:
+    - inventory_hostname in groups["cinder_volume"]
+
 - include: ensure_local_checks.yml
   vars:
     checks: "{{ infra_service_local_checks_list }}"

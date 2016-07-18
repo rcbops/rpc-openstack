@@ -128,3 +128,8 @@ secure_cluster: true
 # List of secure flags to set on for a pool (options for the list are nodelete, nopgchange, nosizechange - prevents deletion, pg from changing and size from changing respectively).
 secure_cluster_flags:
   - nodelete
+
+# As part of https://github.com/rcbops/rpc-openstack/issues/1098 we changed the cinder_volume checks.
+# We need to exclude the original so that upgrades will work smoothly.
+maas_excluded_checks:
+  - cinder_volume_check
