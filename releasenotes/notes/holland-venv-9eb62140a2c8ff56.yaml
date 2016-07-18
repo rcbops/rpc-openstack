@@ -1,0 +1,8 @@
+---
+features:
+  - Holland now runs inside a python virtual environment
+    by default. By default, the virtual environment will
+    be placed in /openstack/venvs/holland-<release-tag>.
+upgrade:
+  - On upgrades, the holland pip packages will linger in 
+    the global environment if not cleaned up.
