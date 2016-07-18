@@ -336,7 +336,7 @@ kernel_checks_list:
 openstack_service_local_checks_list:
   - { name: "cinder_api_local_check", group: "cinder_api" }
   - { name: "cinder_scheduler_check", group: "cinder_scheduler" }
-  - { name: "cinder_volume_check", group: "cinder_volume" }
+  - { name: "cinder_backup_check", group: "cinder_backup" }
   - { name: "glance_api_local_check", group: "glance_api" }
   - { name: "glance_registry_local_check", group: "glance_registry" }
   - { name: "heat_api_local_check", group: "heat_api" }
