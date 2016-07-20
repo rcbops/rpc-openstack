@@ -24,13 +24,14 @@
     - logstash-web-disable
     - logstash-post-install
 
-- name: Stop logstash-web
-  service:
-    name: logstash-web
-    state: stopped
-    enabled: no
+- name: Create patterns directory
+  file:
+    name: "/opt/logstash/patterns"
+    owner: "logstash"
+    group: "logstash"
+    state: directory
   tags:
-    - logstash-web-disable
+    - logstash-patterns
     - logstash-post-install
 
 - name: Logstash Extra Patterns
