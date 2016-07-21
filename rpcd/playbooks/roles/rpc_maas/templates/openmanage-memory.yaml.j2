@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : openmanage.py
-    args    : ["chassis", "memory"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}openmanage.py", "chassis", "memory"]
 alarms      :
     openmanage-memory_status :
         label                   : openmanage-memory--{{ inventory_hostname|quote }}

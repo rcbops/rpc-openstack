@@ -20,6 +20,15 @@
   synchronize:
     src={{ maas_plugin_dir }} dest=/usr/lib/rackspace-monitoring-agent/plugins/ delete=yes
 
+- name: Drop in wrapper script to run maas plugins in venv
+  template:
+    src: "run_plugin_in_venv.sh.j2"
+    dest: "/usr/lib/rackspace-monitoring-agent/plugins/run_plugin_in_venv.sh"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: maas_venv_enabled
+
 - name: List plugin files to chmod
   shell: "ls -1 /usr/lib/rackspace-monitoring-agent/plugins/*.py"
   register: plugin_files
@@ -39,12 +48,20 @@
     mode: "0600"
 
 - name: Verify raxmon-entities-list and MaaS API authentication does not fail
-  command: "raxmon-entities-list"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-entities-list
   register: raxmon_output
   failed_when: raxmon_output.rc != 0
 
 - name: Entity {{ entity_name }} count
-  shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l
   register: entity_count
 
 - name: Zero entities with label {{ entity_name }} exist
@@ -58,14 +75,26 @@
   when: entity_count.stdout|int != 1
 
 - name: Get entity {{ entity_name }}
-  shell: "raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | awk '{print $2}' | cut -d= -f2"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | awk '{print $2}' | cut -d= -f2
   register: entity
 
 - name: Assign agent ID to entity
-  shell: "raxmon-entities-update --id {{ entity.stdout }} --agent-id {{ entity_name }}"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-entities-update --id {{ entity.stdout }} --agent-id {{ entity_name }}
 
 - name: Agent token {{ entity_name }} count
-  shell: "raxmon-agent-tokens-list | grep ' label={{ entity_name }}, ' | wc -l"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-agent-tokens-list | grep ' label={{ entity_name }}, ' | wc -l
   register: agent_token_count
   when: maas_agent_token is not defined
 
@@ -75,12 +104,20 @@
   when: maas_agent_token is not defined and agent_token_count.stdout|int > 1
 
 - name: Create agent token
-  shell: "raxmon-agent-tokens-create --label={{ entity_name }}"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-agent-tokens-create --label={{ entity_name }}
   register: agent_token
   when: maas_agent_token is not defined and agent_token_count.stdout|int == 0
 
 - name: Get agent token
-  shell: "raxmon-agent-tokens-list | grep '<AgentToken: id=.* label={{ entity_name }}, .*>' | awk '{print $2}' | sed -e 's/id=\\(.*\\),/\\1/g'"
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-agent-tokens-list | grep '<AgentToken: id=.* label={{ entity_name }}, .*>' | awk '{print $2}' | sed -e 's/id=\(.*\),/\1/g'
   register: maas_agent_token_id
   when: maas_agent_token is not defined
 

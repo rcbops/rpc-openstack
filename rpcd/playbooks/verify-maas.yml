@@ -18,9 +18,12 @@
   user: root
   tasks:
     - name: "Verify Checks & Alarms are registered"
-      script: >
-        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-created
-        --entity {{ inventory_hostname }}
+      shell: |
+        {% if maas_venv_enabled | bool %}
+        . {{ maas_venv_bin }}/activate
+        {% endif %}
+        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-created \
+        --entity {{ inventory_hostname }} \
         {% for ec in maas_excluded_checks %} --excludedcheck {{ec}}
         {% endfor %}
       register: verify_maas
@@ -35,8 +38,11 @@
         minutes: 2
 
     - name: "Verify Check & Alarm Status"
-      script: >
-        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status
+      shell: |
+        {% if maas_venv_enabled | bool %}
+        . {{ maas_venv_bin }}/activate
+        {% endif %}
+        {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status \
         --entity {{ inventory_hostname }}
       register: verify_status
       failed_when: verify_status.rc != 0

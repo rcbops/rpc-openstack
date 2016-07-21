@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : swift-recon.py
-    args    : ["md5"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}swift-recon.py", "md5"]
 alarms      :
     swift_ring_md5_check :
         label                   : swift_ring_md5_check--{{ ansible_hostname }}

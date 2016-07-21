@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : vg_check.py
-    args    : ["{{ item.cinder_vg_name }}"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}vg_check.py", "{{ item.cinder_vg_name }}"]
 alarms      :
     cinder_vg_space_status :
         label                   : cinder_vg_space_status--{{ ansible_hostname }}

@@ -4,8 +4,8 @@ disabled    : false
 period      : "{{ maas_check_period }}"
 timeout     : "{{ maas_check_timeout }}"
 details     :
-    file    : service_api_local_check.py
-    args    : ["swift_account_server", "--path", "/healthcheck", "{{ storage_address }}", "6002"]
+    file    : run_plugin_in_venv.sh
+    args    : ["{{ maas_plugin_dir }}service_api_local_check.py", "swift_account_server", "--path", "/healthcheck", "{{ storage_address }}", "6002"]
 alarms      :
     swift_account_server_api_local_status :
         label                   : swift_account_server_api_local_status--{{ ansible_hostname }}
