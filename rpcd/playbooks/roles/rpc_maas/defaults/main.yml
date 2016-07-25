@@ -444,3 +444,8 @@ maas_excluded_checks: []
 # This is necessary until LP #1537117 is implemented
 openrc_os_endpoint_type: internalURL
 openrc_insecure: "{{ (keystone_service_adminuri_insecure | bool or keystone_service_internaluri_insecure | bool) | default(false) }}"
+
+#
+# Default horizon site name
+#
+horizon_site_name: "openstack dashboard"
