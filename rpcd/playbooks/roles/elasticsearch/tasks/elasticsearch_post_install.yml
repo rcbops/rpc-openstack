@@ -17,8 +17,8 @@
   template:
     src: "{{ item }}"
     dest: "/etc/elasticsearch/{{ item }}"
-    owner: "root"
-    group: "root"
+    owner: "elasticsearch"
+    group: "elasticsearch"
   with_items:
     - elasticsearch.yml
     - logging.yml
@@ -45,21 +45,6 @@
   wait_for:
     host: "{{ ansible_ssh_host }}"
     port: "9200"
-  tags:
-    - elasticsearch-post-install
-
-- name: Deploy ElasticSearch schema mapping script
-  template:
-    src: "mapping.sh.j2"
-    dest: "/opt/mapping.sh"
-    owner: "root"
-    group: "root"
-    mode: "0755"
-  tags:
-    - elasticsearch-post-install
-
-- name: Run ElasticSearch schema mapping script
-  shell: /opt/mapping.sh
   tags:
     - elasticsearch-post-install
 
