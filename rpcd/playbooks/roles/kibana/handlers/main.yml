@@ -13,6 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Restart Kibana
+  service:
+    name: kibana
+    state: restarted
+    pattern: kibana
+
 - name: Restart Apache
   service:
     name: apache2

@@ -15,7 +15,7 @@
 
 galaxy_info:
   author: rcbops
-  description: Installation of Kibana
+  description: Installation of Kibana 4.5.X
   company: Rackspace
   license: Apache2
   min_ansible_version: 1.6.6

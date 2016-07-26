@@ -14,6 +14,36 @@
 # limitations under the License.
 
 
+- name: Deploy Kibana configuration files
+  template:
+    src: "kibana.yml"
+    dest: "/opt/kibana/config/kibana.yml"
+    owner: "root"
+    group: "root"
+  notify: Restart Kibana
+  tags:
+    - kibana-post-install
+
+- name: Deploy Kibana service configuration file
+  template:
+    src: "kibana"
+    dest: "/etc/default/kibana"
+    owner: "root"
+    group: "root"
+  notify: Restart Kibana
+  tags:
+    - kibana-post-install
+
+- name: Restart Kibana before proceeding
+  meta: flush_handlers
+
+- name: Wait for Kibana port
+  wait_for:
+    host: "127.0.0.1"
+    port: "{{ kibana_app_port }}"
+  tags:
+    - kibana-post-install
+
 - name: create self-signed SSL cert
   command: >
     openssl req -new -nodes -x509 -subj
@@ -40,8 +70,8 @@
   template:
     src: "{{ item }}"
     dest: "/etc/apache2/sites-available/{{ item }}"
-    owner: "{{ kibana_system_user }}"
-    group: "{{ kibana_system_group }}"
+    owner: "root"
+    group: "root"
   with_items:
     - 000-kibana.conf
   notify: Restart Apache
@@ -62,25 +92,13 @@
     - kibana-apache
     - kibana-post-install
 
-- name: Kibana Config
-  template:
-    src: "{{ item }}"
-    dest: "{{ kibana_root }}/{{ item }}"
-    owner: "{{ kibana_system_user }}"
-    group: "{{ kibana_system_group }}"
-  with_items:
-    - config.js
-  notify: Restart Apache
-  tags:
-    - kibana-post-install
-
 - name: Link Kibana Site
   file:
     state: "link"
     src: "/etc/apache2/sites-available/000-kibana.conf"
     dest: "/etc/apache2/sites-enabled/000-kibana.conf"
-    owner: "{{ kibana_system_user }}"
-    group: "{{ kibana_system_group }}"
+    owner: "root"
+    group: "root"
   notify: Restart Apache
   tags:
     - kibana-apache
@@ -110,13 +128,14 @@
     - kibana-apache
     - kibana-post-install
 
-- name: Install Dashboards
-  template:
-    src: "{{ item }}"
-    dest: "/opt/kibana/app/dashboards/{{ item }}"
-    owner: "root"
-    group: "root"
-  with_items:
-    - Event-Dashboard.json
-  tags:
-    - kibana-post-install
+# TODO(shep): this needs to be ported to kibana-4
+#- name: Install Dashboards
+#  template:
+#    src: "{{ item }}"
+#    dest: "/opt/kibana/app/dashboards/{{ item }}"
+#    owner: "root"
+#    group: "root"
+#  with_items:
+#    - Event-Dashboard.json
+#  tags:
+#    - kibana-post-install
