@@ -16,7 +16,7 @@
 - name: "Ensure kernel module(s)"
   modprobe:
     name: "{{ item }}"
-  with_items: rpc_host_kernel_modules
+  with_items: "{{ rpc_host_kernel_modules }}"
   when: rpc_host_kernel_modules is defined
   tags:
     - rpc-host-kernel-modules
@@ -25,7 +25,7 @@
   lineinfile:
     dest: /etc/modules
     line: "{{ item }}"
-  with_items: rpc_host_kernel_modules
+  with_items: "{{ rpc_host_kernel_modules }}"
   when: rpc_host_kernel_modules is defined
   tags:
     - rpc-host-kernel-modules

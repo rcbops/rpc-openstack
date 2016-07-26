@@ -25,7 +25,7 @@
   command: "cat /sys/class/net/{{ item.name }}/speed"
   ignore_errors: true
   register: discover_nic_speed
-  with_items: network_checks_list
+  with_items: "{{ network_checks_list }}"
 
 - name: Install network throughput checks
   template:
@@ -45,6 +45,6 @@
   file:
     path: "/etc/rackspace-monitoring-agent.conf.d/network_throughput-{{ item.name }}-{{ inventory_hostname }}.yaml"
     state: absent
-  with_items: network_checks_list
+  with_items: "{{ network_checks_list }}"
   when:
     - "'network_throughput-{{ item.name }}' in maas_excluded_checks"
