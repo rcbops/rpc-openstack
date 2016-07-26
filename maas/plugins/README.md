@@ -285,6 +285,11 @@ Checks the status of the horizon dashboard. First checks that the login page is 
 
 ##### Mandatory Arguments:
 IP address of service to test
+
+#### Optional Arguments:
+
+site_name_regexp: name of the horizon dashboard used to find the login page (default: 'openstack dashboard')
+
 ##### Example Output:
 
     metric splash_status_code uint32 200
