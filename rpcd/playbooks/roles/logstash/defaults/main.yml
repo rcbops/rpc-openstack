@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # the apt repository url to use for installing logstash from
-logstash_apt_repo_url: "http://packages.elasticsearch.org/logstash/1.4/debian"
+logstash_apt_repo_url: "http://packages.elastic.co/logstash/2.3/debian"
 
 # the apt repository to use for installing logstash from
 logstash_apt_repos:
@@ -22,7 +22,7 @@ logstash_apt_repos:
 
 # the apt repository key url
 logstash_apt_keys:
-  - { url: "https://packages.elasticsearch.org/GPG-KEY-elasticsearch", state: "present" }
+  - { url: "https://packages.elastic.co/GPG-KEY-elasticsearch", state: "present" }
 
 # the listening port for rsyslog events
 logstash_syslog_port: 5544
@@ -31,12 +31,9 @@ logstash_syslog_port: 5544
 logstash_tcp_port: 5140
 
 # the target elasticsearch cluster settings
-elasticsearch_tcp_port: 9300
-elasticsearch_mode: transport
-elasticsearch_cluster: openstack
+elasticsearch_tcp_port: 9200
 
 # the apt packages to install
 logstash_apt_packages:
   - logstash
-  - logstash-contrib
   - openjdk-7-jre-headless
