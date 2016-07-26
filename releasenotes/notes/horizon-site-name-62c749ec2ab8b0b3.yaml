@@ -1,0 +1,7 @@
+---
+features:
+  - Added a new optional argument to the MaaS plugin 
+    horizon_check.py that takes in the name of the 
+    horizon dashboard that is used to find the login 
+    page. The default value is set to 
+    'openstack dashboard'. 
