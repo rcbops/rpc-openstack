@@ -1,0 +1,19 @@
+---
+prelude: >
+    This version introduces nova's new database,
+    nova api db.
+security:
+  - Live migration of nova is now ssh encrypted, using
+    qemu+ssh instead of qemu+tcp. This behavior can be
+    overriden by setting another uri in the variable
+    ``live_migration_uri``
+other:
+  - Due to the introduction of the new nova api db, the
+    variables ``nova_api_db_max_overflow``,
+    ``nova_api_db_max_pool_size`` and
+    ``nova_api_db_pool_timeout`` were introduced.
+    The tweaking of these variables can be done by
+    overriding them directly (for an api db change only),
+    or by adapting ``db_max_overflow``,
+    ``db_max_pool_size`` and ``db_pool_timeout`` (for a
+    global change)
