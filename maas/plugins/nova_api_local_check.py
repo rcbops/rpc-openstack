@@ -37,8 +37,8 @@ def check(auth_ref, args):
     tenant_id = keystone.tenant_id
 
     COMPUTE_ENDPOINT = (
-        'http://{ip}:8774/v2/{tenant_id}'.format(ip=args.ip,
-                                                 tenant_id=tenant_id)
+        'http://{ip}:8774/v2.1/{tenant_id}'
+        .format(ip=args.ip, tenant_id=tenant_id)
     )
 
     try:

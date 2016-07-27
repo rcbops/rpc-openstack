@@ -31,8 +31,8 @@ def check(auth_ref, args):
     tenant_id = keystone.tenant_id
 
     COMPUTE_ENDPOINT = (
-        'http://{hostname}:8774/v2/{tenant_id}'.format(hostname=args.hostname,
-                                                       tenant_id=tenant_id)
+        'http://{hostname}:8774/v2.1/{tenant_id}'
+        .format(hostname=args.hostname, tenant_id=tenant_id)
     )
     try:
         nova = get_nova_client(auth_token=auth_token,
