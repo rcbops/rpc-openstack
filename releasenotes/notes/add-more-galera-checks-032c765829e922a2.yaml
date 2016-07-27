@@ -1,0 +1,26 @@
+---
+features:
+  - |
+    The galera_check.py plugin now provides the following
+    metrics.
+    * num_of_open_files
+    * open_files_limit
+    * innodb_row_lock_time_avg
+    * innodb_deadlocks
+    * access_denied_errors
+    * aborted_clients
+    * aborted_connects
+  - |
+    | New alarms have been created with the following criteria.
+    | open_file_size_limit_reached:
+    | metric["num_of_open_files"] > metric["open_files_limit"]
+    | innodb_row_lock_time_avg:
+    | metric["innodb_row_lock_time_avg"] > {{ innodb_row_lock_time_avg_critical_threshold }}
+    | innodb_deadlocks:
+    | metric["innodb_deadlocks"] != 0
+    | access_denied_errors:
+    | rate(metric["access_denied_errors"]) > {{ mysql_access_denied_errors_rate_warning_threshold }}
+    | aborted_clients:
+    | rate(metric["aborted_clients"]) > 1
+    | aborted_connects:
+    | rate(metric["aborted_connects"]) > 1
