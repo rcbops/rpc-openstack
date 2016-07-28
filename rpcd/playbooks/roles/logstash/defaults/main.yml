@@ -30,6 +30,9 @@ logstash_syslog_port: 5544
 # the listening port for tcp/json events
 logstash_tcp_port: 5140
 
+# the listening port for beats events
+logstash_beats_port: 5044
+
 # the target elasticsearch cluster settings
 elasticsearch_tcp_port: 9200
 
@@ -37,3 +40,6 @@ elasticsearch_tcp_port: 9200
 logstash_apt_packages:
   - logstash
   - openjdk-7-jre-headless
+
+logstash_plugins:
+  - logstash-input-beats

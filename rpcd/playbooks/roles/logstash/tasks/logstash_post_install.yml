@@ -110,3 +110,12 @@
   notify: Restart Logstash
   tags:
     - logstash-post-install
+
+
+- name: Enable Logstash Plugins
+  command: "/opt/logstash/bin/logstash-plugin install {{ item }}"
+  with_items: "{{ logstash_plugins }}"
+  notify: Restart Logstash
+  tags:
+    - logstash-plugins
+    - logstash-post-install

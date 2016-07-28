@@ -1,5 +1,5 @@
 ---
-# Copyright 2015, Rackspace US, Inc.
+# Copyright 2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: beaver_pre_install.yml
-- include: beaver_install.yml
-- include: beaver_post_install.yml
+- name: Restart Filebeat
+  service:
+    name: filebeat
+    state: restarted

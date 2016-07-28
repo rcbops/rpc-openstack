@@ -1,5 +1,5 @@
 ---
-# Copyright 2015, Rackspace US, Inc.
+# Copyright 2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Restart beaver
-  service:
-    name: beaver
-    state: restarted
-    pattern: beaver
+- name: Deploy Filebeat Configuration Files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ filebeat_configuration_files }}"
+  notify: "Restart Filebeat"
+  tags:
+    - filebeat-configuration
+    - filebeat-post-install
