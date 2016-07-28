@@ -1,0 +1,29 @@
+---
+prelude: >
+    Neutron has fixed bugs related to port-security,
+    allowing it to be re-enabled.  Additionally
+    handle_internal_only_routers now defaults to true,
+    allowing us to remove the override.
+features:
+  - LBaaSv2 can now be configured via Horizon.
+  - MTUs are now calculated correctly, overrides have
+    been removed.
+upgrade:
+  - The default value for the arp-responder has changed
+    when using ML2 and the Linux Bridge agent.  The
+    logical network will now utilize traditional flood
+    and learn through the overlay. When upgrading,
+    existing vxlan devices will retain their old setup
+    and be unimpacted by changes to this flag. To apply
+    this to older devices created with the Liberty agent,
+    the vxlan device must be removed and then the Mitaka
+    agent restarted.  The agent will recreate the vxlan
+    devices with the current settings upon restart.
+  - The default_subnet_pools option is now deprecated and
+    will be removed in the Newton release. The same
+    functionality is now provided by setting is_default
+    attribute on subnetpools to True using the API or
+    client.
+other:
+  - Overlay networks are not explicitly required, if
+    unset it will default to the ansible_ssh_host value.

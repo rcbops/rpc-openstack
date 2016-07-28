@@ -103,16 +103,6 @@ swift_ceilometer_enabled: False
 keystone_ceilometer_enabled: False
 tempest_service_available_ceilometer: False
 
-# Disable port security binding for liberty. See https://bugs.launchpad.net/neutron/+bug/1509312
-neutron_ml2_conf_ini_overrides:
-    ml2:
-        extension_drivers: ''
-
-# Enable handle_internal_only_routers based on expected behavior since Juno
-# See https://bugs.launchpad.net/openstack-ansible/+bug/1577868
-neutron_l3_agent_ini_overrides:
-  DEFAULT:
-    handle_internal_only_routers: True
 # List of files to override using the OSA horizon role
 rackspace_static_files_folder: "/opt/rpc-openstack/rpcd/playbooks/roles/horizon_extensions/files"
 horizon_custom_uploads:
