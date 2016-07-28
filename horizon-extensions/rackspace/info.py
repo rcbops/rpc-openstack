@@ -1,5 +1,4 @@
----
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2012, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-horizon_extensions_git_repo: https://github.com/rcbops/rpc-openstack
-horizon_extensions_git_install_branch: master
-horizon_extensions_git_package_name: horizon-extensions
-horizon_extensions_git_install_fragments: "subdirectory=horizon-extensions/"
-horizon_extensions_dest_dir: /opt/rackspace/horizon-extensions
-horizon_extensions_pip_packages:
-   - horizon_extensions
+__author__ = "Kevin Carter"
+__panel_author__ = "kevin.bittner@RACKSPACE.COM"
+__contact__ = "Kevin Carter"
+__email__ = "kevin.carter@rackspace.com"
+__copyright__ = "2015 All Rights Reserved"
+__license__ = "Licensed under the Apache License, Version 2.0"
+__date__ = "2013-11-27"
+__version__ = "1.0.0"
+__status__ = "Production"
+__appname__ = "horizon-extensions"
+__description__ = 'Rackspace Private Cloud Horizon Extensions'
+__url__ = ''

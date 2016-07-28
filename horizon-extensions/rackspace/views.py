@@ -1,11 +1,10 @@
----
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2013, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-horizon_extensions_git_repo: https://github.com/rcbops/rpc-openstack
-horizon_extensions_git_install_branch: master
-horizon_extensions_git_package_name: horizon-extensions
-horizon_extensions_git_install_fragments: "subdirectory=horizon-extensions/"
-horizon_extensions_dest_dir: /opt/rackspace/horizon-extensions
-horizon_extensions_pip_packages:
-   - horizon_extensions
+from django import shortcuts
+from django.views.decorators import vary
+
+import horizon
+
+
+# Always show the Rackspace dashboard when the user logs in
+def get_user_home(user):
+    return horizon.get_dashboard('rackspace').get_absolute_url()
