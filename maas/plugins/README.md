@@ -340,18 +340,25 @@ connects to an individual member of a galera cluster and checks various statuses
 
 ##### Example Output:
 
-    metric wsrep_replicated_bytes int64 320737952 bytes
-    metric wsrep_received_bytes int64 33470 bytes
-    metric wsrep_commit_window double 1.000000
+    metric wsrep_replicated_bytes int64 1307 bytes
+    metric wsrep_received_bytes int64 299878933 bytes
+    metric wsrep_commit_window_size double 1.000143 sequence_delta
     metric wsrep_cluster_size int64 3 nodes
-    metric queries_per_second int64 5792715 qps
-    metric wsrep_cluster_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
-    metric wsrep_cluster_status string primary
-    metric wsrep_local_state_uuid string 67e41d08-165d-11e4-9d87-7e94ef43b302
-    metric wsrep_local_state_comment string synced
+    metric queries_per_second int64 380289 qps
+    metric wsrep_cluster_state_uuid string 6a3b85c0-4b07-11e6-8778-3f5baf70ad5c
+    metric wsrep_cluster_status string Primary
+    metric wsrep_local_state_uuid string 6a3b85c0-4b07-11e6-8778-3f5baf70ad5c
+    metric wsrep_local_state_comment string Synced
     metric mysql_max_configured_connections int64 800 connections
     metric mysql_current_connections int64 1 connections
     metric mysql_max_seen_connections int64 2 connections
+    metric num_of_open_files int64 14 files
+    metric open_files_limit int64 65535 files
+    metric innodb_row_lock_time_avg int64 0 milliseconds
+    metric innodb_deadlocks int64 0 deadlocks
+    metric access_denied_errors int64 0 access_denied_errors
+    metric aborted_clients int64 0 aborted_clients
+    metric aborted_connects int64 0 aborted_connects
 
 ***
 #### conntrack_count.py

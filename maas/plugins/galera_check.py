@@ -90,6 +90,20 @@ def print_metrics(replica_status):
            replica_status['Threads_connected'], 'connections')
     metric('mysql_max_seen_connections', 'int64',
            replica_status['Max_used_connections'], 'connections')
+    metric('num_of_open_files', 'int64',
+           replica_status['Open_files'], 'files')
+    metric('open_files_limit', 'int64',
+           replica_status['open_files_limit'], 'files')
+    metric('innodb_row_lock_time_avg', 'int64',
+           replica_status['Innodb_row_lock_time_avg'], 'milliseconds')
+    metric('innodb_deadlocks', 'int64',
+           replica_status['Innodb_deadlocks'], 'deadlocks')
+    metric('access_denied_errors', 'int64',
+           replica_status['Access_denied_errors'], 'access_denied_errors')
+    metric('aborted_clients', 'int64',
+           replica_status['Aborted_clients'], 'aborted_clients')
+    metric('aborted_connects', 'int64',
+           replica_status['Aborted_connects'], 'aborted_connects')
 
 
 def main():
