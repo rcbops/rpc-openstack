@@ -33,23 +33,244 @@ filebeat_logstash_port: "{{ logstash_beats_port |default(5044) }}"
 #"{{ groups['logstash_all'] | map('extract', hostvars, ['container_address']) | list }}"
 filebeat_logstash_hosts: "{% for host in groups['logstash_all'] %}{{ hostvars[host]['ansible_ssh_host'] }}:{{ filebeat_logstash_port }}{% if not loop.last %},{% endif %}{% endfor %}"
 
-filebeat_config_overrides:
-  filebeat:
-    prospectors:
-      - paths:
-        - /var/log/*.log
-        - /var/log/*/*.log
-        encoding: utf-8
-        input_type: log
-    registry_file: /var/lib/filebeat/registry
-  output:
-    logstash:
-      hosts: "{{ filebeat_logstash_hosts.split(',')|list }}"
-  shipper: null
-  logging:
-    files:
-      rotateeverybytes: 10485760  # = 10MB
-      keepfiles: 7
+# NOTE(sigmavirus24): Explanation of the regular expression:
+# - The Date is formatted by oslo.log as YYYY-MM-DD
+# - The Time is formatted by oslo.log as HH:MM:SS.Microseconds
+# - The Python Module tends to look like "cinder.api.scheduler"
+# - The Id is the group of request Ids, e.g., [req-<UUID4> ...]
+# We don't want lines like these to be captures as "multiline"
+# (hence the negate: true line) so we match the lines that we want
+# to be single log line items and negate them. We want to exclude
+# "Traceback" here because:
+# 1. It's not useful - it has the same timestamp as the actual
+#    traceback.
+# 2. If there is a multiline log before it, you would get one large
+#    log item instead of two discrete items.
+# See also https://play.golang.org/p/Y6qBej0IB2
+#
+#                              Date        Time       PID     Level   Python Module   Id
+multiline_openstack_pattern: '^[0-9-]{10} +[0-9:\.]+ +[0-9]+ +[A-Z]+ +[A-Za-z0-9\._]+ \[|Traceback'
+
+filebeat_logging_paths:
+  - paths:
+    - '/var/log/cinder/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - cinder
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/glance/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - glance
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/heat/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - heat
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/horizon/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - horizon
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/keystone/keystone.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - keystone
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/keystone/ssl_access.log'
+    - '/var/log/keystone/keystone-apache-error.log'
+    tags:
+    - openstack
+    - apache
+    - apache-access
+    - keystone
+  - paths:
+    - '/var/log/neutron/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - neutron
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  - paths:
+    - '/var/log/nova/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - nova
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
+  # NOTE(sigmavirus24): Swift does not use oslo.log, so we cannot rely on our
+  # oslo-based pattern
+  - paths:
+    - '/var/log/swift/account*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - swift
+    - swift-account
+  - paths:
+    - '/var/log/swift/container*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - swift
+    - swift-container
+  - paths:
+    - '/var/log/swift/object*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - swift
+    - swift-object
+  - paths:
+    - '/var/log/swift/proxy*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - swift
+    - swift-proxy
+  # Start of non-OpenStack services whose logs we'd like to ship
+  - paths:
+    - '/var/log/apparmor/*.log'
+    tags:
+    - apparmor
+    - infrastructure
+  - paths:
+    - '/var/log/audit/*.log'
+    tags:
+    - audit
+  - paths:
+    - '/var/log/fsck/*'
+    tags:
+    - fsck
+  - paths:
+    - '/var/log/haproxy/*.log'
+    tags:
+    - haproxy
+    - infrastructure
+  - paths:
+    - '/var/log/libvirt/*.log'
+    - '/var/log/libvirt/*/*.log'
+    tags:
+    - libvirt
+    - nova
+  - paths:
+    - '/var/log/lxc/*.log'
+    tags:
+    - lxc
+    - infrastructure
+  - paths:
+    - '/var/log/upstart/*.log'
+    tags:
+    - upstart
+    - infrastructure
+  - paths:
+    - '/var/log/mysql_logs/*.log'
+    tags:
+    - galera
+    - mysql
+    - infrastructure
+    multiline:
+      # See https://play.golang.org/p/1r4iM0xwjQ
+      pattern: '^([^0-9W]|$)'
+      negate: 'false'
+      match: after
+  - paths:
+    - '/var/log/rabbitmq/*'
+    multiline:
+      # See https://play.golang.org/p/2SwhbSZxue
+      pattern: '^='
+      negate: 'true'
+      match: after
+    tags:
+    - rabbitmq
+    - infrastructure
+  - paths:
+    - '/var/log/elasticsearch/*.log'
+    multiline:
+      # See https://play.golang.org/p/Fo3bb7Mcgr
+      pattern: '^[^\[]'
+      negate: 'false'
+      match: after
+    tags:
+    - elasticsearch
+    - infrastructure
+    - logging
+  - paths:
+    - '/var/log/logstash/*.log'
+    tags:
+    - logstash
+    - infrastructure
+    - logging
+  - paths:
+    - '/var/log/ceph/ceph-mon.*.log'
+    multiline:
+      pattern: '^[a-z_]* '
+      negate: 'false'
+      match: after
+    tags:
+    - ceph-mon
+    - ceph
+    - infrastructure
+  - paths:
+    - '/var/log/ceph/ceph-osd.*.log'
+    tags:
+    - ceph-osd
+    - ceph
+    - infrastructure
+  - paths:
+    - '/var/log/nginx/*access.log'
+    tags:
+    - repo
+    - nginx
+    - nginx-access
+    - infrastructure
+  - paths:
+    - '/var/log/nginx/*error.log'
+    tags:
+    - repo
+    - nginx
+    - nginx-error
+    - infrastructure
+
 
 filebeat_configuration_files:
   - { src: "filebeat.yml.j2", dest: "/etc/filebeat/filebeat.yml" }
