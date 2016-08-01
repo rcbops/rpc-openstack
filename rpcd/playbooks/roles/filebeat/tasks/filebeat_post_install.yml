@@ -22,3 +22,11 @@
   tags:
     - filebeat-configuration
     - filebeat-post-install
+
+- name: Ensuring filebeat is started on boot
+  service:
+    name: filebeat
+    enabled: yes
+    state: started
+  tags:
+    - filebeat-post-install
