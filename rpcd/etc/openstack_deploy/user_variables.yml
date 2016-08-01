@@ -79,6 +79,10 @@ pkg_locations:
   - /etc/openstack_deploy
   - /opt/rpc-openstack/rpcd
 
+# Override OpenStack upper constraints
+repo_build_upper_constraints_overrides:
+  - "elasticsearch<2.1.0"
+
 # NOTE(mancdaz) there may be a better place to override this
 horizon_venv_tag: "{{ openstack_release }}"
 
