@@ -118,7 +118,9 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
 fi
 
 # move OSA secrets to correct locations
-mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
+if [[ ! -f /etc/openstack_deploy/user_osa_secrets.yml ]] && [[ -f /etc/openstack_deploy/user_secrets.yml ]]; then
+  mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
+fi
 
 # Apply host security hardening with openstack-ansible-security
 # The is applied as part of setup-hosts.yml
