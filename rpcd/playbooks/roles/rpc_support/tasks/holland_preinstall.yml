@@ -12,6 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+- name: Create venv dir for holland
+  file:
+    path: "{{ holland_venv }}"
+    state: directory
+
+- name: Install holland requirements dependencies
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items: holland_requires_dependencies
+  when: holland_requires_dependencies is defined
+
 - name: Install packages required by holland
   apt:
     pkg: "{{ item }}"
@@ -24,6 +37,8 @@
 - name: Install pip dependencies
   pip:
     name: "{{ item }}"
+    state: latest
+    virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
     state: latest
   with_items: holland_pip_dependencies
@@ -45,6 +60,8 @@
 - name: Install service source
   pip:
     name: "/opt/{{ holland_service_name }}_{{ holland_git_install_branch | replace('/', '_') }}"
+    state: latest
+    virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
     state: latest
   register: pip_install
@@ -58,6 +75,7 @@
   pip:
     name: "{{ holland_git_dest }}/{{ item.path }}/{{ item.package }}"
     extra_args: "{{ pip_install_options|default('') }}"
+    virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     state: latest
   when: holland_git_dest is defined and holland_git_repo_plugins is defined
   with_items: holland_git_repo_plugins

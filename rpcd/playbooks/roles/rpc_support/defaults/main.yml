@@ -70,6 +70,10 @@ holland_packages:
   - mariadb-client
   - xtrabackup
 
+holland_venv_enabled: True
+holland_venv_bin: "/openstack/venvs/holland-{{ rpc_release }}/bin"
+holland_venv: "/openstack/venvs/holland-{{ rpc_release }}"
+
 holland_pip_dependencies:
   - MySQL-python
 
@@ -84,3 +88,7 @@ hwraid_apt_keys:
 hwraid_apt_packages:
   - megacli
   - lsiutil
+
+holland_requires_dependencies:
+  - virtualenv
+  - virtualenv-tools
