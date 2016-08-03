@@ -26,8 +26,8 @@ elasticsearch_apt_packages:
   - openjdk-7-jre-headless
 
 elasticsearch_pip_packages:
-  - elasticsearch<2.1.0
-  - elasticsearch-curator<3.5.0
+  - elasticsearch>=2.0.0,<3.0.0
+  - elasticsearch-curator==4.0.4
 
 # This sets the cluster name
 elasticsearch_cluster: openstack
