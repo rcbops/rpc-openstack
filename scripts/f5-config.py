@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2014-2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +14,27 @@
 # limitations under the License.
 #
 # (c) 2014, Kevin Carter <kevin.carter@rackspace.com>
+from __future__ import print_function
 import argparse
 import json
 import os
+import sys
 
 import netaddr
 
+IS_LEM = True
 
+LAB_DATA_DIR = os.environ.get('LAB_DATA_DIR')
+LAB_NAME = os.environ.get('LAB_NAME')
+if LAB_DATA_DIR is None or LAB_NAME is None:
+    IS_LEM = False
+
+LAB_NAME_URL = None
 PART = 'RPC'
 PREFIX_NAME = 'RPC'
+if IS_LEM:
+    LAB_NAME_URL = LAB_NAME.lower() + '.rpc.rackspace.com'
+    PREFIX_NAME = PART = LAB_NAME.upper()
 
 SNAT_POOL = (
     '### CREATE SNATPOOL ###\n'
@@ -30,8 +42,8 @@ SNAT_POOL = (
     ' %(snat_pool_addresses)s } }'
 )
 
-#Persistance Profile:
-PERSISTANCE = [
+#  Persistence Profile:
+PERSISTENCE = [
     r'create ltm persistence source-addr /' + PART + '/' + PREFIX_NAME + '_PROF_PERSIST_IP {'
     r' app-service none defaults-from /Common/source_addr'
     r' match-across-services enabled timeout 3600 }',
@@ -361,7 +373,7 @@ def recursive_host_get(inventory, group_name, host_dict=None):
 
 
 def build_pool_parts(inventory):
-    for key, value in POOL_PARTS.iteritems():
+    for key, value in POOL_PARTS.items():
         recursive_host_get(
             inventory, group_name=value['group'], host_dict=value
         )
@@ -379,7 +391,8 @@ def file_find(filename, user_file=None, pass_exception=False):
       $(pwd)/openstack_deploy/
 
     :param filename: ``str``  Name of the file to find
-    :param user_file: ``str`` Additional localtion to look in FIRST for a file
+    :param user_file: ``str`` Additional location to look in FIRST for a file
+    :param pass_exception: ``bool`` sys.exit if the file is not there and false
     """
     file_check = [
         os.path.join(
@@ -451,7 +464,7 @@ def args():
         '--ssl-domain-name',
         help='Name of the domain that will have an ssl cert.',
         required=False,
-        default=None
+        default=LAB_NAME_URL
     )
 
     parser.add_argument(
@@ -517,8 +530,6 @@ def args():
         default=False,
         action='store_true'
     )
-
-
     return vars(parser.parse_args())
 
 
@@ -539,20 +550,32 @@ def main():
     sslvirts = []
     pubvirts = []
 
+    if IS_LEM is True:
+        SEC_RULE=[
+            'create ltm rule /' + PART + '/' + PREFIX_NAME + '_DISCARD_ALL',
+            '   --> Copy and Paste the following between pre-included curly brackets <--',
+            'when CLIENT_ACCEPTED { discard }\n']
+    else:
+        SEC_RULE=[
+            'run util bash',
+            'tmsh create ltm rule /' + PART + '/' + PREFIX_NAME + '_DISCARD_ALL when CLIENT_ACCEPTED { discard }',
+            'exit'
+        ]
+
     commands.extend([
-        '### CREATE SECURITY iRULE ###',
-        'run util bash',
-        'tmsh create ltm rule /' + PART + '/' + PREFIX_NAME + '_DISCARD_ALL when CLIENT_ACCEPTED { discard }',
-        'exit',
+        '### CREATE SECURITY iRULE ###'
+    ] + SEC_RULE + [
         '### CREATE EXTERNAL MONITOR ###',
         '   --> Upload External monitor file to disk <--',
         '       run util bash',
         '       cd /config/monitors/',
         '       vi RPC-MON-EXT-ENDPOINT.monitor',
         '   --> Copy and Paste the External monitor into vi <--',
-        '       create sys file external-monitor /' + PART + '/RPC-MON-EXT-ENDPOINT { source-path file:///config/monitors/RPC-MON-EXT-ENDPOINT.monitor }',
+        ('       create sys file external-monitor /' + PART +
+         '/RPC-MON-EXT-ENDPOINT { source-path file:///config/monitors/RPC-MON-EXT-ENDPOINT.monitor }'),
         '       save sys config',
-        '       create ltm monitor external /' + PART + '/RPC-MON-EXT-ENDPOINT { interval 20 timeout 61 run /' + PART + '/RPC-MON-EXT-ENDPOINT }\n'
+        ('       create ltm monitor external /' + PART + '/RPC-MON-EXT-ENDPOINT { interval 20 timeout 61 run /' +
+         PART + '/RPC-MON-EXT-ENDPOINT }\n')
     ])
     if user_args['ssl_domain_name']:
         commands.extend([
@@ -567,29 +590,30 @@ def main():
             'cd /Common\n',
             '### CREATE SSL PROFILES ###',
             ('create ltm profile client-ssl'
-            ' /' + PART + '/' + PREFIX_NAME + '_PROF_SSL_%(ssl_domain_name)s'
-            ' { cert /' + PART + '/%(ssl_domain_name)s.crt key'
-            ' /' + PART + '/%(ssl_domain_name)s.key defaults-from clientssl }')
+             ' /' + PART + '/' + PREFIX_NAME + '_PROF_SSL_%(ssl_domain_name)s'
+             ' { cert /' + PART + '/%(ssl_domain_name)s.crt key'
+             ' /' + PART + '/%(ssl_domain_name)s.key defaults-from clientssl }')
             % user_args,
-            'create ltm profile server-ssl /' + PART + '/' + PREFIX_NAME + '_PROF_SSL_SERVER { defaults-from /Common/serverssl }\n'
+            ('create ltm profile server-ssl /' + PART + '/' + PREFIX_NAME +
+             '_PROF_SSL_SERVER { defaults-from /Common/serverssl }\n')
             % user_args,
         ])
     if user_args['Superman']:
-        print "       **************************       "
-        print "    .*##*:*####***:::**###*:######*.    "
-        print "   *##: .###*            *######:,##*   "
-        print " *##:  :####:             *####*.  :##: "
-        print "  *##,:########**********:,       :##:  "
-        print "   .#########################*,  *#*    "
-        print "     *#########################*##:     "
-        print "       *##,        ..,,::**#####:       "
-        print "        ,##*,*****,        *##*         "
-        print "          *#########*########:          "
-        print "            *##*:*******###*            "
-        print "             .##*.    ,##*              "
-        print "               :##*  *##,               "
-        print "                 *####:                 "
-        print "                   :,                   "
+        print('       **************************       ')
+        print('    .*##*:*####***:::**###*:######*.    ')
+        print('   *##: .###*            *######:,##*   ')
+        print(' *##:  :####:             *####*.  :##: ')
+        print('  *##,:########**********:,       :##:  ')
+        print('   .#########################*,  *#*    ')
+        print('     *#########################*##:     ')
+        print('       *##,        ..,,::**#####:       ')
+        print('        ,##*,*****,        *##*         ')
+        print('          *#########*########:          ')
+        print('            *##*:*******###*            ')
+        print('             .##*.    ,##*              ')
+        print('               :##*  *##,               ')
+        print('                 *####:                 ')
+        print('                   :,                   ')
 #       Kal-El
 #       SUPERMAN
 #       JNA
@@ -597,7 +621,10 @@ def main():
     pool_parts = build_pool_parts(inventory=inventory_json)
     lb_vip_address = inventory_json['all']['vars']['internal_lb_vip_address']
 
-    for key, value in pool_parts.iteritems():
+    if user_args['ssl_public_ip'] is None:
+        user_args['ssl_public_ip'] = inventory_json['all']['vars']['external_lb_vip_address']
+
+    for key, value in pool_parts.items():
         value['group_name'] = key.upper()
         value['vs_name'] = '%s_VS_%s' % (
             PREFIX_NAME, value['group_name']
@@ -635,9 +662,12 @@ def main():
                         '/' + PART + '/' + PREFIX_NAME + '_PROF_SSL_%(ssl_domain_name)s { context clientside }'
                     ) % user_args
                 else:
-                    virtual_dict['ssl_profiles'] = '/' + PART + '/' + PREFIX_NAME + '_PROF_SSL_SERVER { context serverside } /' + PART + '/' + PREFIX_NAME + '_PROF_SSL_%(ssl_domain_name)s { context clientside }'% user_args
+                    virtual_dict['ssl_profiles'] = (
+                        '/' + PART + '/' + PREFIX_NAME + '_PROF_SSL_SERVER { context serverside } /' + PART + '/' +
+                        PREFIX_NAME + '_PROF_SSL_%(ssl_domain_name)s { context clientside }' % user_args
+                    )
                 if value.get('make_public'):
-                    if value.get ('ssl_impossible'):
+                    if value.get('ssl_impossible'):
                         virtual_dict['vs_name'] = '%s_VS_%s' % (
                             'RPC_PUB', value['group_name']
                         )
@@ -648,7 +678,7 @@ def main():
                             pubvirts.append(pubvirt)
                     else:
                         virtual_dict['vs_name'] = '%s_VS_%s' % (
-                        'RPC_PUB_SSL', value['group_name']
+                            'RPC_PUB_SSL', value['group_name']
                         )
                         sslvirt = '%s' % PUB_SSL_VIRTUAL_ENTRIES % virtual_dict
                         if sslvirt not in sslvirts:
@@ -704,7 +734,7 @@ def main():
     script.extend(['%s' % i % user_args for i in MONITORS])
     script.extend(['%s' % i for i in commands])
     script.extend(['### CREATE PERSISTENCE PROFILES ###'])
-    script.extend(['%s' % i % user_args for i in PERSISTANCE])
+    script.extend(['%s' % i % user_args for i in PERSISTENCE])
     script.extend(['### CREATE NODES ###'])
     script.extend(['%s' % i % user_args for i in nodes])
     script.extend(['\n### CREATE POOLS ###'])

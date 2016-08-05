@@ -1,0 +1,6 @@
+---
+other:
+  - f5-config.py now works with both LEM and PROD to
+    allow for better (unified) usage.  We have added
+    the preliminary support for python3.  SSL endpoints
+    have been added as well.
