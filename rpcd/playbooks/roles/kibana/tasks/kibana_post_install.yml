@@ -127,15 +127,3 @@
   tags:
     - kibana-apache
     - kibana-post-install
-
-# TODO(shep): this needs to be ported to kibana-4
-#- name: Install Dashboards
-#  template:
-#    src: "{{ item }}"
-#    dest: "/opt/kibana/app/dashboards/{{ item }}"
-#    owner: "root"
-#    group: "root"
-#  with_items:
-#    - Event-Dashboard.json
-#  tags:
-#    - kibana-post-install

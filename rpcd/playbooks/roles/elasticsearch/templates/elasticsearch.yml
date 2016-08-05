@@ -214,12 +214,12 @@ bootstrap.mlockall: {{ elasticsearch_bootstrap_mlockall }}
 
 # Set the bind address specifically (IPv4 or IPv6):
 #
-network.bind_host: {{ hostvars[inventory_hostname]['container_address'] }}
+network.bind_host: 127.0.0.1,{{ hostvars[inventory_hostname]['container_address'] }}
 
 # Set the address other nodes will use to communicate with this node. If not
 # set, it is automatically derived. It must point to an actual IP address.
 #
-network.publish_host: {{ hostvars[inventory_hostname]['container_address'] }}
+network.publish_host: 127.0.0.1,{{ hostvars[inventory_hostname]['container_address'] }}
 
 # Set both 'bind_host' and 'publish_host':
 #

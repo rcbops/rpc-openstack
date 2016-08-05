@@ -1,0 +1,5 @@
+---
+features:
+  - Kibana has been upgraded to v4. This update includes an update
+    to the default dashboard and includes all of the features that
+    Kibana added in v4.

@@ -28,6 +28,20 @@
     - kibana-apt-packages
     - kibana-install
 
+- name: Install pip packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "{{ pip_install_options |default('') }}"
+  register: install_pip_packages
+  until: install_pip_packages |success
+  retries: 5
+  delay: 2
+  with_items: kibana_pip_packages
+  tags:
+    - kibana-pip-packages
+    - kibana-install
+
 - name: Enable Kibana Service
   service:
     name: kibana
