@@ -20,7 +20,7 @@
     - name: "Verify Checks & Alarms are registered"
       script: >
         {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-created
-        --entity {{ inventory_hostname }}
+        --entity {{ inventory_hostname }}{{ maas_fqdn_extension }}
         {% for ec in maas_excluded_checks %} --excludedcheck {{ec}}
         {% endfor %}
       register: verify_maas
@@ -37,7 +37,7 @@
     - name: "Verify Check & Alarm Status"
       script: >
         {{ maas_rpc_scripts_dir }}/rpc-maas-tool.py verify-status
-        --entity {{ inventory_hostname }}
+        --entity {{ inventory_hostname }}{{ maas_fqdn_extension }}
       register: verify_status
       failed_when: verify_status.rc != 0
       changed_when: False
