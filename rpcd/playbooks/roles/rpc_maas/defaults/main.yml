@@ -442,6 +442,12 @@ maas_apt_packages:
   - mariadb-client
 
 #
+# maas_requires_pip_packages: Pip packages needed outside the virtualenv
+#
+maas_requires_pip_packages:
+  - virtualenv
+
+#
 # maas_pip_packages: Packages we need but are not built by openstack-ansible
 #
 maas_pip_packages:
