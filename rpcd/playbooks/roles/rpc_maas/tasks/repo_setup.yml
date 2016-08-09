@@ -17,14 +17,14 @@
   apt_key:
     url: "{{ item.url }}"
     state: "{{ item.state }}"
-  with_items: maas_apt_keys
+  with_items: "{{ maas_apt_keys }}"
   when: "ansible_distribution_version in ['12.04', '13.04', '13.10', '14.04'] and maas_apt_keys is defined"
 
 - name: Add Container repos
   apt_repository:
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
-  with_items: maas_apt_repos
+  with_items: "{{ maas_apt_repos }}"
   when: "ansible_distribution_version in ['12.04', '13.04', '13.10', '14.04'] and maas_apt_repos is defined"
   register: add_repos
   until: add_repos|success

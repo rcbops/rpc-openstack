@@ -21,5 +21,5 @@
     state: "{{ item.state|default('present') }}"
     reload: "{{ item.reload|default('yes') }}"
   ignore_errors: true
-  with_items: rpc_host_kernel_sysctl
+  with_items: "{{ rpc_host_kernel_sysctl }}"
   when: rpc_host_kernel_sysctl is defined

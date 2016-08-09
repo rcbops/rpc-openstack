@@ -19,7 +19,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
-  with_items: hwraid_apt_packages
+  with_items: "{{ hwraid_apt_packages }}"
   when: hwraid_apt_packages is defined
   tags:
     - hwraid-apt-packages

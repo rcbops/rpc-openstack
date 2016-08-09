@@ -31,7 +31,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
-  with_items: holland_packages
+  with_items: "{{ holland_packages }}"
   when: holland_packages is defined
 
 - name: Install pip dependencies
@@ -41,7 +41,7 @@
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
     state: latest
-  with_items: holland_pip_dependencies
+  with_items: "{{ holland_pip_dependencies }}"
   when: holland_pip_dependencies is defined
   register: pip_install
   until: pip_install|success
@@ -78,7 +78,7 @@
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     state: latest
   when: holland_git_dest is defined and holland_git_repo_plugins is defined
-  with_items: holland_git_repo_plugins
+  with_items: "{{ holland_git_repo_plugins }}"
   register: pip_install
   until: pip_install|success
   retries: 5

@@ -20,7 +20,7 @@
     update_cache: yes
     cache_valid_time: 600
     force: yes
-  with_items: support_util_packages
+  with_items: "{{ support_util_packages }}"
   register: support_packge_installs
   until: support_packge_installs|success
   retries: 3
@@ -34,7 +34,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
-  with_items: support_host_packages
+  with_items: "{{ support_host_packages }}"
   when: inventory_hostname in groups['hosts']
   tags:
     - support_packages

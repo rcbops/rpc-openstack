@@ -17,7 +17,7 @@
   apt_key:
     url: "{{ item.url }}"
     state: "{{ item.state }}"
-  with_items: hwraid_apt_keys
+  with_items: "{{ hwraid_apt_keys }}"
   when: hwraid_apt_keys is defined
   register: add_keys_url
   until: add_keys_url|success
@@ -31,7 +31,7 @@
   apt_repository:
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
-  with_items: hwraid_apt_repos
+  with_items: "{{ hwraid_apt_repos }}"
   register: add_repos
   until: add_repos|success
   retries: 5

@@ -19,7 +19,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
-  with_items: support_neutron_debug_packages
+  with_items: "{{ support_neutron_debug_packages }}"
   tags:
     - support_packages
     - neutron_debug_packages
