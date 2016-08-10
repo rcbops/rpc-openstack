@@ -17,6 +17,15 @@
   hosts: hosts
   user: root
   tasks:
+    - name: ensure remote directory
+      file:
+        path: "{{ maas_rpc_scripts_dir }}"
+        state: directory
+    - name: copy script to all hosts
+      copy:
+        src: "{{ maas_rpc_scripts_dir }}/rpc-maas-tool.py"
+        dest: "{{ maas_rpc_scripts_dir }}/rpc-maas-tool.py"
+        mode: 0755
     - name: "Verify Checks & Alarms are registered"
       shell: |
         {% if maas_venv_enabled | bool %}
