@@ -50,6 +50,13 @@ filebeat_logstash_hosts: "{% for host in groups['logstash_all'] %}{{ hostvars[ho
 #
 #                              Date        Time       PID     Level   Python Module   Id
 multiline_openstack_pattern: '^[0-9-]{10} +[0-9:\.]+ +[0-9]+ +[A-Z]+ +[A-Za-z0-9\._]+ \[|Traceback'
+# NOTE(sigmavirus24): The logs in the keystone-apache-error logs are just
+# *slightly* different from the regular openstack logs. They have much greater
+# sub-second precision and a second time attribute.
+# See also https://play.golang.org/p/CKZXMOiwoi
+#
+#                                  Date        Time      Date         Time     PID     Level   Python Module   Request Id
+multiline_keystone_error_pattern: '[0-9-]{10} +[0-9:\.]+ [0-9-]{10} +[0-9:\.]+ [0-9]+ +[A-Z]+ +[A-Za-z0-9\._]+ \[|Traceback'
 
 filebeat_logging_paths:
   - paths:
@@ -109,12 +116,22 @@ filebeat_logging_paths:
       match: after
   - paths:
     - '/var/log/keystone/ssl_access.log'
-    - '/var/log/keystone/keystone-apache-error.log'
     tags:
     - openstack
     - apache
     - apache-access
     - keystone
+  - paths:
+    - '/var/log/keystone/keystone-apache-error.log'
+    tags:
+    - openstack
+    - apache
+    - apache-error
+    - keystone
+    multiline:
+      pattern: "{{ multiline_keystone_error_pattern }}"
+      negate: 'true'
+      match: after
   - paths:
     - '/var/log/neutron/*.log'
     document_type: openstack
@@ -191,7 +208,6 @@ filebeat_logging_paths:
     - '/var/log/libvirt/*/*.log'
     tags:
     - libvirt
-    - nova
   - paths:
     - '/var/log/lxc/*.log'
     tags:
