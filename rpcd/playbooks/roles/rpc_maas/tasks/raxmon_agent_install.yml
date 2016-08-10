@@ -14,23 +14,30 @@
 # limitations under the License.
 
 - name: Install plugin dir
-  file: path=/usr/lib/rackspace-monitoring-agent/plugins/ state=directory owner=root group=root mode=0755
+  file:
+    path: "{{ maas_plugin_dir }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
 
 - name: Install MAAS Plugins
   synchronize:
-    src={{ maas_plugin_dir }} dest=/usr/lib/rackspace-monitoring-agent/plugins/ delete=yes
+    src: "{{ maas_source_plugin_dir }}"
+    dest: "{{ maas_plugin_dir }}"
+    delete: yes
 
 - name: Drop in wrapper script to run maas plugins in venv
   template:
     src: "run_plugin_in_venv.sh.j2"
-    dest: "/usr/lib/rackspace-monitoring-agent/plugins/run_plugin_in_venv.sh"
+    dest: "{{maas_plugin_dir}}run_plugin_in_venv.sh"
     owner: "root"
     group: "root"
     mode: "0755"
   when: maas_venv_enabled
 
 - name: List plugin files to chmod
-  shell: "ls -1 /usr/lib/rackspace-monitoring-agent/plugins/*.py"
+  shell: "ls -1 {{ maas_plugin_dir }}*.py"
   register: plugin_files
 
 - name: Chmod listed plugin files
