@@ -74,3 +74,5 @@ ceph_mons: >
   {% endfor -%}
   {% endif -%}
   {{ _var }}
+
+cinder_service_backup_program_enabled: false
