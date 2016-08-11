@@ -126,3 +126,5 @@ horizon_custom_uploads:
 # Container repos
 lxc_container_template_main_apt_repo: "https://mirror.rackspace.com/ubuntu"
 lxc_container_template_security_apt_repo: "https://mirror.rackspace.com/ubuntu"
+
+cinder_service_backup_program_enabled: false
