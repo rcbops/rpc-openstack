@@ -81,7 +81,7 @@ get_token() {
       case $check_port in
           5000)
               #Keystone
-              check_url="$check_proto://$check_ip:$check_port/v2.0/"
+              check_url="$check_proto://$check_ip:$check_port/v3/"
               ;;
           8776)
               #Cinder
