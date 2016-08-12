@@ -133,3 +133,7 @@ repo_build_pip_extra_indexes:
 neutron_neutron_conf_overrides:
   DEFAULT:
     l3_ha: False
+
+# Container repos
+lxc_container_template_main_apt_repo: "https://mirror.rackspace.com/ubuntu"
+lxc_container_template_security_apt_repo: "https://mirror.rackspace.com/ubuntu"
