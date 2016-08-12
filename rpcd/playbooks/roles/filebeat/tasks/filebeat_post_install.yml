@@ -23,6 +23,9 @@
     - filebeat-configuration
     - filebeat-post-install
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Ensuring filebeat is started on boot
   service:
     name: filebeat
