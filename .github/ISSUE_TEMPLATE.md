@@ -27,6 +27,7 @@
 ###### Remove branches that are not impacted.
 ###### For each pull request, update the branch line to reference it.
 - [ ] master
+- [ ] mitaka-13.0
 - [ ] liberty-12.2
 - [ ] kilo
 
