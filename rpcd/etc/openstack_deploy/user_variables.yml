@@ -122,3 +122,7 @@ horizon_custom_uploads:
   favicon:
     src: "{{ rackspace_static_files_folder }}/favicon.ico"
     dest: img/favicon.ico
+
+# Container repos
+lxc_container_template_main_apt_repo: "https://mirror.rackspace.com/ubuntu"
+lxc_container_template_security_apt_repo: "https://mirror.rackspace.com/ubuntu"
