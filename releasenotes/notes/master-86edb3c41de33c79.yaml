@@ -1,0 +1,18 @@
+---
+upgrade:
+  - The new config file layout requires a manual migration
+    of overrides from the old to the new location.  Not
+    performing this migration could cause some overrides
+    to not be set and unknown behavior.
+
+    The steps to do this are to run the migrate-yaml.py
+    script and verify that the output is as you wish it to
+    be to build your overrides files.  You are encouraged
+    to put rpc specific overrides in
+    `/etc/openstack-deploy/user_rpco_variables_overrides.yml`
+    and the openstack-ansible overrides in
+    `/etc/openstack-deploy/user_osa_variables_overrides.yml`
+
+    The secrets files will need to be combined and
+    migrated manually to
+    `/etc/openstack_deploy/user_rpco_secrets.yml`
