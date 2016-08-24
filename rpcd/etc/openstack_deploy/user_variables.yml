@@ -137,3 +137,7 @@ lxc_container_template_main_apt_repo: "https://mirror.rackspace.com/ubuntu"
 lxc_container_template_security_apt_repo: "https://mirror.rackspace.com/ubuntu"
 
 cinder_service_backup_program_enabled: false
+
+# Increase interval between checks after container start.
+# Reduces the "Wait for container ssh" error.
+ssh_delay: 60
