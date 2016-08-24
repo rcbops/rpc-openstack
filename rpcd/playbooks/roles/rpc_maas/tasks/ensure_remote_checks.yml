@@ -23,6 +23,7 @@
   with_items:
     - "{{ checks }}"
   when:
+    - item.group in group_names
     - groups["{{ item.group }}"]|length > 0
     - inventory_hostname == groups["{{ item.group }}"][0]
     - item.name not in maas_excluded_checks
