@@ -1,0 +1,6 @@
+---
+upgrade:
+  - As the horizon-extensions repo changed in v13.0.0, operators
+    should run ``ansible -m file -a
+    "path=/var/www/repo/openstackgit/horizon-extensions state=absent"
+    repo_all`` prior to upgrading to this release.
