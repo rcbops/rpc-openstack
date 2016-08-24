@@ -1,0 +1,7 @@
+---
+upgrade:
+  - OSA Variable ssh_delay is now overriden to 60 from the osa default of 5.
+fixes:
+  - OSA Variable ssh_delay is now overriden to 60 from the osa default of 5,
+    This is to reduce failures when ansible is attempting to access a container
+    while it is (re)starting.
