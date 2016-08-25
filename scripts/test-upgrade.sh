@@ -37,6 +37,14 @@ RPCD_DIR="$BASE_DIR/rpcd"
 rm /etc/openstack_deploy/user_extra_variables.yml /etc/openstack_deploy/user_variables.yml
 
 # TASK #1
+# Bug: https://github.com/rcbops/u-suk-dev/issues/293
+# Issue: We need to analyze support's maintenance plan to determine which
+# pieces we can orchestrate with ansible. This should be added to a
+# pre-upgrade task list.
+cd ${RPCD_DIR}/playbooks
+openstack-ansible rpc-pre-upgrades.yml
+
+# TASK #2
 # Bug: https://github.com/rcbops/u-suk-dev/issues/199
 # Issue: To avoid any dependency issues that have occured in the past, the
 #        repo_server containers are re-built. This was done as part of the
