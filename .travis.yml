@@ -2,6 +2,7 @@ language: python
 
 before_script:
 - pip install tox
+- git fetch origin +refs/heads/*:refs/remotes/origin/*
 
 script: tox
 
