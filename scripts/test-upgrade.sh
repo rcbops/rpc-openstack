@@ -45,3 +45,12 @@ rm /etc/openstack_deploy/user_extra_variables.yml /etc/openstack_deploy/user_var
 cd ${OA_DIR}/playbooks
 openstack-ansible lxc-containers-destroy.yml --limit repo_all
 openstack-ansible setup-hosts.yml --limit repo_all
+
+# TASK #2 TODO: This task should be moved somewhere towards the bottom once
+#               we get a more robust script going.
+# Bug: https://github.com/rcbops/u-suk-dev/issues/366
+# Description: Run post-upgrade tasks.
+#              For a detailed description, please see the README in
+#              the rpc_post_upgrade role directory.
+cd ${RPCD_DIR}/playbooks
+openstack-ansible rpc-post-upgrades.yml

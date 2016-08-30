@@ -1,0 +1,67 @@
+---
+# Copyright 2016, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Verify services are up and checking in
+- name: Grab relevant output of openstack compute service list
+  shell: |
+    . ~/openrc
+    openstack compute service list -c Binary -c Host -c State -f value
+  register: openstack_output
+  failed_when: "openstack_output.rc != 0"
+
+- name: Display output of openstack compute service list
+  debug: var=openstack_output
+
+- name: Fail if any compute service is in the down state
+  fail:
+    msg: "One or more compute services are in the down state. Check the output above for more detail."
+  when: "'down' in '{{ item.split(' ')[-1] }}'"
+  with_items: openstack_output.stdout_lines|default([])
+
+- name: Grab relevant output of neutron agent-list
+  shell: |
+    . ~/openrc
+    neutron agent-list -c agent_type -c host -c alive -f value
+  register: neutron_output
+  failed_when: "neutron_output.rc != 0"
+
+- name: Display output of neutron agent-list
+  debug: var=neutron_output
+
+- name: Fail if any of the neutron agents are down
+  fail:
+    msg: "One or more of the neutron agents are down. Check the output above for more detail."
+  when: "'xxx' in '{{ item.split(' ')[-1] }}'"
+  with_items: neutron_output.stdout_lines|default([])
+
+# Note: As part of https://github.com/rcbops/u-suk-dev/issues/348,
+# it has been realized that cinder services with the old hostname
+# cannot be deleted. Because of this, any services
+# with '_' in their hostnames must be disregarded as part of this check.
+- name: Grab relevant output of cinder service-list
+  shell: |
+    . ~/openrc
+    cinder service-list | grep -vE 'Status|\+|_' | awk '{print $2, $4, $10}'
+  register: cinder_output
+  failed_when: "cinder_output.rc != 0"
+
+- name: Display output of cinder service-list
+  debug: var=cinder_output
+
+- name: Fail if any of the cinder services are down
+  fail:
+    msg: "One or more of the cinder services are in the down state. Check the output above for more detail."
+  when: "'down' in '{{ item.split(' ')[-1] }}'"
+  with_items: cinder_output.stdout_lines|default([])
