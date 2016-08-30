@@ -96,7 +96,11 @@ swift_ceilometer_enabled: False
 keystone_ceilometer_enabled: False
 tempest_service_available_ceilometer: False
 
+# L3HA has to be disabled until all major issues are fixed
+# Based on https://github.com/rcbops/rpc-openstack/issues/1149
 neutron_neutron_conf_overrides:
+  DEFAULT:
+    l3_ha: False
   nova:
     endpoint_type: internal
 
