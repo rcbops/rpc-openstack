@@ -34,6 +34,9 @@ def parse_args():
                         help='The path to the file with defaults.')
     parser.add_argument('--output-file', dest='output_file', required=True,
                         help='The path to the new overrides file location')
+    parser.add_argument('--for-testing-take-new-vars-only', dest='testing',
+                        action="store_true",
+                        help="don't take old overrides over new defaults")
     return parser.parse_args()
 
 
@@ -102,6 +105,22 @@ def main():
     returned_combined = do_the_diff(defaults=parsed_yaml_from(args.defaults),
                                     overrides=parsed_yaml_from(args.overrides))
 
+    # Add the warrantee sticker
+    print('The output assumes you have been pruning your old overrides '
+          'files as needed and as suggested by release notes.')
+    if any(key in ['NEW_DEFAULTS', 'OLD_OVERRIDES'] for
+           key in returned_combined):
+        if args.testing:
+            for key in returned_combined['NEW_DEFAULTS'].keys():
+                returned_combined[key] = returned_combined['NEW_DEFAULTS'][key]
+            del returned_combined['NEW_DEFAULTS']
+            del returned_combined['OLD_OVERRIDES']
+        else:
+            print('\nYour output has conflicts, examine it to make sure '
+                  'values are as you wish them to be, check "NEW_DEFAULTS" and'
+                  ' "OLD_OVERRIDES" specifically as you may or may not need '
+                  'you\'re overrides as they are.')
+
     if os.path.isfile(args.output_file):
         raise SystemExit('The file you are creating already exists, '
                          'please move it, we will not overwrite the file.')
@@ -109,15 +128,6 @@ def main():
         fh.write(yaml.safe_dump(returned_combined,
                                 default_flow_style=False,
                                 explicit_start=True))
-
-    # Add the warrantee sticker
-    print('The output assumes you have been pruning your old overrides '
-          'files as needed and as suggested by release notes.')
-    if 'NEW_DEFAULTS' or 'OLD_OVERRIDES' in returned_combined.keys():
-        print('\nYour output has conflicts, examine it to make sure '
-              'values are as you wish them to be, check "NEW_DEFAULTS" and '
-              '"OLD_OVERRIDES" specifically as you may or may not need '
-              'you\'re overrides as they are.')
 
 
 if __name__ == '__main__':
