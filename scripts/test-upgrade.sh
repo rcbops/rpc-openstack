@@ -37,10 +37,11 @@ RPCD_DIR="$BASE_DIR/rpcd"
 rm /etc/openstack_deploy/user_extra_variables.yml /etc/openstack_deploy/user_variables.yml
 
 # TASK #1
-# Bug: https://github.com/rcbops/rpc-openstack/issues/1345
-# Issue: horizon-extensions now gets pulled from a different location; the
-#        git cache on the repo_all containers needs to be deleted so we can
-#        grab the new repo.  Failing to do this will cause repo-install.yml
-#        to fail to run.
-cd ${RPCD_DIR}/playbooks
-ansible -m file -a "path=/var/www/repo/openstackgit/horizon-extensions state=absent" repo_all
+# Bug: https://github.com/rcbops/u-suk-dev/issues/199
+# Issue: To avoid any dependency issues that have occured in the past, the
+#        repo_server containers are re-built. This was done as part of the
+#        OSA upgrade script in liberty, but is not done in the OSA mitaka
+#        upgrade script. Thus, we destroy the containers here.
+cd ${OA_DIR}/playbooks
+openstack-ansible lxc-containers-destroy.yml --limit repo_all
+openstack-ansible setup-hosts.yml --limit repo_all
