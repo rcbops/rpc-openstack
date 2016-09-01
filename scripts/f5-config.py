@@ -326,7 +326,6 @@ POOL_PARTS = {
         'backend_port': 8181,
         'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_REPO',
         'group': 'pkg_repo',
-        'priority': True,
         'hosts': []
     }
 }
