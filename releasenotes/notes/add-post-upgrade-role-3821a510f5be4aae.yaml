@@ -1,0 +1,9 @@
+---
+features:
+  - A new role has been created, rpc_post_upgrade, to assist
+    operators with capturing the state of an environment
+    after an upgrade.
+upgrade:
+  - A new role has been created, rpc_post_upgrade, to assist
+    operators with capturing the state of an environment
+    after an upgrade
