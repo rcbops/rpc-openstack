@@ -1,0 +1,11 @@
+---
+upgrade:
+  - Existing networks on a Liberty deployment using the
+    ML2 plug-in will require manually updating the MTU
+    value in the neutron.networks table before the upgrade
+    begins.  Failure to do this may result in new
+    instances on existing networks and rebooting existing
+    instances to boot with an incorrect MTU, causing the
+    instances to be inaccessible.  Please see the RPC v13
+    upgrade documentation for more detailed information on
+    how to avoid this situation.
