@@ -128,6 +128,11 @@ repo_build_pip_extra_indexes:
 # Docs: http://docs.openstack.org/developer/openstack-ansible-security/
 # apply_security_hardening: true
 
+## Enable Neutron l2_population
+# We are overriding the default value for neutron_l2_population. Please see
+# https://github.com/rcbops/rpc-openstack/issues/973 for further details.
+neutron_l2_population: True
+
 # Based on https://github.com/rcbops/rpc-openstack/issues/1149
 # L3HA has to be disabled until all major issues are fixed.
 neutron_neutron_conf_overrides:
