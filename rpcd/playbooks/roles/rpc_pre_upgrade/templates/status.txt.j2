@@ -1,0 +1,41 @@
+RabbitMQ Cluster status as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in rabbitmqctl_result.stdout_lines %}
+{{ line }}
+{% endfor %}
+
+
+MySQL wsrep var status as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in mysqlstatus_result.stdout_lines %}
+{{ line }}
+{% endfor %}
+
+
+nova service-list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in nova_servicelist_result.stdout_lines %}
+{{ line }}
+{% endfor %}
+
+
+cinder service-list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in cinder_servicelist_result.stdout_lines %}
+{{ line }}
+{% endfor %}
+
+
+neutron agent-list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in neutron_agentlist_result.stdout_lines %}
+{{ line }}
+{% endfor %}
+
+
+openstack endpoint list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+Compare output to external_lb_vip_address: {{ external_lb_vip_address }}
+
+{% for line in endpointlist_result.stdout_lines %}
+{{ line }}
+{% endfor %}

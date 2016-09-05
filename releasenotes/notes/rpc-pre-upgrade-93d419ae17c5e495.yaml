@@ -1,0 +1,12 @@
+---
+features:
+  - A new role has been created, ``rpc_pre_upgrade`` to
+    assist operators with capturing the state of an
+    environment prior to an upgrade.
+upgrade:
+  - The ``rpc_pre_upgrade`` playbook performs the pre-upgrade
+    steps as outlined in the RPC-O Maintenance Template. Output
+    from the various steps are stored in 
+    ``$HOME/rpc13-upgrade-<date-stamp>`` on the deployment server.
+    These files should be closely examined prior to proceeding
+    with the upgrade.

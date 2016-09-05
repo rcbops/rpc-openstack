@@ -1,0 +1,5 @@
+Instance - volume mappings from mysql as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
+
+{% for line in instance_volume_mappings_result.stdout_lines %}
+{{ line }}
+{% endfor %}

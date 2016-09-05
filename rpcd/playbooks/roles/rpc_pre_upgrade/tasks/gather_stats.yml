@@ -1,0 +1,75 @@
+---
+# Copyright 2016, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Check rabbit cluster status
+  shell: "rabbitmqctl cluster_status"
+  register: rabbitmqctl_result
+  delegate_to: "{{ groups['rabbitmq_all'][0] }}"
+
+- name: Check mysql cluster status
+  shell: "mysql -e \"show status like 'wsrep_clu%'\""
+  register: mysqlstatus_result
+  delegate_to: "{{ groups['galera_all'][0] }}"
+
+- name: Gather nova service-list
+  shell: "source ~/openrc; nova service-list"
+  args:
+    executable: /bin/bash
+  register: nova_servicelist_result
+  delegate_to: "{{ groups['utility_all'][0] }}"
+
+- name: Gather cinder service-list
+  shell: "source ~/openrc; cinder service-list"
+  register: cinder_servicelist_result
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ groups['utility_all'][0] }}"
+
+- name: Gather neutron agent-list
+  shell: "source ~/openrc; neutron agent-list"
+  args:
+    executable: /bin/bash
+  register: neutron_agentlist_result
+  delegate_to: "{{ groups['utility_all'][0] }}"
+
+- name: Gather openstack endpoint list
+  shell: "source ~/openrc; openstack endpoint list"
+  args:
+    executable: /bin/bash
+  register: endpointlist_result
+  delegate_to: "{{ groups['utility_all'][0] }}"
+
+- name: Gather running instances from mysql
+  shell: "mysql -BN -e \"select uuid from instances where deleted=0 and vm_state='active' order by uuid\" nova"
+  args:
+    executable: /bin/bash
+  register: running_instances_result
+  delegate_to: "{{ groups['galera_all'][0] }}"
+
+- name: Gather instance-volume mappings from mysql
+  shell: "mysql -e \"select v.id,v.provider_location,va.attached_host,va.instance_uuid,va.mountpoint from volumes v join volume_attachment va on v.id = va.volume_id where v.deleted = 0 and v.attach_status='attached'\" cinder"
+  args:
+    executable: /bin/bash
+  register: instance_volume_mappings_result
+  delegate_to: "{{ groups['galera_all'][0] }}"
+
+- name: Output into text file
+  template:
+    src: "{{ item }}.txt.j2"
+    dest: "{{ backup_dir }}/{{ item }}-{{ datetime_stamp }}.txt"
+  with_items:
+    - status
+    - instance-volume-mappings
+    - running-instances
