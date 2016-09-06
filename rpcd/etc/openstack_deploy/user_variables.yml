@@ -96,6 +96,11 @@ swift_ceilometer_enabled: False
 keystone_ceilometer_enabled: False
 tempest_service_available_ceilometer: False
 
+## Enable Neutron l2_population
+# We are overriding the default value for neutron_l2_population. Please see
+# https://github.com/rcbops/rpc-openstack/issues/973 for further details.
+neutron_l2_population: True
+
 # L3HA has to be disabled until all major issues are fixed
 # Based on https://github.com/rcbops/rpc-openstack/issues/1149
 neutron_neutron_conf_overrides:
