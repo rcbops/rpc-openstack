@@ -28,13 +28,14 @@ RPCD_DIR="$BASE_DIR/rpcd"
 #        them to the new location.
 "${BASE_DIR}"/scripts/migrate-yaml.py --for-testing-take-new-vars-only \
     --defaults "${RPCD_DIR}"/etc/openstack_deploy/user_rpco_variables_defaults.yml \
-    --overrides /etc/openstack_deploy/user_extra_variables.yml \
+    --overrides /etc/openstack_deploy/user_extras_variables.yml \
     --output-file /etc/openstack_deploy/user_rpco_variables_overrides.yml
 "${BASE_DIR}"/scripts/migrate-yaml.py --for-testing-take-new-vars-only \
-  --defaults "${RPCD_DUR}"/etc/openstack_deploy/user_osa_variables_defaults.yml \
+  --defaults "${RPCD_DIR}"/etc/openstack_deploy/user_osa_variables_defaults.yml \
   --overrides /etc/openstack_deploy/user_variables.yml \
   --output-file /etc/openstack_deploy/user_osa_variables_overrides.yml
-rm /etc/openstack_deploy/user_extra_variables.yml /etc/openstack_deploy/user_variables.yml
+cp -a ${RPCD_DIR}/etc/openstack_deploy/*defaults* /etc/openstack_deploy
+rm /etc/openstack_deploy/user_extras_variables.yml /etc/openstack_deploy/user_variables.yml
 
 # TASK #1
 # Bug: https://github.com/rcbops/u-suk-dev/issues/293
