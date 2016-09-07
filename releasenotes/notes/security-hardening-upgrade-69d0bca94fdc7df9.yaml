@@ -1,0 +1,5 @@
+---
+upgrade:
+  - >
+    By default security hardening is applied on upgrade. If you wish to prevent its application you must ensure the openstack-ansible playbook security-hardening.yml
+    skips its tasks during an upgrade by adding 'apply_security_hardening: false' to /etc/openstack_deploy/user_osa_variables_overrides.yml.
