@@ -54,7 +54,15 @@ cd ${OA_DIR}/playbooks
 openstack-ansible lxc-containers-destroy.yml --limit repo_all
 openstack-ansible setup-hosts.yml --limit repo_all
 
-# TASK #2 TODO: This task should be moved somewhere towards the bottom once
+# TASK #3
+# https://github.com/rcbops/u-suk-dev/issues/392
+# Upgrade openstack-ansible
+pushd ${OA_DIR}
+export I_REALLY_KNOW_WHAT_I_AM_DOING=true
+echo "YES" | ${OA_DIR}/scripts/run-upgrade.sh
+popd
+
+# TASK #4 TODO: This task should be moved somewhere towards the bottom once
 #               we get a more robust script going.
 # Bug: https://github.com/rcbops/u-suk-dev/issues/366
 # Description: Run post-upgrade tasks.
