@@ -56,6 +56,22 @@ openstack-ansible lxc-containers-destroy.yml --limit repo_all
 openstack-ansible setup-hosts.yml --limit repo_all
 
 # TASK #3
+# Bug: https://github.com/rcbops/u-suk-dev/issues/374
+# Issue: Neutron has no migration to correctly set the MTU on existing networks
+#        created in liberty or below.  This work-around sets the MTU on these
+#        networks before the upgrade starts so that instances booted on these
+#        networks after the upgrade has finished will have their MTUs set
+#        correctly.
+# NOTE: In newton, MTUs will be calculated on the fly and this mtu field will
+#       get dropped.
+VLAN_FLAT="UPDATE networks SET mtu='1500' WHERE id IN (SELECT network_id FROM ml2_network_segments WHERE network_type IN ('vlan','flat'));"
+VXLAN="UPDATE networks SET mtu='1450' WHERE id IN (SELECT network_id FROM ml2_network_segments WHERE network_type='vxlan');"
+
+cd ${OA_DIR}/playbooks
+ansible galera_all[0] -m shell -a "mysql --verbose -e \"${VLAN_FLAT}\" neutron"
+ansible galera_all[0] -m shell -a "mysql --verbose -e \"${VXLAN}\" neutron"
+
+# TASK #4
 # https://github.com/rcbops/u-suk-dev/issues/392
 # Upgrade openstack-ansible
 pushd ${OA_DIR}
@@ -63,7 +79,7 @@ export I_REALLY_KNOW_WHAT_I_AM_DOING=true
 echo "YES" | ${OA_DIR}/scripts/run-upgrade.sh
 popd
 
-# TASK #4 TODO: This task should be moved somewhere towards the bottom once
+# TASK #5 TODO: This task should be moved somewhere towards the bottom once
 #               we get a more robust script going.
 # Bug: https://github.com/rcbops/u-suk-dev/issues/366
 # Description: Run post-upgrade tasks.
