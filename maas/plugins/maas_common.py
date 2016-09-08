@@ -195,7 +195,7 @@ else:
         return nova
 
 try:
-    from keystoneclient.openstack.common.apiclient import exceptions as k_exc
+    from keystoneclient import exceptions as k_exc
     from keystoneclient.v2_0 import client as k2_client
     from keystoneclient.v3 import client as k3_client
 except ImportError:
