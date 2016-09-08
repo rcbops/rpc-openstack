@@ -14,26 +14,23 @@ export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
-export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
-export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
 
-OA_DIR='/opt/rpc-openstack/openstack-ansible'
-RPCD_DIR='/opt/rpc-openstack/rpcd'
-RPCD_VARS='/etc/openstack_deploy/user_rpco_variables_defaults.yml'
-RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
+export BASE_DIR='/opt/rpc-openstack'
+export OA_DIR='/opt/rpc-openstack/openstack-ansible'
+export RPCD_DIR='/opt/rpc-openstack/rpcd'
+export RPCD_VARS='/etc/openstack_deploy/user_rpco_variables_defaults.yml'
+export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
-function run_ansible {
-  openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
-}
+source ${BASE_DIR}/scripts/functions.sh
 
 # begin the bootstrap process
 cd ${OA_DIR}
 
-# bootstrap ansible and install galaxy roles (needed whether AIO or multinode)
 ./scripts/bootstrap-ansible.sh
+
 # This removes Ceph roles downloaded using their pre-Ansible-Galaxy names
 ansible-galaxy remove --roles-path /opt/rpc-openstack/rpcd/playbooks/roles/ ceph-common ceph-mon ceph-osd
 
@@ -229,27 +226,5 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
 fi
 
-# begin the RPC installation
-cd ${RPCD_DIR}/playbooks/
-
-# configure everything for RPC support access
-run_ansible rpc-support.yml
-
-# configure the horizon extensions
-run_ansible horizon_extensions.yml
-
-# deploy and configure RAX MaaS
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible setup-maas.yml
-  run_ansible verify-maas.yml
-fi
-
-# deploy and configure the ELK stack
-if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-  run_ansible setup-logging.yml
-
-  # deploy the LB required for the ELK stack
-  if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-    run_ansible haproxy.yml
-  fi
-fi
+# Begin the RPC installation
+bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
