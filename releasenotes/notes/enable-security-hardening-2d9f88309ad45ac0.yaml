@@ -5,8 +5,7 @@ security:
     is now applied to all environments by default. It provides enhanced host
     security hardening without disrupting an existing OpenStack environment.
 
-    To opt-out of host security hardening, set the ``DEPLOY_HARDENING``
-    environment variable to ``no`` before running ``deploy.sh``.
+    To opt-out of host security hardening, set 'apply_security_hardening: false' in /etc/openstack_deploy/user_osa_variables_overrides.yml.
 
     The security role documentation explains which
     `security configurations are applied <http://docs.openstack.org/developer/openstack-ansible-security/controls.html>`_
