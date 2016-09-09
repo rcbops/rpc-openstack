@@ -52,9 +52,17 @@
   delegate_to: "{{ item }}"
   with_items: "{{ groups['rsyslog_container'] }}"
 
-- name: Restart beaver
+- name: Check if beaver is installed
+  stat:
+    path: /etc/init.d/beaver
+  register: beaver_init_script
+  with_items: "{{ groups['all'] }}"
+  delegate_to: "{{ item }}"
+
+- name: Restart beaver if installed
   service:
     name: beaver
     state: restarted
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['all'] }}"
+  with_items: beaver_init_script.results
+  when: item.stat.exists
+  delegate_to: "{{ item.item }}"
