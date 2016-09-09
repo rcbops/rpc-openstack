@@ -1,10 +1,4 @@
 ---
-issues:
-  - The default value for `neutron_l2_population` has been
-    overridden, which will require deployers to recreate
-    any VXLAN interfaces created with `neutron_l2_population`
-    set `False`. Not recreating these interfaces will lead to
-    connectivity issues for virtual machines.
-upgrade:
+other:
   - Based on feedback from Support, the default value for
     `neutron_l2_population` has been overridden to `True`.
