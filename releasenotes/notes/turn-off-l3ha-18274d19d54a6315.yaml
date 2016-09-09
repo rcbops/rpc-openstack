@@ -12,9 +12,8 @@ upgrade:
     For more information, see:
     `bug 1149 <https://github.com/rcbops/rpc-openstack/issues/1149>`_
     or the known issues section in the v13.0 RPCO documentation.
-fixes:
-  - Fixed `bug 1149 <https://github.com/rcbops/rpc-openstack/issues/1149>`_
 other:
-  - Neutron L3HA as a default has been disabled.
+  - Neutron L3HA as a default has been disabled. This has been done
+    due to the number of bugs that still exist in that feature.
     The default now is to use the neutron_ha_tool for backing up
     l3 routers.

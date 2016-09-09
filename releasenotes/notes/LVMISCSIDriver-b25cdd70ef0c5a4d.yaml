@@ -1,0 +1,4 @@
+---
+other:
+ - The cinder driver LVMISCSIDriver has been removed, any configurations should be
+   updated to use LVMVolumeDriver instead prior to deploying Mitaka.
