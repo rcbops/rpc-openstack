@@ -1,7 +1,4 @@
 ---
-prelude: >
-    This version introduces nova's new database,
-    nova api db.
 security:
   - Live migration of nova is now ssh encrypted, using
     qemu+ssh instead of qemu+tcp. This behavior can be

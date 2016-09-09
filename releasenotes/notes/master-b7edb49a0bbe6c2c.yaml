@@ -1,9 +1,4 @@
 ---
-prelude: >
-    Neutron has fixed bugs related to port-security,
-    allowing it to be re-enabled.  Additionally
-    handle_internal_only_routers now defaults to true,
-    allowing us to remove the override.
 features:
   - LBaaSv2 can now be configured via Horizon.
   - MTUs are now calculated correctly, overrides have
@@ -25,5 +20,4 @@ upgrade:
     attribute on subnetpools to True using the API or
     client.
 other:
-  - Overlay networks are not explicitly required, if
-    unset it will default to the ansible_ssh_host value.
+  - Configuring bridges and IPs for overlay networks is now optional; if unset the neutron_local_ip value will default to the ansible_ssh_host value.
