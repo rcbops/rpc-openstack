@@ -16,7 +16,7 @@
 rpc_repo_path: /opt/rpc-openstack/openstack-ansible
 
 # rpc-openstack version, this should be discovered by git_repo_info
-rpc_release: "{{ rpc_openstack_repo is defined | ternary((rpc_openstack_repo | default({}))['version'], 'UNKNOWN_RELEASE') }}"
+rpc_release: "{{ rpc_openstack_repo['version'] }}"
 
 # Definitions for the repo server, these should match your openstack-ansible
 # deployment
