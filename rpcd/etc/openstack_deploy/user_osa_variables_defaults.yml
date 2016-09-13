@@ -152,3 +152,6 @@ repo_build_upper_constraints_overrides:
 # Increase interval between checks after container start.
 # Reduces the "Wait for container ssh" error.
 ssh_delay: 60
+
+# Use the correct secrets file
+osa_secrets_file_name: "user_osa_secrets.yml"
