@@ -26,4 +26,4 @@
 - name: Fail if network partitions are detected
   fail:
     msg: "Rabbitmq network partitions have been detected."
-  when: "' {partitions,[]},' not in rabbitmqctl_output.stdout_lines"
+  when: "'{partitions,[]}' not in rabbitmqctl_output.stdout_lines"
