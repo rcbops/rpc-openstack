@@ -25,6 +25,7 @@
 
 # Gather swift-recon md5 output
 - include: gather_swift_stats.yml
+  when: groups['swift_proxy']|default([])|length > 0
 
 # Perform log rotation and cleanup
 - include: log_rotation.yml
