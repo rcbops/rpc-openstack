@@ -18,3 +18,19 @@
   user: root
   roles:
     - { role: "rpc_pre_upgrade", tags: [ "rpc-pre-upgrades" ] }
+
+- name: restart beaver
+  hosts: all
+  tags:
+    - rpc-pre-upgrades
+  tasks:
+    - name: Check if beaver is installed
+      stat:
+        path: /etc/init.d/beaver
+      register: beaver_init_script
+
+    - name: Restart beaver if installed
+      service:
+        name: beaver
+        state: restarted
+      when: beaver_init_script.stat.exists
