@@ -146,3 +146,6 @@ version specification:
 ```
 ANSIBLE_VERSION='>=2.0' tox -e ansible-lint
 ```
+
+# Gating
+Please see the documentation in [jenkins-rpc/README.md](https://github.com/rcbops/jenkins-rpc/blob/master/README.md)
