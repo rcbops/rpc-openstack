@@ -49,8 +49,8 @@
       failed_when: verify_maas.rc != 0
       changed_when: False
       until: verify_maas.rc == 0
-      retries: 8
-      delay: 60
+      retries: "{{ verify_maas_retries }}"
+      delay: "{{ verify_maas_delay }}"
 
     - name: "Allow MAAS time to run checks before verifying their status"
       pause:
@@ -67,8 +67,8 @@
       failed_when: verify_status.rc != 0
       changed_when: False
       until: verify_status.rc == 0
-      retries: 8
-      delay: 60
+      retries: "{{ verify_maas_retries }}"
+      delay: "{{ verify_maas_delay }}"
 
   vars_files:
     - "roles/rpc_maas/defaults/main.yml"

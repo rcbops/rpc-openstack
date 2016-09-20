@@ -512,3 +512,13 @@ horizon_site_name: "openstack dashboard"
 #                             cinder-backup service should be deployed
 #
 maas_monitor_cinder_backup: false
+
+#
+# verify_maas_delay: How long to wait between failures if there is one
+#
+verify_maas_delay: 20
+
+#
+# verify_maas_retries: How many times to retry on failure
+#
+verify_maas_retries: 5
