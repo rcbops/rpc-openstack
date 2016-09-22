@@ -27,7 +27,6 @@
   when:
     - inventory_hostname in groups['swift_hosts']
 
-
 # Setup Swift Server healthchecks
 - include: ensure_local_checks.yml
   vars:
