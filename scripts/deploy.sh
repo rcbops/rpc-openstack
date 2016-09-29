@@ -142,6 +142,13 @@ fi
 ./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_osa_secrets.yml
 ./scripts/pw-token-gen.py --file $RPCD_SECRETS
 
+# ensure that the ELK containers aren't created if they're not
+# going to be used
+# NOTE: this needs to happen before ansible/openstack-ansible is first run
+if [[ "${DEPLOY_ELK}" != "yes" ]]; then
+  rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
+fi
+
 # Apply any patched files.
 cd ${RPCD_DIR}/playbooks
 openstack-ansible -i "localhost," patcher.yml
@@ -166,12 +173,6 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
   ansible repo_all -m file -a 'name=/root/.pip state=absent' 2>/dev/null ||:
 
   cd ${OA_DIR}/playbooks/
-
-  # ensure that the ELK containers aren't created if they're not
-  # going to be used
-  if [[ "${DEPLOY_ELK}" != "yes" ]]; then
-    rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
-  fi
 
   # setup the haproxy load balancer
   if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
