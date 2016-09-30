@@ -29,4 +29,3 @@
 
 # Perform log rotation and cleanup
 - include: log_rotation.yml
-
