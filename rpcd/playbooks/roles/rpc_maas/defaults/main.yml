@@ -482,6 +482,7 @@ maas_pip_packages:
   - rackspace-monitoring-cli
   - ipaddr
   - swift
+  - waxeye
 
 #
 # maas_pip_dependencies: These are pip packages we depend on, but should already be built in
@@ -528,3 +529,19 @@ horizon_site_name: "openstack dashboard"
 #                             cinder-backup service should be deployed
 #
 maas_monitor_cinder_backup: false
+
+#
+# verify_maas_delay: How long to wait between failures if there is one
+#
+verify_maas_delay: 20
+
+#
+# verify_maas_retries: How many times to retry on failure
+#
+verify_maas_retries: 5
+
+#
+# maas_use_api: Allow operations that make use of the MaaS api, set to false
+#               for offline testing
+#
+maas_use_api: true
