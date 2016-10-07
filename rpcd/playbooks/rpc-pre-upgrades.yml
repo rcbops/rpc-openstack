@@ -21,6 +21,7 @@
 
 - name: remove beaver
   hosts: all
+  user: root
   tags:
     - rpc-pre-upgrades
     - remove-beaver
