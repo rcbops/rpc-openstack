@@ -23,6 +23,7 @@ import logging
 import os
 from Queue import Queue
 import re
+import subprocess
 import sys
 import yaml
 
@@ -32,6 +33,8 @@ from rackspace_monitoring.drivers import rackspace
 from rackspace_monitoring.providers import get_driver
 from rackspace_monitoring.types import Provider
 
+import alarmparser
+
 DEFAULT_CONFIG_FILE = '/root/.raxrc'
 logging.basicConfig(level=logging.DEBUG,
                     datefmt="",
@@ -40,19 +43,28 @@ logging.basicConfig(level=logging.DEBUG,
 LOGGER = logging.getLogger(__name__)
 
 
+class ParseException(Exception):
+    def __init__(self, message, alarm=None, check=None):
+        super(ParseException, self).__init__(message)
+        self.check = check
+        self.alarm = alarm
+
+
 class RpcMaas(object):
     """Class representing a connection to the MAAS Service"""
 
     def __init__(self, entity_match='', entities=None,
-                 config_file=DEFAULT_CONFIG_FILE):
+                 config_file=DEFAULT_CONFIG_FILE, use_api=True):
         self.entity_label_whitelist = entities
         self.entity_match = entity_match
         self.config_file = config_file
-        self.driver = get_driver(Provider.RACKSPACE)
-        self._get_conn()
-        self._get_overview()
-        self._add_links()
-        self._filter_entities()
+        self.use_api = use_api
+        if self.use_api:
+            self.driver = get_driver(Provider.RACKSPACE)
+            self._get_conn()
+            self._get_overview()
+            self._add_links()
+            self._filter_entities()
         self.q = Queue()
 
     def _filter_entities(self):
@@ -209,9 +221,13 @@ class RpcMassCli(object):
     def __init__(self):
         self.parse_args()
         LOGGER.addHandler(logging.FileHandler(self.args.logfile))
+        use_api = True
+        if self.args.command in ['verify-alarm-syntax', 'verify-local']:
+            use_api = False
         self.rpcm = RpcMaas(self.args.entitymatch,
                             self.args.entity,
-                            self.args.raxrcpath)
+                            self.args.raxrcpath,
+                            use_api)
         self.rpcmac = RpcMaasAgentConfig(self.args.agentconfdir)
 
     def parse_args(self):
@@ -226,6 +242,7 @@ class RpcMassCli(object):
                                      'overview',
                                      'verify-created',
                                      'verify-status',
+                                     'verify-local',
                                      'remove-defunct-checks',
                                      'remove-defunct-alarms'],
                             help='Command to execute')
@@ -277,8 +294,8 @@ class RpcMassCli(object):
         self.args = parser.parse_args()
 
     def main(self):
-        if self.rpcm.conn is None:
-            LOGGER.error("Unable to get a client to MaaS, exiting")
+        if self.rpcm.use_api is True and self.rpcm.conn is None:
+            LOGGER.error("Unable to get a connection to MaaS, exiting")
             sys.exit(1)
 
         dd = {'list-alarms': self.alarms,
@@ -292,12 +309,198 @@ class RpcMassCli(object):
               'verify-status': self.verify_status,
               'delete': self.delete,
               'remove-defunct-checks': self.remove_defunct_checks,
-              'remove-defunct-alarms': self.remove_defunct_alarms}
+              'remove-defunct-alarms': self.remove_defunct_alarms,
+              'verify-alarm-syntax': self.verify_alarm_syntax,
+              'verify-local': self.verify_local
+              }
         result = dd[self.args.command]()
         if result is None:
             return 0
         else:
             return result
+
+    def _parse_alarm_criteria(self, alarm):
+        """Use the waxeye generated parser to parse the alarm critera DSL"""
+        try:
+            # Waxeye requires deep recurssion, 10000 stack frames should
+            # use about 5mb of memory excluding stored data.
+            sys.setrecursionlimit(10000)
+            p = alarmparser.Parser()
+            ast = p.parse(alarm['criteria'])
+            if ast.__class__.__name__ == 'AST':
+                return ast
+            else:
+                raise ParseException(
+                    "Cannot parse alarm criteria: {alarm} Error: {ast}"
+                    .format(alarm=alarm['label'],
+                            ast=ast), alarm=alarm)
+        except RuntimeError as e:
+            message = ("Failed to parse {name}: {criteria}."
+                       " Message: {message}"
+                       .format(name=alarm['name'],
+                               criteria=alarm['criteria'],
+                               message=e.message))
+            raise ParseException(message, alarm=alarm)
+
+    def verify_alarm_syntax(self):
+        """Verify syntax by parsing the alarm criteria for all known checks """
+        rc = 0
+        for check in self.rpmac.checks.values():
+            for alarm in check.alarms:
+                try:
+                    self._parse_alarm_criteria(alarm)
+                except ValueError as e:
+                    LOGGER.info(e)
+                    rc = 1
+        return rc
+
+    def _find_metrics(self, ast, metrics):
+        """Recursively descend AST looking for metricName elements
+
+        When a metric name is found, a string is constructed from all it's
+        single character child nodes, a list of metric name strings is
+        returned.
+        """
+        if hasattr(ast, 'type') and ast.type == 'metricName':
+            name_node = ast.children[0]
+            name_str = ''.join(map(str, name_node.children))
+            metrics.append(name_str)
+        if hasattr(ast, 'children'):
+            for child in ast.children:
+                child_metrics = self._find_metrics(child, [])
+                if child_metrics:
+                    metrics.extend(child_metrics)
+        return metrics
+
+    def verify_local(self):
+        """Checks MaaS configuration without using MaaS API
+
+        Checks three things:
+        1) Execute the command defined in each check and check its return code
+        2) Compile the alarm criteria and check for syntax
+        3) Check the metrics required by the alarm criteria against the metrics
+            produced by executing the check commands.
+        """
+
+        status_line_re = re.compile('status\s+(?P<status>.*)')
+        metric_line_re = re.compile(
+            'metric\s+(?P<name>[^\s]+)\s+(?P<unit>[^\s]+)\s+(?P<value>[^\s]+)')
+
+        def _alarm_metrics_from_check(check):
+            """Get all the metrics referenced by a check's alarms"""
+            metrics = []
+            for alarm in check['alarms'].values():
+                ast = self._parse_alarm_criteria(alarm)
+                return self._find_metrics(ast, metrics)
+
+        def _execute_check(args, check, rpcm):
+            """Execute one check
+
+            This function will be called from a threadpool thread.
+            """
+            try:
+                result = {'success': True,
+                          'output': subprocess.check_output(
+                              args,
+                              stderr=subprocess.STDOUT),
+                          'check': check
+                          }
+            except subprocess.CalledProcessError as e:
+                result = {'success': False,
+                          'output': e.output,
+                          'check': check
+                          }
+            rpcm.q.put(result)
+
+        # Checks are executed using a threadpool to speed up verification.
+        execution_results = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            for check in self.rpcmac.checks.values():
+                if check['type'] != 'agent.plugin':
+                    continue
+                args = ["{plugin_path}{plugin}".format(
+                    plugin_path='/usr/lib/rackspace-monitoring-agent/plugins/',
+                    plugin=check['details']['file'])]
+                args.extend(check['details']['args'])
+                executor.submit(_execute_check, args, check, self.rpcm)
+        while not self.rpcm.q.empty():
+            execution_results.append(self.rpcm.q.get())
+
+        available_metrics = set()  # metrics produced by check commands
+        required_metrics = set()  # metrics used in alarm criteria
+        failed_checks = []  # checks that failed to execute or not 'okay'
+        invalid_criteria = []  # alarms with invalid criteria
+
+        for result in execution_results:
+            check = result['check']
+            if result['success'] is not True:
+                failed_checks.append(result)
+                continue
+            # use the output of executing the checks to find available metrics
+            for line in result['output'].splitlines():
+                # check the status line and return code
+                match = status_line_re.match(line)
+                if match:
+                    status = match.groupdict()['status']
+                    if status != 'okay':
+                        failed_checks.append(result)
+                # store all the metrics that are returned by the check
+                match = metric_line_re.match(line)
+                if match:
+                    available_metrics.add(match.groupdict()['name'])
+
+        # Parse alarm criteria
+        for check in self.rpcmac.checks.values():
+            try:
+                metrics = _alarm_metrics_from_check(check)
+                # Non agent metrics are not added to required_metrics because
+                # we can't determine locally the metrics that will be
+                # available to alarms for remote checks.
+                if check['type'] == 'agent.plugin':
+                    required_metrics.update(metrics)
+            except ParseException as e:
+                invalid_criteria.append({
+                    'check': check,
+                    'alarm': e.alarm,
+                    'error': e.message
+                })
+
+        missing_metrics = required_metrics - available_metrics
+
+        if (failed_checks == []
+                and missing_metrics == set()
+                and invalid_criteria == []):
+            LOGGER.info("All checks executed OK, "
+                        "All alarm criteria syntax OK, "
+                        "All required metrics are present")
+            return 0
+        if missing_metrics:
+            LOGGER.info(
+                "The following metrics are required by alarms but not"
+                " produced by any checks: {missing_metrics}".format(
+                    missing_metrics=missing_metrics))
+        if failed_checks:
+            LOGGER.info(
+                "The following checks failed to execute or didn't return "
+                "'okay' as their status: {failed_checks}".format(
+                    failed_checks=[(r['check']['label'], r['output'])
+                                   for r in failed_checks]))
+        if invalid_criteria:
+            LOGGER.info(
+                "The following alarms have critera that could not be parsed:"
+                " {alarms}".format(
+                    alarms="\n".join([
+                        "Alarm: {name} Criteria: {criteria}"
+                        " Error: {error}".format(
+                            name=ic['alarm']['label'],
+                            criteria=ic['alarm']['criteria'],
+                            error=ic['error'])
+                        for ic in invalid_criteria
+                    ])
+                )
+            )
+
+        return 1
 
     def checks_without_alarms(self):
         """list checks with no alarms"""
