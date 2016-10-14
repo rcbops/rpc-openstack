@@ -44,6 +44,7 @@ def check(args):
     auth_details = get_auth_details()
     OS_USERNAME = auth_details['OS_USERNAME']
     OS_PASSWORD = auth_details['OS_PASSWORD']
+    OS_USER_DOMAIN_NAME = auth_details['OS_USER_DOMAIN_NAME']
     HORIZON_URL = 'https://{ip}'.format(ip=args.ip)
     HORIZON_PORT = '443'
 
@@ -65,10 +66,12 @@ def check(args):
         splash_status_code = r.status_code
         splash_milliseconds = r.elapsed.total_seconds() * 1000
 
-        csrf_token = html.fromstring(r.content).xpath(
+        parsed_html = html.fromstring(r.content)
+        csrf_token = parsed_html.xpath(
             '//input[@name="csrfmiddlewaretoken"]/@value')[0]
-        region = html.fromstring(r.content).xpath(
+        region = parsed_html.xpath(
             '//input[@name="region"]/@value')[0]
+        domain = parsed_html.xpath('//input[@name="domain"]')
         s.headers.update(
             {'Content-type': 'application/x-www-form-urlencoded',
                 'Referer': HORIZON_URL})
@@ -76,6 +79,8 @@ def check(args):
                    'password': OS_PASSWORD,
                    'csrfmiddlewaretoken': csrf_token,
                    'region': region}
+        if domain:
+            payload['domain'] = OS_USER_DOMAIN_NAME
         try:
             l = s.post(
                 ('%s:%s/auth/login/') % (HORIZON_URL, HORIZON_PORT),
