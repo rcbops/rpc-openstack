@@ -91,22 +91,6 @@ openstack-ansible lxc-containers-destroy.yml --limit repo_all
 openstack-ansible setup-hosts.yml --limit repo_all
 
 # TASK #5
-# Bug:   https://github.com/rcbops/u-suk-dev/issues/374
-# Issue: Neutron has no migration to correctly set the MTU on existing networks
-#        created in liberty or below.  This work-around sets the MTU on these
-#        networks before the upgrade starts so that instances booted on these
-#        networks after the upgrade has finished will have their MTUs set
-#        correctly.
-# NOTE: In newton, MTUs will be calculated on the fly and this mtu field will
-#       get dropped.
-VLAN_FLAT="UPDATE networks SET mtu='1500' WHERE id IN (SELECT network_id FROM ml2_network_segments WHERE network_type IN ('vlan','flat'));"
-VXLAN="UPDATE networks SET mtu='1450' WHERE id IN (SELECT network_id FROM ml2_network_segments WHERE network_type='vxlan');"
-
-cd ${OA_DIR}/playbooks
-ansible galera_all[0] -m shell -a "mysql --verbose -e \"${VLAN_FLAT}\" neutron"
-ansible galera_all[0] -m shell -a "mysql --verbose -e \"${VXLAN}\" neutron"
-
-# TASK #6
 # Bug:   https://github.com/rcbops/u-suk-dev/issues/383
 # Issue: The ceph-all.yml playbook will fail because of the hostname
 #        changes introduced in Mitaka. This section recreates the mons
@@ -140,7 +124,7 @@ if [ $(echo ${mons} | wc -w) -gt 0 ]; then
   openstack-ansible ${RPCD_DIR}/playbooks/ceph-all.yml
 fi
 
-# TASK #7
+# TASK #6
 # https://github.com/rcbops/u-suk-dev/issues/392
 # Upgrade openstack-ansible
 pushd ${OA_DIR}
@@ -148,7 +132,7 @@ export I_REALLY_KNOW_WHAT_I_AM_DOING=true
 echo "YES" | ${OA_DIR}/scripts/run-upgrade.sh
 popd
 
-# TASK #8
+# TASK #7
 # Set upgrade variables for the RPCO playbooks
 # The variables are put into a temporary user_variables file, then deleted
 # at the end of this script.
@@ -159,7 +143,7 @@ else
   echo "logging_upgrade: true" >> ${UPGRADE_VARIABLES_FILE}
 fi
 
-# TASK #9
+# TASK #8
 # https://github.com/rcbops/u-suk-dev/issues/393
 # Run deploy-rpc-playbooks.sh
 # Ultimitely, this will run the RPCO playbooks.
@@ -169,7 +153,7 @@ export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"yes"}
 bash scripts/deploy-rpc-playbooks.sh
 
-# TASK #10
+# TASK #9
 # Bug: https://github.com/rcbops/u-suk-dev/issues/366
 # Description: Run post-upgrade tasks.
 #              For a detailed description, please see the README in
