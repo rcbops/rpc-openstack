@@ -291,6 +291,12 @@ class RpcMassCli(object):
                             help='A check that should not be present'
                                  'can be specified multiple times',
                             default=[])
+        parser.add_argument('--excludeverifycheck',
+                            action="append",
+                            help='A check that should be excluded from'
+                                 'verification, can be specified'
+                                 'multiple times',
+                            default=[])
         self.args = parser.parse_args()
 
     def main(self):
@@ -372,6 +378,14 @@ class RpcMassCli(object):
                     metrics.extend(child_metrics)
         return metrics
 
+    def _verify_excludedcheck(self, check_label):
+        """Verify if a check should be exluded from local verification"""
+        for exclude in self.args.excludeverifycheck:
+            if exclude in check_label:
+                return 1
+
+        return 0
+
     def verify_local(self):
         """Checks MaaS configuration without using MaaS API
 
@@ -416,6 +430,11 @@ class RpcMassCli(object):
         execution_results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             for check in self.rpcmac.checks.values():
+                # Skip excluded checks from verification
+                if self._verify_excludedcheck(check['label']):
+                    continue
+
+                # Skip non plugin checks (built-in or remote checks)
                 if check['type'] != 'agent.plugin':
                     continue
                 args = ["{plugin_path}{plugin}".format(
@@ -438,6 +457,10 @@ class RpcMassCli(object):
 
         for result in execution_results:
             check = result['check']
+            # Skip excluded checks from verification
+            if self._verify_excludedcheck(check['label']):
+                continue
+            # Skip failed checks
             if result['success'] is not True:
                 failed_checks.append(result)
                 continue
@@ -457,6 +480,10 @@ class RpcMassCli(object):
         # Parse alarm criteria
         for check in self.rpcmac.checks.values():
             try:
+                # Skip excluded checks from verification
+                if self._verify_excludedcheck(check['label']):
+                    continue
+
                 metrics = _alarm_metrics_from_check(check)
                 # Non agent metrics are not added to required_metrics because
                 # we can't determine locally the metrics that will be
