@@ -30,7 +30,7 @@
 - name: Upgrade elasticsearch to stable 1.7.x version
   apt:
     pkg: "{{ item }}"
-    state: latest
+    state: present
     update_cache: yes
     cache_valid_time: 600
     dpkg_options: "force-confold"
@@ -38,7 +38,7 @@
   until: install_apt_packages|success
   retries: 5
   delay: 2
-  with_items: elasticsearch_apt_packages
+  with_items: elasticsearch_reindex_apt_packages
   tags:
     - logging-upgrade
     - elasticsearch-upgrade
@@ -109,6 +109,7 @@
 
 - name: Drop log_test1 template
   shell: 'curl -sk -XDELETE {{ internal_lb_vip_address }}:{{ elasticsearch_http_port }}/_template/log_test1'
+  retries: 5
   tags:
     - logging-upgrade
     - elasticsearch-upgrade
