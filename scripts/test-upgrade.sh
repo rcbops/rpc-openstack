@@ -112,6 +112,7 @@ if [ $(echo ${mons} | wc -w) -gt 0 ]; then
   #This shouldn't change a thing, it's a regular playbook run.
   openstack-ansible ${RPCD_DIR}/playbooks/gen-facts.yml
   for mon in ${mons}; do
+    ansible $mon -m shell -a "ceph --format json-pretty status | grep -q '\"overall_status\": \"HEALTH_OK\"'"
     ansible $mon -m command -a "stop ceph-mon id=$mon"
     ansible $mon -m command -a "ceph mon remove $mon"
     openstack-ansible lxc-containers-destroy.yml --skip-tags=container-directories --limit $mon
