@@ -16,7 +16,7 @@
 - name: Install apt packages
   apt:
     pkg: "{{ item }}"
-    state: latest
+    state: present
     update_cache: yes
     cache_valid_time: 600
   register: install_apt_packages

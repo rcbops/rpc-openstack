@@ -23,6 +23,9 @@ elasticsearch_legacy_apt_repos:
 # use -e 'logging_upgrade=true' to upgrade logging components
 logging_upgrade: false
 
+# use -e 'force_upgrade=true' for force the upgrade to happen regardless of the pre-flight checks
+force_upgrade: false
+
 elasticsearch_apt_repo_url: "http://packages.elastic.co/elasticsearch/2.x/debian"
 
 elasticsearch_apt_repos:
@@ -31,8 +34,16 @@ elasticsearch_apt_repos:
 elasticsearch_apt_keys:
   - { url: "http://packages.elastic.co/GPG-KEY-elasticsearch", state: "present" }
 
+elasticsearch_version: 2.4.1
+
+elasticsearch_reindex_version: 1.7.5
+
 elasticsearch_apt_packages:
-  - elasticsearch
+  - elasticsearch={{ elasticsearch_version }}
+  - openjdk-7-jre-headless
+
+elasticsearch_reindex_apt_packages:
+  - elasticsearch={{ elasticsearch_reindex_version }}
   - openjdk-7-jre-headless
 
 elasticsearch_pip_packages:
