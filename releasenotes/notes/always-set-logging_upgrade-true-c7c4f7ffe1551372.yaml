@@ -1,0 +1,3 @@
+---
+issues:
+  - When upgrading ElasticSearch from RPCO r12 to r13, failure to set the Ansible var logging_upgrade=true may result in data corruption.
