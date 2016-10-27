@@ -18,5 +18,7 @@ matrix:
       env: TOXENV=releasenotes
     - python: 2.7
       env: TOXENV=bashate
+    - python: 2.7
+      env: TOXENV=release-script
 
 sudo: false
