@@ -70,17 +70,15 @@ def get_osd_statistics(client=None, keyring=None, osd_ids=None):
         else:
             msg = 'The OSD ID %s does not exist.' % osd_id
             raise maas_common.MaaSException(msg)
-        for key in ('up', 'in'):
-            name = '_'.join((osd_ref, key))
-            maas_common.metric_bool(name, osd[key])
+
+        key = 'up'
+        name = '_'.join((osd_ref, key))
+        maas_common.metric_bool(name, osd[key])
 
         for _osd in pg_osds_dump:
             if _osd['osd'] == osd_id:
                 osd = _osd
                 break
-        for key in ('kb', 'kb_used', 'kb_avail'):
-            name = '_'.join((osd_ref, key))
-            maas_common.metric(name, 'uint64', osd[key])
 
 
 def get_cluster_statistics(client=None, keyring=None):
