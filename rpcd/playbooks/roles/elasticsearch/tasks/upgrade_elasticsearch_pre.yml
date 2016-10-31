@@ -262,7 +262,6 @@
   tags:
     - logging-upgrade
     - elasticsearch-upgrade
-    - reindex-wrapper
 
 - name: Remove legacy apt repositories
   apt_repository:
@@ -276,7 +275,6 @@
   tags:
     - logging-upgrade
     - elasticsearch-upgrade
-    - reindex-wrapper
 
 - name: Flush apt cache
   apt:
