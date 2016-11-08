@@ -45,14 +45,9 @@ if [[ ! -f "/etc/openstack_deploy/user_osa_variables_overrides.yml" ]]; then
     --output-file /etc/openstack_deploy/user_osa_variables_overrides.yml
   rm -f /etc/openstack_deploy/user_variables.yml
 fi
-# TODO: We need to eventually find a proper way to migrate these secret variables.
-#       For now, we just copy existing secret variables defined previously on the
-#       liberty install. This won't cause any problems since there aren't any new
-#       secret variables in mitaka that are not defined in liberty.
-if [[ -f "/etc/openstack_deploy/user_extras_secrets.yml" ]]; then
-  mv /etc/openstack_deploy/user_extras_secrets.yml \
-     /etc/openstack_deploy/user_rpco_secrets.yml
-fi
+
+$BASE_DIR/scripts/update-secrets.sh
+
 if [[ -f "/etc/openstack_deploy/user_secrets.yml" ]]; then
   mv /etc/openstack_deploy/user_secrets.yml \
      /etc/openstack_deploy/user_osa_secrets.yml

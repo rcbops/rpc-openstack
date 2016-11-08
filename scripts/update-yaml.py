@@ -25,6 +25,9 @@ def parse_args():
                              'configuration.')
     parser.add_argument('overrides',
                         help='The path to the yaml file with overrides.')
+    parser.add_argument('--output-file',
+                        help='The name of the file that will contain both '
+                             'base and overrides')
     return parser.parse_args()
 
 
@@ -51,6 +54,11 @@ if __name__ == '__main__':
     base = get_config(args.base)
     overrides = get_config(args.overrides)
     config = dict(base.items() + overrides.items())
+
     if config:
-        with open(args.base, 'w') as f:
+        if args.output_file:
+            output_file = args.output_file
+        else:
+            output_file = args.base
+        with open(output_file, 'w') as f:
             f.write(str(yaml.safe_dump(config, default_flow_style=False)))
