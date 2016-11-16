@@ -29,6 +29,22 @@ function run_ansible {
   openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
 }
 
+# Confirm OA_DIR is properly checked out
+submodulestatus=$(git submodule status ${OA_DIR})
+case "${submodulestatus:0:1}" in
+  "-")
+    echo "ERROR: rpc-openstack submodule is not properly checked out"
+    exit 1
+    ;;
+  "+")
+    echo "WARNING: rpc-openstack submodule does not match the expected SHA"
+    ;;
+  "U")
+    echo "ERROR: rpc-openstack submodule has merge conflicts"
+    exit 1
+    ;;
+esac
+
 # begin the bootstrap process
 cd ${OA_DIR}
 
