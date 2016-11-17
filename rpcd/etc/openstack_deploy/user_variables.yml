@@ -18,6 +18,9 @@ rpc_conn_pool_size: 180
 rpc_response_timeout: 180
 rpc_thread_pool_size: 180
 
+cinder_rpc_thread_pool_size: "{{ rpc_thread_pool_size }}"
+cinder_rpc_response_timeout: "{{ rpc_response_timeout }}"
+
 keystone_database_max_pool_size: 120
 keystone_database_pool_timeout: 60
 
