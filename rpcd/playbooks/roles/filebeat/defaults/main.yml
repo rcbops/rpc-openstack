@@ -57,6 +57,24 @@ multiline_openstack_pattern: '^[0-9-]{10} +[0-9:\.]+ +[0-9]+ +[A-Z]+ +[A-Za-z0-9
 #
 #                                  Date        Time      Date         Time     PID     Level   Python Module   Request Id
 multiline_keystone_error_pattern: '[0-9-]{10} +[0-9:\.]+ [0-9-]{10} +[0-9:\.]+ [0-9]+ +[A-Z]+ +[A-Za-z0-9\._]+ \[|Traceback'
+# NOTE(d34dh0r53): There are multiple patterns of multiline entries
+# that appear in the various swift logs. These patterns only match the most
+# common as multiple multiline patterns are currently not possible.
+# See Also https://play.golang.org/p/1XcqjYl6kl
+#
+#                                              Month                  Day         Time       Host           Python Module         Status
+multiline_swift_container_replicator_pattern: '^[A-Za-z]+[[:space:]]* +[0-9]{1,2} +[0-9:\.]+ +[A-Za-z0-9-]+ container-replicator: +[A-Za-z0-9-\ ]+'
+#
+# See Also https://play.golang.org/p/pXS87svYhY
+#
+#                                            Month                  Day         Time       Host           Python Module       Status
+multiline_swift_account_replicator_pattern: '^[A-Za-z]+[[:space:]]* +[0-9]{1,2} +[0-9:\.]+ +[A-Za-z0-9-]+ account-replicator: +[A-Za-z0-9-\ ]+'
+#
+# See Also https://play.golang.org/p/ImBB_vgtok
+#
+#                                          Month                   Day         Time       Host           Python Module      Status
+multiline_swift_object_replicator_pattern: '^[A-Za-z]+[[:space:]]* +[0-9]{1,2} +[0-9:\.]+ +[A-Za-z0-9-]+ object-replicator: +[A-Za-z0-9-\ ]+'
+
 
 filebeat_logging_paths:
   - paths:
@@ -163,6 +181,10 @@ filebeat_logging_paths:
     - openstack
     - swift
     - swift-account
+    multiline:
+      pattern: "{{ multiline_swift_account_replicator_pattern }}"
+      negate: false
+      match: after
   - paths:
     - '/var/log/swift/container*.log'
     document_type: openstack
@@ -170,6 +192,10 @@ filebeat_logging_paths:
     - openstack
     - swift
     - swift-container
+    multiline:
+      pattern: "{{ multiline_swift_container_replicator_pattern }}"
+      negate: false
+      match: after
   - paths:
     - '/var/log/swift/object*.log'
     document_type: openstack
@@ -177,6 +203,10 @@ filebeat_logging_paths:
     - openstack
     - swift
     - swift-object
+    multiline:
+      pattern: "{{ multiline_swift_object_replicator_pattern }}"
+      negate: false
+      match: after
   - paths:
     - '/var/log/swift/proxy*.log'
     document_type: openstack
