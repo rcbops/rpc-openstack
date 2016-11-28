@@ -421,7 +421,12 @@ class RpcMassCli(object):
                 args = ["{plugin_path}{plugin}".format(
                     plugin_path='/usr/lib/rackspace-monitoring-agent/plugins/',
                     plugin=check['details']['file'])]
-                args.extend(check['details']['args'])
+                try:
+                    args.extend(check['details']['args'])
+                except KeyError:
+                    check['details']['args'] = ""
+                    args.extend(check['details']['args'])
+
                 executor.submit(_execute_check, args, check, self.rpcm)
         while not self.rpcm.q.empty():
             execution_results.append(self.rpcm.q.get())
@@ -467,9 +472,10 @@ class RpcMassCli(object):
 
         missing_metrics = required_metrics - available_metrics
 
-        if (failed_checks == []
-                and missing_metrics == set()
-                and invalid_criteria == []):
+        if (failed_checks == [] and
+                missing_metrics == set() and
+                invalid_criteria == []):
+
             LOGGER.info("All checks executed OK, "
                         "All alarm criteria syntax OK, "
                         "All required metrics are present")
@@ -547,8 +553,8 @@ class RpcMassCli(object):
 
     def _compare_alarm(self, config_alarm, api_alarm):
         """Compare one config alarm with one api alarm"""
-        return (config_alarm['label'] == api_alarm.label
-                and config_alarm['criteria'] == api_alarm.criteria)
+        return (config_alarm['label'] == api_alarm.label and
+                config_alarm['criteria'] == api_alarm.criteria)
 
     def compare_alarms(self):
         """Compare alarms.
@@ -792,12 +798,12 @@ class RpcMassCli(object):
                     return self._os(obj) + sep + line
                 # check
                 elif hasattr(obj, 'alarms'):
-                    return (_line_segment(obj.entity, self._os(obj))
-                            + sep + line)
+                    return (_line_segment(obj.entity, self._os(obj)) +
+                            sep + line)
                 # alarm or metric
                 else:
-                    return (_line_segment(obj.check, self._os(obj))
-                            + sep + line)
+                    return (_line_segment(obj.check, self._os(obj)) +
+                            sep + line)
             for obj in objs:
                 LOGGER.info(_line_segment(obj))
         else:
@@ -813,9 +819,10 @@ class RpcMassCli(object):
                 for check in [c for c in checks if c.entity == entity]:
                     LOGGER.info(self._os(check, indent=1))
                     for obj in objs:
-                        if (getattr(obj, 'check', None) == check
-                                and getattr(obj, 'entity', None) == entity):
+                        if (getattr(obj, 'check', None) == check and
+                                getattr(obj, 'entity', None) == entity):
                             LOGGER.info(self._os(obj, indent=2))
+
 
 if __name__ == "__main__":
     cli = RpcMassCli()
