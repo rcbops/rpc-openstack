@@ -75,10 +75,6 @@
   when: >
     inventory_hostname in groups['galera']
 
-- include: pccommon_get.yml
-  when: >
-    inventory_hostname in groups['utility'] or inventory_hostname in groups['neutron_agent']  or inventory_hostname in groups['infra_hosts']
-
 - include: neutron_debug.yml
   when: >
     inventory_hostname in groups['neutron_agent']

@@ -7,3 +7,6 @@
 - name: ceph.ceph-osd
   src: https://github.com/ceph/ansible-ceph-osd.git
   version: 434a13f4d3ee3f60c410052d2670d5dfea034bf8
+- name: rcbops_openstack-ops
+  src: https://github.com/rsoprivatecloud/openstack-ops
+  version: d55e02723c0666cd8a4959027fa97ced88cb0617
