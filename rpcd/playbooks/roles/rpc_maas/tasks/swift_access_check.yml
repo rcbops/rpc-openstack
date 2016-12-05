@@ -1,0 +1,109 @@
+---
+# Copyright 2016, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Add a swift user for file checking
+- name: Create a keystone user for swift filecheck
+  keystone:
+    command: "ensure_user"
+    endpoint: "{{ keystone_service_adminurl }}"
+    login_user: "{{ keystone_admin_user_name }}"
+    login_password: "{{ keystone_auth_admin_password }}"
+    login_project_name: "{{ keystone_admin_tenant_name }}"
+    user_name: "{{ swift_accesscheck_user_name }}"
+    tenant_name: "{{ swift_service_project_name }}"
+    password: "{{ swift_accesscheck_password }}"
+    insecure: "{{ keystone_service_adminuri_insecure }}"
+  register: add_user
+  when:
+    - not swift_service_in_ldap | bool
+  until: add_user | success
+  retries: 5
+  delay: 10
+
+# Assign the swiftoperator role to the file checking user
+- name: Add swift role to user
+  keystone:
+    command: "ensure_user_role"
+    endpoint: "{{ keystone_service_adminurl }}"
+    login_user: "{{ keystone_admin_user_name }}"
+    login_password: "{{ keystone_auth_admin_password }}"
+    login_project_name: "{{ keystone_admin_tenant_name }}"
+    user_name: "{{ swift_accesscheck_user_name }}"
+    tenant_name: "{{ swift_service_project_name }}"
+    role_name: "{{ swift_operator_role }}"
+    insecure: "{{ keystone_service_adminuri_insecure }}"
+  register: add_user_role
+  when:
+    - not swift_service_in_ldap | bool
+  until: add_user_role | success
+  retries: 5
+  delay: 10
+
+# Copy test HTML file to the swift proxy for uploading
+- name: Create index file
+  copy:
+    dest: "/tmp/{{ swift_accesscheck_file }}"
+    src: "index.html"
+
+# Place an HTML file in a swift container
+- name: Upload check file to swift
+  shell: >
+    source /root/openrc;
+    /openstack/venvs/swift-{{ openstack_release }}/bin/swift upload
+    --object-name {{ swift_accesscheck_file }}
+    {{ swift_accesscheck_container }}
+    /tmp/{{ swift_accesscheck_file }}
+  args:
+    executable: "/bin/bash"
+  changed_when: false
+
+# Set global read permission on the swift container
+- name: Configure check container ACL
+  shell: >
+    source /root/openrc;
+    /openstack/venvs/swift-{{ openstack_release }}/bin/swift post -r '.r:*'
+    {{ swift_accesscheck_container }}
+  args:
+    executable: "/bin/bash"
+  changed_when: false
+
+# Configure the container to return an index file by default
+- name: Configure check container index file
+  shell: >
+    source /root/openrc;
+    /openstack/venvs/swift-{{ openstack_release }}/bin/swift post -m 'web-index:{{ swift_accesscheck_file }}'
+    {{ swift_accesscheck_container }}
+  args:
+    executable: "/bin/bash"
+  changed_when: false
+
+# Fetch the swift account token to build the URL
+- name: Retrieve check file key
+  shell: >
+    source /root/openrc;
+    /openstack/venvs/swift-{{ openstack_release }}/bin/swift stat {{ swift_accesscheck_container }}
+    {{ swift_accesscheck_file }} |
+    grep "Account:" |
+    awk '{ print $2 }'
+  args:
+    executable: "/bin/bash"
+  register: swift_url_key
+  changed_when: false
+
+# Set the full check URL as a fact
+- name: Set URL fact
+  set_fact:
+    swift_accesscheck_url: "{{ maas_swift_proxy_scheme | default(maas_scheme)}}://{{ external_lb_vip_address }}:8080/v1/{{ swift_url_key.stdout }}/{{ swift_accesscheck_container }}/{{ swift_accesscheck_file }}"
+    swift_access_url_key: "{{ swift_url_key.stdout }}"

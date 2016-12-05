@@ -360,7 +360,7 @@ elasticsearch_process_names:
   # process name that includes "elasticsearch". The process running
   # elasticsearch is actually named "java" so we search for that here. This is
   # less than ideal, but the best we can do right now.
-  - java 
+  - java
 
 filebeat_process_names:
   - filebeat
@@ -443,7 +443,8 @@ openstack_service_remote_checks_list:
   - { name: "lb_api_check_heat_api", group: "heat_api" }
   - { name: "lb_api_check_heat_cfn", group: "heat_api_cfn" }
   - { name: "lb_api_check_heat_cloudwatch", group: "heat_api_cloudwatch" }
-  - { name: "lb_api_check_swift_proxy", group: "swift_proxy" }
+  - { name: "lb_api_check_swift_healthcheck", group: "swift_proxy" }
+  - { name: "lb_api_check_swift_access", group: "swift_proxy" }
 
 ssl_cert_checks_list:
   - { name: "lb_ssl_cert_expiry_check", group: "utility"}
@@ -545,3 +546,11 @@ verify_maas_retries: 5
 #               for offline testing
 #
 maas_use_api: true
+
+# Swift object access check
+swift_accesscheck_enabled: true
+swift_accesscheck_container: "accesscheck"
+swift_accesscheck_file: "index.html"
+swift_accesscheck_user_name: "accesscheck"
+swift_operator_role: "swiftoperator"
+swift_service_project_name: "service"

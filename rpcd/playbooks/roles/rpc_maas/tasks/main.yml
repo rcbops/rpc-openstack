@@ -45,6 +45,11 @@
   vars:
     internal_vip_address: "{{ internal_lb_vip_address }}"
 
+- include: swift_access_check.yml
+  when:
+    - swift_accesscheck_enabled | bool
+    - inventory_hostname == groups['swift_proxy'][0]
+
 - include: remote.yml
   vars:
     ip_address: "{{ external_lb_vip_address }}"
