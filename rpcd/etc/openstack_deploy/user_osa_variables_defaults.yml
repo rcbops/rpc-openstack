@@ -158,3 +158,9 @@ ssh_delay: 60
 
 # Use the correct secrets file
 osa_secrets_file_name: "user_osa_secrets.yml"
+
+# Disable glance image cache
+glance_flavor: keystone
+glance_glance_api_conf_overrides:
+  DEFAULT:
+    image_cache_dir: None
