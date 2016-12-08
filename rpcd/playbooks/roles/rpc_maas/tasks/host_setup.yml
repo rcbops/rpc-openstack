@@ -19,6 +19,8 @@
 
 - include: raxmon_cli_config.yml
 
-- include: raxmon_agent_install.yml
+- include: agent_install_local.yml
+- include: agent_install_remote.yml
   vars:
     entity_name: "{{ inventory_hostname }}{{ maas_fqdn_extension }}"
+  when: "{{ maas_use_api | bool }}"
