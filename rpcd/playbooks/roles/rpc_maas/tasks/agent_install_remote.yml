@@ -13,19 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Verify raxmon-entities-list and MaaS API authentication does not fail
+  shell: |
+    {% if maas_venv_enabled | bool %}
+    . {{ maas_venv_bin }}/activate
+    {% endif %}
+    raxmon-entities-list
+  register: raxmon_output
+  failed_when: raxmon_output.rc != 0
+
 - name: Entity {{ entity_name }} count
   shell: |
-    set -o pipefail
     {% if maas_venv_enabled | bool %}
     . {{ maas_venv_bin }}/activate
     {% endif %}
     raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | wc -l
-  args:
-    executable: "/bin/bash"
   register: entity_count
-  until: entity_count|success
-  retries: 5
-  delay: 2
 
 - name: Zero entities with label {{ entity_name }} exist
   fail:
@@ -39,17 +42,11 @@
 
 - name: Get entity {{ entity_name }}
   shell: |
-    set -o pipefail
     {% if maas_venv_enabled | bool %}
     . {{ maas_venv_bin }}/activate
     {% endif %}
     raxmon-entities-list | grep ' label={{ entity_name }} provider=Rackspace Monitoring ...>$' | awk '{print $2}' | cut -d= -f2
-  args:
-    executable: "/bin/bash"
   register: entity
-  until: entity|success
-  retries: 5
-  delay: 2
 
 - name: Assign agent ID to entity
   shell: |
@@ -60,17 +57,11 @@
 
 - name: Agent token {{ entity_name }} count
   shell: |
-    set -o pipefail
     {% if maas_venv_enabled | bool %}
     . {{ maas_venv_bin }}/activate
     {% endif %}
     raxmon-agent-tokens-list | grep ' label={{ entity_name }}, ' | wc -l
-  args:
-    executable: "/bin/bash"
   register: agent_token_count
-  until: agent_token_count|success
-  retries: 5
-  delay: 2
   when: maas_agent_token is not defined
 
 - name: At most one {{ entity_name }} agent token should exist
@@ -89,17 +80,11 @@
 
 - name: Get agent token
   shell: |
-    set -o pipefail
     {% if maas_venv_enabled | bool %}
     . {{ maas_venv_bin }}/activate
     {% endif %}
     raxmon-agent-tokens-list | grep '<AgentToken: id=.* label={{ entity_name }}, .*>' | awk '{print $2}' | sed -e 's/id=\(.*\),/\1/g'
-  args:
-    executable: "/bin/bash"
   register: maas_agent_token_id
-  until: maas_agent_token_id|success
-  retries: 5
-  delay: 2
   when: maas_agent_token is not defined
 
 - name: Set agent token fact
@@ -113,6 +98,7 @@
     mode: 0600
     owner: root
     group: root
+
 
 - name: Start raxmon agent
   service:

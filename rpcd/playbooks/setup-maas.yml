@@ -24,7 +24,6 @@
 - name: Install MaaS
   hosts: hosts:all_containers
   user: root
-  any_errors_fatal: true
   pre_tasks:
     # This is needed to set the rpc_openstack_repo and rpc_release variables
     # correctly
