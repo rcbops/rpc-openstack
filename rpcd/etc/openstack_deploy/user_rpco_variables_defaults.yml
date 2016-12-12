@@ -56,7 +56,9 @@ hp_check: false
 #lb_name: 'unspecified'
 
 # Set the maas_scheme
-maas_scheme: http
+# Note: (alextricity25) This has been changed to https because
+# SSL termination is done by default since Newton per https://review.openstack.org/#/c/277199/
+maas_scheme: https
 # Specify per service if required, as an example:
 # maas_nova_scheme: https
 
@@ -70,6 +72,10 @@ maas_alarm_remote_consecutive_count: 1
 
 # Set the following to skip creating alarms for this device for disk utilisation monitoring
 # maas_excluded_devices: ['xvde']
+
+# Set the following to skip a specific check
+maas_excluded_checks:
+  - horizon_local_check
 
 # Set the threshold for filesystem monitoring when you are not specifying specific filesystems.
 maas_filesystem_warning_threshold: 80.0
@@ -89,22 +95,6 @@ maas_monitor_cinder_backup: "{{ cinder_service_backup_program_enabled }}"
 # overrides for the nova_cloud_stats  maas plugin
 cloud_resource_cpu_allocation_ratio: "{{ nova_cpu_allocation_ratio }}"
 cloud_resource_mem_allocation_ratio: "{{ nova_ram_allocation_ratio }}"
-
-# For an AIO it's recommended to set the following to limit the expected RAM
-# usage of elasticsearch.
-# elasticsearch_heap_size_mb: 1024
-
-# Enumerate any apt packages that the deployer would like to pin to a particular version.
-#
-# This relies on the apt_package_pinning role from openstack-ansible.
-#
-# Pinning happens in the 'apt_pinned_packages' variable.
-#
-# apt_pinned_packages:
-#   - { package: "lxc", version: "1.0.7-0ubuntu0.1" }
-#   - { package: "libvirt-bin", version: "1.2.2-0ubuntu13.1.9" }
-#   - { package: "rabbitmq-server", origin: "www.rabbitmq.com" }
-#   - { package: "*", release: "MariaDB" }
 
 # Ceph options
 # fsid is the unique identifier for your object store.

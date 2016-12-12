@@ -13,19 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galaxy_info:
-  author: rcbops
-  description: Installation and setup of Rackspace MaaS
-  company: Rackspace
-  license: Apache2
-  min_ansible_version: 1.6.6
-  platforms:
-    - name: Ubuntu
-      versions:
-        - trusty
-  categories:
-    - cloud
-    - monitoring
-    - MaaS
-    - development
-    - openstack
+container_skel:
+  nova_compute_container:
+    contains:
+      - neutron_linuxbridge_agent
+      - neutron_openvswitch_agent
+      - nova_compute

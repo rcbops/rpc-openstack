@@ -64,9 +64,6 @@ ansible-galaxy remove --roles-path /opt/rpc-openstack/rpcd/playbooks/roles/ ceph
 ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force \
                            --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
 
-# Enable playbook callbacks from OSA to display playbook statistics
-grep -q callback_plugins playbooks/ansible.cfg || sed -i '/\[defaults\]/a callback_plugins = plugins/callbacks' playbooks/ansible.cfg
-
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
 
@@ -81,8 +78,28 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   fi
   # force the deployment of haproxy for an AIO
   export DEPLOY_HAPROXY="yes"
-  if [[ ! -d /etc/openstack_deploy/ ]]; then
-    ./scripts/bootstrap-aio.sh
+  if [[ ! -d /etc/openstack_deploy/ || ! -d /etc/openstack_deploy/$RPCD_OVERRIDES ]]; then
+
+    # Adding affinity of 3 for rabbit and galera containers
+    # This variable is passed as a user variable in the following
+    # ansible-playbook command.
+    cat > /tmp/openstack_user_config_overrides.yml <<EOF
+openstack_user_config_overrides:
+  shared-infra_hosts:
+    aio1:
+      affinity:
+        galera_container: 3
+        rabbit_mq_container: 3
+      ip: 172.29.236.100
+EOF
+    pushd $OA_DIR/tests
+      ansible-playbook bootstrap-aio.yml -i test-inventory.ini -e "${BOOTSTRAP_OPTS:-""}" -e "@/tmp/openstack_user_config_overrides.yml"
+    popd
+
+    # Create env.d directory so we can add our own configs
+    # See: https://review.openstack.org/#/c/332595/
+    mkdir -p /etc/openstack_deploy/env.d
+
     # move OSA variables file to AIO location.
     mv /etc/openstack_deploy/user_variables.yml /etc/openstack_deploy/user_osa_aio_variables.yml
     pushd ${RPCD_DIR}
@@ -136,9 +153,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
 
     # set the ansible inventory hostname to the host's name
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
-    # set the affinity to 3 for infra cluster (necessary for maas testing)
-    sed -i "s/rabbit_mq_container: 1/rabbit_mq_container: 3/" /etc/openstack_deploy/openstack_user_config.yml
-    sed -i "s/galera_container: 1/galera_container: 3/" /etc/openstack_deploy/openstack_user_config.yml
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
   fi
   # remove swift config if not deploying swift.
@@ -147,6 +161,8 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   fi
   rm -f /etc/openstack_deploy/conf.d/aodh.yml
   rm -f /etc/openstack_deploy/conf.d/ceilometer.yml
+  rm -f /etc/openstack_deploy/conf.d/gnocchi.yml
+
 fi
 
 # move OSA secrets to correct locations
@@ -206,11 +222,6 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     run_ansible setup-hosts.yml
   fi
 
-  # ensure correct pip.conf
-  pushd ${RPCD_DIR}/playbooks/
-    run_ansible pip-lockdown.yml
-  popd
-
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
     pushd ${RPCD_DIR}/playbooks/
       run_ansible ceph-all.yml
@@ -241,16 +252,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   if [[ "${DEPLOY_TEMPEST}" == "yes" ]]; then
     # Deploy tempest
-    # NOTE(mattt): This is an attempt to reduce the number of tempest-related
-    #              gate failures that we are seeing.  We cannot have the repo
-    #              server build this version of tempest because it has
-    #              requirements that do not jive with stable/mitaka.
-    run_ansible os-tempest-install.yml -e tempest_developer_mode=true \
-                                       -e tempest_git_repo=https://git.openstack.org/openstack/tempest \
-                                       -e tempest_git_install_branch=304802830b56354a83bad86925851107411d45ec \
-                                       -e tempest_requirements_git_repo=https://git.openstack.org/openstack/requirements \
-                                       -e tempest_requirements_git_install_branch=6c86e861875529f87b09244de355d5df865b7adc \
-                                       -e pip_install_options=--isolated
+    run_ansible os-tempest-install.yml
   fi
 
 fi
