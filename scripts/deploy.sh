@@ -146,6 +146,7 @@ magnum_galera_password:
 magnum_rabbitmq_password:
 magnum_trustee_password:
 EOF
+  git clone https://github.com/openstack/openstack-ansible-os_magnum.git -b 48fc4699ab61c14aa8ad006268d37fcd71b69656 --single-branch /etc/ansible/roles/os_magnum
 fi
 
 # Apply host security hardening with openstack-ansible-security
