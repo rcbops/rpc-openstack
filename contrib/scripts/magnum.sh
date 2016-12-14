@@ -50,5 +50,6 @@ EOF
   magnum_git_dest: "/opt/magnum_{{ magnum_git_install_branch | replace('/', '_') }}"
 EOF
   cp $CONTRIB_DIR/magnum/os-magnum-install.yml $OA_DIR/playbooks/
+  cp $CONTRIB_DIR/magnum/magnum.yml /etc/openstack_deploy/env.d/magnum.yml
   echo "- include: os-magnum-install.yml" >> $OA_DIR/playbooks/setup-openstack.yml
 fi
