@@ -14,15 +14,15 @@
   * Possibly a new feature (?)
 
 **Minor release**
-  
+
   * Big change within a release
   * Security  - upgrade-impacting
   * Bug fixes - upgrade-impacting
   * Features
   * sha bumps
-   
+
 **Patch release**
-  
+
   * Security  - non-upgrade-impacting
   * Bug fixes - non-upgrade-impacting
 
@@ -125,7 +125,7 @@ Issues are categorised to simplify the process of identifying the highest priori
   Any labels relevant to this step will start with 'impacts-'.
   * If an issue is reported by support or they update an existing issue to say they are impacted add the label 'impacts-support'.
   * If an issue is reported by QE, they update an existing issue to say they are impacted or someone else discovers an issue that affects a release candidate add the label 'impacts-qe'.
-* Identify the product features impacted by the issue.  
+* Identify the product features impacted by the issue.
   Any labels relevant to this section will start with 'feature-'.
 * Confirm the issue is valid
   * If the issue is invalid add the label 'status-invalid' and close the issue with a comment detailing why the issue is invalid.
@@ -229,13 +229,13 @@ The documentation work is all done in [this](https://github.com/rackerlabs/docs-
 2. Once you have created a pull request, tag the doc team for review. See [Documentation team FAQ](https://github.com/rackerlabs/docs-rackspace/blob/master/doc/contributor-collateral/privatecloud-docteam-FAQ.rst) for clarification on who to contact.
 3. Await merge. Respond to any questions/comments/concerns.
 
-Any further questions about our github processes, contributor guidelines, or FAQ about the docs and team, refer to: [Contributor collatoral](https://github.com/rackerlabs/docs-rackspace/tree/master/doc/contributor-collateral) 
+Any further questions about our github processes, contributor guidelines, or FAQ about the docs and team, refer to: [Contributor collatoral](https://github.com/rackerlabs/docs-rackspace/tree/master/doc/contributor-collateral)
 
 ## Commits, release notes and pull requests
 ### Fixing a bug
 
-1. After the bug is triaged and prioritised, make the required changes. New features, breaking changes and other patches of note must include a release note generated using the `reno tool`. Please see `Release Notes` for more information.
-2. Push changes directly to a branch on ```rpc-openstack``` in the ```rcbops``` github namespace (rather than a developers own fork). A pull request is then made from this branch to the ```master``` branch.
+1. After the bug is triaged and prioritised, make the required changes. New features, breaking changes and other patches of note must include a release note generated using the `reno` tool. Please see `Release Notes` for more information.
+2. Push changes directly to a branch on ```rpc-openstack``` in the ```rcbops``` github namespace (rather than a developer's own fork). A pull request is then made from this branch to the ```master``` branch.
 3. Unless a bug is specific to a release branch (e.g. ```liberty-12.1```), commit fixes to the ```master``` branch before any potential backports.
 4. Bugs meeting backport criteria are backported to the release branches (e.g. ```liberty-12.1```) as appropriate.
 5. Github markdown is used to update the original issue with a checklist for tracking which branches have fixes merged.
@@ -278,7 +278,7 @@ In your commit message please consider the following points:
 A release note must be included in your commit for notable changes and new features. It is generated using the Reno tool. To create a release note:
 
 1. [Install the reno tool](http://docs.openstack.org/developer/reno/installation.html).
-2. Generate a new release note file. The YAML file is located under `/releasenotes/notes`. 
+2. Generate a new release note file. The YAML file is located under `/releasenotes/notes`.
 
    `$ reno new <version>`
 3. Edit the YAML file. The text uses RST formatting.
@@ -320,6 +320,7 @@ In order for a PR to be merged, the following criteria should be met:
 
 * All gate tests must have passed.
 * There must be at least 2 members of the rcbops engineering team review and give the PR a +1 approval using the review guidelines above.
+ * Use GitHub's [pull request reviews](https://help.github.com/articles/about-pull-request-reviews/) function so that your comments are collated into a single review.
  * If a patch is being backported, the person doing the backport cannot vote on it, but the original author of the patch can.
 * The second +1 reviewer should merge the patch.
 
@@ -337,7 +338,7 @@ In order for a PR to be merged, the following criteria should be met:
 ### Patch releases
 1. Work (bugfixes) is performed in the ```master``` branch and cherry-picked into the release branch (e.g. ```liberty-12.1``` or ```mitaka-13.1```). OR work (bugfixes) is performed directly in the release branch if it is release specific and doesn't affect ```master```.
 2. Every 2 weeks (approximately) a new release tag (e.g. ```12.1.1```) is made.
-3. Immediately after tagging, all external projects included either via submodules, ansible-galaxy or some other mechanism, will have the version/revision/SHA updated to point to the HEAD of that project (in vernacular, we'll do a SHA bump). This allows an immediate set of gate jobs to run on those SHA bumps, as well as the next 2 weeks of development to happen against those new SHA's. This will allow us to stay current and only have to cope with incremental change in external projects. 
+3. Immediately after tagging, all external projects included either via submodules, ansible-galaxy or some other mechanism, will have the version/revision/SHA updated to point to the HEAD of that project (in vernacular, we'll do a SHA bump). This allows an immediate set of gate jobs to run on those SHA bumps, as well as the next 2 weeks of development to happen against those new SHA's. This will allow us to stay current and only have to cope with incremental change in external projects.
 
 [1]
 ```
