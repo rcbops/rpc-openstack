@@ -425,17 +425,5 @@ MON:
 OSDs:
 
     metric osd.0_up uint32 1
-    metric osd.0_in uint32 1
-    metric osd.0_kb uint64 165002356
-    metric osd.0_kb_used uint64 63071532
-    metric osd.0_kb_avail uint64 94994344
     metric osd.1_up uint32 1
-    metric osd.1_in uint32 1
-    metric osd.1_kb uint64 165002356
-    metric osd.1_kb_used uint64 63071532
-    metric osd.1_kb_avail uint64 94994344
     metric osd.2_up uint32 1
-    metric osd.2_in uint32 1
-    metric osd.2_kb uint64 165002356
-    metric osd.2_kb_used uint64 63071532
-    metric osd.2_kb_avail uint64 94994344
