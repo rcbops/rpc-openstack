@@ -23,7 +23,7 @@ from maas_common import print_output
 from maas_common import status_err
 from maas_common import status_ok
 
-SUPPORTED_VERSIONS = set(["7.1.0", "7.4.0"])
+SUPPORTED_VERSIONS = set(["7.1.0", "7.4.0", "8.3.0", "8.4.0"])
 OM_PATTERN = '(?:%(field)s)\s+:\s+(%(group_pattern)s)'
 CHASSIS = re.compile(OM_PATTERN % {'field': '^Health', 'group_pattern': '\w+'},
                      re.MULTILINE)
