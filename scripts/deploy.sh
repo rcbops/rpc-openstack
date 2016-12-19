@@ -244,7 +244,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     ansible neutron_agent -m command \
                           -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 8000 -j CHECKSUM --checksum-fill'
     ansible neutron_agent -m shell \
-                          -a 'DEBIAN_FRONTEND=noninteractive apt-get install iptables-persistent'
+                          -a 'DEBIAN_FRONTEND=noninteractive apt-get -y install iptables-persistent'
   fi
 
   # setup openstack
