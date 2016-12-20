@@ -161,6 +161,10 @@ filebeat_logging_paths:
     - openstack
     - oslofmt
     - magnum
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+      match: after
   # NOTE(sigmavirus24): Swift does not use oslo.log, so we cannot rely on our
   # oslo-based pattern
   - paths:
