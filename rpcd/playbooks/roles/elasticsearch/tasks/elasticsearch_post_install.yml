@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Create /var/lib/elasticsearch
+  file:
+    path: "/var/lib/elasticsearch"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+
 - name: Deploy ElasticSearch configuration files
   template:
     src: "{{ item }}"
