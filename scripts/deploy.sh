@@ -117,8 +117,6 @@ EOF
     echo "lb_name: '$(hostname)'" >> $RPCD_OVERRIDES
     # set the notification_plan to the default for Rackspace Cloud Servers
     echo "maas_notification_plan: npTechnicalContactsEmail" >> $RPCD_OVERRIDES
-    # the AIO needs this enabled to test the feature, but user_rpco_variables_defaults.yml defaults this to false
-    echo "cinder_service_backup_program_enabled: true" >> $OA_OVERRIDES
     # set network speed for vms
     echo "net_max_speed: 1000" >> $RPCD_OVERRIDES
 

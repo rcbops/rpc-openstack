@@ -26,7 +26,7 @@ db_max_overflow: 60
 db_max_pool_size: 120
 db_pool_timeout: 60
 
-cinder_rpc_thread_pool_size: "{{ rpc_thread_pool_size }}"
+cinder_rpc_executor_thread_pool_size: "{{ rpc_thread_pool_size }}"
 cinder_rpc_response_timeout: "{{ rpc_response_timeout }}"
 
 keystone_database_max_pool_size: "{{ db_max_pool_size }}"
@@ -65,13 +65,6 @@ rabbitmq_ulimit: 65535
 # since memory utilization is primarily driven by the objects placed in memcached.
 memcached_connections: 16384
 
-## Apache SSL Settings
-# These do not need to be configured unless you're creating certificates for
-# services running behind Apache (currently, Horizon and Keystone).
-ssl_protocol: "ALL -SSLv2 -SSLv3"
-# Cipher suite string from https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
-ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS"
-
 # Keystone overrides
 keystone_token_provider: "uuid"
 keystone_token_driver: "sql"
@@ -96,18 +89,7 @@ pkg_locations:
   - /etc/openstack_deploy
   - /opt/rpc-openstack/rpcd
 
-# NOTE(mancdaz) there may be a better place to override this
 horizon_venv_tag: "{{ openstack_release }}"
-
-# disable ceilometer
-cinder_ceilometer_enabled: False
-glance_ceilometer_enabled: False
-heat_ceilometer_enabled: False
-neutron_ceilometer_enabled: False
-nova_ceilometer_enabled: False
-swift_ceilometer_enabled: False
-keystone_ceilometer_enabled: False
-tempest_service_available_ceilometer: False
 
 # List of files to override using the OSA horizon role
 rackspace_static_files_folder: "/opt/rpc-openstack/rpcd/playbooks/roles/horizon_extensions/files"
@@ -126,31 +108,11 @@ horizon_custom_uploads:
 repo_build_pip_extra_indexes:
   - "https://rpc-repo.rackspace.com/pools"
 
-# Enumerate any apt packages that the deployer would like to pin to a particular version.
-#
-# This relies on the apt_package_pinning role from openstack-ansible.
-#
-# Pinning happens in the 'apt_pinned_packages' variable.
-#
-# apt_pinned_packages:
-#   - { package: "lxc", version: "1.0.7-0ubuntu0.1" }
-#   - { package: "libvirt-bin", version: "1.2.2-0ubuntu13.1.9" }
-#   - { package: "rabbitmq-server", origin: "www.rabbitmq.com" }
-#   - { package: "*", release: "MariaDB" }
-
 # We pin download.ceph.com so ceph packages are not downloaded for the
 # UCA repository that was added in newton.
 # For more information please see https://github.com/rcbops/u-suk-dev/issues/747
 ceph_apt_pinned_packages:
     - { package: "*", release: "RedHat", priority: 995 }
-
-## Host security hardening
-# The openstack-ansible-security role provides security hardening for hosts
-# by applying security configurations from the STIG. Hardening is enabled by
-# default, but an option to opt-out is available by setting the following
-# variable to 'false' in /etc/openstack_deploy/user_osa_variables_overrides.yml.
-# Docs: http://docs.openstack.org/developer/openstack-ansible-security/
-apply_security_hardening: true
 
 ## Enable Neutron l2_population
 # We are overriding the default value for neutron_l2_population. Please see
@@ -162,10 +124,6 @@ neutron_l2_population: True
 neutron_neutron_conf_overrides:
   DEFAULT:
     l3_ha: False
-
-# Container repos
-lxc_container_template_main_apt_repo: "https://mirror.rackspace.com/ubuntu"
-lxc_container_template_security_apt_repo: "https://mirror.rackspace.com/ubuntu"
 
 cinder_service_backup_program_enabled: false
 

@@ -74,6 +74,8 @@ maas_alarm_remote_consecutive_count: 1
 # maas_excluded_devices: ['xvde']
 
 # Set the following to skip a specific check
+# horizon_local_check is disabled until https://github.com/rcbops/u-suk-dev/issues/781
+# is resolved
 maas_excluded_checks:
   - horizon_local_check
 
