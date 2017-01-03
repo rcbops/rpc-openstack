@@ -40,14 +40,20 @@ haproxy_extra_services:
       - "forwardfor"
       - "httpchk /status"
       - "httplog"
+#These entries are required in order for the lxc-containers-create.yml playbook
+#to successfully create the Magnum containers
+magnum_service_adminuri_proto: "{{ openstack_service_adminuri_proto | default(magnum_service_proto) }}"
+magnum_service_proto: http
+magnum_service_port: 9511
+magnum_service_adminuri: "{{ magnum_service_adminuri_proto }}://{{ internal_lb_vip_address }}:{{ magnum_service_port }}"
 EOF
   # TODO(chris_hultin):
   # Remove this section upon transition to Newton
   # This is required so that repo_build.yml does not attempt to build a different version of Magnum
   cat >> $OA_DIR/playbooks/defaults/repo_packages/openstack_services.yml <<'EOF'
-  magnum_git_repo: https://git.openstack.org/openstack/magnum
-  magnum_git_install_branch: stable/mitaka
-  magnum_git_dest: "/opt/magnum_{{ magnum_git_install_branch | replace('/', '_') }}"
+magnum_git_repo: https://git.openstack.org/openstack/magnum
+magnum_git_install_branch: stable/mitaka
+magnum_git_dest: "/opt/magnum_{{ magnum_git_install_branch | replace('/', '_') }}"
 EOF
   cp $CONTRIB_DIR/magnum/os-magnum-install.yml $OA_DIR/playbooks/
   cp $CONTRIB_DIR/magnum/magnum.yml /etc/openstack_deploy/env.d/magnum.yml
