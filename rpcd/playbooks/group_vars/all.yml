@@ -28,3 +28,8 @@ migrations_dir: /etc/openstack_deploy/migrations
 
 # Ceph Conf Directory Mode
 conf_directory_mode: 755
+
+# Cross roles configurations
+holland_venv_enabled: True
+holland_venv_bin: "/openstack/venvs/holland-{{ rpc_release }}/bin"
+holland_venv: "/openstack/venvs/holland-{{ rpc_release }}"
