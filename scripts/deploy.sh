@@ -13,6 +13,7 @@ export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
+export DEPLOY_MAGNUM=${DEPLOY_MAGNUM:-"no"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
@@ -21,6 +22,7 @@ export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
 export BASE_DIR='/opt/rpc-openstack'
 export OA_DIR='/opt/rpc-openstack/openstack-ansible'
 export RPCD_DIR='/opt/rpc-openstack/rpcd'
+export CONTRIB_DIR='/opt/rpc-openstack/contrib'
 export RPCD_VARS='/etc/openstack_deploy/user_rpco_variables_defaults.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
@@ -137,6 +139,8 @@ fi
 if [[ ! -f /etc/openstack_deploy/user_osa_secrets.yml ]] && [[ -f /etc/openstack_deploy/user_secrets.yml ]]; then
   mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
 fi
+
+$CONTRIB_DIR/scripts/*.sh
 
 # Apply host security hardening with openstack-ansible-security
 # The is applied as part of setup-hosts.yml
