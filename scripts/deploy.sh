@@ -212,12 +212,15 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     run_ansible haproxy-install.yml
   fi
 
-  # We have to skip V-38462 when using an unauthenticated mirror
-  # V-38660 is skipped for compatibility with Ubuntu Xenial
+  # NOTE(mhayden): V-38642 must be skipped when using an apt repository with
+  # unsigned/untrusted packages.
+  # NOTE(mhayden): V-38660 halts the playbook run when it finds SNMP v1/2
+  # configurations on a server. RPC has these configurations applied, so this
+  # task must be skipped.
   if [[ ${UNAUTHENTICATED_APT} == "yes" && ${DEPLOY_HARDENING} == "yes" ]]; then
     run_ansible setup-hosts.yml --skip-tags=V-38462,V-38660
   else
-    run_ansible setup-hosts.yml
+    run_ansible setup-hosts.yml --skip-tags=V-38660
   fi
 
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
