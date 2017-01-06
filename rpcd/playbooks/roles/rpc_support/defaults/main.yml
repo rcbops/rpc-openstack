@@ -66,6 +66,9 @@ holland_git_repo_plugins:
 
 holland_pip_wheel_name: holland
 
+holland_packages:
+  - git
+
 holland_venv_enabled: True
 holland_venv_bin: "/openstack/venvs/holland-{{ rpc_release }}/bin"
 holland_venv: "/openstack/venvs/holland-{{ rpc_release }}"
