@@ -15,7 +15,7 @@
 
 horizon_extensions_git_repo: https://github.com/rcbops/rpc-openstack
 # SHA of the latest commit of the horizon-extensions subtree in the mitaka-13.1 branch
-horizon_extensions_git_install_branch: 86c05b65f901e25980fb8d3a4609692e395941b1
+horizon_extensions_git_install_branch: mitaka-13.1
 horizon_extensions_git_package_name: horizon-extensions
 horizon_extensions_git_install_fragments: "subdirectory=horizon-extensions/"
 horizon_extensions_dest_dir: /opt/rackspace/horizon-extensions
