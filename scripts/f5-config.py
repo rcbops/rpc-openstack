@@ -89,6 +89,9 @@ MONITORS = [
     r'create ltm monitor http /' + PART + '/' + PREFIX_NAME + '_MON_HTTP_REPO {'
     r' defaults-from http destination *:8181 recv "200 OK" send "HEAD /'
     r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
+    r' create ltm monitor http /' + PART + '/' + PREFIX_NAME + '_MON_HTTP_REPO_CACHE {'
+    r' defaults-from http destination *:3142 recv "200 OK" send "HEAD /acng-report.html'
+    r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
     r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_REPO_GIT {'
     r' defaults-from tcp destination *:9418 }',
     '\n'
@@ -341,6 +344,14 @@ POOL_PARTS = {
         'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_REPO',
         'group': 'pkg_repo',
         'hosts': []
+    },
+    'repo_cache':{
+        'port': 3142
+        'mon_type': '/' + PART + '/' PREFIX_NAME + '_MON_HTTP_REPO_CACHE',
+        'group': 'repo_all',
+        'priority': True,
+        'hosts': []
+        
     },
     'repo_git': {
         'port': 9418,
