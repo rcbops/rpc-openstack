@@ -11,7 +11,7 @@ EOF
   version: 48fc4699ab61c14aa8ad006268d37fcd71b69656
 EOF
 #Distribute Magnum configuration files and settings
-  cat > $OA_OVERRIDES <<'EOF'
+  cat > /etc/openstack_deploy/user_osa_variables_overrides.yml <<'EOF'
 # These configuration entries for Keystone configure some settings for Trusts to
 # function properly
 keystone_keystone_conf_overrides:
