@@ -346,12 +346,12 @@ POOL_PARTS = {
         'hosts': []
     },
     'repo_cache':{
-        'port': 3142
-        'mon_type': '/' + PART + '/' PREFIX_NAME + '_MON_HTTP_REPO_CACHE',
+        'port': 3142,
+        'backend_port': 3142,
+        'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_REPO_CACHE',
         'group': 'repo_all',
         'priority': True,
         'hosts': []
-        
     },
     'repo_git': {
         'port': 9418,
