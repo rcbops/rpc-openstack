@@ -31,7 +31,6 @@
     state: latest
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
-    state: latest
   with_items: "{{ holland_pip_dependencies }}"
   when: holland_pip_dependencies is defined
   register: pip_install
@@ -54,7 +53,6 @@
     state: latest
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
-    state: latest
   register: pip_install
   until: pip_install|success
   retries: 5

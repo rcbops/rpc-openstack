@@ -543,13 +543,6 @@ verify_maas_delay: 20
 verify_maas_retries: 5
 
 #
-# verify_local_maas_excluded_checks: Exclude checks by name from verify-local task.
-#                                    Multiple entries are allowed as list.
-#
-verify_local_maas_excluded_checks:
- - "holland_local_check"
-
-#
 # maas_use_api: Allow operations that make use of the MaaS api, set to false
 #               for offline testing
 #
