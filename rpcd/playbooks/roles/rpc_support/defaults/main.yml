@@ -78,9 +78,6 @@ holland_pip_dependencies:
 
 hwraid_apt_repo_url: "http://mirror.rackspace.com/hwraid.le-vert.net/ubuntu/"
 
-hwraid_apt_repos:
-  - { repo: "deb {{ hwraid_apt_repo_url }} {{ ansible_lsb.codename }} main", state: "present" }
-
 hwraid_apt_keys:
   - { url: "http://mirror.rackspace.com/hwraid.le-vert.net/ubuntu/hwraid.le-vert.net.gpg.key", state: "present" }
 
