@@ -18,6 +18,9 @@
 # This file is controlled by the devs and will be overwritten on upgrade
 # If you wish to override the variables set here, use /etc/openstack_deploy/user_osa_variables_overrides.yml
 
+# The release tag to use for the repo and venvs
+openstack_release: "{{ rpc_release }}"
+
 # SQLAlchemy/Olso Thread Pool Settings
 rpc_conn_pool_size: 180
 rpc_response_timeout: 180
