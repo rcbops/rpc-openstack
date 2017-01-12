@@ -15,6 +15,7 @@
 # limitations under the License.
 import argparse
 import datetime
+import os
 import shlex
 import subprocess
 
@@ -91,6 +92,15 @@ def main():
 
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     yesterday = yesterday.strftime('%Y%m%d')
+
+    # Guess machine age based on ctime of hostname, if machine is less than a
+    # day old it can't have a backup from yesterday so skip check.
+    hostname_ctime = datetime.datetime.fromtimestamp(
+        os.path.getctime('/etc/hostname'))
+    if (datetime.datetime.now() - hostname_ctime).days < 1:
+        status_ok()
+        metric_bool('holland_backup_status', True)
+        return
 
     # Get completed Holland backup set
     backupsets = \
