@@ -26,18 +26,13 @@
   tags:
     - rabbitmq-user
 
-  # uri module not used because httplib2 not available in the rabbit container
-  # TODO(hughsaunders): replace with uri module when supported ansible >=2.0.2
 - name: Get list of vhosts
-  shell: "curl -u {{ maas_rabbitmq_user }}:{{ maas_rabbitmq_password }} localhost:15672/api/vhosts"
-  register: vhost_list_output
-  tags:
-    - rabbitmq-user
-    - skip_ansible_lint
-
-- name: Parse vhost json
-  set_fact:
-    vhost_json: "{{vhost_list_output.stdout|from_json}}"
+  uri:
+    url: "http://localhost:15672/api/vhosts"
+    user: "{{ maas_rabbitmq_user }}"
+    password: "{{ maas_rabbitmq_password}}"
+    return_content: yes
+  register: vhost_list
   tags:
     - rabbitmq-user
 
@@ -51,6 +46,6 @@
     write_priv: ".*"
     tags: "administrator"
     state: "present"
-  with_items: vhost_json
+  with_items: vhost_list.json
   tags:
     - rabbitmq-user

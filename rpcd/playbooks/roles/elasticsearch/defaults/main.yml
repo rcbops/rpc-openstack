@@ -38,14 +38,6 @@ elasticsearch_version: 2.4.1
 
 elasticsearch_reindex_version: 1.7.5
 
-elasticsearch_apt_packages:
-  - elasticsearch={{ elasticsearch_version }}
-  - openjdk-7-jre-headless
-
-elasticsearch_reindex_apt_packages:
-  - elasticsearch={{ elasticsearch_reindex_version }}
-  - openjdk-7-jre-headless
-
 elasticsearch_pip_packages:
   - elasticsearch>=2.0.0,<3.0.0
   - elasticsearch-curator==4.0.4

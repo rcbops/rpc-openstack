@@ -36,11 +36,6 @@ logstash_beats_port: 5044
 # the target elasticsearch cluster settings
 elasticsearch_tcp_port: 9200
 
-# the apt packages to install
-logstash_apt_packages:
-  - logstash
-  - openjdk-7-jre-headless
-
 logstash_plugins:
   - logstash-input-beats
 

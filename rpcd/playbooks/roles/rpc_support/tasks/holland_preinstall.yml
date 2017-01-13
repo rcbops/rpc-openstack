@@ -25,6 +25,15 @@
   with_items: holland_requires_dependencies
   when: holland_requires_dependencies is defined
 
+- name: Install packages required by holland
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 600
+  with_items: "{{ holland_packages }}"
+  when: holland_packages is defined
+
 - name: Install pip dependencies
   pip:
     name: "{{ item }}"

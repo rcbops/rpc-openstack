@@ -27,7 +27,7 @@ import memcache
 
 
 VERSION_RE = re.compile('STAT version (\d+\.\d+\.\d+)(?![-+0-9\\.])')
-VERSIONS = ['1.4.14 (Ubuntu)', '1.4.15']
+VERSIONS = ['1.4.14 (Ubuntu)', '1.4.15', '1.4.25 Ubuntu']
 MEMCACHE_METRICS = {'total_items': 'items',
                     'get_hits': 'cache_hits',
                     'get_misses': 'cache_misses',

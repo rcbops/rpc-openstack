@@ -146,3 +146,9 @@ glance_flavor: keystone
 glance_glance_api_conf_overrides:
   DEFAULT:
     image_cache_dir: None
+
+# TODO(hughsaunders): remove this when https://bugs.launchpad.net/openstack-ansible/+bug/1656278
+# is fixed.
+neutron_metering_agent_ini_overrides:
+  DEFAULT:
+    interface_driver: neutron.agent.linux.interface.BridgeInterfaceDriver
