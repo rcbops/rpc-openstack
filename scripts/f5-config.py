@@ -66,14 +66,11 @@ MONITORS = [
     r' destination *:80 recv "302 Found" send "HEAD / HTTP/1.1\r\nHost:'
     r' rpc\r\n\r\n" }',
     r'create ltm monitor http /' + PART + '/' + PREFIX_NAME + '_MON_HTTP_NOVA_SPICE_CONSOLE {'
-    r' defaults-from http destination *:6082 recv "200 OK" send "HEAD /'
+    r' defaults-from http destination *:6082 recv "200 OK" send "HEAD /spice_auto.html'
     r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
     r'create ltm monitor https /' + PART + '/' + PREFIX_NAME + '_MON_HTTPS_HORIZON_SSL { defaults-from'
     r' https destination *:443 recv "302 FOUND" send "HEAD / HTTP/1.1\r\nHost:'
     r' rpc\r\n\r\n" }',
-    r'create ltm monitor https /' + PART + '/' + PREFIX_NAME + '_MON_HTTPS_NOVA_SPICE_CONSOLE {'
-    r' defaults-from https destination *:6082 recv "200 OK" send "HEAD /'
-    r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
     r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_NOVA_API_EC2 { defaults-from tcp'
     r' destination *:8773 }',
     r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_HEAT_API_CFN { defaults-from tcp'
