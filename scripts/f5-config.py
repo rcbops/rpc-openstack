@@ -71,8 +71,6 @@ MONITORS = [
     r'create ltm monitor https /' + PART + '/' + PREFIX_NAME + '_MON_HTTPS_HORIZON_SSL { defaults-from'
     r' https destination *:443 recv "302 FOUND" send "HEAD / HTTP/1.1\r\nHost:'
     r' rpc\r\n\r\n" }',
-    r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_NOVA_API_EC2 { defaults-from tcp'
-    r' destination *:8773 }',
     r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_HEAT_API_CFN { defaults-from tcp'
     r' destination *:8000 }',
     r'create ltm monitor tcp /' + PART + '/' + PREFIX_NAME + '_MON_TCP_HEAT_API_CLOUDWATCH {'
@@ -240,14 +238,6 @@ POOL_PARTS = {
         'backend_port': 9696,
         'mon_type': '/' + PART + '/RPC-MON-EXT-ENDPOINT',
         'group': 'neutron_server',
-        'make_public': True,
-        'hosts': []
-    },
-    'nova_api_ec2': {
-        'port': 8773,
-        'backend_port': 8773,
-        'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_TCP_NOVA_API_EC2',
-        'group': 'nova_api_os_compute',
         'make_public': True,
         'hosts': []
     },
