@@ -1,238 +1,36 @@
 # Contributing to this repository
 
-#### Notes
-- ```master``` branch is always the 'current' branch where development for the next minor or major release is taking place
-- Named branches (e.g. ```liberty-12.1```, or ```mitaka-13.2```) are release branches where releases are tagged
-- All branches have gating enabled, and patches should not be merged that do not pass gating
-- QE testing is only performed on major (e.g. ```12.0.0```) and minor (e.g. ```12.1.0```) releases, not on patch (e.g. ```12.1.5```) releases, which are assumed to be adequately tested by the commit based, and periodic, jenkins gating.
+# Table of Contents
+1. [Commits, release notes and pull requests](#commits-release-notes-pull-requests)
+    1. [Fixing a bug](#fixing-a-bug)
+    2. [Commits](#commits)
+    3. [Release notes](#release-notes)
+    4. [Pull requests](#pull-requests)
+        1. [Reviewing pull requests](#reviewing-pull-requests)
+        2. [Merging pull requests](#merging-pull-requests)
+        3. [Backports](#backports)
+2. [Documentation impact](#documentation-impact)
+    1. [Documenting your change](#documenting-your-change)
+    2. [What to document](#what-to-document)
+    3. [How to document] (#what-to-document)
+3. [Enabling an upstream project in RPCO](#enabling-upstream-project)
+    1. [Integrating with OpenStack-Ansible](#integrating-with-osa)
+    2. [Beta vs. LA vs. GA](#beta-vs-la-vs-ga)
+        1. [Beta](#beta)
+        2. [Limited Availability(LA)](#limited-availability)
+        3. [General Availability(GA)](#general-availability)
+    3. [The details](#the-details)
+        1. [Adding the ability to be deployed](#ability-to-deploy)
+        2. [Adding the necessary(if any) variables to default variable files](#add-variables)
+        3. [Adding ELK configurations](#add-elk-configs)
+        4. [Adding the f5 configurations(TBD)](#add-f5-configs)
+        5. [Adding MaaS(Monitoring) plugins](#add-maas-plugins)
+4. [Notes](#notes)
+5. [Version definitions](#version-definitions)
 
-#### Version definitions
 
-**Major release**
-
-  * OpenStack release
-  * Possibly a new feature (?)
-
-**Minor release**
-
-  * Big change within a release
-  * Security  - upgrade-impacting
-  * Bug fixes - upgrade-impacting
-  * Features
-  * sha bumps
-
-**Patch release**
-
-  * Security  - non-upgrade-impacting
-  * Bug fixes - non-upgrade-impacting
-
-# Issue workflow
-
-### Definitions
-#### Issues
-Issues are work items, they may be bugs or enhancements. They are managed using [Waffle](https://waffle.io/rcbops/u-suk-dev?source=rcbops%2Frpc-openstack) and stored in [GitHub](https://github.com/rcbops/rpc-openstack/issues). Issues that are logged in other places, for example on Launchpad for OSA, are not within scope unless they have been reported on this project by the creation of a new issue to track the upstream item.
-
-Each individual issue should be viewed as tracking all the steps required to release one commit as part of the product. So, if an issue requires changes made in multiple pull requests to a single branch those changes should be broken out into separate issues however, if the commit requires backports they do form part of the same issue.
-
-#### Waffle board
-The [Waffle board](https://waffle.io/rcbops/u-suk-dev?source=rcbops%2Frpc-openstack) is a Kanban board consisting of a series of columns used to manage the progress of issues. This board is the only place to view or update the current work commitments.
-
-#### WIP (Work In Progress)
-An issue is WIP when it is in one of the columns, on the board, between Backlog and Done. Put another way, the only times an issue does not count as WIP are if it is in Backlog or Done.
-
-#### WIP limits
-Most columns on the board have a maximum WIP limit that is used to throttle the amount of new work to which the engineering team commits. Approved also has a minimum WIP limit that is used as a mechanism to initiate the process of pulling new work into Backlog. The current WIP limits can be found by filtering the Waffle board on the relevant swim lane to highlight the appropriate WIP limit card in Backlog. No column can receive new work if it violates the WIP limit unless there is an explicit exception made for it as defined in the processes below.
-
-#### Swim lanes
-Each swim lane represents a category of WIP, for example bugs or enhancements. The board is divided into swim lanes using labels.
-
-#### Stakeholders
-* reporter - the individual that created the issue.
-* owner(s) - the individual(s) assigned to manage the issue through to its closure.
-* reviewer(s) - the individual(s) who review a pull request and provide feedback.
-
-#### Labels
-Labels are used to categorise issues to aid with tracking and prioritisation.
-
-|Type                     |Label name               |Description                                                                                                                                                   |Examples                                                                                      |
-|-------------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-|Issue type               |type-bug                 |Defects affecting the RPCO project.                                                                                                                           |                                                                                              |
-|Issue type               |type-enhancement-large   |Significant new features that require tracking by the product team.                                                                                           |Adding a new OpenStack service.                                                               |
-|Issue type               |type-enhancement-medium  |Enhancements that impact other teams, such as requiring QE to implement significant new testing. These issues need to be factored into specific minor release.|                                                                                              |
-|Issue type               |type-enhancement-small   |Enhancements can reasonably be added to any minor release, these should in general not change default behaviour only add to it.                               |Additional MaaS plugin metrics or new logstash filters.                                       |
-|Issue type               |type-undecided           |Used when there is not enough information provided to determine the type.                                                                                     |                                                                                              |
-|Team affected            |impacts-qe               |Identifies issues that affect the QE team.                                                                                                                    |                                                                                              |
-|Team affected            |impacts-support          |Identifies issues that affect the Support team.                                                                                                               |                                                                                              |
-|Team affected            |impacts-onboarding       |Identifies issus that are suitable activities for new team members or individuals.                                                                            |                                                                                              |
-|Team affected            |impacts-training         |Identifies issues that affect the Training group.                                                                                                             |                                                                                              |
-|Team affected            |impacts-rpcr             |Identifies issues that affect the Rackspace-supported Red Hat OpenStack Platform team.                                                                        |                                                                                              |
-|Priority                 |prio-expedited           |Expedited issue, any issue that causes a fundamental failure in the product, especially if there is no workaround or it affects all deployments.              |Customers down, inoperable service, deployment failures of core functionality, blocked gating.|
-|Priority                 |prio-1                   |Priority 1 issues are fundamental failures where there is a workaround or only a subset of users are affected.                                                |Incorrect default configurations.                                                             |
-|Priority                 |prio-2                   |Priority 2 issues affect non-standard configurations or do not directly affect the customer experience or non-core features.                                  |Individual MaaS plugin failures.                                                              |
-|Priority                 |prio-3                   |Priority 3 issue are low impact, they are cosmetic or cause limited tangible impact.                                                                          |Typographical errors.                                                                         |
-|Priority                 |prio-undecided           |Unprioritised issue contain insufficient information on which to determine a priority.                                                                        |Issues that do not clearly describe what is broken or the impact it is having.                |
-|Workflow status (Waffle) |status-approved          |An issue that has been moved into the column Approved.                                                                                                        |                                                                                              |
-|Workflow status (Waffle) |status-doing             |An issue that has been moved into the column Doing.                                                                                                           |                                                                                              |
-|Workflow status (Waffle) |status-needs-review      |An issue that has been moved into the column Needs-review.                                                                                                    |                                                                                              |
-|Workflow status (Waffle) |status-pending-sha-update|An issue that has been moved into the column Pending-SHA-update.                                                                                              |                                                                                              |
-|Workflow status          |status-needs-information |The issue requires further information to enable it to be completed.                                                                                          |                                                                                              |
-|Workflow status          |status-blocked           |Indicates an issue is blocked on another item of work. The description should be updated with a link to the blocking issue.                                   |                                                                                              |
-|Workflow status          |status-dont-merge        |Indicates an issue in Needs-review that should not be merged, generally this indicates the assignee is working on updating the pull request.                  |                                                                                              |
-|Workflow status          |status-duplicate         |Any issue that duplicates an existing issue.                                                                                                                  |                                                                                              |
-|Workflow status          |status-invalid           |Any issue that is not within scope of the project.                                                                                                            |                                                                                              |
-|Workflow status          |status-wontfix           |Any issue that it is determined will not be fixed.                                                                                                            |                                                                                              |
-|Workflow status          |status-abandoned         |Any issue that becomes WIP but is closed without being completed.                                                                                             |                                                                                              |
-|Tracking upstream project|tracking-upstream        |For tracking issues with upstream projects that are affecting the RPCO project.                                                                               |                                                                                              |
-|Product feature          |feature-gating           |Gating-related work.                                                                                                                                          |                                                                                              |
-|Product feature          |feature-upgrades         |Upgrades-related work.                                                                                                                                        |                                                                                              |
-|Product feature          |feature-monitoring       |Monitoring-related work.                                                                                                                                      |                                                                                              |
-|Product feature          |feature-osa              |OSA-related work.                                                                                                                                             |                                                                                              |
-|Swim lane                |swimlane-rr              |Issues that form part of the WIP for revision (patch) releases.                                                                                               |                                                                                              |
-|Swim lane                |swimlane-enhancements    |Issues that form part of the WIP for major/minor releases.                                                                                                    |                                                                                              |
-|Swim lane                |swimlane-improvements    |Issues that form part of the WIP for infrastructure that supports releases.                                                                                   |Gating or this process documentation.                                                         |
-|Swim lane                |swimlane-misc            |Issues that form part of the WIP that cannot be categorised by one of the other swim lanes.                                                                   |Spikes.                                                                                       |
-
-## Pre-Backlog -> Backlog
-### Adding an issue to the backlog
-Click [here](https://github.com/rcbops/rpc-openstack/issues/new) to load the form used when creating a new issue in the backlog. The form is generated from [this template](.github/ISSUE_TEMPLATE.md) which includes a set of questions for the reporter and a checklist to be completed by the owner as the issue is worked. Currently Waffle does not support the use of an issue template and so issues should not be created directly in Waffle.
-
-## Backlog
-All issues that are are not approved to be worked are listed in Backlog, this includes new issues and those that have been triaged but not yet committed to.
-
-### Issue triage
-Issue triage is an ongoing process that should happen whenever Approved needs updating with new tasks. The engineering team will triage new issues and monitor unprioritised issues so that new commitments are always targetting the most import work.
-
-Each issue is given a priority and that priority is used to help decide the order in which issues are worked. It is important to remember that there is a finite resource available to fix issues. The process of prioritisation is used to focus the available resources on the most important tasks identified.
-
-Issues are labelled with a priority as defined in the [labels table](#Labels).
-
-#### Expedited issues
-Expedited issues are allowed to exceed the WIP limit on any column. These issues are critical to fix and must be prioritised above all other work. They are identified with the label 'prio-expedited'. Due to the negative impact expedited issues have on WIP it is important they are used appropriately.
-
-#### Enhancements
-Issues labeled as 'type-enhancement-large' or 'type-enhancement-medium' filter into planning for major and minor releases. Tracking of that work is done elsewhere and so these issues should be closed once their information has been transferred to the appropriate place.
-
-Issues labeled as 'type-enhancement-small' should also be given a priority, in general they should be labeled as 'prio-3' but a higher priority can be given if the enhancement helps to prevent customer downtime.
-
-#### Classifying issues
-Issues are categorised to simplify the process of identifying the highest priority issues and allow different types of work to be tracked. The steps taken to correctly label an issue are:
-* Label issue type
-  * Assign the appropriate issue-type label.
-  * If the issue is determined to be 'type-undecided', also add the labels 'prio-undecided' and 'status-needs-information'. Add a comment detailing the required information.
-  * If the issue is determined to be 'type-enhancement-large', the issue should be logged as an idea on the [product roadmap](https://trello.com/b/OdRe9RxX/rpc-engineering-roadmap) and closed here with a link to the roadmap card.
-  * If the issue is determined to be 'type-enhancement-medium', the issue should be added to the [release-planning backlog](https://waffle.io/rcbops/u-suk-dev?source=rcbops%2Fu-suk-dev) and closed here with a link to the new card.
-* Identify the teams impacted by the issue
-  Any labels relevant to this step will start with 'impacts-'.
-  * If an issue is reported by support or they update an existing issue to say they are impacted add the label 'impacts-support'.
-  * If an issue is reported by QE, they update an existing issue to say they are impacted or someone else discovers an issue that affects a release candidate add the label 'impacts-qe'.
-* Identify the product features impacted by the issue.
-  Any labels relevant to this section will start with 'feature-'.
-* Confirm the issue is valid
-  * If the issue is invalid add the label 'status-invalid' and close the issue with a comment detailing why the issue is invalid.
-* Confirm the issue is something that will be fixed
-  * If the issue is not going to be fixed add the label 'status-wontfix' and close it with a comment explaining why.
-* Confirm the issue hasn't previously been logged
-  * If there is a pre-existing issue add the label 'status-duplicate' to this new one and close it with a comment linking to the pre-existing issue.
-* Determine if the issue is blocked by something
-  * If the issue is blocked by some other activity add the label 'status-blocked' and add details of the blocker to the issue description.
-* Prioritise the issue if 'type-bug' or 'type-enhancement-small'
-  * If there is insufficient information from which to determine the priority add the labels 'prio-undecided' and 'status-needs-information'. Also add a comment detailing the missing information.
-  * Assign the appropriate priority label based on the definitions of each priority category, if the issue is labeled with 'type-enhancement-small' generally this will be 'prio-3'.
-
-#### Triage meetings
-Triage meetings are held on a weekly basis, with ad hoc meetings held as required. Their main purpose is to review what has been achieved since the last meeting and provide an opportunity to discuss specific cards if there is concern about their current priority. The Waffle board is used to provide this information.
-
-##### Triage meeting tasks
-* Review tasks completed since the last meeting
-* Review new issues in the backlog
-* Allow the opportunity to discuss the classification of any open issue that has not already been discussed in the meeting, this should not be used as a chance to rehash old arguments but instead to highlight the case for issues where the circumstances have changed.
-
-## Backlog -> Approved
-Approved is updated with tasks from Backlog if the relevant swim lane in Approved is under its minimum WIP limit. Any new issues in Backlog must be triaged before moving new work to Approved. In general, the next work to commit to should be based on the priorities of support unless there is an issue blocking the engineering team from meeting their responsibilities. If all things are equal the next card to move to Approved should be decided based on priority and age, with the oldest card of the highest priority the next moved.
-
-## Approved
-This column shows the work to which the engineering team has currently committed but not yet started.
-
-## Approved -> Doing
-### Selecting an issue to work on
-Working on a task means moving it from Approved to Doing, this operation is only allowed if it doesn't violate the Doing WIP limit for the relevant swim lane. All available work is found on the Waffle board in Approved, the next task is always at the top. Assign yourself as the owner of the issue at the top and move it from the top of Approved to the bottom of Doing.
-
-If a task includes an existing pull request from someone outside the engineering team, they should not be assigned as the owner. All work must be owned by the engineering team, if someone on another team e.g. support has provided code then work with them to get it merged but ultimately it is the responsibility of the engineering team to manage the flow of work and ensure all aspects of a card are completed.
-
-## Doing
-#### Fixing an issue
-The issue description contains a list of the steps required to close an issue, this is added by the [issue template](.github/ISSUE_TEMPLATE.md). As each step is completed, update the description.
-
-##### New issues discovered while working an issue
-If a new bug or feature requirement is found while working on an assigned issue, that new work item should be logged as a separate issue in Backlog.
-
-If the new issue blocks the existing issue, you should assign yourself to the new issue and move it to Doing - make sure to go through the normal labeling process so the issue is correctly classified and add the appropriate swim lane label. The existing issue should be updated with all the work that has been done, the label 'status-blocked' added and a link to the blocking issue should be included in the issue description. In this situation the WIP limit can be exceeded. Removing blocks to WIP should be considered a high priority, when WIP is blocked the assignee should look to raise this with the team so that the blockage can be removed quickly.
-
-If the new issue does not prevent the resolution of your current task it will be treated as any new issue.
-
-##### Creating a pull request
-If an issue affects multiple branches the owner should always start by creating a pull request for the newest branch, generally this means master. Only one pull request should ever be in progress for a task in Doing.
-
-To ensure that issues and pull request are correctly associated, reference the issue at the end of the commit message, e.g.:
-    Connected https://github.com/rcbops/rpc-openstack/issues/0
-
-## Doing -> Needs review
-A card can only be moved from Doing to Needs-review if Needs-review is below its WIP limit for the relevant swim lane. If that condition is met and you are ready for feedback on your pull request, move the card (this should be a connected pair of the issue and pull request) to the bottom of Needs-review.
-
-## Needs review
-Reviewers should always review the tasks in the order the are listed in Needs-review. If owners need to make changes to the pull request, for example base on feedback from reviewers, the task should remain in Needs-review while that is done but the label 'status-dont-merge' should be added to the issue to prevent it being merged prematurely and then removed once the update has been made. The reviewer merging the commit should delete the issue branch (using the link on the pull request page) and tick the issue checklist for the fixed branch.
-
-##### Backports
-The owner is responsible for backporting the commit. Backports are done while the card is in Needs-review.
-
-## Needs review -> Pending SHA update
-### Issues tracking upstream changes
-If the issue relates to a change that has been made upstream, these should be identifiable by the label 'tracking-upstream', and RPCO cannot consume the change until the appropriate SHA's have been updated in RPCO or upstream in OSA, the issue should be moved to the bottom of Pending-SHA-update. This column does not have a WIP limit and is used as a buffer to prevent Needs-review being blocked by WIP that is waiting on a periodic task.
-
-## Needs review -> Done
-### Closing the issue
-An issue must only be moved to Done if the issue description fields, generated by the issue template, have all been completed. There is no WIP limit on Done :)
-
-## Pending SHA update -> Done
-### Closing the issue
-In general SHA updates in RPCO are done every two weeks. Once the update is merged, the issues in Pending-SHA-update that are resolved by the update, should be moved to Done.
-
-## Done
-Work that has been completed in the last seven days is listed here. After that time it is archived.
-
-## Documentation impact
-
-### documenting your change
-
-When noting there is a doc impact on your change, you have two choices:
-
-1. Submit an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues)
-OR
-2. Contribute your own doc change to [docs-rpc](https://github.com/rackerlabs/docs-rpc) and tag a relevant docs person for review and merge.
-
-### what to document
-
-Document changes if:
-
-* There are changes to the way playbooks are run/named
-* Changes to the documented configuration files
-* New feature
-* Change that requires you (as the developer) to take action
-* Update impact changes
-
-### how to document
-
-The documentation work is all done in [this](https://github.com/rackerlabs/docs-rpc) repo.
-
-1. See the [Docs workflow](https://github.com/rackerlabs/docs-rpc/blob/master/GITHUBING.rst) to setup for contribution and
-   [here](https://github.com/rackerlabs/docs-rpc/blob/master/CONTRIBUTING.rst) for our Contributor guidelines.
-2. Once you have created a pull request, tag the doc team for review. See [Documentation team FAQ](https://github.com/rackerlabs/docs-rackspace/blob/master/doc/contributor-collateral/privatecloud-docteam-FAQ.rst) for clarification on who to contact.
-3. Await merge. Respond to any questions/comments/concerns.
-
-Any further questions about our github processes, contributor guidelines, or FAQ about the docs and team, refer to: [Contributor collatoral](https://github.com/rackerlabs/docs-rackspace/tree/master/doc/contributor-collateral)
-
-## Commits, release notes and pull requests
-### Fixing a bug
+## Commits, release notes and pull requests<a name="commits-release-notes-pull-requests"></a>
+### Fixing a bug<a name="fixing-a-bug"></a>
 
 1. After the bug is triaged and prioritised, make the required changes. New features, breaking changes and other patches of note must include a release note generated using the `reno` tool. Please see `Release Notes` for more information.
 2. Push changes directly to a branch on ```rpc-openstack``` in the ```rcbops``` github namespace (rather than a developer's own fork). A pull request is then made from this branch to the ```master``` branch.
@@ -242,7 +40,7 @@ Any further questions about our github processes, contributor guidelines, or FAQ
 6. Each time a PR is merged, the associated branch is deleted from ```rpc-openstack```.
 7. When all PRs are completed the issue is then closed.
 
-### Commits
+### Commits<a name="commits"></a>
 
 Please avoid the following in a commit:
 
@@ -257,9 +55,9 @@ Expected git commit message structure:
 * Insert a single blank line after the first line.
 * Subsequent lines should be wrapped at 72 characters.
 * Provide a detailed description of the change in the following lines, using the guidelines in the section below.
-* The last line of the commit should be a reference to the issue being fixed using the keyword 'Connected', e.g.
+* The last line of the commit should be a reference to the issue being fixed using the keyword 'Connects', e.g.
 ```
-Connected https://github.com/rcbops/rpc-openstack/issues/0
+Connects https://github.com/rcbops/rpc-openstack/issues/0
 ```
 
 In your commit message please consider the following points:
@@ -273,7 +71,7 @@ In your commit message please consider the following points:
 * If the commit message suggests an improved code structure, you may be able to split this into two or more commits.
 * Ensure sufficient information is provided to review your commit.
 
-### Release notes
+### Release notes<a name="release-notes"></a>
 
 A release note must be included in your commit for notable changes and new features. It is generated using the Reno tool. To create a release note:
 
@@ -296,7 +94,7 @@ In most cases only the following sections should be used for new release notes s
 
 For more information, see the [Reno project documentation](http://docs.openstack.org/developer/reno/index.html).
 
-### Pull requests
+### Pull requests<a name="pull-requests"></a>
 
 * A pull request (PR) should ideally contain a single commit
 * The PR should include an edited `yaml` release note file describing the changes.
@@ -304,7 +102,7 @@ For more information, see the [Reno project documentation](http://docs.openstack
 * The PR description should reference the original issue.
 * Where absolutely necessary, related commits can be grouped into a single PR, but this should be the exception, not the rule.
 
-#### Reviewing a pull request
+#### Reviewing a pull request<a name="reviewing-pull-requests"></a>
 
 When reviewing a PR, please ensure the included commit(s):
 
@@ -314,7 +112,7 @@ When reviewing a PR, please ensure the included commit(s):
 * Includes a YAML release note file which complies with the release notes guidelines described above.
 * Does not overreach. Each commit should be self contained to only address the issue at hand (see above).
 
-#### Merging a pull request
+#### Merging a pull request<a name="merging-pull-requests"></a>
 
 In order for a PR to be merged, the following criteria should be met:
 
@@ -324,28 +122,156 @@ In order for a PR to be merged, the following criteria should be met:
  * If a patch is being backported, the person doing the backport cannot vote on it, but the original author of the patch can.
 * The second +1 reviewer should merge the patch.
 
-## Release workflow
+#### Backports<a name="backports"></a>
+The owner is responsible for backporting the commit if necessary. Backport pull requests must reference the original issue using the 'Connects' keyword.
 
-### Major and minor releases
-1. Work (meaning bugfixes and feature development) is performed in the ```master``` branch in preparation for a major or minor release (e.g. ```12.0.0``` or ```12.2.0```).
-2. When all criteria for the targeted release are fulfilled, a release branch is created using the naming convention **series-Major.minor** (e.g. ```liberty-12.0```, or ```mitaka-13.1```), and an rc tag created (e.g. ```r12.0.0rc1```). This tag is then passed to the QE team for initial testing.
-3. Work continues in ```master``` on features and bugs targeted at the next major or minor release (e.g. ```12.1.0```).
-4. As QE (and potentially support and other teams) progress their testing on the release candidate, bugs will be identified in the rc tag that was handed to them. These bugs should be fixed in ```master``` and cherry-picked to the release branch. **No other bug fixes should be cherry-picked into this branch** so that this branch can remain a non-moving target for QE.
-5. Once all bugs from the initial release candidate have been cherry-picked into the release branch, a new release candidate should be tagged (e.g. ```r12.0.0rc2```).
-6. Steps 4-5 should be repeated until the latest rc passes all QE tests satisfactorily.
-7. Once QE are satisfied, a release tag (e.g. ```r12.0.0```) is created in the release branch.
+## Documentation impact<a name="documentation-impact"></a>
 
-### Patch releases
-1. Work (bugfixes) is performed in the ```master``` branch and cherry-picked into the release branch (e.g. ```liberty-12.1``` or ```mitaka-13.1```). OR work (bugfixes) is performed directly in the release branch if it is release specific and doesn't affect ```master```.
-2. Every 2 weeks (approximately) a new release tag (e.g. ```12.1.1```) is made.
-3. Immediately after tagging, all external projects included either via submodules, ansible-galaxy or some other mechanism, will have the version/revision/SHA updated to point to the HEAD of that project (in vernacular, we'll do a SHA bump). This allows an immediate set of gate jobs to run on those SHA bumps, as well as the next 2 weeks of development to happen against those new SHA's. This will allow us to stay current and only have to cope with incremental change in external projects.
+### Documenting your change<a name="documenting-your-change"></a>
 
-[1]
+When there is a doc impact on your change, you have two choices:
+
+1. Contribute your own doc change to [docs-rpc](https://github.com/rackerlabs/docs-rpc) and tag a relevant docs person for review and merge.
+OR
+2. Submit an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues)
+
+### What to document<a name="what-to-document"></a>
+
+Documentation is required for:
+
+* Changes to the way playbooks are run/named
+* Changes to the documented configuration files
+* New feature
+* Changes that requires you (as the developer) to take action
+* Changes that impact upgrades
+
+### How to document<a name="how-to-document"></a>
+
+The documentation work is all done in [this](https://github.com/rackerlabs/docs-rpc) repo.
+
+1. See the [Docs workflow](https://github.com/rackerlabs/docs-rpc/blob/master/GITHUBING.rst) to setup for contribution and
+   [here](https://github.com/rackerlabs/docs-rpc/blob/master/CONTRIBUTING.rst) for our Contributor guidelines.
+2. After you create a pull request, tag the doc team for review. See [Documentation team FAQ](https://github.com/rackerlabs/docs-rackspace/blob/master/doc/contributor-collateral/privatecloud-docteam-FAQ.rst) for clarification on who to contact.
+3. Await merge. Respond to any questions/comments/concerns.
+
+For any questions about our github processes, contributor guidelines, or FAQ about the docs and team, refer to: [Contributor collatoral](https://github.com/rackerlabs/docs-rackspace/tree/master/doc/contributor-collateral)
+
+## Enabling an upstream project in RPCO<a name="enabling-upstream-project"></a>
+
+### Integrating with OpenStack-Ansible<a name="integrating-with-osa"></a>
+
+Before an OpenStack feature can be integrated into RPCO, it must first be implemented into the OpenStack-Ansible (OSA) project.
+For documentation on how to add a service and Ansible role to OpenStack-Ansible, see [this page](http://docs.openstack.org/developer/openstack-ansible/developer-docs/additional-roles.html).
+
+Once the new project is fully integrated into OpenStack-Ansible, it might not be consumable by RPCO yet. Since RPCO and OSA do not have matching development cycles, the project will either have to be backported to a stable branch in OSA (unlikely) or will not be included until RPCO moves on to the release with the new project. For example, if the new project is added into the master branch of OSA (currently Ocata), it will not be consumable by RPCO until RPCO's master branch has been modified to consume OSA's Otaca release. It is recommended to start this integration into OSA 6-12 months before you intend on releasing the feature in RPC.
+
+### Beta vs. LA vs. GA<a name="beta-vs-la-vs-ga"></a>
+
+#### Beta<a name="beta"></a>
+
+When a new OpenStack project or feature is first introduced into RPCO, it will come in as a beta. In order for the project/feature to be qualified as a beta item, it must meet the following criteria:
+
+  * Integration into the OSA project as specified in the above section
+
+It's also important to note that betas are:
+
+  * Not fully supported by Rackspace Support
+  * Not considered stable features/projects
+  * Not integrated into RPCO automated testing
+  * Not deployed by default
+  * May not be implemented with HA
+  * May not be fully documented
+
+#### Limited Availability (LA)<a name="limited-availability"></a>
+
+Once the feature is out of beta, it will go into LA status. LA features must have the following:
+
+  * Ability to be deployed via our bootstrap and deployment scripts (This is currently being changed as part of https://github.com/rcbops/u-suk-dev/issues/834)
+  * All necessary addition of variables inserted in either [user_osa_varibles_defaults.yml](https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/user_osa_variables_defaults.yml) and/or [user_rpco_variables_defaults.yml](https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml)
+  * Integration with RPCO's ELK configurations
+  * If the new project has a service that needs to be load-balanced, then f5 support for these services must be added into the [f5-config.py script](https://github.com/rcbops/rpc-openstack/tree/master/scripts#f5-configpy)
+  * Must be monitored via a MaaS plugin
+  * Documentation on how to deploy the feature/project with RPCO
+  * Must be HA
+  * Must be fully integrated with RPCO gate jobs
+  * Must be fully supported by Rackspace
+
+#### General Availability (GA)<a name="general-availability"></a>
+
+Fully supported features/projects in RPCO must meet the qualifications for a beta, GA, plus the following:
+
+  * Integrated with horizon
+  * Must have some supported SDK/CLI tooling
+
+
+### The details<a name="the-details"></a>
+
+#### Adding the ability to be deployed<a name="ability-to-deploy"></a>
+Deployments of features/projects are handled via deployment variables in the [deploy.sh script](https://github.com/rcbops/rpc-openstack/blob/master/scripts/deploy.sh). To add the ability for a feature/project to be deployed, add the proper DEPLOY variable and use that as a trigger to execute the instructions necessary to deploy that feature/project.
+For example:
+* https://github.com/rcbops/rpc-openstack/pull/1620/files#diff-93518fda10b0403d3c5c20b4df4740a6
+* https://github.com/rcbops/rpc-openstack/pull/1708/files#diff-93518fda10b0403d3c5c20b4df4740a6
+
+For more information on the ``deploy.sh`` script, please see https://github.com/rcbops/rpc-openstack/blob/master/scripts/README.rst#deploysh
+
+#### Adding the necessary (if any) variables to default variable files<a name="add-variables"></a>
+It might be necessary to specify OpenStack-Ansible or RPCO variable overrides so they take new values by default. To override these variables, they must be set in the proper variable files. For more information, please see https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/README.rst
+
+#### Adding ELK configurations<a name="add-elk-configs"></a>
+First, add the filebeat configurations into the filebeat role's [default variable file](https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/filebeat/defaults/main.yml).
+For example, the filebeat configurations for the cinder logs will look like the following:
+```yaml
+
+filebeat_logging_paths:
+  - paths:
+    - '/var/log/cinder/*.log'
+    document_type: openstack
+    tags:
+    - openstack
+    - oslofmt
+    - cinder
+    multiline:
+      pattern: "{{ multiline_openstack_pattern }}"
+      negate: 'true'
+match: after
 ```
-sample markdown for checklist
+If the service you are adding does not have multiline logging, you may omit the multiline option.
 
----
-- [x] master PR: https://github.com/rcbops/rpc-openstack/pull/{{number}}
-- [] kilo PR: https://github.com/rcbops/rpc-openstack/pull/{{number}}
-```
+Next, add a logstash filter configuration template file for the service that you are adding. Please make sure to follow the numbering convention used for the other services i.e. ``21_myservice.conf``. For an example, please see:
+https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/logstash/templates/06-cinder.conf
+For more documentation about using filters with logstash, please see:
+https://www.elastic.co/guide/en/logstash/2.3/advanced-pipeline.html#configuring-grok-filter
 
+Finally, add the template file created above as an item in the ``logstash_post_install.yml`` task file, in the task "Deploy Logstash configuration files": https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/logstash/tasks/logstash_post_install.yml#L45
+
+#### Adding the f5 configurations<a name="add-f5-configs"></a>
+For information on how to add a service to our f5-config.py script, please see https://github.com/rcbops/rpc-openstack/blob/master/scripts/README.rst#f5-configpy
+
+#### Adding MaaS (Monitoring) plugins for new services<a name="add-maas-plugins"></a>
+For information on how to create MaaS plugins, please see: https://github.com/rcbops/rpc-openstack/blob/master/maas/plugins/README.md
+
+## Notes<a name="notes"></a>
+- ```master``` branch is always the 'current' branch where development for the next minor or major release is taking place
+- Named branches (e.g. ```liberty-12.1```, or ```mitaka-13.2```) are release branches where releases are tagged
+- All branches have gating enabled, and patches should not be merged that do not pass gating
+- QE testing is only performed on major (e.g. ```12.0.0```) and minor (e.g. ```12.1.0```) releases, not on patch (e.g. ```12.1.5```) releases, which are assumed to be adequately tested by the commit based, and periodic, jenkins gating.
+
+## Version definitions<a name="version-definitions"></a>
+
+**Major release**
+
+  * OpenStack release
+  * Possibly a new feature (?)
+
+**Minor release**
+
+  * Big change within a release
+  * Security  - upgrade-impacting
+  * Bug fixes - upgrade-impacting
+  * Features
+  * SHA bumps
+
+**Patch release**
+
+  * Security  - non-upgrade-impacting
+  * Bug fixes - non-upgrade-impacting
