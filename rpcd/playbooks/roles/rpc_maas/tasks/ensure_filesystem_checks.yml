@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install fileystem auto checks
+- name: Install fileystem checks
   template:
     src: "filesystem.yaml.j2"
     dest: "/etc/rackspace-monitoring-agent.conf.d/filesystem_{{ item.filesystem|replace('/', '.') }}--{{ inventory_hostname }}.yaml"

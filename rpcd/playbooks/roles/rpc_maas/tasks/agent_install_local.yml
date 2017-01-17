@@ -37,14 +37,17 @@
   when: maas_venv_enabled
 
 - name: List plugin files to chmod
-  shell: "ls -1 {{ maas_plugin_dir }}*.py"
+  find:
+    path: "{{ maas_plugin_dir }}"
+    patterns: "*.py"
   register: plugin_files
 
 - name: Chmod listed plugin files
   file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     mode: "0755"
-  with_items: plugin_files.stdout_lines
+  with_items: "{{ plugin_files.files|default({}) }}"
+  when: plugin_files.files|length > 0
 
 - name: Create openrc file
   template:
