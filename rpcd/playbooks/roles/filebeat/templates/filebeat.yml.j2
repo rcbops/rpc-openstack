@@ -2,7 +2,7 @@
 filebeat:
   prospectors:
 {% for service in filebeat_logging_paths %}
-    - paths: {{ service.paths }}
+    - paths: {{ service.paths | to_json }}
 {% if service.document_type is defined %}
       document_type: {{ service.document_type }}
 {% endif %}
@@ -18,7 +18,7 @@ filebeat:
  # happy.
  #}
       fields:
-        tags: {{ service.tags }}
+        tags: {{ service.tags | to_json }}
 {% endif %}
 {% if service.multiline is defined %}
       multiline:
