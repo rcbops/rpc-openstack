@@ -23,7 +23,7 @@
   hosts: all
   gather_facts: no
   roles:
-    - { role: rcbops_openstack-ops }
+    - { role: "rcbops_openstack-ops" }
   tags:
     - "rpc_dependencies"
     - "rpc_pccommon"

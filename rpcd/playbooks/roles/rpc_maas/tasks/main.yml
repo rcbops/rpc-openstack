@@ -18,24 +18,27 @@
     inventory_hostname in groups['hosts']
 
 - include: keystone_user.yml
-  when: >
-    groups['utility']|length > 0 and inventory_hostname == groups['utility'][0]
+  when:
+    - groups['utility']|length > 0
+    - inventory_hostname == groups['utility'][0]
 
 - include: rabbitmq_user.yml
-  when: >
-    groups['rabbitmq_all']|length > 0 and inventory_hostname == groups['rabbitmq_all'][0]
+  when:
+    - groups['rabbitmq_all']|length > 0
+    - inventory_hostname == groups['rabbitmq_all'][0]
 
 - include: create_my_cnf.yml
-  when: >
-    inventory_hostname in groups['galera']
+  when:
+    - inventory_hostname in groups['galera']
 
 - include: host_monitoring.yml
-  when: >
-    inventory_hostname in groups['hosts']
+  when:
+    - inventory_hostname in groups['hosts']
 
 - include: network.yml
-  when: >
-    network_checks_list|length > 0 and inventory_hostname in groups['hosts']
+  when:
+    - network_checks_list|length > 0
+    - inventory_hostname in groups['hosts']
 
 - include: kernel.yml
 
@@ -48,33 +51,36 @@
 - include: swift_access_check.yml
   when:
     - swift_accesscheck_enabled | bool
+    - groups['swift_proxy']|length > 0
     - inventory_hostname == groups['swift_proxy'][0]
 
 - include: remote.yml
   vars:
     ip_address: "{{ external_lb_vip_address }}"
-  when: >
-    remote_check == true
+  when:
+    - remote_check == true
 
 - include: ensure_local_checks.yml
   vars:
     checks: "{{ cinder_vg_checks_list }}"
-  when: >
-    cinder_backends['lvm'] is defined
+  when:
+    - cinder_backends['lvm'] is defined
 
 - include: swift.yml
   vars:
     external_vip_address: "{{ external_lb_vip_address }}"
-  when: >
-    inventory_hostname in groups['swift_all']
+  when:
+    - groups['swift_all']|length > 0
+    - inventory_hostname in groups['swift_all']
 
 - include: ceph.yml
-  when: >
-    inventory_hostname in groups['ceph_all'] and
-    groups['ceph_all'] is defined
+  when:
+    - groups['ceph_all'] is defined
+    - groups['ceph_all']|length > 0
+    - inventory_hostname in groups['ceph_all']
 
 - include: maas_exclude.yml
 
 - include: restart_raxmon.yml
-  when: >
-    inventory_hostname in groups['hosts']
+  when:
+    - inventory_hostname in groups['hosts']
