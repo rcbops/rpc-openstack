@@ -152,3 +152,22 @@ glance_glance_api_conf_overrides:
 neutron_metering_agent_ini_overrides:
   DEFAULT:
     interface_driver: neutron.agent.linux.interface.BridgeInterfaceDriver
+
+# Adding elastic search and kibana to haproxy_extra_services
+haproxy_extra_services:
+  - service:
+      haproxy_service_name: elasticsearch
+      haproxy_backend_nodes: "{{ groups['elasticsearch'] | default([]) }}"
+      haproxy_ssl: False
+      haproxy_port: 9200
+      haproxy_balance_type: http
+      haproxy_backend_options:
+        - "httpchk /healthcheck"
+  - service:
+      haproxy_service_name: kibana_ssl
+      haproxy_backend_nodes: "{{ groups['kibana'] | default([]) }}"
+      haproxy_ssl: False
+      haproxy_port: 8443
+      haproxy_balance_type: tcp
+      haproxy_backend_options:
+        - "ssl-hello-chk"
