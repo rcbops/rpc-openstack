@@ -110,6 +110,9 @@ fetch_directory: /etc/openstack_deploy/ceph_fetch
 ceph_stable: true
 # Specify ceph release name
 ceph_stable_release: hammer
+# Ceph stable repo URL
+ceph_stable_repo: "http://download.ceph.com/debian-{{ ceph_stable_release }}/"
+
 # Enable OpenStack support inside the ceph-ansible playbooks
 openstack_config: true
 # Use raw journal devices
