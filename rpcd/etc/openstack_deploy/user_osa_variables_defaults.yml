@@ -158,3 +158,22 @@ ssh_delay: 60
 
 # Use the correct secrets file
 osa_secrets_file_name: "user_osa_secrets.yml"
+
+# Adding elastic search and kibana to haproxy_extra_services
+haproxy_extra_services:
+  - service:
+      haproxy_service_name: elasticsearch
+      haproxy_backend_nodes: "{{ groups['elasticsearch'] | default([]) }}"
+      haproxy_ssl: False
+      haproxy_port: 9200
+      haproxy_balance_type: http
+      haproxy_backend_options:
+        - "httpchk /healthcheck"
+  - service:
+      haproxy_service_name: kibana_ssl
+      haproxy_backend_nodes: "{{ groups['kibana'] | default([]) }}"
+      haproxy_ssl: False
+      haproxy_port: 8443
+      haproxy_balance_type: tcp
+      haproxy_backend_options:
+        - "ssl-hello-chk"

@@ -22,11 +22,6 @@ fi
 # deploy and configure the ELK stack
 if [[ "${DEPLOY_ELK}" == "yes" ]]; then
   run_ansible setup-logging.yml
-
-  # deploy the LB required for the ELK stack
-  if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-    run_ansible haproxy.yml
-  fi
 fi
 
 # verify RAX MaaS is running after all necessary
