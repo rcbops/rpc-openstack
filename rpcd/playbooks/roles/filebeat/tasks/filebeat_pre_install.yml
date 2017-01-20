@@ -31,6 +31,7 @@
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
     update_cache: yes
+    filename: "{{ item.filename | default(omit) }}"
   with_items: "{{ filebeat_apt_repos }}"
   register: add_beats_repositories
   until: add_beats_repositories|success
