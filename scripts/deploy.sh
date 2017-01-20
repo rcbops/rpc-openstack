@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
+# Copyright 2014-2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+## Shell Opts ----------------------------------------------------------------
 
 set -e -u -x
 set -o pipefail
+
+## Variables -----------------------------------------------------------------
 
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
@@ -14,18 +31,21 @@ export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
-export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
 
-export BASE_DIR='/opt/rpc-openstack'
-export OA_DIR='/opt/rpc-openstack/openstack-ansible'
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
+export OA_DIR="${BASE_DIR}/openstack-ansible"
 export OA_OVERRIDES='/etc/openstack_deploy/user_osa_variables_overrides.yml'
-export RPCD_DIR='/opt/rpc-openstack/rpcd'
+export RPCD_DIR="${BASE_DIR}/rpcd"
 export RPCD_OVERRIDES='/etc/openstack_deploy/user_rpco_variables_overrides.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
+## Functions -----------------------------------------------------------------
+
 source ${BASE_DIR}/scripts/functions.sh
+
+## Main ----------------------------------------------------------------------
 
 if [[ "$DEPLOY_AIO" != "yes" ]] && [[ "$DEPLOY_HARDENING" != "yes" ]]; then
   echo "** DEPLOY_HARDENING should no longer be used **"
@@ -53,16 +73,8 @@ case "${submodulestatus:0:1}" in
     ;;
 esac
 
-# begin the bootstrap process
-cd ${OA_DIR}
-
-./scripts/bootstrap-ansible.sh
-
-# This removes Ceph roles downloaded using their pre-Ansible-Galaxy names
-ansible-galaxy remove --roles-path /opt/rpc-openstack/rpcd/playbooks/roles/ ceph-common ceph-mon ceph-osd
-
-ansible-galaxy install --role-file=/opt/rpc-openstack/ansible-role-requirements.yml --force \
-                           --roles-path=/opt/rpc-openstack/rpcd/playbooks/roles
+# Bootstrap Ansible
+source "$(dirname "${0}")/bootstrap-ansible.sh"
 
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
@@ -172,8 +184,8 @@ fi
 bash ${BASE_DIR}/scripts/update-secrets.sh
 
 # ensure all needed passwords and tokens are generated
-./scripts/pw-token-gen.py --file /etc/openstack_deploy/user_osa_secrets.yml
-./scripts/pw-token-gen.py --file $RPCD_SECRETS
+${OA_DIR}/scripts/pw-token-gen.py --file /etc/openstack_deploy/user_osa_secrets.yml
+${OA_DIR}/scripts/pw-token-gen.py --file $RPCD_SECRETS
 
 # ensure that the ELK containers aren't created if they're not
 # going to be used
