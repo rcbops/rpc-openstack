@@ -293,13 +293,12 @@ POOL_PARTS = {
     },
     'horizon_ssl': {
         'port': 443,
-        'backend_port': 443,
-        'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTPS_HORIZON_SSL',
+        'backend_port': 80,
+        'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_HORIZON',
         'group': 'horizon',
         'hosts': [],
         'make_public': True,
         'persist': True,
-        'backend_ssl': True
     },
     'elasticsearch': {
         'port': 9200,
