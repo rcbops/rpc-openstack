@@ -12,4 +12,3 @@ container_skel:
       - logstash
     properties:
       service_name: logstash
-      container_release: trusty
