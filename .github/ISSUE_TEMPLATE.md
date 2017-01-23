@@ -27,9 +27,9 @@
 ###### Remove branches that are not impacted.
 ###### For each pull request, update the branch line to reference it.
 - [ ] master
+- [ ] newton-14.0
 - [ ] mitaka-13.1
 - [ ] liberty-12.2
-- [ ] kilo
 
 ##### Upgrade impact. Consider the impact on moving between major, minor and patch releases.
 - [ ] This change does not impact upgrades
