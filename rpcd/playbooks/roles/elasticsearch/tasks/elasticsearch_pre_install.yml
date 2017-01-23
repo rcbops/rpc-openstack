@@ -31,6 +31,7 @@
   apt_repository:
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
+    filename: "{{ item.filename | default(omit) }}"
   with_items: elasticsearch_apt_repos
   register: add_repos
   until: add_repos|success

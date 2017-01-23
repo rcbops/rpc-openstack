@@ -32,6 +32,7 @@
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
     update_cache: yes
+    filename: "{{ item.filename | default(omit) }}"
   with_items: "{{ kibana_apt_repos }}"
   register: add_kibana_repos
   until: add_kibana_repos|success

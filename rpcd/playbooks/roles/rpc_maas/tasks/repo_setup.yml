@@ -26,6 +26,7 @@
   apt_repository:
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
+    filename: "{{ item.filename | default(omit) }}"
   with_items: "{{ maas_apt_repos }}"
   when:
     - ansible_distribution == 'Ubuntu'
