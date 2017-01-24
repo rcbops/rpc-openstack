@@ -15,6 +15,8 @@
 # limitations under the License.
 import argparse
 import os
+from subprocess import CalledProcessError
+from subprocess import check_output
 
 from maas_common import metric_bool
 from maas_common import print_output
@@ -48,7 +50,7 @@ def get_processes(procs_path):
     process_names = set()
     try:
         with open(procs_path, mode='r') as f:
-            for pid in f.read().splitlines():
+            for pid in f.read().split():
                 process_names.update(get_process_name(pid))
     except OSError as ex:
         # Could not read the PID list file, probably due to a permission
@@ -77,11 +79,16 @@ def check_process_running(process_names, container_name=None):
         # nothing to do. Return an error for the check.
         status_err('No process names provided')
 
-    procs_path = '/sys/fs/cgroup/cpu/cgroup.procs'
+    procs_path = '/proc/1/task/1/children'
     if container_name is not None:
         # Checking for processes in a container, not the parent host
-        procs_path = os.path.join('/sys/fs/cgroup/cpu/lxc', container_name,
-                                  'cgroup.procs')
+        try:
+            container_pid = check_output(['lxc-info', '-n',
+                                          container_name, '-p']).split()[1]
+        except CalledProcessError as ex:
+            status_err('Error in finding container. {}', exception=ex)
+        procs_path = os.path.join('/proc', container_pid, 'task',
+                                  container_pid, 'children')
     procs = get_processes(procs_path)
 
     if not procs:
