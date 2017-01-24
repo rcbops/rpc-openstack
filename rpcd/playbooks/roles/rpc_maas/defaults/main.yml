@@ -360,7 +360,7 @@ elasticsearch_process_names:
   # process name that includes "elasticsearch". The process running
   # elasticsearch is actually named "java" so we search for that here. This is
   # less than ideal, but the best we can do right now.
-  - java 
+  - java
 
 filebeat_process_names:
   - filebeat
@@ -557,3 +557,9 @@ verify_maas_retries: 5
 #               for offline testing
 #
 maas_use_api: true
+
+#
+# maas_agent_upgrade: Allow for automatic MaaS agent upgrades
+#
+#
+maas_agent_upgrade: true
