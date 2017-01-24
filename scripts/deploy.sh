@@ -57,21 +57,8 @@ if [[ "$DEPLOY_AIO" != "yes" ]] && [[ "$DEPLOY_HARDENING" != "yes" ]]; then
   exit 1
 fi
 
-# Confirm OA_DIR is properly checked out
-submodulestatus=$(git submodule status ${OA_DIR})
-case "${submodulestatus:0:1}" in
-  "-")
-    echo "ERROR: rpc-openstack submodule is not properly checked out"
-    exit 1
-    ;;
-  "+")
-    echo "WARNING: rpc-openstack submodule does not match the expected SHA"
-    ;;
-  "U")
-    echo "ERROR: rpc-openstack submodule has merge conflicts"
-    exit 1
-    ;;
-esac
+# Check the openstack-ansible submodule status
+check_submodule_status
 
 # Bootstrap Ansible
 source "$(dirname "${0}")/bootstrap-ansible.sh"

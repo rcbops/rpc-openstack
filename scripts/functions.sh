@@ -1,8 +1,46 @@
 #!/usr/bin/env bash
+# Copyright 2014-2017 , Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+## Vars ----------------------------------------------------------------------
+
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
+export OA_DIR="${BASE_DIR}/openstack-ansible"
 
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-''}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 
+## Functions -----------------------------------------------------------------
+
 function run_ansible {
   openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
+}
+
+function check_submodule_status {
+  # Confirm OA_DIR is properly checked out
+  submodulestatus=$(git submodule status ${OA_DIR})
+  case "${submodulestatus:0:1}" in
+    "-")
+      echo "ERROR: rpc-openstack submodule is not properly checked out"
+      exit 1
+      ;;
+    "+")
+      echo "WARNING: rpc-openstack submodule does not match the expected SHA"
+      ;;
+    "U")
+      echo "ERROR: rpc-openstack submodule has merge conflicts"
+      exit 1
+      ;;
+  esac
 }
