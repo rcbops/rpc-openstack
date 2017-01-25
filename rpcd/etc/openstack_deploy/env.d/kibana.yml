@@ -12,4 +12,3 @@ container_skel:
       - kibana
     properties:
       service_name: kibana
-      container_release: trusty
