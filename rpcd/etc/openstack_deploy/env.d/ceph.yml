@@ -29,7 +29,6 @@ container_skel:
     contains:
       - mons
     properties:
-      container_release: trusty
       service_name: ceph
   ceph_osd_container:
     belongs_to:
@@ -38,7 +37,6 @@ container_skel:
       - osds
     properties:
       is_metal: true
-      container_release: trusty
       service_name: ceph
 
 

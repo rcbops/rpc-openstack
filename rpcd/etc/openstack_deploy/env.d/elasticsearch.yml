@@ -12,4 +12,3 @@ container_skel:
       - elasticsearch
     properties:
       service_name: elasticsearch
-      container_release: trusty
