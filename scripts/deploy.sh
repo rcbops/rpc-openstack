@@ -18,29 +18,9 @@
 set -e -u -x
 set -o pipefail
 
-## Variables -----------------------------------------------------------------
-
-export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
-export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
-export DEPLOY_OA=${DEPLOY_OA:-"yes"}
-export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
-export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
-export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
-export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
-export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
-export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
-export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
-export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
-
-export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-export OA_DIR="${BASE_DIR}/openstack-ansible"
-export OA_OVERRIDES='/etc/openstack_deploy/user_osa_variables_overrides.yml'
-export RPCD_DIR="${BASE_DIR}/rpcd"
-export RPCD_OVERRIDES='/etc/openstack_deploy/user_rpco_variables_overrides.yml'
-export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
-
 ## Functions -----------------------------------------------------------------
 
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
