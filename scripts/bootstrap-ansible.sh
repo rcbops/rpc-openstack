@@ -18,17 +18,15 @@
 set -e -u -x
 set -o pipefail
 
-## Vars ----------------------------------------------------------------------
-
-export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-export OA_DIR="${BASE_DIR}/openstack-ansible"
-export RPCD_DIR="${BASE_DIR}/rpcd"
-# Set the role fetch mode to any option [galaxy, git-clone]
-export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-galaxy}
-
 ## Functions -----------------------------------------------------------------
 
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 source ${BASE_DIR}/scripts/functions.sh
+
+## Vars ----------------------------------------------------------------------
+
+# Set the role fetch mode to any option [galaxy, git-clone]
+export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-galaxy}
 
 ## Main ----------------------------------------------------------------------
 

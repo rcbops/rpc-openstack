@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2014-2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,16 +17,9 @@
 ## Shell Opts ----------------------------------------------------------------
 set -e -u -x
 
-## Variables -----------------------------------------------------------------
-# Extra options to pass to the AIO bootstrap process
-export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-''}
-
-export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-export OA_DIR="${BASE_DIR}/openstack-ansible"
-export RPCD_DIR="${BASE_DIR}/rpcd"
-
 ## Functions -----------------------------------------------------------------
 
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------

@@ -20,20 +20,21 @@
     - name: Set ceph user_variables override
       set_fact:
         user_variables_overrides:
-          apply_security_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') | default('yes', true) }}"
+          apply_security_hardening: "{{ rpco_deploy_hardening }}"
       when: "{{ not rpco_deploy_ceph | bool }}"
     - name: Set ceph user_variables override
       set_fact:
         user_variables_overrides:
-          apply_security_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') | default('yes', true) }}"
+          apply_security_hardening: "{{ rpco_deploy_hardening }}"
           glance_default_store: rbd
           nova_libvirt_images_rbd_pool: vms
       when: "{{ rpco_deploy_ceph | bool }}"
   vars:
-    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') | default('no', true) }}"
+    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') }}"
+    rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
 
 - name: Execute the OSA AIO bootstrap
-  include: "{{ lookup('env', 'OA_DIR') | default('/opt/rpc-openstack/openstack-ansible', true) }}/tests/bootstrap-aio.yml"
+  include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
   vars:
     openstack_user_config_overrides:
       shared-infra_hosts:
@@ -135,9 +136,9 @@
       shell: "{{ rpco_base_dir }}/scripts/update-secrets.sh"
 
   vars:
-    rpco_base_dir: "{{ lookup('env', 'BASE_DIR') | default('/opt/rpc-openstack', true) }}"
-    osa_cfg_src_path: "{{ lookup('env', 'OA_DIR') | default(rpco_base_dir ~ '/openstack-ansible', true) ~ '/etc/openstack_deploy' }}"
-    rpco_cfg_src_path: "{{ lookup('env', 'RPCD_DIR') | default(rpco_base_dir ~ '/rpcd', true) ~ '/etc/openstack_deploy' }}"
-    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') | default('no', true) }}"
-    rpco_deploy_elk: "{{ lookup('env', 'DEPLOY_ELK') | default('yes', true) }}"
-    rpco_deploy_swift: "{{ lookup('env', 'DEPLOY_SWIFT') | default('yes', true) }}"
+    rpco_base_dir: "{{ lookup('env', 'BASE_DIR') }}"
+    osa_cfg_src_path: "{{ lookup('env', 'OA_DIR') ~ '/etc/openstack_deploy' }}"
+    rpco_cfg_src_path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy' }}"
+    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') }}"
+    rpco_deploy_elk: "{{ lookup('env', 'DEPLOY_ELK') }}"
+    rpco_deploy_swift: "{{ lookup('env', 'DEPLOY_SWIFT') }}"
