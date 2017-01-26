@@ -135,6 +135,19 @@
     - name: Update the RPC-O secrets
       shell: "{{ rpco_base_dir }}/scripts/update-secrets.sh"
 
+    - name: Check for the existance of a gating settings file
+      stat:
+        path: "{{ rpco_cfg_src_path }}/user_zzz_gating_variables.yml"
+      register: gating_vars
+
+    - name: Copy gating settings file into place
+      copy:
+        src: "{{ rpco_cfg_src_path }}/user_zzz_gating_variables.yml"
+        dest: "/etc/openstack_deploy/user_zzz_gating_variables.yml"
+      when:
+        - gating_vars.stat.exists is defined
+        - gating_vars.stat.exists | bool
+
   vars:
     rpco_base_dir: "{{ lookup('env', 'BASE_DIR') }}"
     osa_cfg_src_path: "{{ lookup('env', 'OA_DIR') ~ '/etc/openstack_deploy' }}"
