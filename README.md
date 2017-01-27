@@ -1,15 +1,12 @@
 # rpc-openstack
-Optional add-ons for Rackspace Private Cloud
+Rackspace Private Cloud (RPC)
 
 # openstack-ansible integration
 
-The rpc-openstack repo includes add-ons for the Rackspace Private Cloud product
-that integrate with the 
+The rpc-openstack repo wraps
 [openstack-ansible](https://github.com/openstack/openstack-ansible)
-set of Ansible playbooks and roles.
-These add-ons extend the 'vanilla' OpenStack environment with value-added
-features that Rackspace has found useful, but are not core to deploying an
-OpenStack cloud.
+with RPC preferred default settings and additional playbooks and roles
+which Rackspace find useful when operating OpenStack.
 
 # Juno Support
 
@@ -31,8 +28,8 @@ support directly any longer.
 
 Plays:
 
-* `beaver.yml` - deploys the beaver log shipper on all hosts
 * `elasticsearch.yml` - deploys an elasticsearch host
+* `filebeat.yml` - deploys the filebeat log shipper on all hosts
 * `haproxy` - deploys haproxy configurations for elasticsearch and kibana
 * `kibana.yml` - Setup Kibana on the Kibana hosts for the logging dashboard.
 * `logstash.yml` - deploys a logstash host. If this play is used, be sure to
@@ -40,11 +37,6 @@ copy the related block in user_rpco_variables_defaults.yml to
 user_rpco_variables_overrides before this play is run and then rerun the
 appropriate plays in openstack-ansible after this play to ensure that rsyslog
 ships logs to logstash. See steps 2-4 and 3-2 below for more.
-* `repo-build.yml` - scans throug the YAML files in the source tree and builds
-any packages or git sources into wheels and deploys them to the local repo
-server(s).
-* `repo-pip-setup.yml` - updates the pip configuration on all of the containers
-to include the rpc-openstack source that was created by `repo-build.yml`.
 * `rpc-support.yml` - provides holland backup service, support SSH key
 distribution, custom security group rules, bashrc settings, and other
 miscellaneous tasks helpful to support personnel.
@@ -57,7 +49,7 @@ hosts and containers in the deployment using the related plays mentioned
 above.
 * `site.yml` - deploys all the playbooks mentioned here.
 * `verify-maas.yml` - confirms each maas check selected for each host has been
-captured server-side for recording in MaaS and that each chec has at least one 
+captured server-side for recording in MaaS and that each check has at least one
 alarm configured for it.
 
 # Basic Setup:
@@ -94,9 +86,9 @@ alarm configured for it.
      `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible setup-maas.yml`
   3. run the MaaS verify play:
      `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible verify-maas.yml`
-     MaaS Verification _may_ fail if executed within the first few moments after 
-     the Setup plays complete as the MaaS service registers checks and alarms 
-     installed on your hosts. If it fails, manually retrying once after a 
+     MaaS Verification _may_ fail if executed within the first few moments after
+     the Setup plays complete as the MaaS service registers checks and alarms
+     installed on your hosts. If it fails, manually retrying once after a
      one minute delay is recommended.
 
 # Environment Variables for deploy.sh
@@ -107,12 +99,10 @@ Variable           | Default                            | Description           
 -------------------|------------------------------------|------------------------------------------------------|------------------------------------------------------------------
 ADMIN_PASSWORD     | secrete                            | Set Admin password for Kibana                        | Only used if DEPLOY_AIO=yes
 DEPLOY_AIO         | no                                 | Deploy All-In-One (AIO)                              | Overrides DEPLOY_HAPROXY=yes
-DEPLOY_HAPROXY     | no                                 | Deploy HAProxy                                       | Must set DEPLOY_HAPROXY=yes if not using a physical load balancer
 DEPLOY_OA          | yes                                | Deploy OpenStack-Ansible (OA)                        |
 DEPLOY_ELK         | yes                                | Deploy Logging Stack (ELK)                           | Only used if DEPLOY_OA=yes
 DEPLOY_MAAS        | no                                 | Deploy Monitoring (MaaS)                             |
 DEPLOY_TEMPEST     | no                                 | Deploy Tempest                                       | Only used if DEPLOY_OA=yes
-DEPLOY_CEILOMETER  | no                                 | Deploy Ceilometer                                    | Not used
 DEPLOY_CEPH        | no                                 | Deploy Ceph                                          | Only used if DEPLOY_OA=yes
 FORKS              | `grep -c ^processor /proc/cpuinfo` | Number of forks Ansible may use                      | May have issues if FORKS > SSHD's MaxSessions. Adjust accordingly
 ANSIBLE_PARAMETERS |                                    | Additional paramters passed to Ansible               |

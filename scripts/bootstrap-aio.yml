@@ -92,7 +92,6 @@
           mode: "0440"
         - name: "user_rpco_variables_defaults.yml"
           mode: "0440"
-        - name: "user_rpco_secrets.yml"
         - name: "env.d/nova.yml"
         - name: "conf.d/ceph.yml.aio"
           condition: "{{ rpco_deploy_ceph | bool }}"
@@ -105,6 +104,9 @@
         config_type: "yaml"
       when: "{{ (item.condition | default(True)) | bool }}"
       with_items:
+        - name: "user_rpco_secrets.yml"
+          override:
+            kibana_password: "{{ lookup('env', 'ADMIN_PASSWORD') }}"
         - name: "user_rpco_variables_overrides.yml.aio"
         - name: "env.d/ceph.yml"
           condition: "{{ rpco_deploy_ceph | bool }}"
