@@ -117,17 +117,6 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
   # setup the infrastructure
   run_ansible setup-infrastructure.yml
 
-  # TODO(odyssey4me)
-  # Remove this once https://review.openstack.org/422629 merges and is available for RPC-O
-  if [ "${DEPLOY_AIO}" == "yes" ]; then
-    ansible neutron_agent -m command \
-                          -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 80 -j CHECKSUM --checksum-fill'
-    ansible neutron_agent -m command \
-                          -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 8000 -j CHECKSUM --checksum-fill'
-    ansible neutron_agent -m shell \
-                          -a 'DEBIAN_FRONTEND=noninteractive apt-get -y install iptables-persistent'
-  fi
-
   # setup openstack
   run_ansible setup-openstack.yml
 
