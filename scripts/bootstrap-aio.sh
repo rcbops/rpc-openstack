@@ -38,11 +38,6 @@ if [ -n "${DATA_DISK_DEVICE}" ]; then
 fi
 
 # Run AIO bootstrap playbook
-if [ -z "${BOOTSTRAP_OPTS}" ]; then
-  openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
-                   -i "localhost," -c local
-else
-  openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
-                   -i "localhost," -c local \
-                   -e "${BOOTSTRAP_OPTS}"
-fi
+openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
+                  -i "localhost," -c local \
+                  -e "${BOOTSTRAP_OPTS}"
