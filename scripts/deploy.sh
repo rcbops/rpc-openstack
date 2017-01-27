@@ -47,9 +47,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # execute the AIO configuration bootstrap
   source "$(dirname "${0}")/bootstrap-aio.sh"
 
-  # set the kibana admin password
-  sed -i "s/kibana_password:.*/kibana_password: ${ADMIN_PASSWORD}/" $RPCD_SECRETS
-
   # set the ansible inventory hostname to the host's name
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
