@@ -127,5 +127,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
 fi
 
-# Begin the RPC installation
-bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
+if [[ "${DEPLOY_RPC}" == "yes" ]]; then
+  # Begin the RPC installation
+  bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
+fi
