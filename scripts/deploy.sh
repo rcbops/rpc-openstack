@@ -14,6 +14,7 @@ export DEPLOY_CEILOMETER="no"
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"no"}
+export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
@@ -280,37 +281,39 @@ function run_lock {
 }
 
 
-# begin the RPC installation
-pushd  ${RPCD_DIR}/playbooks
+if [[ "${DEPLOY_RPC}" == "yes" ]]; then
+  # begin the RPC installation
+  pushd  ${RPCD_DIR}/playbooks
 
-# configure everything for RPC support access
-  RUN_TASKS+=("rpc-support.yml")
+  # configure everything for RPC support access
+    RUN_TASKS+=("rpc-support.yml")
 
-# configure the horizon extensions
-  RUN_TASKS+=("horizon_extensions.yml")
+  # configure the horizon extensions
+    RUN_TASKS+=("horizon_extensions.yml")
 
-# deploy and configure RAX MaaS
-  if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-    RUN_TASKS+=("setup-maas.yml")
-  fi
-
-# deploy and configure the ELK stack
-  if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-    RUN_TASKS+=("setup-logging.yml")
-
-  # deploy the LB required for the ELK stack
-    if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-      RUN_TASKS+=(" haproxy.yml")
+  # deploy and configure RAX MaaS
+    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+      RUN_TASKS+=("setup-maas.yml")
     fi
-  fi
 
-# verify RAX MaaS
-  if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-    RUN_TASKS+=("verify-maas.yml")
-  fi
+  # deploy and configure the ELK stack
+    if [[ "${DEPLOY_ELK}" == "yes" ]]; then
+      RUN_TASKS+=("setup-logging.yml")
 
-  for item in ${!RUN_TASKS[@]}; do
-     run_lock $item "${RUN_TASKS[$item]}"
-  done
+    # deploy the LB required for the ELK stack
+      if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
+        RUN_TASKS+=(" haproxy.yml")
+      fi
+    fi
 
- popd
+  # verify RAX MaaS
+    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+      RUN_TASKS+=("verify-maas.yml")
+    fi
+
+    for item in ${!RUN_TASKS[@]}; do
+      run_lock $item "${RUN_TASKS[$item]}"
+    done
+
+  popd
+fi
