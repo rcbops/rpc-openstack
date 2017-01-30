@@ -16,7 +16,6 @@
 
 ## Shell Opts ----------------------------------------------------------------
 set -e -u -x
-set -o pipefail
 
 ## Functions -----------------------------------------------------------------
 
@@ -25,24 +24,20 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
-# begin the RPC installation
-cd ${RPCD_DIR}/playbooks/
+# Check the openstack-ansible submodule status
+check_submodule_status
 
-# configure everything for RPC support access
-run_ansible rpc-support.yml
-
-# deploy and configure RAX MaaS
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible setup-maas.yml
+# Get minimum disk size
+DATA_DISK_MIN_SIZE="$((1024**3 * $(awk '/bootstrap_host_data_disk_min_size/{print $2}' ${OA_DIR}/tests/roles/bootstrap-host/defaults/main.yml) ))"
+# Determine the largest secondary disk device available for repartitioning which meets the minimum size requirements
+DATA_DISK_DEVICE=$(lsblk -brndo NAME,TYPE,RO,SIZE | \
+                   awk '/d[b-z]+ disk 0/{ if ($4>m && $4>='$DATA_DISK_MIN_SIZE'){m=$4; d=$1}}; END{print d}')
+# Only set the secondary disk device option if there is one
+if [ -n "${DATA_DISK_DEVICE}" ]; then
+  export BOOTSTRAP_OPTS="${BOOTSTRAP_OPTS} bootstrap_host_data_disk_device=${DATA_DISK_DEVICE}"
 fi
 
-# deploy and configure the ELK stack
-if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-  run_ansible setup-logging.yml
-fi
-
-# verify RAX MaaS is running after all necessary
-# playbooks have been run
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible verify-maas.yml
-fi
+# Run AIO bootstrap playbook
+openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
+                  -i "localhost," -c local \
+                  -e "${BOOTSTRAP_OPTS}"

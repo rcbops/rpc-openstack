@@ -1,0 +1,159 @@
+---
+# Copyright 2015, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Set facts for the AIO bootstrap process
+  hosts: localhost
+  user: root
+  tasks:
+    - name: Set ceph user_variables override
+      set_fact:
+        user_variables_overrides:
+          apply_security_hardening: "{{ rpco_deploy_hardening }}"
+      when: "{{ not rpco_deploy_ceph | bool }}"
+    - name: Set ceph user_variables override
+      set_fact:
+        user_variables_overrides:
+          apply_security_hardening: "{{ rpco_deploy_hardening }}"
+          glance_default_store: rbd
+          nova_libvirt_images_rbd_pool: vms
+      when: "{{ rpco_deploy_ceph | bool }}"
+  vars:
+    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') }}"
+    rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
+
+- name: Execute the OSA AIO bootstrap
+  include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
+  vars:
+    openstack_user_config_overrides:
+      shared-infra_hosts:
+        aio1:
+          affinity:
+            galera_container: 3
+            rabbit_mq_container: 3
+          ip: 172.29.236.100
+
+- name: Execute the RPC-O AIO adjustments
+  hosts: localhost
+  user: root
+  tasks:
+    - name: Ensure that the env.d directory is present
+      file:
+        path: "/etc/openstack_deploy/env.d"
+        state: directory
+
+    # TODO(odyssey4me): Switch this to use https://review.openstack.org/423368
+    # once it is merged upstream and available in RPC-O.
+    - name: Rename standard OSA user-space configuration file
+      shell: |
+        result_code=0
+        if [ -e "/etc/openstack_deploy/user_variables.yml" ]; then
+          mv /etc/openstack_deploy/user_variables.yml /etc/openstack_deploy/user_osa_variables_overrides.yml
+          result_code=2
+        fi
+        exit ${result_code}
+      register: user_variables_rename
+      changed_when: user_variables_rename.rc == 2
+      failed_when: user_variables_rename.rc not in [0, 2]
+
+    # TODO(odyssey4me): Switch this to use https://review.openstack.org/423368
+    # once it is merged upstream and available in RPC-O.
+    - name: Rename standard OSA user-space secret file
+      shell: |
+        result_code=0
+        if [ -e "/etc/openstack_deploy/user_secrets.yml" ]; then
+          mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
+          result_code=2
+        fi
+        exit ${result_code}
+      register: user_secrets_rename
+      changed_when: user_secrets_rename.rc == 2
+      failed_when: user_secrets_rename.rc not in [0, 2]
+
+    - name: Copy the generally applicable RPC-O config files
+      copy:
+        src: "{{ rpco_cfg_src_path }}/{{ item.name }}"
+        dest: "/etc/openstack_deploy/{{ item.name | regex_replace('.aio$', '') }}"
+        mode: "{{ item.mode | default(omit) }}"
+      when: "{{ (item.condition | default(True)) | bool }}"
+      with_items:
+        - name: "user_osa_variables_defaults.yml"
+          mode: "0440"
+        - name: "user_rpco_variables_defaults.yml"
+          mode: "0440"
+        - name: "env.d/nova.yml"
+        - name: "conf.d/ceph.yml.aio"
+          condition: "{{ rpco_deploy_ceph | bool }}"
+
+    - name: Template the RPC-O config files
+      config_template:
+        src: "{{ rpco_cfg_src_path }}/{{ item.name }}"
+        dest: "/etc/openstack_deploy/{{ item.name | regex_replace('.aio$', '') }}"
+        config_overrides: "{{ item.override | default({}) }}"
+        config_type: "yaml"
+      when: "{{ (item.condition | default(True)) | bool }}"
+      with_items:
+        - name: "user_rpco_secrets.yml"
+          override:
+            kibana_password: "{{ lookup('env', 'ADMIN_PASSWORD') }}"
+        - name: "user_rpco_variables_overrides.yml.aio"
+        - name: "env.d/ceph.yml"
+          condition: "{{ rpco_deploy_ceph | bool }}"
+          override:
+            container_skel:
+              ceph_osd_container:
+                properties:
+                  is_metal: false
+        - name: "env.d/elasticsearch.yml"
+          condition: "{{ rpco_deploy_elk | bool }}"
+        - name: "env.d/kibana.yml"
+          condition: "{{ rpco_deploy_elk | bool }}"
+        - name: "env.d/logstash.yml"
+          condition: "{{ rpco_deploy_elk | bool }}"
+
+    - name: Remove config files
+      file:
+        path: "/etc/openstack_deploy/conf.d/{{ item.name }}"
+        state: absent
+      when: "{{ (item.condition | default(True)) | bool }}"
+      with_items:
+        - name: "aodh.yml"
+        - name: "ceilometer.yml"
+        - name: "gnocchi.yml"
+        - name: "swift.yml"
+          condition: "{{ not rpco_deploy_swift | bool }}"
+
+    - name: Update the RPC-O secrets
+      shell: "{{ rpco_base_dir }}/scripts/update-secrets.sh"
+
+    - name: Check for the existance of a gating settings file
+      stat:
+        path: "{{ rpco_cfg_src_path }}/user_zzz_gating_variables.yml"
+      register: gating_vars
+
+    - name: Copy gating settings file into place
+      copy:
+        src: "{{ rpco_cfg_src_path }}/user_zzz_gating_variables.yml"
+        dest: "/etc/openstack_deploy/user_zzz_gating_variables.yml"
+      when:
+        - gating_vars.stat.exists is defined
+        - gating_vars.stat.exists | bool
+
+  vars:
+    rpco_base_dir: "{{ lookup('env', 'BASE_DIR') }}"
+    osa_cfg_src_path: "{{ lookup('env', 'OA_DIR') ~ '/etc/openstack_deploy' }}"
+    rpco_cfg_src_path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy' }}"
+    rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') }}"
+    rpco_deploy_elk: "{{ lookup('env', 'DEPLOY_ELK') }}"
+    rpco_deploy_swift: "{{ lookup('env', 'DEPLOY_SWIFT') }}"

@@ -18,31 +18,20 @@
 set -e -u -x
 set -o pipefail
 
-## Vars ----------------------------------------------------------------------
+## Functions -----------------------------------------------------------------
 
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-export OA_DIR="${BASE_DIR}/openstack-ansible"
-export RPCD_DIR="${BASE_DIR}/rpcd"
+source ${BASE_DIR}/scripts/functions.sh
+
+## Vars ----------------------------------------------------------------------
+
 # Set the role fetch mode to any option [galaxy, git-clone]
 export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-galaxy}
 
 ## Main ----------------------------------------------------------------------
 
-# Confirm OA_DIR is properly checked out
-submodulestatus=$(git submodule status ${OA_DIR})
-case "${submodulestatus:0:1}" in
-  "-")
-    echo "ERROR: rpc-openstack submodule is not properly checked out"
-    exit 1
-    ;;
-  "+")
-    echo "WARNING: rpc-openstack submodule does not match the expected SHA"
-    ;;
-  "U")
-    echo "ERROR: rpc-openstack submodule has merge conflicts"
-    exit 1
-    ;;
-esac
+# Check the openstack-ansible submodule status
+check_submodule_status
 
 # begin the bootstrap process
 pushd ${OA_DIR}
