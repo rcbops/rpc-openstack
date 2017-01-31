@@ -1,36 +1,20 @@
 # rpc-openstack
 Rackspace Private Cloud (RPC)
 
-# openstack-ansible integration
+# OpenStack-Ansible integration
 
 The rpc-openstack repo wraps
 [openstack-ansible](https://github.com/openstack/openstack-ansible)
 with RPC preferred default settings and additional playbooks and roles
 which Rackspace find useful when operating OpenStack.
 
-# Juno Support
-
-In Juno, the MaaS plugins code is contained in a separate repo,
-[rpc-maas](https://github.com/rcbops/rpc-maas), and the Ansible code to deploy
-and configure the checks and alarms using these plugins is contained in tree
-with the
-[openstack-ansible](http://git.openstack.org/cgit/openstack/openstack-ansible/tree/?h=juno)
-repo with the Juno branch.
-
-As of Kilo, both the Maas plugins, and the Ansible code to deploy and
-configure the checks and alarms, are contained in the
-[rpc-openstack](https://github.com/rcbops/rpc-openstack) repo.
-
-The Kilo branch of openstack-ansible does not include any rpc-maas
-support directly any longer.
-
 # Ansible Playbooks
 
-Plays:
+RPCO carries several playbooks that run in additional to the OpenStack-Ansible
+playbooks. These playbooks can be found in the rpcd/playbooks directory.
 
 * `elasticsearch.yml` - deploys an elasticsearch host
 * `filebeat.yml` - deploys the filebeat log shipper on all hosts
-* `haproxy` - deploys haproxy configurations for elasticsearch and kibana
 * `kibana.yml` - Setup Kibana on the Kibana hosts for the logging dashboard.
 * `logstash.yml` - deploys a logstash host. If this play is used, be sure to
 copy the related block in user_rpco_variables_defaults.yml to
@@ -43,21 +27,63 @@ miscellaneous tasks helpful to support personnel.
 * `setup-maas.yml` - deploys, sets up, and installs Rackspace
 [MaaS](http://www.rackspace.com/cloud/monitoring) checks
 for Rackspace Private Clouds.
-* `setup-logging.yml` - deploys and configures Beaver, Logstash,
+* `setup-logging.yml` - deploys and configures Filebeat, Logstash,
 Elasticsearch, and Kibana to tag, index, and expose aggregated logs from all
 hosts and containers in the deployment using the related plays mentioned
 above.
-* `site.yml` - deploys all the playbooks mentioned here.
 * `verify-maas.yml` - confirms each maas check selected for each host has been
-captured server-side for recording in MaaS and that each check has at least one
-alarm configured for it.
+captured server-side, for recording in MaaS and that each check has at least one
+alarm configured for it. This playbook can also be used to perform local checks
+and ignore remote API checks by specifing ``maas_use_api: False`` in the
+``user_rpco_variables_overrides.yml`` file.
+* `ceph-all.yml` - Runs the `ceph-mon.yml` and `ceph-osd.yml` playbooks
+* `ceph-mon.yml` - Runs the `ceph.ceph-mon` Ansible role, which is an external role
+  located at https://github.com/ceph/ansible-ceph-mon to deploy the ceph monitor bits
+* `ceph-osd.yml` - Runs the `ceph.ceph-osd` Ansible role, which is an external role
+  located at https://github.com/ceph/ansible-ceph-osd to deploy the ceph OSD bits
 
-# Basic Setup:
+
+# Quick Start with an RPCO All-In-One(AIO)
+
+To build an AIO, first clone the RPCO repo:
+```
+cd /opt && git clone --recursive https://github.com/rcbops/rpc-openstack
+```
+
+Set the ``DEPLOY_AIO`` variable:
+```
+export DEPLOY_AIO='yes'
+```
+
+Run the ``deploy.sh`` script. It is recommended to run this script in either
+a tmux or screen session. It will take about 90 minutes to complete:
+```
+cd /opt/rpc-openstack
+./scripts/deploy.sh
+```
+
+## Deploying MaaS with an AIO
+1. Add the following variables to `/etc/openstack_deploy/user_rpco_variables_overrides.yml`:
+```
+rackspace_cloud_tenant_id: YourTenantID
+rackspace_cloud_username: YourUsername
+rackspace_cloud_api_key: YourAPIKey
+```
+2. Run the MaaS setup plays:
+ `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible setup-maas.yml`
+3. Run the MaaS verify play:
+ `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible verify-maas.yml`
+     MaaS Verification _might_ fail if executed within the first few moments after
+     the `setup-maas.yml` playbook completes. This is because some of the MaaS checks
+     might not have registered to the API yet. If it fails, rerun the playbook after
+     a few minutes.
+
+# Basic Setup (non-AIO deployments):
 
 1. Clone the RPC repository:
    `cd /opt && git clone --recursive https://github.com/rcbops/rpc-openstack`
 2. Unless doing an AIO build, prepare the openstack-ansible configuration.
-  1. recursively copy the openstack-ansible-deployment configuration files:
+  1. recursively copy the OpenStack-Ansible configuration files:
      `cp -R openstack-ansible/etc/openstack_deploy /etc/openstack_deploy`
   2. move OSA variables to the correct locations.
 
@@ -77,21 +103,10 @@ alarm configured for it.
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
 3. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
-  1. If building AIO, set `DEPLOY_AIO=yes` before running
-  2. If building without the ELK stack, set `DEPLOY_ELK=no` before running
-4. If you want MaaS working with AIO, do the following:
-  1. edit `/etc/openstack_deploy/user_rpco_variables_overrides.yml` to add
-     credentials
-  2. run the MaaS setup plays:
-     `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible setup-maas.yml`
-  3. run the MaaS verify play:
-     `cd /opt/rpc-openstack/rpcd/playbooks && openstack-ansible verify-maas.yml`
-     MaaS Verification _may_ fail if executed within the first few moments after
-     the Setup plays complete as the MaaS service registers checks and alarms
-     installed on your hosts. If it fails, manually retrying once after a
-     one minute delay is recommended.
+  1. If building without the ELK stack, set `DEPLOY_ELK=no` before running
 
 # Environment Variables for deploy.sh
+
 
 Use these environment variables to override aspects of `deploy.sh`'s behavior.
 
@@ -104,8 +119,14 @@ DEPLOY_ELK         | yes                                | Deploy Logging Stack (
 DEPLOY_MAAS        | no                                 | Deploy Monitoring (MaaS)                             |
 DEPLOY_TEMPEST     | no                                 | Deploy Tempest                                       | Only used if DEPLOY_OA=yes
 DEPLOY_CEPH        | no                                 | Deploy Ceph                                          | Only used if DEPLOY_OA=yes
+DEPLOY_SWIFT       | yes                                | Deploy swift                                         |
+DEPLOY_HARDENING   | yes                                | Deploy openstack-ansible-security role               |
+DEPLOY_RPC         | yes                                | Deploy the RPCO specific variables                   |
+BOOTSTRAP_OPTS     |                                    | Any options used for the bootstrap process           | Only used if DEPLOY_AIO=yes
 FORKS              | `grep -c ^processor /proc/cpuinfo` | Number of forks Ansible may use                      | May have issues if FORKS > SSHD's MaxSessions. Adjust accordingly
 ANSIBLE_PARAMETERS |                                    | Additional paramters passed to Ansible               |
+
+All of the variables for deploy.sh are made available by sourcing the [functions.sh](https://github.com/rcbops/rpc-openstack/blob/master/scripts/functions.sh) script
 
 For instance to adjust the number of forks Ansible is able to use:
 
@@ -113,17 +134,6 @@ For instance to adjust the number of forks Ansible is able to use:
 export FORKS=10
 ./scripts/deploy.sh
 ```
-
-# Upgrading
-
-To run an upgrade of an existing openstack-ansible installation:
-
-1. Run`scripts/upgrade.sh`.
-
-Please note the following behaviors that are **destructive**:
-    * `/etc/rpc_deploy` will be deprecated and the file structure moved to 
-      `/etc/openstack_deploy`.
-
 # Linting
 
 If you would like to lint against a version of ansible that is not the
