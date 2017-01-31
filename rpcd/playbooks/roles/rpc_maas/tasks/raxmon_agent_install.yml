@@ -18,7 +18,9 @@
 
 - name: Install MAAS Plugins
   synchronize:
-    src={{ maas_plugin_dir }} dest=/usr/lib/rackspace-monitoring-agent/plugins/ delete=yes
+    src: "{{ maas_source_plugin_dir }}"
+    dest: /usr/lib/rackspace-monitoring-agent/plugins/
+    delete: yes
 
 - name: List plugin files to chmod
   shell: "ls -1 /usr/lib/rackspace-monitoring-agent/plugins/*.py"

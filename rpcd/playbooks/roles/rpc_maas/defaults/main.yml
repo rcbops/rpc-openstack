@@ -356,7 +356,7 @@ elasticsearch_process_names:
   # process name that includes "elasticsearch". The process running
   # elasticsearch is actually named "java" so we search for that here. This is
   # less than ideal, but the best we can do right now.
-  - java 
+  - java
 
 beaver_process_names:
   - beaver
@@ -488,7 +488,9 @@ maas_pip_dependencies:
   - python-novaclient
   - python-memcached
 
-maas_plugin_dir: /opt/rpc-openstack/maas/plugins/
+maas_source_plugin_dir: plugins/
+
+maas_plugin_dir: /usr/lib/rackspace-monitoring-agent/plugins/
 
 maas_rpc_scripts_dir: /opt/rpc-openstack/scripts
 #
