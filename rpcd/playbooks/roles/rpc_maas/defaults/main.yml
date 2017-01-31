@@ -505,7 +505,7 @@ maas_pip_dependencies:
   - python-novaclient
   - python-memcached
 
-maas_source_plugin_dir: /opt/rpc-openstack/maas/plugins/
+maas_source_plugin_dir: plugins/
 
 maas_plugin_dir: /usr/lib/rackspace-monitoring-agent/plugins/
 
