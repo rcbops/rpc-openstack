@@ -360,7 +360,7 @@ elasticsearch_process_names:
   # process name that includes "elasticsearch". The process running
   # elasticsearch is actually named "java" so we search for that here. This is
   # less than ideal, but the best we can do right now.
-  - java 
+  - java
 
 filebeat_process_names:
   - filebeat
@@ -504,10 +504,36 @@ maas_source_plugin_dir: /opt/rpc-openstack/maas/plugins/
 maas_plugin_dir: /usr/lib/rackspace-monitoring-agent/plugins/
 
 maas_rpc_scripts_dir: /opt/rpc-openstack/scripts
+
+# The following two variables control which checks and alarms are excluded from
+# MaaS. Here is explanation of what each variable does:
 #
-# maas_excluded_checks: List of checks and alarms to exclude from this deploy
+# 1) When you add a check to `maas_excluded_checks`, the check (and any
+#    associated alarms) are not provisioned. This disables graphing,
+#    monitoring, alarms and alerts for that particular check.
 #
+# 2) When you add an alarm to `maas_excluded_alarms`, the alarm is not
+#    provisioned. However, the check itself (and any associated graphing) is
+#    maintained.
+#
+# Both lists can contain simple strings that match exactly, or they can contain
+# regular expressions.
 maas_excluded_checks: []
+maas_excluded_alarms: []
+
+# Customizing MaaS check period and timeout.
+# The following two variables allow deployers to provide custom check periods
+# and timeouts for certain checks. Each variable is a list of dictionaries
+# containing the check label and the appropriate value:
+#
+#   maas_check_period_override:
+#     - disk_utilization: 60
+#     - conntrack_count: 45
+#   maas_check_timeout_override:
+#     - cinder_backup_check: 120
+#
+maas_check_period_override: {}
+maas_check_timeout_override: {}
 
 # openrc definitions from OSA
 # This is necessary until LP #1537117 is implemented
@@ -545,3 +571,9 @@ verify_maas_retries: 5
 #               for offline testing
 #
 maas_use_api: true
+
+#
+# maas_agent_upgrade: Allow for automatic MaaS agent upgrades
+#
+#
+maas_agent_upgrade: true
