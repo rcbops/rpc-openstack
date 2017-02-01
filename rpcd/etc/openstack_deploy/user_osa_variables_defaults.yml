@@ -171,3 +171,6 @@ haproxy_extra_services:
       haproxy_balance_type: tcp
       haproxy_backend_options:
         - "ssl-hello-chk"
+
+#Set the default for Neutron-HA-tool to true
+neutron_legacy_ha_tool_enabled: true
