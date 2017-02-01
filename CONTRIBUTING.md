@@ -32,8 +32,8 @@
 ## Commits, release notes and pull requests<a name="commits-release-notes-pull-requests"></a>
 ### Fixing a bug<a name="fixing-a-bug"></a>
 
-1. After the bug is triaged and prioritised, make the required changes. New features, breaking changes and other patches of note must include a release note generated using the `reno` tool. Please see `Release Notes` for more information.
-2. Push changes directly to a branch on ```rpc-openstack``` in the ```rcbops``` github namespace (rather than a developer's own fork). A pull request is then made from this branch to the ```master``` branch.
+1. After the bug is triaged and prioritized, make the required changes. New features, breaking changes and other patches of note must include a release note generated using the `reno` tool. Please see `Release Notes` for more information.
+2. Make the needed changes following a git workflow that works best for you. [Example Branching workflow](https://git-scm.com/book/en/v2/Git-Branching-Branching-Workflows)
 3. Unless a bug is specific to a release branch (e.g. ```liberty-12.1```), commit fixes to the ```master``` branch before any potential backports.
 4. Bugs meeting backport criteria are backported to the release branches (e.g. ```liberty-12.1```) as appropriate.
 5. Github markdown is used to update the original issue with a checklist for tracking which branches have fixes merged.
