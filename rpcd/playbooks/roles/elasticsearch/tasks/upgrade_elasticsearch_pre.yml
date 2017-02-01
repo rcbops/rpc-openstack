@@ -108,8 +108,13 @@
     - reindex-wrapper
 
 - name: Drop log_test1 template
-  shell: 'curl -sk -XDELETE {{ internal_lb_vip_address }}:{{ elasticsearch_http_port }}/_template/log_test1'
-  retries: 5
+  shell: 'curl -fsk -XDELETE {{ internal_lb_vip_address }}:{{ elasticsearch_http_port }}/_template/log_test1'
+  args:
+     warn: no
+  register: curl_result
+  retries: 12
+  delay: 5
+  until: curl_result.rc == 0
   tags:
     - logging-upgrade
     - elasticsearch-upgrade
