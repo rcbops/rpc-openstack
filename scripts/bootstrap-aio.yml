@@ -36,6 +36,8 @@
 - name: Execute the OSA AIO bootstrap
   include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
   vars:
+    bootstrap_host_user_variables_filename: "user_osa_variables_overrides.yml"
+    bootstrap_host_user_secrets_filename: "user_osa_secrets.yml"
     openstack_user_config_overrides:
       shared-infra_hosts:
         aio1:
@@ -52,34 +54,6 @@
       file:
         path: "/etc/openstack_deploy/env.d"
         state: directory
-
-    # TODO(odyssey4me): Switch this to use https://review.openstack.org/423368
-    # once it is merged upstream and available in RPC-O.
-    - name: Rename standard OSA user-space configuration file
-      shell: |
-        result_code=0
-        if [ -e "/etc/openstack_deploy/user_variables.yml" ]; then
-          mv /etc/openstack_deploy/user_variables.yml /etc/openstack_deploy/user_osa_variables_overrides.yml
-          result_code=2
-        fi
-        exit ${result_code}
-      register: user_variables_rename
-      changed_when: user_variables_rename.rc == 2
-      failed_when: user_variables_rename.rc not in [0, 2]
-
-    # TODO(odyssey4me): Switch this to use https://review.openstack.org/423368
-    # once it is merged upstream and available in RPC-O.
-    - name: Rename standard OSA user-space secret file
-      shell: |
-        result_code=0
-        if [ -e "/etc/openstack_deploy/user_secrets.yml" ]; then
-          mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
-          result_code=2
-        fi
-        exit ${result_code}
-      register: user_secrets_rename
-      changed_when: user_secrets_rename.rc == 2
-      failed_when: user_secrets_rename.rc not in [0, 2]
 
     - name: Copy the generally applicable RPC-O config files
       copy:
