@@ -69,7 +69,6 @@ rabbitmq_ulimit: 65535
 memcached_connections: 16384
 
 # Keystone overrides
-keystone_token_provider: "uuid"
 keystone_token_driver: "sql"
 
 # Galera overrides
