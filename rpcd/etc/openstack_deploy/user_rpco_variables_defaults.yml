@@ -71,6 +71,25 @@ maas_alarm_remote_consecutive_count: 1
 # Set the following to skip creating alarms for this device for disk utilisation monitoring
 # maas_excluded_devices: ['xvde']
 
+# Set the following to skip a specific check
+# horizon_local_check is disabled until https://github.com/rcbops/u-suk-dev/issues/781
+# is resolved
+maas_excluded_checks:
+  - 'horizon_local_check.*'
+
+# Disable the following MaaS alarms
+# Issue: https://github.com/rcbops/u-suk-dev/issues/1081
+maas_excluded_alarms:
+  - '^idle_percent_average.*'
+  - '^memory_used.*'
+  - '^alarm-network-receive.*'
+  - '^alarm-network-transmit.*'
+
+# Set overrides for check periods
+# Issue: https://github.com/rcbops/u-suk-dev/issues/1081
+maas_check_period_override:
+  disk_utilisation: 900
+
 # Set the threshold for filesystem monitoring when you are not specifying specific filesystems.
 maas_filesystem_warning_threshold: 80.0
 maas_filesystem_critical_threshold: 90.0
