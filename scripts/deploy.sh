@@ -15,6 +15,7 @@ export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export DEPLOY_MAGNUM=${DEPLOY_MAGNUM:-"no"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
+export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
@@ -250,5 +251,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
 fi
 
-# Begin the RPC installation
-bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
+if [[ "${DEPLOY_RPC}" == "yes" ]]; then
+  # Begin the RPC installation
+  bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
+fi
