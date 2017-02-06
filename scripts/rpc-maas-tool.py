@@ -636,7 +636,7 @@ class RpcMassCli(object):
         for entity in self.rpcm.get_entities():
             for alarm in entity.alarms:
                 alarms.append(alarm)
-                if alarm.state not in ["OK", "UNKNOWN"]:
+                if alarm.state not in ["OK", "UNKNOWN", "DISABLED"]:
                     failed_alarms.append(alarm)
                     alarm.bullet = "!"
         return (alarms, failed_alarms)
