@@ -21,6 +21,7 @@ export DEPLOY_OA=${DEPLOY_OA:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
 export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
+export DEPLOY_RALLY=${DEPLOY_RALLY:-"no"}
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
