@@ -118,6 +118,7 @@ DEPLOY_OA          | yes                                | Deploy OpenStack-Ansib
 DEPLOY_ELK         | yes                                | Deploy Logging Stack (ELK)                           | Only used if DEPLOY_OA=yes
 DEPLOY_MAAS        | no                                 | Deploy Monitoring (MaaS)                             |
 DEPLOY_TEMPEST     | no                                 | Deploy Tempest                                       | Only used if DEPLOY_OA=yes
+DEPLOY_RALLY       | no                                 | Deploy Rally                                         | Only used if DEPLOY_OA=yes
 DEPLOY_CEPH        | no                                 | Deploy Ceph                                          | Only used if DEPLOY_OA=yes
 DEPLOY_SWIFT       | yes                                | Deploy swift                                         |
 DEPLOY_HARDENING   | yes                                | Deploy openstack-ansible-security role               |
