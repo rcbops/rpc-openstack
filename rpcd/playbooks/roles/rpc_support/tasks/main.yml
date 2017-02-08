@@ -43,7 +43,8 @@
 
 - include: spice_console.yml
   when: >
-    inventory_hostname in groups['nova_console']
+    inventory_hostname in groups['nova_console'] and nova_console_type == 'spice'
+
   tags:
     - nova_spice_console
 
