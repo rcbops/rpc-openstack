@@ -10,6 +10,7 @@ alarms      :
     wsrep_cluster_size :
         label                   : wsrep_cluster_size--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
+        disabled                : {{ (('wsrep_cluster_size--'+ansible_hostname) | match(maas_excluded_alarms_regex)) | ternary('true', 'false') }}
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["wsrep_cluster_size"] < {{ groups["galera"] | length }}) {
@@ -18,6 +19,7 @@ alarms      :
     wsrep_local_state :
         label                   : wsrep_local_state--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
+        disabled                : {{ (('wsrep_local_state--'+ansible_hostname) | match(maas_excluded_alarms_regex)) | ternary('true', 'false') }}
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["wsrep_local_state_comment"] != "Synced" ) {
@@ -26,6 +28,7 @@ alarms      :
     percentage_used_mysql_connections :
         label                   : percentage_used_mysql_connections--{{ ansible_hostname }}
         notification_plan_id    : "{{ maas_notification_plan }}"
+        disabled                : {{ (('percentage_used_mysql_connections--'+ansible_hostname) | match(maas_excluded_alarms_regex)) | ternary('true', 'false') }}
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (percentage(metric["mysql_current_connections"], metric["mysql_max_configured_connections"]) > {{ mysql_connection_critical_threshold }} ) {
