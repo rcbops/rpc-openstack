@@ -207,12 +207,13 @@ Fully supported features/projects in RPCO must meet the qualifications for a bet
 ### The details<a name="the-details"></a>
 
 #### Adding the ability to be deployed<a name="ability-to-deploy"></a>
-Deployments of features/projects are handled via deployment variables in the [deploy.sh script](https://github.com/rcbops/rpc-openstack/blob/master/scripts/deploy.sh). To add the ability for a feature/project to be deployed, add the proper DEPLOY variable and use that as a trigger to execute the instructions necessary to deploy that feature/project.
-For example:
-* https://github.com/rcbops/rpc-openstack/pull/1620/files#diff-93518fda10b0403d3c5c20b4df4740a6
-* https://github.com/rcbops/rpc-openstack/pull/1708/files#diff-93518fda10b0403d3c5c20b4df4740a6
+Deployments of features/projects are handled via deployment variables defined in the [``functions.sh``](https://github.com/rcbops/rpc-openstack/blob/master/scripts/functions.sh) script. To add the ability for a feature/project to be deployed, add the proper DEPLOY variable and use that as a trigger to execute the instructions necessary to deploy that feature/project.
+
+The ``functions.sh`` script is sourced in the ``deploy.sh`` script to include these DEPLOY variables. The DEPLOY variables can then be used to deploy a certain feature/project. They are also used in [``bootstrap-aio.yml``](https://github.com/openstack/openstack-ansible/blob/master/tests/bootstrap-aio.yml) to deploy specific scenarios for AIOs.
 
 For more information on the ``deploy.sh`` script, please see https://github.com/rcbops/rpc-openstack/blob/master/scripts/README.rst#deploysh
+
+For more information on the ``bootstrap-aio.yml`` playbook, please see https://github.com/rcbops/rpc-openstack/blob/master/scripts/README.rst
 
 #### Adding the necessary (if any) variables to default variable files<a name="add-variables"></a>
 It might be necessary to specify OpenStack-Ansible or RPCO variable overrides so they take new values by default. To override these variables, they must be set in the proper variable files. For more information, please see https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/README.rst
