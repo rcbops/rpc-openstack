@@ -36,8 +36,30 @@
 - name: Execute the OSA AIO bootstrap
   include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
   vars:
+    scenario: "{{ lookup('env', 'DEPLOY_CEPH') | bool | ternary('ceph', 'swift') }}"
     bootstrap_host_user_variables_filename: "user_osa_variables_overrides.yml"
     bootstrap_host_user_secrets_filename: "user_osa_secrets.yml"
+    confd_overrides:
+      swift:
+        - name: cinder.yml.aio
+        - name: glance.yml.aio
+        - name: heat.yml.aio
+        - name: horizon.yml.aio
+        - name: keystone.yml.aio
+        - name: neutron.yml.aio
+        - name: nova.yml.aio
+        - name: swift.yml.aio
+      ceph:
+        - name: cinder.yml.aio
+        - name: glance.yml.aio
+        - name: heat.yml.aio
+        - name: horizon.yml.aio
+        - name: keystone.yml.aio
+        - name: neutron.yml.aio
+        - name: nova.yml.aio
+        - name: swift.yml.aio
+        - name: ceph.yml.aio
+          path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy/conf.d' }}"
     openstack_user_config_overrides:
       shared-infra_hosts:
         aio1:
@@ -58,17 +80,14 @@
     - name: Copy the generally applicable RPC-O config files
       copy:
         src: "{{ rpco_cfg_src_path }}/{{ item.name }}"
-        dest: "/etc/openstack_deploy/{{ item.name | regex_replace('.aio$', '') }}"
+        dest: "/etc/openstack_deploy/{{ item.name }}"
         mode: "{{ item.mode | default(omit) }}"
-      when: "{{ (item.condition | default(True)) | bool }}"
       with_items:
         - name: "user_osa_variables_defaults.yml"
           mode: "0440"
         - name: "user_rpco_variables_defaults.yml"
           mode: "0440"
         - name: "env.d/nova.yml"
-        - name: "conf.d/ceph.yml.aio"
-          condition: "{{ rpco_deploy_ceph | bool }}"
 
     - name: Template the RPC-O config files
       config_template:
@@ -95,18 +114,6 @@
           condition: "{{ rpco_deploy_elk | bool }}"
         - name: "env.d/logstash.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
-
-    - name: Remove config files
-      file:
-        path: "/etc/openstack_deploy/conf.d/{{ item.name }}"
-        state: absent
-      when: "{{ (item.condition | default(True)) | bool }}"
-      with_items:
-        - name: "aodh.yml"
-        - name: "ceilometer.yml"
-        - name: "gnocchi.yml"
-        - name: "swift.yml"
-          condition: "{{ not rpco_deploy_swift | bool }}"
 
     - name: Update the RPC-O secrets
       shell: "{{ rpco_base_dir }}/scripts/update-secrets.sh"
