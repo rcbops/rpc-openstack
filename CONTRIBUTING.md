@@ -25,6 +25,9 @@
         3. [Adding ELK configurations](#add-elk-configs)
         4. [Adding the f5 configurations(TBD)](#add-f5-configs)
         5. [Adding MaaS(Monitoring) plugins](#add-maas-plugins)
+        6. [Integration tests](#integration-tests)
+            1. [Tempest tests](#tempest-tests)
+            2. [Adding tests to jenkins-rpc](#adding-tests-to-jenkins-rpc)
 4. [Notes](#notes)
 5. [Version definitions](#version-definitions)
 
@@ -250,6 +253,15 @@ For information on how to add a service to our f5-config.py script, please see h
 
 #### Adding MaaS (Monitoring) plugins for new services<a name="add-maas-plugins"></a>
 For information on how to create MaaS plugins, please see: https://github.com/rcbops/rpc-openstack/blob/master/maas/plugins/README.md
+
+#### Integration tests<a name="integration-tests"></a>
+A new OpenStack project must provide integration testing through either [tempest](http://docs.openstack.org/developer/tempest/) or our [jenkins-rpc](https://github.com/rcbops/jenkins-rpc/blob/master/README.md) gating jobs. Most OpenStack services provide scenario tests as part of the tempest test suite. If not, add integration tests to the ``jenkins-rpc`` CI/CD pipeline that run on each commit.
+
+##### Tempest tests<a name="tempest-tests"></a>
+If the introduced OpenStack service has tempest tests, make sure that it is being run as part of our jenkins-rpc gating jobs. The tempest scenarios for these jobs are defined [here](https://github.com/rcbops/jenkins-rpc/blob/master/rpc-jobs/jobs.yaml#L6). If these tests don't include the new service, then make a PR against jenkins-rpc to modify this variable.
+
+##### Adding tests to jenkins-rpc<a name="adding-tests-to-jenkins-rpc"></a>
+If the OpenStack service does not have tempest tests, then it is required for some form of functional and/or integration testing be added as part of the jenkins-rpc CI/CD pipeline. For example, the holland service has a [playbook](https://github.com/rcbops/jenkins-rpc/blob/master/scripts/test_holland.yml) to perform tests [at the end](https://github.com/rcbops/jenkins-rpc/blob/master/scripts/gating_bash_lib.sh#L369) of an AIO job. A simliar playbook can be added for the newly introduced OpenStack service. Once a playbook has been created, create a function in ``gating_bash_lib.sh``, and invoke it in the [``run_tests``](https://github.com/rcbops/jenkins-rpc/blob/master/scripts/gating_bash_lib.sh#L369) function.
 
 ## Notes<a name="notes"></a>
 - ```master``` branch is always the 'current' branch where development for the next minor or major release is taking place
