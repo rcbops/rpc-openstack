@@ -67,6 +67,7 @@ MONITORS = [
     r' rpc\r\n\r\n" }',
     r'create ltm monitor http /' + PART + '/' + PREFIX_NAME + '_MON_HTTP_NOVA_SPICE_CONSOLE {'
     r' defaults-from http destination *:6082 recv "200 OK" send "HEAD /spice_auto.html'
+    r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
     r'create ltm monitor http /' + PART + '/' + PREFIX_NAME + '_MON_HTTP_NOVA_NOVNC_CONSOLE {'
     r' defaults-from http destination *:6082 recv "200 OK" send "HEAD /novnc_auto.html'
     r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
