@@ -54,6 +54,7 @@ nova_ram_allocation_ratio: 1.0
 
 # Nova config overrides
 nova_cross_az_attach: False
+nova_console_type: novnc
 
 # RabbitMQ overrides
 rabbitmq_ulimit: 65535

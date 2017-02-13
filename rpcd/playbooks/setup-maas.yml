@@ -37,3 +37,5 @@
       run_once: true
   roles:
     - { role: "rpc_maas", tags: [ "maas-setup" ] }
+  vars:
+    nova_console_type: "spice"
