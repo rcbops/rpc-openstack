@@ -5,8 +5,13 @@ before_script:
 
 script: tox
 
+# Send notifications to #rpc-github in Slack
 notifications:
-    email: false
+  email: false
+  slack:
+    on_success: never
+    on_failure: always
+    secure: PMkX4ttSc5yaEKn1JYu1zf5SuE6kX0zoCv09wZI1npgYDqod72bxQBSWxYYre8/BCF9Te2UmuYIGtHxtNnvquwdfzHKJBEhpIcHJYWmBb1lNLC391stRPt2lePp5/kt/W2Ath1lhXoOZLIGZ4Akyj2S7alKlMWaqedApWOtBtQk=
 
 matrix:
   include:
