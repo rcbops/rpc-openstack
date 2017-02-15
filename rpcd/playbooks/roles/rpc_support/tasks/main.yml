@@ -95,3 +95,5 @@
 
 - include: configure_unattended_upgrades.yml
 
+- include: create_default_flavors.yml
+  when:  inventory_hostname == groups['utility'][0]
