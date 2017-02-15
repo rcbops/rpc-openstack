@@ -21,68 +21,63 @@ from maas_common import print_output
 from maas_common import status_err
 from maas_common import status_ok
 
-
-def get_process_name(pid):
-    process_exe_path = os.path.join('/proc', pid, 'exe')
-    process_comm_path = os.path.join('/proc', pid, 'comm')
-
-    try:
-        process_exe = os.readlink(process_exe_path)
-        with open(process_comm_path, mode='r') as f:
-            comm = f.read().rstrip('\n')
-    except OSError as ex:
-        if ex.errno == os.errno.ENOENT:
-            return set()
-        status_err('Could not read process information.', exception=ex)
-    except IOError as ex:
-        # The path we are checking for a PID list does not exist.
-        # This is probably caused by an invalid container name.
-        status_err('No such process exists. {}', exception=ex)
-
-    # Return the "exe" path and the baesname of the "exe" path, and
-    # the value contained in comm to make matching easier
-    return set([comm, process_exe, os.path.basename(process_exe)])
+import lxc
+import psutil
 
 
-def get_processes(procs_path):
-    process_names = set()
-    try:
-        with open(procs_path, mode='r') as f:
-            for pid in f.read().splitlines():
-                process_names.update(get_process_name(pid))
-    except OSError as ex:
-        # Could not read the PID list file, probably due to a permission
-        # error. This is different from an IOError, so we handle the two
-        # types differently.
-        status_err('Could not read PID list file. {}', exception=ex)
-    except IOError as ex:
-        # The path we are checking for a PID list does not exist.
-        # This is probably caused by an invalid container name.
-        status_err('No such container exists. {}', exception=ex)
+def venv_wrapper_check():
+    """Check if we are running inside the virtualenv wrapper script."""
+    # Are we running inside the virtualenv wrapper script?
+    parent_process = psutil.Process(os.getpid()).parent
+    if 'run_plugin_in_venv.sh' in ' '.join(parent_process.cmdline):
+        return parent_process.pid
+    else:
+        return False
 
-    # Return a set() of potential process names resolved from their PID
-    return process_names
+
+def get_processes(parent_pid=None):
+    """Get processes from the system.
+
+    Retrieves all processes from the system. Provide a PID via parent_pid if
+    you want to get child processes of that specific PID (example: in a
+    container).
+    """
+    # Don't examine the process of this script.
+    excluded_pids = [os.getpid()]
+
+    # Don't examine the process of the venv wrapper script, either.
+    if venv_wrapper_check():
+        excluded_pids.append(venv_wrapper_check())
+
+    if parent_pid is None:
+        procs = [x for x in psutil.process_iter()
+                 if x.pid not in excluded_pids]
+    else:
+        procs = [x for x in psutil.Process(parent_pid).get_children()]
+    return procs
 
 
 def check_process_running(process_names, container_name=None):
     """Check to see if processes are running.
 
-       Check if each of the processes in process_names are in a list
-       of running processes in the specified container name, or on
-       this host.
+    Check if each of the processes in process_names are in a list
+    of running processes in the specified container name, or on
+    this host.
     """
+    procs = get_processes()
 
-    if not process_names:
-        # The caller has not provided a value for process_names, which gives us
-        # nothing to do. Return an error for the check.
-        status_err('No process names provided')
-
-    procs_path = '/sys/fs/cgroup/cpu/cgroup.procs'
     if container_name is not None:
-        # Checking for processes in a container, not the parent host
-        procs_path = os.path.join('/sys/fs/cgroup/cpu/lxc', container_name,
-                                  'cgroup.procs')
-    procs = get_processes(procs_path)
+        # Get the container's init PID.
+        init_pid = lxc.Container(container_name).init_pid
+
+        # If the container wasn't found, exit now.
+        if init_pid == -1:
+            status_err('Could not find PID for container {}'.format(
+                container_name)
+            )
+
+        # Get the processes within the container.
+        procs = get_processes(parent_pid=init_pid)
 
     if not procs:
         # Unable to get a list of process names for the container or host.
@@ -91,14 +86,25 @@ def check_process_running(process_names, container_name=None):
     # Since we've fetched a process list, report status_ok.
     status_ok()
 
-    # Report the presence of each process from the command line in the
-    # running process list for the host or specified container.
+    # Make a list of command lines from each PID. There's a chance that one or
+    # more PIDs may have exited already and this causes a NoSuchProcess
+    # exception.
+    cmdlines = []
+    for proc in procs:
+        try:
+            cmdlines.append(map(os.path.basename, proc.cmdline))
+        except psutil._error.NoSuchProcess:
+            pass
+
+    # Loop through the process names provided on the command line to see if
+    # they exist on the system or in a container.
     for process_name in process_names:
-        metric_bool('%s_process_status' % process_name,
-                    process_name in procs)
+        matches = [x for x in cmdlines if process_name in x]
+        metric_bool('%s_process_status' % process_name, len(matches) > 0)
 
 
 def main(args):
+    """Main function."""
     if not args.processes:
         # The command line does not have any process names specified
         status_err('No executable names supplied')
