@@ -436,8 +436,12 @@ maas_apt_packages:
 # maas_pip_packages: Packages we need but are not built by openstack-ansible
 #
 maas_pip_packages:
-  - rackspace-monitoring-cli
   - ipaddr
+  - lxc-python2
+  - psutil
+  - rackspace-monitoring-cli
+  - swift
+  - waxeye
 
 #
 # maas_pip_dependencies: These are pip packages we depend on, but should already be built in
