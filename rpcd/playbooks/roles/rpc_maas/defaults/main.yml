@@ -371,6 +371,7 @@ swift_object_process_names:
   - swift-object-replicator
   - swift-object-updater
   - swift-object-auditor
+  - swift-object-expirer
 
 swift_account_process_names:
   - swift-account-server
