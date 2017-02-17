@@ -294,6 +294,9 @@ rabbitmq_queue_growth_rate_threshold: 15
 # Set the threshold for the "Disk utilisation" MaaS alarms
 disk_utilisation_threshold: 90
 
+# Set the container storage threshold
+percent_used_critical_threshold: 85
+
 # nf_conntrack threshold
 nf_conntrack_threshold: 90
 
