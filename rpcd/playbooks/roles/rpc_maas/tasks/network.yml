@@ -39,12 +39,9 @@
     - discover_nic_speed.results
   when:
     - inventory_hostname in groups["{{ item.0.group }}"]
-    - not 'network_throughput-{{ item.0.name }}' | match(maas_excluded_checks_regex)
 
 - name: Remove checks that are excluded
   file:
     path: "/etc/rackspace-monitoring-agent.conf.d/network_throughput-{{ item.name }}-{{ inventory_hostname }}.yaml"
     state: absent
-  with_items: network_checks_list
-  when:
-    - not 'network_throughput-{{ item.name }}' | match(maas_excluded_checks_regex)
+  with_items: "{{ network_checks_list }}"
