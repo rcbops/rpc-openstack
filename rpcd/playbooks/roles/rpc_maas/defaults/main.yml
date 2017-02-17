@@ -480,8 +480,10 @@ maas_requires_pip_packages:
 # maas_pip_packages: Packages we need but are not built by openstack-ansible
 #
 maas_pip_packages:
-  - rackspace-monitoring-cli
   - ipaddr
+  - lxc-python2
+  - psutil
+  - rackspace-monitoring-cli
   - swift
   - waxeye
 
