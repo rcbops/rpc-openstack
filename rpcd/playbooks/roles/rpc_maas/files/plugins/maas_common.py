@@ -371,6 +371,51 @@ else:
         return heat
 
 
+try:
+    from magnumclient import client as magnum_client
+    from magnumclient.common.apiclient import exceptions as magnum_exc
+except ImportError:
+    def get_magnum_client(*args, **kwargs):
+        status_err('Cannot import magnumclient')
+else:
+    def get_magnum_client(token=None, endpoint=None, previous_tries=0):
+        if previous_tries > 3:
+            return None
+
+        # first try to use auth details from auth_ref so we
+        # don't need to auth with keystone every time
+        auth_ref = get_auth_ref()
+        auth_details = get_auth_details()
+        keystone = get_keystone_client(auth_ref)
+
+        if not token:
+            token = keystone.auth_token
+        if not endpoint:
+            endpoint = get_endpoint_url_for_service('container-infra',
+                                                    auth_ref,
+                                                    get_endpoint_type(
+                                                        auth_details))
+
+        magnum = magnum_client.Client('1',
+                                      endpoint_override=endpoint,
+                                      auth_token=token,
+                                      insecure=auth_details['OS_API_INSECURE'])
+        try:
+            magnum.cluster_templates.list()
+        except h_exc.HTTPUnauthorized:
+            auth_ref = force_reauth()
+            keystone = get_keystone_client(auth_ref)
+
+            token = keystone.auth_token
+            magnum = get_magnum_client(token, endpoint, previous_tries + 1)
+        except magnum_exc.HttpError:
+            raise
+        except Exception as e:
+            status_err(str(e))
+
+        return magnum
+
+
 class MaaSException(Exception):
     """Base MaaS plugin exception."""
 

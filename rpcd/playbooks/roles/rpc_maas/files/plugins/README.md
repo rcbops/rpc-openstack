@@ -15,7 +15,7 @@ A discussion of these rules can be found in <https://github.com/rcbops/rcbops-ma
 
 Contains many helper functions that the various plugins use to perform keystone authentication, write metrics consistently, handle errors consistently etc.  For keystone auth, it expects the presence of a /root/openrc-maas that contains credentials for a keystone user that you have created specifically for the purposes of monitoring.
 The contents of this file would look something like this:
-    
+
     # COMMON OPENSTACK ENVS
     export OS_USERNAME=maas-user
     export OS_PASSWORD=mypassword
@@ -146,6 +146,20 @@ IP address of service to test
     metric heat_api_local_response_time double 22.752 ms
 
 ***
+#### magnum_api_local_check.py
+
+##### Description:
+Polls a (native) magnum API living on the specified IP. Checks to see if the API is up, and then also gathers a list of metrics to return.
+
+##### Mandatory Arguments:
+IP address of service to test
+##### Example Output:
+
+    status okay
+    metric magnum_api_local_status uint32 1
+    metric magnum_api_local_response_time double 48.532 ms
+
+***
 #### service_api_local_check.py
 
 ##### Mandatory Arguments:
@@ -239,6 +253,19 @@ Hostname or IP address of Neutron API service
 
     metric neutron-metadata-agent-proxy_status uint32 1
     ...
+
+***
+#### magnum_service_check.py
+
+##### Description:
+Polls the magnum api and gets a list of all magnum services running in the environment, then checks the output to see if each one is up or not. If a service is marked as administratively down, the check will skip it.
+
+##### Mandatory Arguments:
+Hostname or IP address of service to test
+##### Example Output:
+
+    status okay
+    metric magnum-conductor_status uint32 1
 
 ***
 ***

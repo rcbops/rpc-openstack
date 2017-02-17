@@ -87,6 +87,12 @@
     - groups['ceph_all']|length > 0
     - inventory_hostname in groups['ceph_all']
 
+- include: magnum.yml
+  when:
+    - groups['magnum_all'] is defined
+    - groups['magnum_all']|length > 0
+    - inventory_hostname in groups['magnum_all']
+
 - include: restart_raxmon.yml
   when:
     - inventory_hostname in groups['hosts']

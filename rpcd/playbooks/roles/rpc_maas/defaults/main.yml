@@ -430,6 +430,10 @@ openstack_service_local_checks_list:
   - { name: "nova_console_check", group: "nova_console" }
   - { name: "nova_cloud_stats_check", group: "nova_api_os_compute" }
 
+magnum_checks_list:
+  - { name: "magnum_api_local_check", group: "magnum" }
+  - { name: "magnum_conductor_check", group: "magnum" }
+
 cinder_vg_checks_list:
   - { name: "cinder_vg_check", group: "cinder_volume", cinder_vg_name: "{{ cinder_vg_name }}" }
 
@@ -508,6 +512,7 @@ maas_pip_packages:
   - lxc-python2
   - psutil
   - rackspace-monitoring-cli
+  - python-magnumclient
   - swift
   - waxeye
 
