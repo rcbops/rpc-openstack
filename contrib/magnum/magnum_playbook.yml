@@ -61,6 +61,9 @@
             neutron_lbaasv2: True
             horizon_enable_neutron_lbaas: True
           name: LBaaS v2 configuration
+        - block: |
+            repo_build_git_selective: False
+          name: Git Repo Selective Build
   vars:
     oa_dir: '/opt/rpc-openstack/openstack-ansible'
     magnum_git_install_branch: 'f2f9bd4653fb66f61c2789d5f08a4edce6fd04bf'
