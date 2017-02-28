@@ -274,7 +274,7 @@ net_tx_pct_crit: 60
 swift_object_quarantine_failed_percentage_threshold: 5.0
 swift_object_quarantine_average_threshold: 25.0
 swift_object_replication_failure_percentage_threshold: 5.0
-swift_object_replication_growth_rate_threshold: 10.0
+swift_object_replication_growth_rate_threshold: 20.0
 swift_object_replication_avg_time_threshold: 50.0
 swift_account_quarantine_failed_percentage_threshold: 5.0
 swift_account_quarantine_average_threshold: 25.0
@@ -287,7 +287,7 @@ swift_container_replication_failure_percentage_threshold: 5.0
 swift_container_replication_growth_rate_threshold: 10.0
 swift_container_replication_avg_time_threshold: 50.0
 swift_async_pending_failure_percentage_threshold: 5.0
-swift_async_pending_average_threshold: 25.0
+swift_async_pending_average_threshold: 1000.0
 
 # cloud level resource thresholds
 cloud_resource_warning_memory: 80.0
@@ -406,16 +406,18 @@ cinder_backup_checks_list:
   - { name: "cinder_backup_check", group: "cinder_backup" }
 
 swift_checks_list:
-  - { name: "swift_object_server_check", group: "swift_obj" }
   - { name: "swift_account_server_check", group: "swift_acc" }
   - { name: "swift_container_server_check", group: "swift_cont" }
+  - { name: "swift_object_server_check", group: "swift_obj" }
+
+swift_recon_checks_list:
+  - { name: "swift_account_replication_check", group: "swift_proxy" }
+  - { name: "swift_async_check", group: "swift_proxy" }
+  - { name: "swift_container_replication_check", group: "swift_proxy" }
+  - { name: "swift_md5_check", group: "swift_proxy" }
+  - { name: "swift_object_replication_check", group: "swift_proxy" }
   - { name: "swift_proxy_server_check", group: "swift_proxy" }
-  - { name: "swift_md5_check", group: "swift_hosts" }
-  - { name: "swift_quarantine_check", group: "swift_hosts" }
-  - { name: "swift_async_check", group: "swift_hosts" }
-  - { name: "swift_object_replication_check", group: "swift_obj" }
-  - { name: "swift_account_replication_check", group: "swift_acc" }
-  - { name: "swift_container_replication_check", group: "swift_cont" }
+  - { name: "swift_quarantine_check", group: "swift_proxy" }
 
 openstack_service_remote_checks_list:
   - { name: "lb_api_check_cinder", group: "cinder_api" }
