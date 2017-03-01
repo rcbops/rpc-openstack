@@ -16,3 +16,12 @@
 - include: ensure_local_checks.yml
   vars:
     checks: "{{ hp_checks_list }}"
+
+- name: Remove legacy HP checks as they are combined into one now
+  file:
+    path: "/etc/rackspace-monitoring-agent.conf.d/{{ item }}--{{ inventory_hostname }}.yaml"
+    state: absent
+  with_items:
+    - "hp-memory"
+    - "hp-processors"
+    - "hp-vdisk"
