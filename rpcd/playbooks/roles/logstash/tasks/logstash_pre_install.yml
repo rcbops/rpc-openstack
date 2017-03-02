@@ -25,7 +25,6 @@
   delay: 2
   tags:
     - logstash-apt-keys
-    - logstash-pre-install
 
 - name: Add apt repositories
   apt_repository:
@@ -39,4 +38,3 @@
   delay: 2
   tags:
     - logstash-apt-repos
-    - logstash-pre-install
