@@ -15,6 +15,6 @@ alarms      :
         disabled                : {{ (('container_storage_percent_used_critical--' + ansible_hostname) | match(maas_excluded_alarms_regex)) | ternary('true', 'false') }}
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
-            if (metric["container_storage_percent_used_critical"] >= {{ percent_used_critical_threshold }}) {
+            if (metric["container_storage_percent_used_critical"] != 1) {
                 return new AlarmStatus(CRITICAL, "Container storage for {{ ansible_host }} has reached a critical threshold >= {{ percent_used_critical_threshold }} % used.");
             }
