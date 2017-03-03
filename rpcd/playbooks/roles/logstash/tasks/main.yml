@@ -25,6 +25,17 @@
     - always
 
 - include: upgrade_logstash_pre.yml
+  tags:
+    - logstash-upgrade
+
 - include: logstash_pre_install.yml
+  tags:
+    - logstash-install
+
 - include: logstash_install.yml
+  tags:
+    - logstash-install
+
 - include: logstash_post_install.yml
+  tags:
+    - logstash-config

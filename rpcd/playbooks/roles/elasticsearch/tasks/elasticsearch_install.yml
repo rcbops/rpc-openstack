@@ -26,7 +26,6 @@
   with_items: elasticsearch_apt_packages
   tags:
     - elasticsearch-apt-packages
-    - elasticsearch-install
 
 - name: Install pip packages
   pip:
@@ -40,9 +39,10 @@
   with_items: elasticsearch_pip_packages
   tags:
     - elasticsearch-pip-packages
-    - elasticsearch-install
 
-- name: Enable ElasticSearch Service
-  service:
-    name: elasticsearch
-    enabled: yes
+- name: Create /var/lib/elasticsearch
+  file:
+    path: "/var/lib/elasticsearch"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch

@@ -26,4 +26,12 @@
   with_items: logstash_apt_packages
   tags:
     - logstash-apt-packages
-    - logstash-install
+
+- name: Create patterns directory
+  file:
+    name: "/opt/logstash/patterns"
+    owner: "logstash"
+    group: "logstash"
+    state: directory
+  tags:
+    - logstash-patterns

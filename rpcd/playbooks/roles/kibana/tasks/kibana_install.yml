@@ -26,7 +26,6 @@
   with_items: "{{ kibana_apt_packages }}"
   tags:
     - kibana-apt-packages
-    - kibana-install
 
 - name: Install pip packages
   pip:
@@ -40,9 +39,4 @@
   with_items: kibana_pip_packages
   tags:
     - kibana-pip-packages
-    - kibana-install
 
-- name: Enable Kibana Service
-  service:
-    name: kibana
-    enabled: yes

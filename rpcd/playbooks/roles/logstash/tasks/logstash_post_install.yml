@@ -13,16 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create patterns directory
-  file:
-    name: "/opt/logstash/patterns"
-    owner: "logstash"
-    group: "logstash"
-    state: directory
-  tags:
-    - logstash-patterns
-    - logstash-post-install
-
 - name: Logstash Extra Patterns
   template:
     src: "{{ item }}"
@@ -34,7 +24,6 @@
   notify: Restart Logstash
   tags:
     - logstash-patterns
-    - logstash-post-install
 
 - name: Deploy Logstash configuration files
   template:
@@ -101,7 +90,6 @@
   notify: Restart Logstash
   tags:
     - logstash-post-install
-
 
 - name: Enable Logstash Plugins
   command: "/opt/logstash/bin/logstash-plugin install {{ item }}"

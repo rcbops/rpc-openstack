@@ -13,12 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create /var/lib/elasticsearch
-  file:
-    path: "/var/lib/elasticsearch"
-    state: directory
-    owner: elasticsearch
-    group: elasticsearch
+- name: Enable ElasticSearch Service
+  service:
+    name: elasticsearch
+    enabled: yes
 
 - name: Deploy ElasticSearch configuration files
   template:
@@ -30,8 +28,6 @@
     - elasticsearch.yml
     - logging.yml
   notify: Restart ElasticSearch
-  tags:
-    - elasticsearch-post-install
 
 - name: Deploy ElasticSearch service configuration file
   template:
@@ -42,8 +38,6 @@
   with_items:
     - elasticsearch
   notify: Restart ElasticSearch
-  tags:
-    - elasticsearch-post-install
 
 - name: Restart ElasticSearch before proceeding
   meta: flush_handlers
@@ -52,8 +46,6 @@
   wait_for:
     host: "{{ ansible_ssh_host }}"
     port: "9200"
-  tags:
-    - elasticsearch-post-install
 
 - name: Setup the ElasticSearch Curator cron job
   cron:
@@ -63,8 +55,6 @@
     user: "root"
     job: "/usr/local/bin/curator --host {{ hostvars[inventory_hostname]['container_address'] }} delete indices --older-than {{ elasticsearch_prune_days }} --time-unit 'days' --timestring '%Y.%m.%d' --prefix 'logstash'"
     cron_file: "elasticsearch_curator"
-  tags:
-    - elasticsearch-post-install
 
 - name: Get ElasticSearch version
   uri:
@@ -73,7 +63,6 @@
     status_code: 200
   register: escontent
   tags:
-    - elasticsearch-post-install
     - elasticsearch-version
 
 - name: Verify ElasticSearch version
@@ -81,5 +70,4 @@
     msg: "Incorrect version of ElasticSearch {{ escontent.json.version.number }} is installed."
   when: escontent.json.version.number != '2.4.1'
   tags:
-    - elasticsearch-post-install
     - elasticsearch-version

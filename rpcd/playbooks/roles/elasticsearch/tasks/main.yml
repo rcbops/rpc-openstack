@@ -27,10 +27,24 @@
 - include: upgrade_pre_flight.yml
   when:
     - logging_upgrade | bool
+  tags:
+    - elasticsearch-upgrade
+
 - include: upgrade_elasticsearch_pre.yml
   when:
     - logging_upgrade | bool
     - proceed_with_upgrade | bool
+  tags:
+    - elasticsearch-upgrade
+
 - include: elasticsearch_pre_install.yml
+  tags:
+    - elasticsearch-install
+
 - include: elasticsearch_install.yml
+  tags:
+    - elasticsearch-install
+
 - include: elasticsearch_post_install.yml
+  tags:
+    - elasticsearch-config

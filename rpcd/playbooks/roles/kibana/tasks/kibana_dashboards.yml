@@ -19,7 +19,7 @@
     chdir: "/opt/kibana/"
   register: kibana_version
   tags:
-    - kibana-post-install
+    - kibana-package-version
 
 - name: Import Kibana's LS index configuration in ES
   uri:
@@ -39,7 +39,7 @@
     - where: "/config/{{ kibana_version.stdout }}"
       what: '{"defaultIndex" : "logstash-*"}'
   tags:
-    - kibana-post-install
+    - kibana-import
 
 - name: Uploading JSON configuration files
   uri:
@@ -56,5 +56,4 @@
     - "visualization/*.json"
     - "dashboard/*.json"
   tags:
-    - kibana-post-install
     - kibana-rax-dashboard
