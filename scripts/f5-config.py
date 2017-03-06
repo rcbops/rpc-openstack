@@ -265,7 +265,6 @@ POOL_PARTS = {
         'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_NOVA_SPICE_CONSOLE',
         'group': 'nova_console',
         'hosts': [],
-        'ssl_impossible': True,
         'make_public': True,
         'persist': True
     },
@@ -275,7 +274,6 @@ POOL_PARTS = {
         'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_HTTP_NOVA_NOVNC_CONSOLE',
         'group': 'nova_console',
         'hosts': [],
-        'ssl_impossible': True,
         'make_public': True,
         'persist': True
     },
