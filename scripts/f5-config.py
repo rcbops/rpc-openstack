@@ -356,6 +356,13 @@ POOL_PARTS = {
         'mon_type': '/' + PART + '/' + PREFIX_NAME + '_MON_TCP_REPO_GIT',
         'group': 'pkg_repo',
         'hosts': []
+    },
+    'magnum': {
+        'port': 9511,
+        'backend_port': 9511,
+        'mon_type': '/' + PART + '/RPC-MON-EXT-ENDPOINT',
+        'group': 'magnum_all',
+        'hosts': []
     }
 }
 
