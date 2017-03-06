@@ -29,7 +29,15 @@ def venv_wrapper_check():
     """Check if we are running inside the virtualenv wrapper script."""
     # Are we running inside the virtualenv wrapper script?
     parent_process = psutil.Process(os.getpid()).parent
-    if 'run_plugin_in_venv.sh' in ' '.join(parent_process.cmdline):
+
+    # psutil 1.2.1 has a cmdline() method for the parent process object
+    # but the latest psutil does not. We need to handle this carefully.
+    if getattr(parent_process, "cmdline", None) is not None:
+        parent_cmdline = ' '.join(parent_process.cmdline)
+    else:
+        parent_cmdline = ' '.join(parent_process.im_self.cmdline())
+
+    if 'run_plugin_in_venv.sh' in parent_cmdline:
         return parent_process.pid
     else:
         return False
@@ -92,8 +100,14 @@ def check_process_running(process_names, container_name=None):
     cmdlines = []
     for proc in procs:
         try:
-            cmdlines.append(map(os.path.basename, proc.cmdline))
-        except psutil._error.NoSuchProcess:
+            # In psutil 1.2.1, cmdline is an attribute, but in 5.x, it's now
+            # a callable method.
+            cmdline_check = getattr(proc, "cmdline", None)
+            if callable(cmdline_check):
+                cmdlines.append(map(os.path.basename, proc.cmdline()))
+            else:
+                cmdlines.append(map(os.path.basename, proc.cmdline))
+        except Exception:
             pass
 
     # Loop through the process names provided on the command line to see if
