@@ -512,12 +512,14 @@ maas_requires_pip_packages:
 #
 # NOTE: python-novaclient 7.x changes how the list() method works and requires
 #       more work.
+# NOTE: psutil's API completely changed after 1.x, so we're keeping at 1.2.1
+#       until we can get it sorted out.
 maas_pip_packages:
   - cryptography
   - ipaddr
   - lxc-python2
   - lxml
-  - psutil
+  - psutil<=1.2.1
   - rackspace-monitoring-cli
   - python-cinderclient
   - python-glanceclient
