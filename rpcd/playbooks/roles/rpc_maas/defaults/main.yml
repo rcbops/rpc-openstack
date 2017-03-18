@@ -513,7 +513,6 @@ maas_requires_pip_packages:
 maas_pip_packages:
   - cryptography
   - ipaddr
-  - lxc-python2
   - lxml
   - psutil<=1.2.1
   - rackspace-monitoring-cli
@@ -528,6 +527,12 @@ maas_pip_packages:
   - requests
   - swift
   - waxeye
+
+#
+# maas_pip_container_packages: install these packages only on hosts with containers
+#
+maas_pip_container_packages:
+  - lxc-python2
 
 maas_source_plugin_dir: plugins/
 
