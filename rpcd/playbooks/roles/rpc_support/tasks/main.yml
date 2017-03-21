@@ -101,3 +101,7 @@
 
 - include: create_default_flavors.yml
   when:  inventory_hostname == groups['utility'][0]
+
+- include: sos.yml
+  when:
+    - inventory_hostname in groups['hosts']
