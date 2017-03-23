@@ -21,7 +21,9 @@ if [[ -z "$VIRTUAL_ENV" ]] ; then
     echo "WARNING: Not running hacking inside a virtual environment."
 fi
 
+ansible-galaxy install -r ansible-role-requirements.yml --force -p rpcd/playbooks/roles
 pushd rpcd/playbooks/
+
   echo "Running ansible-playbook syntax check"
   # Do a basic syntax check on all playbooks and roles.
   ansible-playbook -i 'localhost,' --syntax-check *.yml --list-tasks
