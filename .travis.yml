@@ -27,3 +27,12 @@ matrix:
       env: TOXENV=release-script
 
 sudo: false
+
+# By default travis clones the rpc-openstack repo
+# with --depth set to 50. However, reno typically
+# needs more (or all) of the history to properly
+# traverse the commit history and generate release
+# notes. Setting depth here to something
+# OVER 9000!!!!!
+git:
+  depth: 9001
