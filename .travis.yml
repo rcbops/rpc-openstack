@@ -3,6 +3,17 @@ language: python
 before_script:
 - pip install 'tox!=2.4.0,>=2.3'
 
+# By default travis clones the rpc-openstack repo
+# with --depth set to 50, creating a shallow clone. 
+# However, reno typically needs more (or all) of the
+# history to properly traverse the commit history
+# and generate release notes. This section deletes
+# the shallow clone that travis creates, then clones
+# the full repository
+install:
+  - git clone --recursive https://github.com/rcbops/rpc-openstack.git rcbops/rpc-openstack
+  - cd rcbops/rpc-openstack
+
 script: tox
 
 # Send notifications to #rpc-github in Slack
@@ -27,12 +38,3 @@ matrix:
       env: TOXENV=release-script
 
 sudo: false
-
-# By default travis clones the rpc-openstack repo
-# with --depth set to 50. However, reno typically
-# needs more (or all) of the history to properly
-# traverse the commit history and generate release
-# notes. Setting depth here to something
-# OVER 9000!!!!!
-git:
-  depth: 9001
