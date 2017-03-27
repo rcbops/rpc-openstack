@@ -292,12 +292,6 @@ filebeat_logging_paths:
     - infrastructure
     - logging
   - paths:
-    - '/var/log/logstash/*.log'
-    tags:
-    - logstash
-    - infrastructure
-    - logging
-  - paths:
     - '/var/log/ceph/ceph-mon.*.log'
     multiline:
       pattern: '^[a-z_]* '
