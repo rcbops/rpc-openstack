@@ -450,6 +450,13 @@ def main():
     if proceed != 'YES':
         return
 
+    if args.github_token
+        token = args.github_token
+    elif os.environ['RPC_GITHUB_TOKEN']:
+        token = os.environ['RPC_GITHUB_TOKEN']
+    else:
+        return
+
     rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=True)
 
     if args.existing_release:
@@ -460,7 +467,7 @@ def main():
             tag_str=str(args.tag), commit=args.commit, message=tag_message
         )
 
-    release = Release(rpco_tag, github_token=args.github_token)
+    release = Release(rpco_tag, github_token=token)
 
     if not args.existing_release:
         release.publish_release()
@@ -468,7 +475,7 @@ def main():
     if not release.pre_release:
         docs_repo = Repo(url=args.docs_repo_url, cache_dir=args.cache_dir,
                          bare=False)
-        request_doc_update(args.github_token, docs_repo, release)
+        request_doc_update(token, docs_repo, release)
 
 
 if __name__ == '__main__':
