@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO(Cloudnull): This check should be extended to Ubuntu Xenial in the future.
 - name: Install local checks
   template:
     src: "container_storage_checks.yaml.j2"
@@ -20,4 +21,5 @@
     owner: "root"
     group: "root"
     mode: "0644"
+  when: ansible_distribution_version == '14.04'
   delegate_to: "{{ physical_host }}"
