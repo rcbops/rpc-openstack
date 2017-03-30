@@ -20,6 +20,7 @@ import errno
 import os
 import re
 import sys
+import logging
 
 import github3
 import sh
@@ -240,7 +241,7 @@ class Release(object):
         return self.release_date + datetime.timedelta(days=14)
 
     def _generate_release_diff(self):
-        print("Generating release diff...")
+        logging.info("Generating release diff...")
         diff = sh.rpc_differ(self.tag.previous,
                              self.tag,
                              "--rpc-repo-url", self.repo.url,
@@ -302,6 +303,9 @@ class Release(object):
 
 
 def update_repo_with_new_ver_number(repo, branch, new_version_number):
+    ''' Update the future_tag into repo, then git add, commit and push.
+    '''
+
     repo.git.checkout(branch)
     repo.git.pull(repo.remote, branch)
     for release_file in RELEASE_FILES:
@@ -495,32 +499,6 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
 
-    if args.tag.rc == 1 or (not args.tag.rc and not args.tag.patch):
-        return (
-            'The script currently only supports patch releases and release '
-            'candidates after the initial one.'
-        )
-
-    proceed_text = (
-        'WARNING - Running this script will:\n'
-        '  - add a tag to %s\n'
-        '  - update version number by pushing a commit to %s\n'
-        '  - submit an issue/pull-request to %s\n'
-        'If you still wish to proceed type "YES": '
-    ) % (args.repo_url, args.repo_url,  args.docs_repo_url)
-
-    proceed = raw_input(proceed_text)
-
-    if proceed != 'YES':
-        return
-
-    if args.github_token:
-        token = args.github_token
-    elif os.environ['RPC_GITHUB_TOKEN']:
-        token = os.environ['RPC_GITHUB_TOKEN']
-    else:
-        return
-
     if args.branch:
         branch = str(args.branch)
     else:
@@ -532,7 +510,27 @@ def main():
                         "/*/ { print $2; } ")
                 ).strip()
         except:
-            raise Exception("Can't discover branch")
+            return "The current branch cannot be discovered."
+
+    proceed_text = (
+        'WARNING - Running this script will:\n'
+        '  - add a tag to %s\n'
+        '  - update branch %s with new version number\n'
+        '  - submit an issue/pull-request to %s\n'
+        'If you still wish to proceed type "YES": '
+    ) % (args.repo_url, branch,  args.docs_repo_url)
+
+    proceed = raw_input(proceed_text)
+
+    if proceed != 'YES':
+        return
+
+    if args.github_token:
+        token = args.github_token
+    elif os.environ.get('RPC_GITHUB_TOKEN', False):
+        token = os.environ['RPC_GITHUB_TOKEN']
+    else:
+        return "Token neither found in the CLI nor in env vars"
 
     # Intantiate a repo.
     # Do not use bare repo because changes has to be pushed into it.
@@ -549,7 +547,6 @@ def main():
 
     release = Release(rpco_tag, github_token=token)
 
-    # Guess next cycle version number
     if not args.future_tag:
         future_tag = release.tag.next_revision()
     else:
@@ -557,10 +554,10 @@ def main():
 
     if not args.existing_release:
         if not args.do_not_publish_release:
-            print("Publishing github release...")
+            logging.info("Publishing github release...")
             release.publish_release()
         if not args.do_not_update_milestones:
-            print("Updating github milestones...")
+            logging.info("Updating github milestones...")
             release.update_milestones(next_version=future_tag)
 
     if (not args.do_not_file_docs_issue and
@@ -569,11 +566,9 @@ def main():
                          bare=False)
         request_doc_update(token, docs_repo, release)
 
-    # Update the future_tag into repo
-    # Then git add, commit and push.
     if not args.do_not_change_files_with_release_version:
-        print("The new dev cycle for branch {} will be: {}"
-              .format(branch, str(future_tag)))
+        logging.info("The new dev cycle for branch {} will be: {}"
+                     .format(branch, str(future_tag)))
         update_repo_with_new_ver_number(rpco_repo, branch,
                                         str(future_tag))
 

@@ -37,6 +37,7 @@
      ```
     git push REMOTE --delete OLD_BRANCH
     ```
+- [ ] Edit the rpc_release version number in ```rpcd/playbooks/group_vars/all.yml``` and ```rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml```, commit, and push. This is to prepare next development cycle.
 - [ ] If creating or deleting a branch, update the [issue template](https://github.com/rcbops/rpc-openstack/blob/master/.github/ISSUE_TEMPLATE.md) to include it in the list.
 - [ ] Update the [GitHub release notes](https://github.com/rcbops/rpc-openstack/releases) with output from rpc-differ, remember to tick pre-release if the tag is for a release candidate.
 
@@ -68,7 +69,7 @@ If your environment variables contain RPC_GITHUB_TOKEN, you can even run it like
 ```
 
 ## Other versions
-The guess work currently done for patch and rc>1 isn't applicable for other versions.
+The calculation of next tag currently only work for patch and rc>1.
 In certain cases, you'll want to specify the version number that will be used
 for the next development cycle (Remember you'd still need to be in the proper branch)
 You may issue this:
