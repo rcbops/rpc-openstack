@@ -268,17 +268,19 @@ class Release(object):
             else:
                 raise
 
-    def update_milestones(self):
-        """Create GitHub release page for tag"""
+    def update_milestones(self, next_version=None):
+        """Create GitHub milestone for next tag"""
+        if not next_version:
+            next_version = self.tag.next_revision
         try:
-            self.gh.create_milestone(
-                title=str(self.tag.next_revision),
+            milestone_rc = self.gh.create_milestone(
+                title=str(next_version),
                 due_on=self.next_release_date.strftime('%Y-%m-%dT%H:%M:%SZ')
             )
         except github3.exceptions.UnprocessableEntity:
             next_milestone = None
             for milestone in self.gh.milestones():
-                if milestone.title == self.tag.next_revision:
+                if milestone.title == next_version:
                     next_milestone = milestone
                     break
             if next_milestone:
@@ -287,6 +289,12 @@ class Release(object):
                 )
             else:
                 raise
+        else:
+            if not milestone_rc:
+                raise Exception(
+                    'None object Returned (Probably a 404 due to auth issues)',
+                    'cannot create milestone'
+                )
         for milestone in self.gh.milestones():
             if milestone.title == self.tag:
                 milestone.update(state='closed')
@@ -541,13 +549,19 @@ def main():
 
     release = Release(rpco_tag, github_token=token)
 
+    # Guess next cycle version number
+    if not args.future_tag:
+        future_tag = release.tag.next_revision()
+    else:
+        future_tag = args.future_tag
+
     if not args.existing_release:
         if not args.do_not_publish_release:
             print("Publishing github release...")
             release.publish_release()
         if not args.do_not_update_milestones:
             print("Updating github milestones...")
-            release.update_milestones()
+            release.update_milestones(next_version=future_tag)
 
     if (not args.do_not_file_docs_issue and
             not release.pre_release):
@@ -555,19 +569,13 @@ def main():
                          bare=False)
         request_doc_update(token, docs_repo, release)
 
-    # Guess next cycle version number
-    if not args.future_tag:
-        future_tag = str(release.tag.next_revision())
-    else:
-        future_tag = str(args.future_tag)
-
     # Update the future_tag into repo
     # Then git add, commit and push.
     if not args.do_not_change_files_with_release_version:
         print("The new dev cycle for branch {} will be: {}"
-              .format(branch, future_tag))
+              .format(branch, str(future_tag)))
         update_repo_with_new_ver_number(rpco_repo, branch,
-                                        future_tag)
+                                        str(future_tag))
 
 if __name__ == '__main__':
     sys.exit(main())
