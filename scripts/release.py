@@ -240,11 +240,12 @@ class Release(object):
         return self.release_date + datetime.timedelta(days=14)
 
     def _generate_release_diff(self):
+        print("Generating release diff...")
         diff = sh.rpc_differ(self.tag.previous,
                              self.tag,
                              "--rpc-repo-url", self.repo.url,
                              update=True
-                            ).stdout
+                             ).stdout
         return sh.pandoc(
             '--from', 'rst',
             '--to', 'markdown_github',
@@ -542,8 +543,10 @@ def main():
 
     if not args.existing_release:
         if not args.do_not_publish_release:
+            print("Publishing github release...")
             release.publish_release()
         if not args.do_not_update_milestones:
+            print("Updating github milestones...")
             release.update_milestones()
 
     if (not args.do_not_file_docs_issue and
