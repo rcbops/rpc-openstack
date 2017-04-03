@@ -47,6 +47,35 @@ From the deployment host, install tempest into the utility container:
     cd /opt/rpc-openstack/openstack-ansible/playbooks
     openstack-ansible os-tempest-install.yml
 
+## Configure tempest
+
+Refstack now requires pre-provisioned credentials and the corresponding
+accounts file to funtion. Create an accounts file in ~/.tempest/etc/ called
+accounts.yaml with the following content:
+
+```
+- username: 'admin'
+  tenant_name: 'admin'
+  password: 'yourpasswordhere'
+  resources:
+    network: 'private'
+    router: 'router'
+```
+
+Next, change add the following line to the ``[auth]`` section in
+``~/.tempest/etc/tempest.conf``:
+
+```
+test_accounts_file=~/.tempest/etc/accounts.yaml
+```
+Finally, in the same file, modify ``use_dynamic_credentials`` by setting it
+to ``False``:
+```
+use_dynamic_credentials = False
+```
+
+For more information please see: https://docs.openstack.org/developer/tempest/configuration.html#pre-provisioned-credentials
+
 ## Run RefStack
 
 Go back to the utility container and run `refstack-client`:
@@ -54,17 +83,17 @@ Go back to the utility container and run `refstack-client`:
     cd /root/refstack-client
     source .venv/bin/activate
     ./refstack-client test \
-      -c /opt/tempest_untagged/etc/tempest.conf \
+      -c ~/.tempest/etc/tempest.conf \
       --upload \
-      --test-list 2016.08-test-list.txt \
+      --test-list 2017.01-test-list.txt \
       -v | tee -a reflog.txt
 
 It will take 20-40 minutes to run, depending on the speed of your server(s).
 When the run is complete, you will see a URL printed at the end of the output.
 This URL contains the detailed results for your RefStack run and the results
-must show 100% compliance.
+must show 100% compliance for required tests.
 
-As an example, [this is our Mitaka (13.0) report](https://refstack.openstack.org/#/results/cc55dfe3-82fc-407b-b785-145198cd8607).
+As an example, [this is our Newton (14.0) report](https://refstack.openstack.org/#/results/6a4a6cb4-13ba-42d2-8789-f456060370ca)
 
 ## Troubleshooting
 
