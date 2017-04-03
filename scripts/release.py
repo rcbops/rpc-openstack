@@ -20,6 +20,7 @@ import errno
 import os
 import re
 import sys
+import yaml
 import logging
 
 import github3
@@ -302,6 +303,22 @@ class Release(object):
                 break
 
 
+def chk_devel_version(repo, branch, expected_release):
+    repo.git.checkout(branch)
+    repo.git.pull(repo.remote, branch)
+    for release_file in RELEASE_FILES:
+        filename = os.path.join(repo.path, release_file)
+        with open(filename, 'r') as f:
+            content = f.read()
+        current_release = yaml.load(content)['rpc_release']
+        version_check = os.getenv('RPC_VERSION_CHECK', True)
+        if (current_release != expected_release and
+                version_check not in [ 'False', 'no', 'FALSE' ]):
+            raise Exception('{} in {} does not match expected version {}'
+                            .format(current_release, filename,
+                                    expected_release))
+
+
 def update_repo_with_new_ver_number(repo, branch, new_version_number):
     ''' Update the future_tag into repo, then git add, commit and push.
     '''
@@ -532,10 +549,13 @@ def main():
     else:
         return "Token neither found in the CLI nor in env vars"
 
-    # Intantiate a repo.
+    # Instantiate a repo.
     # Do not use bare repo because changes has to be pushed into it.
     # If you had a bare repo present in your cache dir, please delete it.
     rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=False)
+
+    # Ensure the proper version of the tag before attempting to release it
+    chk_devel_version(rpco_repo, branch, str(args.tag))
 
     if args.existing_release:
         rpco_tag = rpco_repo.tags[rpco_repo.tags.index(args.tag)]
@@ -544,7 +564,6 @@ def main():
         rpco_tag = rpco_repo.create_tag(
             tag_str=str(args.tag), commit=args.commit, message=tag_message
         )
-
     release = Release(rpco_tag, github_token=token)
 
     if not args.future_tag:
