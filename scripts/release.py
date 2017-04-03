@@ -242,7 +242,7 @@ class Release(object):
         return self.release_date + datetime.timedelta(days=14)
 
     def _generate_release_diff(self):
-        logging.info("Generating release diff...")
+        logging.warning("Generating release diff...")
         diff = sh.rpc_differ(self.tag.previous,
                              self.tag,
                              "--rpc-repo-url", self.repo.url,
@@ -313,7 +313,7 @@ def chk_devel_version(repo, branch, expected_release):
         current_release = yaml.load(content)['rpc_release']
         version_check = os.getenv('RPC_VERSION_CHECK', True)
         if (current_release != expected_release and
-                version_check not in [ 'False', 'no', 'FALSE' ]):
+                version_check not in ['False', 'no', 'FALSE', 'NO']):
             raise Exception('{} in {} does not match expected version {}'
                             .format(current_release, filename,
                                     expected_release))
@@ -573,10 +573,10 @@ def main():
 
     if not args.existing_release:
         if not args.do_not_publish_release:
-            logging.info("Publishing github release...")
+            logging.warning("Publishing github release...")
             release.publish_release()
         if not args.do_not_update_milestones:
-            logging.info("Updating github milestones...")
+            logging.warning("Updating github milestones...")
             release.update_milestones(next_version=future_tag)
 
     if (not args.do_not_file_docs_issue and
@@ -586,8 +586,8 @@ def main():
         request_doc_update(token, docs_repo, release)
 
     if not args.do_not_change_files_with_release_version:
-        logging.info("The new dev cycle for branch {} will be: {}"
-                     .format(branch, str(future_tag)))
+        logging.warning("The new dev cycle for branch {} will be: {}"
+                        .format(branch, str(future_tag)))
         update_repo_with_new_ver_number(rpco_repo, branch,
                                         str(future_tag))
 
