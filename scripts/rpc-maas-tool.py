@@ -462,8 +462,9 @@ class RpcMassCli(object):
                 try:
                     result = self.rpcm.conn.test_existing_check(check)
                 except rackspace.RackspaceMonitoringValidationError as e:
-                    validation_error = (" Validation Error: %(s):"
-                                        % {'e': e.message})
+                    validation_error = " Validation Error: {s}:".format(
+                        s=e.message
+                    )
                     break
 
                 status = result[0]['status']
