@@ -25,7 +25,7 @@ import logging
 
 import github3
 import sh
-from sh import git, awk
+from sh import git
 
 RELEASE_FILES = [
     'rpcd/playbooks/group_vars/all.yml',
@@ -462,6 +462,38 @@ def request_doc_update(github_token, repo, release):
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Publish RPCO tag.')
+    # Mandatory args
+    parser.add_argument(
+        '--tag', type=Tag, required=True, help='Name of new tag.'
+    )
+    existing = parser.add_mutually_exclusive_group(required=True)
+    existing.add_argument(
+        '--commit', help='Reference to the commit to tag.'
+    )
+    existing.add_argument(
+        '--existing-release', default=False, action='store_true'
+    )
+    # Recommended args
+    parser.add_argument(
+        '--future-tag', type=Tag,
+        help='The version number for the next cycle'
+    )
+    # Convenience args that defaults to ENV vars
+    parser.add_argument(
+        '--branch', help='Branch to update'
+    )
+    parser.add_argument('--github-token')
+    parser.add_argument(
+        '--rpc-version-check', action='store',
+        choices=['yes', 'no'],
+        help='Check rpc version in tree before doing anything'
+    )
+    # Optional args
+    parser.add_argument(
+        '--delete-cache-dir',
+        help='Remove directory where cached data is stored.',
+        default=True, action='store_true',
+    )
     parser.add_argument(
         '--cache-dir', help='Directory where cached data will be stored.',
         type=os.path.expanduser, default='~/.rpco-release-tool',
@@ -474,16 +506,7 @@ def build_parser():
         '--docs-repo-url', help='URL of docs repo to update.',
         default='ssh://git@github.com/rackerlabs/docs-rpc.git',
     )
-    parser.add_argument(
-        '--branch', help='Branch to update'
-    )
-    parser.add_argument(
-        '--tag', type=Tag, required=True, help='Name of new tag.'
-    )
-    parser.add_argument(
-        '--future-tag', type=Tag,
-        help='The version number for the next cycle'
-    )
+    # Workflow args
     parser.add_argument(
         '--do-not-publish-release', default=False, action='store_true',
         help='Do not publish a github release for this release'
@@ -501,81 +524,80 @@ def build_parser():
         action='store_true',
         help='Do not update files with the new rpc_release: "future tag"'
     )
-    parser.add_argument(
-        '--rpc-version-check', default="True",
-        help='Check rpc version in tree before doing anything'
-    )
-    existing = parser.add_mutually_exclusive_group(required=True)
-    existing.add_argument(
-        '--commit', help='Reference to the commit to tag.'
-    )
-    existing.add_argument(
-        '--existing-release', default=False, action='store_true'
-    )
-    parser.add_argument('--github-token')
     return parser
+
+
+def validate_args(args):
+    ''' Ensure the args are following expectations.
+    '''
+    # Store tag as a string on top of as a tag object
+    args.tag_str = str(args.tag)
+    # Future_tag must be str or None
+    if args.future_tag:
+        args.future_tag_str = str(args.future_tag)
+    # args.branch is always a string, discovered or not
+    if not args.branch:
+        branches = (b.strip() for b in
+                    git("branch", "--no-color").stdout.split("\n"))
+        for branch in branches:
+            if branch.startswith('*'):
+                args.branch = branch[2:]
+                break
+        else:
+            raise SystemExit("The current branch cannot be discovered")
+    # Github token must be in CLI or env var
+    if not args.github_token:
+        token = os.environ.get('RPC_GITHUB_TOKEN', False)
+        if token:
+            args.github_token = token
+        else:
+            raise SystemExit("Token neither found in the CLI nor in env vars")
+    # RPC version should be in CLI or env var, as a str(yes|no), default yes.
+    if args.rpc_version_check:
+        chk_state = args.rpc_version_check
+    else:
+        chk_state = os.environ.get('RPC_VERSION_CHECK', 'yes')
+    args.version_check = True if chk_state == 'yes' else False
+    return args
 
 
 def main():
     logging.getLogger().setLevel(logging.INFO)
-
     parser = build_parser()
-    args = parser.parse_args()
-
-    if args.branch:
-        branch = str(args.branch)
-    else:
-        # Discover branch from current repository
-        try:
-            branch = str(
-                    awk(
-                        git("branch", "--no-color"),
-                        "/*/ { print $2; } ")
-                ).strip()
-        except:
-            return "The current branch cannot be discovered."
+    cli_args = parser.parse_args()
+    args = validate_args(cli_args)
 
     proceed_text = (
         'WARNING - Running this script will:\n'
+        '  - Delete your cache folder (%s)\n'
         '  - add a tag to %s\n'
         '  - update branch %s with new version number\n'
         '  - submit an issue/pull-request to %s\n'
         'If you still wish to proceed type "YES": '
-    ) % (args.repo_url, branch,  args.docs_repo_url)
+    ) % (args.cache_dir, args.repo_url, args.branch, args.docs_repo_url)
 
     proceed = raw_input(proceed_text)
 
     if proceed != 'YES':
         return
 
-    # Get env var/cli var for github token
-    if args.github_token:
-        token = args.github_token
-    elif os.environ.get('RPC_GITHUB_TOKEN', False):
-        token = os.environ['RPC_GITHUB_TOKEN']
-    else:
-        return "Token neither found in the CLI nor in env vars"
-
-    # Get env var/cli var for version checking
-    chk_ver = os.environ.get('RPC_VERSION_CHECK', args.rpc_version_check)
-
     # Instantiate a repo.
-    # Do not use bare repo because changes has to be pushed into it.
-    # If you had a bare repo present in your cache dir, please delete it.
+    if args.delete_cache_dir:
+        sh.rm(args.cache_dir, '-rf')
     rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=False)
 
-    if chk_ver.lower() != 'false':
-        chk_devel_version(rpco_repo, branch, str(args.tag))
+    if args.version_check:
+        chk_devel_version(rpco_repo, args.branch, args.tag_str)
 
     if args.existing_release:
         rpco_tag = rpco_repo.tags[rpco_repo.tags.index(args.tag)]
     else:
         tag_message = 'Release %s' % args.tag
         rpco_tag = rpco_repo.create_tag(
-            tag_str=str(args.tag), commit=args.commit, message=tag_message
+            tag_str=args.tag_str, commit=args.commit, message=tag_message
         )
     release = Release(rpco_tag,
-                      github_token=token,
+                      github_token=args.github_token,
                       next_release=args.future_tag)
 
     if not args.existing_release:
@@ -594,9 +616,9 @@ def main():
 
     if not args.do_not_change_files_with_release_version:
         logging.info("The new dev cycle for branch {} will be: {}"
-                     .format(branch, str(future_tag)))
-        update_repo_with_new_ver_number(rpco_repo, branch,
-                                        str(future_tag))
+                     .format(args.branch, release.next_release))
+        update_repo_with_new_ver_number(rpco_repo, args.branch,
+                                        args.future_tag_str)
 
 if __name__ == '__main__':
     sys.exit(main())
