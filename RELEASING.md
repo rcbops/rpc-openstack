@@ -69,7 +69,7 @@ If your environment variables contain RPC_GITHUB_TOKEN, you can even run it like
 ```
 
 ## Other versions
-The calculation of next tag currently only work for patch and rc>1.
+The calculation of next tag currently only work for patch releases and rc>1.
 In certain cases, you'll want to specify the version number that will be used
 for the next development cycle (Remember you'd still need to be in the proper branch)
 You may issue this:
@@ -88,6 +88,12 @@ branch still needs to be created on the remote beforehand.
 
 On top of it, if you want to skip certain parts of the workflow, you can use
 the --do-not-<worfklow part> in the CLI to skip them.
+
+The workflow parts are:
+* --do-not-publish-release: Do not publish a github release for this tag
+* --do-not-update-milestones: Do not update github milestones
+* --do-not-file-docs-issue: Do not create a docs issue for this release
+  --do-not-change-files-with-release-version: Do not update code intree.
 
 Example:
 ```
