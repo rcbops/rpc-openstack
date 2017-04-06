@@ -1,58 +1,37 @@
-#### Do NOT include any confidential information, this issue will be created on a public repo
-#### This section is completed by the issue reporter
-##### On which version(s) do you encounter this issue?
-###### Please provide the output to 'git describe --all' for  all deployments where you have confirmed it occurs.
+> **THIS IS A PUBLIC FACING ISSUE.**
+>
+> Do not include private or confidential information in this issue.
 
-##### What type of issue is this? Please tick the appropriate box.
-- [ ] bug - existing functionality that does not work for you as documented
-- [ ] feature - new functionality that you would like to see added
+## Is this a feature or a bug?
 
-##### What is the expected behavior?
+- [ ] Feature _(request for enhancement, new functionality)_
+- [ ] Bug _(something is broken)_
 
-##### What is actually happening?
-
-##### What were you attempting to do when you encountered this error (give as much detail as possible)? 
-
-##### How can we reproduce this issue?
-
-##### How can we verify your issue is addressed?
-
-##### If you are using or know of a workaround please describe the necessary steps?
-
-##### What is your evaluation on the importance of this issue, and why?
-
-----------------------------------------------------------------------------------------------------------------------------
-#### This section is completed during the issue resolution process. If you are reporting an issue, please do not modify the section below.
-##### Which branches are impacted by this issue?
-###### Remove branches that are not impacted.
-###### For each pull request, update the branch line to reference it.
+## Which version of rpc-openstack does this issue relate to?
 - [ ] master
 - [ ] newton-14.0
 - [ ] mitaka-13.1
 - [ ] liberty-12.2
 
-##### Upgrade impact. Consider the impact on moving between major, minor and patch releases.
-- [ ] This change does not impact upgrades
-- [ ] This change addresses a potential upgrade impact
-- [ ] The upgrade impact is being tracked by another issue.
+Run `git log --pretty=oneline | head -n 1` and provide the output below between
+the backtick lines:
 
-The issue tracking the upgrade impact is:
+```
 
-##### Testing impact
-- [ ] An issue/pull-request has been create or exists to track the testing gap, and is referenced below
-- [ ] This change includes additional testing
-- [ ] This change is tested by the existing setup
+```
 
-Additional testing links:
+## What happened?
 
-##### Release note
-- [ ] This change includes a release note.
-- [ ] This change does not require a release note.
+> Example: I can't snapshot a cinder volume on an AIO RPC-O deployment.
 
-##### Doc Impact
-##### Does your change require documentation?
-- [ ] Yes, and I submitted an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues "Docs issues")
-- [ ] Yes, and I contributed a documentation patch to [docs-rpc](https://github.com/rackerlabs/docs-rpc "docs-rpc")
-- [ ] No documentation required for this change
+## What were you doing when it happened?
 
-Additional documentation links (please add links if you have ticked yes):
+> Example: I have an existing cinder volume and I get this error when I try
+> to snapshot it using openstackclient:
+>
+>      $ openstack --os-cloud=mycloud volume snapshot list
+>      publicURL endpoint for volumev2 service in RegionOne region not found
+
+## What did you expect to happen instead of what actually happened?
+
+> Example: I expected a cinder volume snapshot to be successfully created.
