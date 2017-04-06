@@ -612,7 +612,7 @@ def main():
             not release.pre_release):
         docs_repo = Repo(url=args.docs_repo_url, cache_dir=args.cache_dir,
                          bare=False)
-        request_doc_update(token, docs_repo, release)
+        request_doc_update(args.github_token, docs_repo, release)
 
     if not args.do_not_change_files_with_release_version:
         logging.info("The new dev cycle for branch {} will be: {}"
