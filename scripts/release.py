@@ -293,12 +293,8 @@ class Release(object):
                 )
             else:
                 raise
-        else:
-            if not milestone_rc:
-                raise Exception(
-                    'None object Returned (Probably a 404 due to auth issues)',
-                    'cannot create milestone'
-                )
+        if not milestone_rc:
+            raise SystemExit("Milestone was not created")
         for milestone in self.gh.milestones():
             if milestone.title == self.tag:
                 milestone.update(state='closed')
