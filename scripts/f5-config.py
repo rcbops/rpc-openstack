@@ -415,6 +415,8 @@ POOL_PARTS = {
         'backend_port': 9511,
         'mon_type': PART + 'RPC-MON-EXT-ENDPOINT',
         'group': 'magnum_all',
+        'make_public': True,
+        'x-forwarded-proto': True,
         'hosts': []
     }
 }
