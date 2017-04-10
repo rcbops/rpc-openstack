@@ -22,6 +22,7 @@ import re
 import sys
 import yaml
 import logging
+import shutil
 
 import github3
 import sh
@@ -528,9 +529,6 @@ def validate_args(args):
     '''
     # Store tag as a string on top of as a tag object
     args.tag_str = str(args.tag)
-    # Future_tag must be str or None
-    if args.future_tag:
-        args.future_tag_str = str(args.future_tag)
     # args.branch is always a string, discovered or not
     if not args.branch:
         branches = (b.strip() for b in
@@ -553,7 +551,7 @@ def validate_args(args):
         chk_state = args.rpc_version_check
     else:
         chk_state = os.environ.get('RPC_VERSION_CHECK', 'yes')
-    args.version_check = True if chk_state == 'yes' else False
+    args.version_check = True if chk_state != 'no' else False
     return args
 
 
@@ -579,7 +577,7 @@ def main():
 
     # Instantiate a repo.
     if args.delete_cache_dir:
-        sh.rm(args.cache_dir, '-rf')
+        shutil.rmtree(args.cache_dir, ignore_errors=True)
     rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=False)
 
     if args.version_check:
@@ -614,7 +612,7 @@ def main():
         logging.info("The new dev cycle for branch {} will be: {}"
                      .format(args.branch, release.next_release))
         update_repo_with_new_ver_number(rpco_repo, args.branch,
-                                        args.future_tag_str)
+                                        str(release.next_release))
 
 if __name__ == '__main__':
     sys.exit(main())
