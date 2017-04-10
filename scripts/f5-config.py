@@ -62,7 +62,7 @@ MONITORS = [
     r' rpc\r\n\r\n" }',
     r'create ltm monitor http ' + PART + PREFIX_NAME + '_MON_HTTP_MAGNUM { defaults-from'
     r' http destination *:9511 recv "200 OK" send "HEAD /v1 HTTP/1.1\r\nHost:'
-    r' rpc\r\n\r\n" }'
+    r' rpc\r\n\r\n" }',
     r'create ltm monitor http ' + PART + PREFIX_NAME + '_MON_HTTP_NOVA_API_METADATA {'
     r' defaults-from http destination *:8775 recv "200 OK" send "HEAD /'
     r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
