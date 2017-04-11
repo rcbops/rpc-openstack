@@ -150,3 +150,7 @@ secure_cluster: true
 # List of secure flags to set on for a pool (options for the list are nodelete, nopgchange, nosizechange - prevents deletion, pg from changing and size from changing respectively).
 secure_cluster_flags:
   - nodelete
+
+# this variable is required for ceph.ceph-common to function properly as our ceph playbooks
+# are not suppported by Ansible 2.1.5
+check_firewall: False
