@@ -22,8 +22,7 @@
   pip:
     name: "{{ item }}"
     state: latest
-  with_items: holland_requires_dependencies
-  when: holland_requires_dependencies is defined
+  with_items: "{{ holland_requires_dependencies | default([]) }}"
 
 - name: Install packages required by holland
   apt:
@@ -31,19 +30,17 @@
     state: present
     update_cache: yes
     cache_valid_time: 600
-  with_items: "{{ holland_packages }}"
-  when: holland_packages is defined
+  with_items: "{{ holland_packages | default([]) }}"
 
 - name: Install pip dependencies
   pip:
     name: "{{ item }}"
     state: latest
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
-    extra_args: "{{ pip_install_options|default('') }}"
-  with_items: "{{ holland_pip_dependencies }}"
-  when: holland_pip_dependencies is defined
+    extra_args: "{{ pip_install_options | default('') }}"
+  with_items: "{{ holland_pip_dependencies | default([]) }}"
   register: pip_install
-  until: pip_install|success
+  until: pip_install | success
   retries: 3
 
 - name: Get package from git
@@ -53,7 +50,7 @@
     version: "{{ holland_git_install_branch }}"
   register: git_clone
   ignore_errors: yes
-  until: git_clone|success
+  until: git_clone | success
   retries: 5
 
 - name: Install service source
@@ -63,7 +60,7 @@
     virtualenv: "{{ holland_venv_enabled | bool | ternary(holland_venv, omit) }}"
     extra_args: "{{ pip_install_options|default('') }}"
   register: pip_install
-  until: pip_install|success
+  until: pip_install | success
   retries: 5
   async: 1800
   delay: 5
@@ -78,7 +75,7 @@
   when: holland_git_dest is defined and holland_git_repo_plugins is defined
   with_items: "{{ holland_git_repo_plugins }}"
   register: pip_install
-  until: pip_install|success
+  until: pip_install | success
   retries: 5
   delay: 10
   tags:

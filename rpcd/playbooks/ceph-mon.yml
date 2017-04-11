@@ -15,7 +15,6 @@
 
 - name: Deploy mons
   hosts: mons
-  user: root
   max_fail_percentage: 0
   gather_facts: True
   pre_tasks:
@@ -25,6 +24,7 @@
         path: "/var/lib/ceph/"
       register: container_ceph_dir
       ignore_errors: True
+    # TODO(evrardjp): Rewrite this for ansible 2.0
     - name: Checking if the ceph folder is a bind mount
       shell: egrep 'lxc.mount.entry.*/openstack/{{ inventory_hostname }}.*ceph.*bind' /var/lib/lxc/{{ inventory_hostname }}/config
       ignore_errors: True
@@ -66,11 +66,10 @@
   roles:
     - ceph.ceph-mon
   vars:
-    is_metal: "{{ properties.is_metal|default(false) }}"
+    is_metal: "{{ properties.is_metal | default(False) }}"
 
 - name: Remove rbd pool
   hosts: mons[0]
-  user: root
   tasks:
     - name: Check if rbd pool exists and is empty
       shell: rados -p rbd df | egrep '^rbd( +0){9}$'

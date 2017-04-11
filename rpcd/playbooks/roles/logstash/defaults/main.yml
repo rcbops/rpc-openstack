@@ -18,11 +18,13 @@ logstash_apt_repo_url: "http://packages.elastic.co/logstash/2.3/debian"
 
 # the apt repository to use for installing logstash from
 logstash_apt_repos:
-  - { repo: "deb {{ logstash_apt_repo_url }} stable main", state: "present" }
+  - repo: "deb {{ logstash_apt_repo_url }} stable main"
+    state: "present"
 
 # the apt repository key url
 logstash_apt_keys:
-  - { url: "https://packages.elastic.co/GPG-KEY-elasticsearch", state: "present" }
+  - url: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+    state: "present"
 
 # the listening port for rsyslog events
 logstash_syslog_port: 5544

@@ -17,8 +17,7 @@
   apt_key:
     url: "{{ item.url }}"
     state: "{{ item.state }}"
-  with_items: elasticsearch_apt_keys
-  when: elasticsearch_apt_keys is defined
+  with_items: "{{ elasticsearch_apt_keys }}"
   register: add_keys_url
   until: add_keys_url|success
   retries: 5
@@ -32,7 +31,7 @@
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
     filename: "{{ item.filename | default(omit) }}"
-  with_items: elasticsearch_apt_repos
+  with_items: "{{ elasticsearch_apt_repos }}"
   register: add_repos
   until: add_repos|success
   retries: 5

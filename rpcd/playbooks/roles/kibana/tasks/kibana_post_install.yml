@@ -57,7 +57,7 @@
 
 - name: Enable apache modules
   command: a2enmod "{{ item }}"
-  with_items: kibana_apache_modules
+  with_items: "{{ kibana_apache_modules }}"
   tags:
     - kibana-apache-modules
     - kibana-apache

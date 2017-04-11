@@ -16,6 +16,5 @@
 - name: Setup Filebeat log shiping
   hosts: all
   max_fail_percentage: 20
-  user: root
   roles:
-    - { role: "filebeat" }
+    - "filebeat"

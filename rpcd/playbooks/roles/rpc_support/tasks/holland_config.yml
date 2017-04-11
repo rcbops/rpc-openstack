@@ -31,8 +31,10 @@
     dest: "{{ item.dest }}"
     state: link
   with_items:
-    - { src: "{{ holland_git_dest }}/config/providers", dest: "/etc/holland/providers" }
-    - { src: "{{ holland_git_dest }}/config/backupsets", dest: "/etc/holland/backupsets" }
+    - src: "{{ holland_git_dest }}/config/providers"
+      dest: "/etc/holland/providers"
+    - src: "{{ holland_git_dest }}/config/backupsets"
+      dest: "/etc/holland/backupsets"
   tags:
     - holland_conf
     - holland_all
@@ -44,8 +46,10 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   with_items:
-    - { src: "holland-xtrabackup.conf.j2", dest: "/etc/holland/backupsets/rpc_support.conf" }
-    - { src: "holland.conf.j2", dest: "/etc/holland/holland.conf" }
+    - src: "holland-xtrabackup.conf.j2"
+      dest: "/etc/holland/backupsets/rpc_support.conf"
+    - src: "holland.conf.j2"
+      dest: "/etc/holland/holland.conf"
   tags:
     - holland_conf
     - holland_all

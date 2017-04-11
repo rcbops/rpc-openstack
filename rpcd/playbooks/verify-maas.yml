@@ -15,7 +15,6 @@
 
 - name: Verify MaaS setup
   hosts: hosts
-  user: root
   tasks:
     - name: ensure remote directory
       file:

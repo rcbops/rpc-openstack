@@ -15,15 +15,15 @@
 
 - name: Setup hosts for rpc-support
   hosts: hosts:all_containers
-  user: root
   roles:
-    - { role: "rpc_support", tags: [ "rpc-support" ] }
+    - role: "rpc_support"
+      tags: [ "rpc-support" ]
 
 - name: Drop rcbops/pccommon script and dependencies
   hosts: all
   gather_facts: no
   roles:
-    - { role: "rcbops_openstack-ops" }
+    - "rcbops_openstack-ops"
   tags:
     - "rpc_dependencies"
     - "rpc_pccommon"

@@ -18,9 +18,9 @@
 #   2) Since it's a pre-run, the inventory won't necessarily be
 #      available or accurate
 - name: Patch upstream files
-  hosts: 127.0.0.1
+  hosts: localhost
   connection: local
   gather_facts: No
-  user: root
   roles:
-    - { role: "patcher", tags: [ "patcher" ] }
+    - role: "patcher"
+      tags: [ "patcher" ]
