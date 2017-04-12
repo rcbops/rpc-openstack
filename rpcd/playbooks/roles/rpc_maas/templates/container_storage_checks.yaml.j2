@@ -16,5 +16,5 @@ alarms      :
         criteria                : |
             :set consecutiveCount={{ maas_alarm_local_consecutive_count }}
             if (metric["container_storage_percent_used_critical"] != 1) {
-                return new AlarmStatus(CRITICAL, "Container storage for {{ ansible_host }} has reached a critical threshold >= {{ percent_used_critical_threshold }} % used.");
+                return new AlarmStatus(CRITICAL, "Container storage for {{ ansible_hostname }} has reached a critical threshold >= {{ percent_used_critical_threshold }} % used.");
             }
