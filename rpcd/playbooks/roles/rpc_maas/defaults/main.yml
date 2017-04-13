@@ -508,6 +508,7 @@ maas_pip_packages:
   - ipaddr
   - lxc-python2
   - psutil
+  - apache-libcloud<2.0.0
   - rackspace-monitoring-cli
   - swift
   - waxeye
