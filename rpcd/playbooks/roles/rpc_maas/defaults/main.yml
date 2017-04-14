@@ -522,6 +522,7 @@ maas_pip_packages:
   - ipaddr
   - lxml
   - psutil<=1.2.1
+  - apache-libcloud<2.0.0
   - rackspace-monitoring-cli
   - python-cinderclient
   - python-glanceclient
