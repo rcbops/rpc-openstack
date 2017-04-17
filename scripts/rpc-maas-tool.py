@@ -200,7 +200,7 @@ class RpcMaasAgentConfig(object):
     def _parse_config_file(self, path):
         """Parse one yaml config file"""
         with open(path, 'r') as config_file:
-            blob = yaml.load(config_file)
+            blob = yaml.safe_load(config_file)
         return blob
 
 
