@@ -1,0 +1,7 @@
+---
+features:
+  - |
+    Added a Public endpoint for Magnum API
+fixes:
+  - |
+    Magnum endpoint now uses a Magnum-specific monitor
