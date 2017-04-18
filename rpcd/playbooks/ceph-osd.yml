@@ -18,14 +18,13 @@
 
 - name: Deploy osds
   hosts: osds
-  user: root
   pre_tasks:
     - name: Create log dir
       file:
         path: "{{ item.path }}"
         state: directory
       with_items:
-        - { path: "/openstack/log/{{ inventory_hostname }}-ceph" }
+        -  path: "/openstack/log/{{ inventory_hostname }}-ceph"
       when: is_metal | bool
       tags:
         - ceph-logs
@@ -37,11 +36,13 @@
         state: "{{ item.state }}"
         force: "yes"
       with_items:
-        - { src: "/openstack/log/{{ inventory_hostname }}-ceph", dest: "/var/log/ceph", state: "link" }
+        - src: "/openstack/log/{{ inventory_hostname }}-ceph"
+          dest: "/var/log/ceph"
+          state: "link"
       when: is_metal | bool
       tags:
         - ceph-logs
   roles:
     - ceph.ceph-osd
   vars:
-    is_metal: "{{ properties.is_metal|default(false) }}"
+    is_metal: "{{ properties.is_metal | default(False) }}"

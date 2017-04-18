@@ -15,6 +15,5 @@
 
 - name: Setup Kibana host
   hosts: kibana_all
-  user: root
   roles:
-    - { role: "kibana" }
+    - "kibana"

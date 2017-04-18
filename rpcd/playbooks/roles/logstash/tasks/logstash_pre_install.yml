@@ -17,10 +17,9 @@
   apt_key:
     url: "{{ item.url }}"
     state: "{{ item.state }}"
-  with_items: logstash_apt_keys
-  when: logstash_apt_keys is defined
+  with_items: "{{ logstash_apt_keys }}"
   register: add_keys_url
-  until: add_keys_url|success
+  until: add_keys_url | success
   retries: 5
   delay: 2
   tags:
@@ -31,9 +30,9 @@
     repo: "{{ item.repo }}"
     state: "{{ item.state }}"
     filename: "{{ item.filename | default(omit) }}"
-  with_items: logstash_apt_repos
+  with_items: "{{ logstash_apt_repos }}"
   register: add_repos
-  until: add_repos|success
+  until: add_repos | success
   retries: 5
   delay: 2
   tags:

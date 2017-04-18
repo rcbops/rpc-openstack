@@ -19,7 +19,7 @@
     state: latest
     extra_args: "{{ pip_install_options | default('') }}"
   register: install_pip_packages
-  until: install_pip_packages|success
+  until: install_pip_packages | success
   retries: 2
   delay: 2
   with_items:
@@ -36,5 +36,11 @@
     server: "{{ hostvars[groups['memcached'][0]]['ansible_ssh_host'] }}:11211"
     encrypt_string: "{{ memcached_encryption_key }}"
   with_items:
-    - { src: "/root/.ssh/rpc_support", name: "rpc_support", file_mode: "0600", dir_mode: "0755" }
-    - { src: "/root/.ssh/rpc_support.pub", name: "rpc_support_pub", file_mode: "0640", dir_mode: "0755" }
+    - src: "/root/.ssh/rpc_support"
+      name: "rpc_support"
+      file_mode: "0600"
+      dir_mode: "0755"
+    - src: "/root/.ssh/rpc_support.pub"
+      name: "rpc_support_pub"
+      file_mode: "0640"
+      dir_mode: "0755"

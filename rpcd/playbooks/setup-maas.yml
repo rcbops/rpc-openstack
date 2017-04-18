@@ -19,10 +19,10 @@
 - name: Install Ceph dependencies
   hosts: osds_all:mons_all:&hosts
   roles:
-    - role: ceph.ceph-common
+    - ceph.ceph-common
 
 - name: Install MaaS
   hosts: hosts:all_containers
-  user: root
   roles:
-    - { role: "rpc_maas", tags: [ "maas-setup" ] }
+    - role: "rpc_maas"
+      tags: [ "maas-setup" ]

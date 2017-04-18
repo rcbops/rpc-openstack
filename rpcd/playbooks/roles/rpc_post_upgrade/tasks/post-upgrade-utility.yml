@@ -22,13 +22,16 @@
   failed_when: "openstack_output.rc != 0"
 
 - name: Display output of openstack compute service list
-  debug: var=openstack_output
+  debug:
+    var: openstack_output
 
+  # TODO(evrardjp): Use something similar to
+  # stdout_lines.find("down") != -1
 - name: Fail if any compute service is in the down state
   fail:
     msg: "One or more compute services are in the down state. Check the output above for more detail."
   when: "'down' in '{{ item.split(' ')[-1] }}'"
-  with_items: openstack_output.stdout_lines|default([])
+  with_items: "{{ openstack_output.stdout_lines | default([]) }}"
 
 - name: Grab relevant output of neutron agent-list
   shell: |
@@ -38,13 +41,14 @@
   failed_when: "neutron_output.rc != 0"
 
 - name: Display output of neutron agent-list
-  debug: var=neutron_output
+  debug:
+    var: neutron_output
 
 - name: Fail if any of the neutron agents are down
   fail:
     msg: "One or more of the neutron agents are down. Check the output above for more detail."
   when: "'xxx' in '{{ item.split(' ')[-1] }}'"
-  with_items: neutron_output.stdout_lines|default([])
+  with_items: "{{ neutron_output.stdout_lines | default([]) }}"
 
 # Note: As part of https://github.com/rcbops/u-suk-dev/issues/348,
 # it has been realized that cinder services with the old hostname
@@ -58,10 +62,11 @@
   failed_when: "cinder_output.rc != 0"
 
 - name: Display output of cinder service-list
-  debug: var=cinder_output
+  debug:
+    var: cinder_output
 
 - name: Fail if any of the cinder services are down
   fail:
     msg: "One or more of the cinder services are in the down state. Check the output above for more detail."
   when: "'down' in '{{ item.split(' ')[-1] }}'"
-  with_items: cinder_output.stdout_lines|default([])
+  with_items: "{{ cinder_output.stdout_lines | default([]) }}"

@@ -22,5 +22,7 @@
     encrypt_string: "{{ memcached_encryption_key }}"
     expires: 86400
   with_items:
-    - { src: "/root/.ssh/rpc_support", name: "rpc_support" }
-    - { src: "/root/.ssh/rpc_support.pub", name: "rpc_support_pub" }
+    - src: "/root/.ssh/rpc_support"
+      name: "rpc_support"
+    - src: "/root/.ssh/rpc_support.pub"
+      name: "rpc_support_pub"

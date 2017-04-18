@@ -15,6 +15,5 @@
 
 - name: Setup Logstash host
   hosts: logstash_all
-  user: root
   roles:
-    - { role: "logstash" }
+    - "logstash"

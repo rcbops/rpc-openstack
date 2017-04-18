@@ -30,7 +30,7 @@
   uri:
     url: "http://localhost:15672/api/vhosts"
     user: "{{ maas_rabbitmq_user }}"
-    password: "{{ maas_rabbitmq_password}}"
+    password: "{{ maas_rabbitmq_password }}"
     return_content: yes
   register: vhost_list
   tags:
@@ -40,12 +40,12 @@
   rabbitmq_user:
     user: "{{ maas_rabbitmq_user }}"
     password: "{{ maas_rabbitmq_password }}"
-    vhost: "{{item.name}}"
+    vhost: "{{ item.name }}"
     configure_priv: ".*"
     read_priv: ".*"
     write_priv: ".*"
     tags: "administrator"
     state: "present"
-  with_items: vhost_list.json
+  with_items: "{{ vhost_list.json }}"
   tags:
     - rabbitmq-user

@@ -15,9 +15,8 @@
 - name: Apply patch files
   patch:
     src: "{{ patcher_src_dir }}/{{ item }}"
-    basedir: "{{ patcher_dest_dir}}"
+    basedir: "{{ patcher_dest_dir }}"
     strip: 1
-  with_items: patcher_files
-  when: patcher_files is defined
+  with_items: "{{ patcher_files }}"
   tags:
     - apply-patches

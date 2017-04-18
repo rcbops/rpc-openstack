@@ -15,13 +15,12 @@
 
 - name: Setup hosts for rpc-pre-upgrades
   hosts: localhost
-  user: root
   roles:
-    - { role: "rpc_pre_upgrade", tags: [ "rpc-pre-upgrades" ] }
+    - role: "rpc_pre_upgrade"
+      tags: [ "rpc-pre-upgrades" ]
 
 - name: remove beaver
   hosts: all
-  user: root
   tags:
     - rpc-pre-upgrades
     - remove-beaver
@@ -60,7 +59,7 @@
         state: absent
 
     - name: Check if beaver is installed
-      shell: pip show -q Beaver
+      command: pip show -q Beaver
       register: is_beaver_installed
       failed_when: false
       changed_when: false
