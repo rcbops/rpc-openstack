@@ -41,6 +41,13 @@ check_submodule_status
 # Bootstrap Ansible
 source "$(dirname "${0}")/bootstrap-ansible.sh"
 
+# Install the Ansible Run Analyser callback. This is used to gather task failure
+# information in gate jobs.
+if [[ "${DEPLOY_ARA}" == "yes" ]]; then
+  /opt/ansible-runtime/bin/pip install --upgrade-strategy only-if-needed ara
+  export ANSIBLE_CALLBACK_PLUGINS="/etc/ansible/roles/plugins/callback:/opt/ansible-runtime/lib/python2.7/site-packages/ara/plugins/callbacks"
+fi
+
 # bootstrap the AIO
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
 
