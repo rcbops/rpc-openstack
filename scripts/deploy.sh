@@ -67,6 +67,7 @@ fi
 
 if [[ "${DEPLOY_MAGNUM}" == "yes" ]]; then
   run_ansible ${BASE_DIR}/contrib/magnum/magnum_playbook.yml
+  run_ansible ${BASE_DIR}/contrib/octavia/playbook.yml
 fi
 
 # update the RPC-O secrets

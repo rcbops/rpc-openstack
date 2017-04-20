@@ -52,6 +52,7 @@
     - 18-ceph.conf
     - 19-nginx.conf
     - 20-magnum.conf
+    - 21-octavia.conf
     - 98-traceback.conf
     - 99-output.conf
   notify: Restart Logstash
