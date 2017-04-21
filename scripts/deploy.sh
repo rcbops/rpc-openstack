@@ -84,9 +84,7 @@ if [[ "${DEPLOY_ELK}" != "yes" ]]; then
   rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
 fi
 
-# Apply any patched files.
 cd ${RPCD_DIR}/playbooks
-openstack-ansible -i "localhost," patcher.yml
 
 # set permissions and lay down overrides files
 chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
