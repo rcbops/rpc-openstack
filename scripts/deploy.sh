@@ -19,7 +19,7 @@ set -e -u -x
 set -o pipefail
 
 ## Functions -----------------------------------------------------------------
-
+export ANSIBLE_TIMEOUT=120
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 source ${BASE_DIR}/scripts/functions.sh
 
