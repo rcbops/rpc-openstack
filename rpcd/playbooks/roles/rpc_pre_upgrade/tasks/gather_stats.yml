@@ -24,28 +24,28 @@
   delegate_to: "{{ groups['galera_all'][0] }}"
 
 - name: Gather nova service-list
-  shell: "source ~/openrc; nova service-list"
+  shell: "source ~/openrc; nova --insecure service-list"
   args:
     executable: /bin/bash
   register: nova_servicelist_result
   delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather cinder service-list
-  shell: "source ~/openrc; cinder service-list"
+  shell: "source ~/openrc; cinder --insecure service-list"
   register: cinder_servicelist_result
   args:
     executable: /bin/bash
   delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather neutron agent-list
-  shell: "source ~/openrc; neutron agent-list"
+  shell: "source ~/openrc; neutron --insecure agent-list"
   args:
     executable: /bin/bash
   register: neutron_agentlist_result
   delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather openstack endpoint list
-  shell: "source ~/openrc; openstack endpoint list"
+  shell: "source ~/openrc; openstack --insecure endpoint list"
   args:
     executable: /bin/bash
   register: endpointlist_result
