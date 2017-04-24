@@ -13,8 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Run post-upgrade tasks
-  hosts: galera_all:rabbitmq:utility:swift_proxy:elasticsearch_container:neutron_all
-  any_errors_fatal: true
-  roles:
-    - rpc_post_upgrade
+- name: Find running neutron services not in venv
+  shell: |
+    pgrep -a "neutron" | awk '{print $2,$3}' | grep -vP "{{ neutron_venv_bin }}/\w+[\d\.\d]?\s{1}{{ neutron_venv_bin }}/\w+"
+  register: neutron_output
+  failed_when: "neutron_output.stdout_lines|length != 0"
+
+- name: Display output of neutron_output
+  debug: var=neutron_output
