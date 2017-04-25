@@ -80,4 +80,4 @@
       when: "{{ maas_use_api | bool }}"
 
   vars_files:
-    - "roles/rpc_maas/defaults/main.yml"
+    - [ "roles/rpc_maas/defaults/main.yml", "/etc/ansible/roles/rpc_maas/defaults/main.yml", "{{ ansible_env.HOME }}/.ansible/roles/rpc_maas/defaults/main.yml" ]
