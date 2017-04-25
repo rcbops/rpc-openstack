@@ -13,10 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-elasticsearch_http_port: 9200
-swift_venv_tag: "{{ openstack_release }}"
-swift_venv_bin: "/openstack/venvs/swift-{{ swift_venv_tag }}/bin"
-neutron_venv_tag: "{{ openstack_release }}"
-neutron_venv_bin: "/openstack/venvs/neutron-{{ neutron_venv_tag }}/bin"
-nova_venv_tag: "{{ openstack_release }}"
-nova_venv_bin: "/openstack/venvs/nova-{{ nova_venv_tag }}/bin"
+# Extra `when` required to ensure this is only on Nova Service nodes which should
+# be running in a venv, as otherwise this could catch a valid nova service outside
+# of a venv
+- name: Find running nova services not in venv
+  shell: |
+    pgrep -a "nova" | awk '{print $2,$3}' | grep -vP "{{ nova_venv_bin }}/\w+[\d\.\d]?\s{1}{{ nova_venv_bin }}/\w+"
+  register: nova_output
+  when: '"nova" in hostvars["{{ inventory_hostname }}"].properties.service_name'
+  failed_when: "nova_output.stdout_lines|length != 0"
+
+- name: Display output of nova_output
+  debug: var=nova_output
