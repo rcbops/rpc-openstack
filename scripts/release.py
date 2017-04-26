@@ -20,9 +20,18 @@ import errno
 import os
 import re
 import sys
+import yaml
+import logging
+import shutil
 
 import github3
 import sh
+from sh import git
+
+RELEASE_FILES = [
+    'rpcd/playbooks/group_vars/all.yml',
+    'rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml'
+]
 
 
 class Repo(object):
@@ -216,7 +225,7 @@ class Tag(object):
 
 
 class Release(object):
-    def __init__(self, tag, github_token=None):
+    def __init__(self, tag, github_token=None, next_release=None):
         self.tag = tag
         self.repo = tag.repo
         self.github_token = github_token
@@ -225,6 +234,10 @@ class Release(object):
         self.next_release_date = self._calculate_next_due_date()
         self.pre_release = bool(self.tag.rc)
         self.diff = self._generate_release_diff()
+        if next_release:
+            self.next_release = next_release
+        else:
+            self.next_release = self.tag.next_revision()
 
     def _get_github_session(self):
         gh = github3.GitHub(token=self.github_token)
@@ -234,7 +247,12 @@ class Release(object):
         return self.release_date + datetime.timedelta(days=14)
 
     def _generate_release_diff(self):
-        diff = sh.rpc_differ(self.tag.previous, self.tag, update=True).stdout
+        logging.info("Generating release diff...")
+        diff = sh.rpc_differ(self.tag.previous,
+                             self.tag,
+                             "--rpc-repo-url", self.repo.url,
+                             update=True
+                             ).stdout
         return sh.pandoc(
             '--from', 'rst',
             '--to', 'markdown_github',
@@ -258,16 +276,16 @@ class Release(object):
                 raise
 
     def update_milestones(self):
-        """Create GitHub release page for tag"""
+        """Create GitHub milestone for next tag"""
         try:
-            self.gh.create_milestone(
-                title=str(self.tag.next_revision),
+            milestone_rc = self.gh.create_milestone(
+                title=str(self.next_release),
                 due_on=self.next_release_date.strftime('%Y-%m-%dT%H:%M:%SZ')
             )
         except github3.exceptions.UnprocessableEntity:
             next_milestone = None
             for milestone in self.gh.milestones():
-                if milestone.title == self.tag.next_revision:
+                if milestone.title == self.next_release:
                     next_milestone = milestone
                     break
             if next_milestone:
@@ -276,10 +294,49 @@ class Release(object):
                 )
             else:
                 raise
+        if not milestone_rc:
+            raise SystemExit("Milestone was not created")
         for milestone in self.gh.milestones():
             if milestone.title == self.tag:
                 milestone.update(state='closed')
                 break
+
+
+def chk_devel_version(repo, branch, expected_release):
+    repo.git.checkout(branch)
+    repo.git.pull(repo.remote, branch)
+    for release_file in RELEASE_FILES:
+        filename = os.path.join(repo.path, release_file)
+        with open(filename, 'r') as f:
+            content = f.read()
+        current_release = yaml.load(content)['rpc_release']
+        if current_release != expected_release:
+            raise Exception('{} in {} does not match expected version {}'
+                            .format(current_release, filename,
+                                    expected_release))
+
+
+def update_repo_with_new_ver_number(repo, branch, new_version_number):
+    ''' Update the future_tag into repo, then git add, commit and push.
+    '''
+
+    repo.git.checkout(branch)
+    repo.git.pull(repo.remote, branch)
+    for release_file in RELEASE_FILES:
+        filename = os.path.join(repo.path, release_file)
+        with open(filename, 'r') as release_fh:
+            lines = release_fh.readlines()
+        with open(filename, 'w') as f:
+            for line in lines:
+                f.write(re.sub(r'rpc_release(: |=).*$',
+                               r"rpc_release\1" + new_version_number,
+                               line))
+        repo.git.add(filename)
+
+    msg_title = 'Start {} dev cycle'.format(new_version_number)
+    msg_body = 'This is an automatic commit.'
+    repo.git.commit(m='%s\n\n%s' % (msg_title, msg_body))
+    repo.git.push(repo.remote, branch)
 
 
 def request_doc_update(github_token, repo, release):
@@ -402,6 +459,38 @@ def request_doc_update(github_token, repo, release):
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Publish RPCO tag.')
+    # Mandatory args
+    parser.add_argument(
+        '--tag', type=Tag, required=True, help='Name of new tag.'
+    )
+    existing = parser.add_mutually_exclusive_group(required=True)
+    existing.add_argument(
+        '--commit', help='Reference to the commit to tag.'
+    )
+    existing.add_argument(
+        '--existing-release', default=False, action='store_true'
+    )
+    # Recommended args
+    parser.add_argument(
+        '--future-tag', type=Tag,
+        help='The version number for the next cycle'
+    )
+    # Convenience args that defaults to ENV vars
+    parser.add_argument(
+        '--branch', help='Branch to update'
+    )
+    parser.add_argument('--github-token')
+    parser.add_argument(
+        '--rpc-version-check', action='store',
+        choices=['yes', 'no'],
+        help='Check rpc version in tree before doing anything'
+    )
+    # Optional args
+    parser.add_argument(
+        '--delete-cache-dir',
+        help='Remove directory where cached data is stored.',
+        default=True, action='store_true',
+    )
     parser.add_argument(
         '--cache-dir', help='Directory where cached data will be stored.',
         type=os.path.expanduser, default='~/.rpco-release-tool',
@@ -414,62 +503,116 @@ def build_parser():
         '--docs-repo-url', help='URL of docs repo to update.',
         default='ssh://git@github.com/rackerlabs/docs-rpc.git',
     )
+    # Workflow args
     parser.add_argument(
-        '--tag', type=Tag, required=True, help='Name of new tag.'
+        '--do-not-publish-release', default=False, action='store_true',
+        help='Do not publish a github release for this release'
     )
-    existing = parser.add_mutually_exclusive_group(required=True)
-    existing.add_argument(
-        '--commit', help='Reference to the commit to tag.'
+    parser.add_argument(
+        '--do-not-update-milestones', default=False, action='store_true',
+        help='Do not update github milestones'
     )
-    existing.add_argument(
-        '--existing-release', default=False, action='store_true'
+    parser.add_argument(
+        '--do-not-file-docs-issue', default=False, action='store_true',
+        help='Do not create a docs issue for this release'
     )
-    parser.add_argument('--github-token')
+    parser.add_argument(
+        '--do-not-change-files-with-release-version', default=False,
+        action='store_true',
+        help='Do not update files with the new rpc_release: "future tag"'
+    )
     return parser
 
 
-def main():
-    parser = build_parser()
-    args = parser.parse_args()
+def validate_args(args):
+    ''' Ensure the args are following expectations.
+    '''
+    # Store tag as a string on top of as a tag object
+    args.tag_str = str(args.tag)
+    # args.branch is always a string, discovered or not
+    if not args.branch:
+        branches = (b.strip() for b in
+                    git("branch", "--no-color").stdout.split("\n"))
+        for branch in branches:
+            if branch.startswith('*'):
+                args.branch = branch[2:]
+                break
+        else:
+            raise SystemExit("The current branch cannot be discovered")
+    # Github token must be in CLI or env var
+    if not args.github_token:
+        token = os.environ.get('RPC_GITHUB_TOKEN', False)
+        if token:
+            args.github_token = token
+        else:
+            raise SystemExit("Token neither found in the CLI nor in env vars")
+    # RPC version should be in CLI or env var, as a str(yes|no), default yes.
+    if args.rpc_version_check:
+        chk_state = args.rpc_version_check
+    else:
+        chk_state = os.environ.get('RPC_VERSION_CHECK', 'yes')
+    args.version_check = True if chk_state != 'no' else False
+    return args
 
-    if args.tag.rc == 1 or (not args.tag.rc and not args.tag.patch):
-        return (
-            'The script currently only supports patch releases and release '
-            'candidates after the initial one.'
-        )
+
+def main():
+    logging.getLogger().setLevel(logging.INFO)
+    parser = build_parser()
+    cli_args = parser.parse_args()
+    args = validate_args(cli_args)
 
     proceed_text = (
         'WARNING - Running this script will:\n'
+        '  - Delete your cache folder (%s)\n'
         '  - add a tag to %s\n'
+        '  - update branch %s with new version number\n'
         '  - submit an issue/pull-request to %s\n'
         'If you still wish to proceed type "YES": '
-    ) % (args.repo_url, args.docs_repo_url)
+    ) % (args.cache_dir, args.repo_url, args.branch, args.docs_repo_url)
 
     proceed = raw_input(proceed_text)
 
     if proceed != 'YES':
         return
 
-    rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=True)
+    # Instantiate a repo.
+    if args.delete_cache_dir:
+        shutil.rmtree(args.cache_dir, ignore_errors=True)
+    rpco_repo = Repo(url=args.repo_url, cache_dir=args.cache_dir, bare=False)
+
+    if args.version_check:
+        chk_devel_version(rpco_repo, args.branch, args.tag_str)
 
     if args.existing_release:
         rpco_tag = rpco_repo.tags[rpco_repo.tags.index(args.tag)]
     else:
         tag_message = 'Release %s' % args.tag
         rpco_tag = rpco_repo.create_tag(
-            tag_str=str(args.tag), commit=args.commit, message=tag_message
+            tag_str=args.tag_str, commit=args.commit, message=tag_message
         )
-
-    release = Release(rpco_tag, github_token=args.github_token)
+    release = Release(rpco_tag,
+                      github_token=args.github_token,
+                      next_release=args.future_tag)
 
     if not args.existing_release:
-        release.publish_release()
-        release.update_milestones()
-    if not release.pre_release:
+        if not args.do_not_publish_release:
+            logging.info("Publishing github release...")
+            release.publish_release()
+        if not args.do_not_update_milestones:
+            logging.info("Updating github milestones...")
+            release.update_milestones()
+
+    if (not args.do_not_file_docs_issue and
+            not release.pre_release):
         docs_repo = Repo(url=args.docs_repo_url, cache_dir=args.cache_dir,
                          bare=False)
         request_doc_update(args.github_token, docs_repo, release)
 
+    if not args.do_not_change_files_with_release_version:
+        logging.info("The new dev cycle for branch {} will be: {}"
+                     .format(args.branch, release.next_release))
+        update_repo_with_new_ver_number(rpco_repo, args.branch,
+                                        str(release.next_release))
 
 if __name__ == '__main__':
     sys.exit(main())

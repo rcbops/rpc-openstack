@@ -37,6 +37,7 @@
      ```
     git push REMOTE --delete OLD_BRANCH
     ```
+- [ ] Edit the rpc_release version number in ```rpcd/playbooks/group_vars/all.yml``` and ```rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml```, commit, and push. This is to prepare next development cycle.
 - [ ] If creating or deleting a branch, update the [issue template](https://github.com/rcbops/rpc-openstack/blob/master/.github/ISSUE_TEMPLATE.md) to include it in the list.
 - [ ] Update the [GitHub release notes](https://github.com/rcbops/rpc-openstack/releases) with output from rpc-differ, remember to tick pre-release if the tag is for a release candidate.
 
@@ -51,20 +52,61 @@
 # Using the release script
 
 The python script ``release.py`` in the scripts directory can be used to automate
-the release process for patch releases and release candidates after the first one has
-been made.
+the release process as long as the branch to release already exists.
 
-To release a patch release or a release candidate after rc1, run the ``release.py``
-script like so:
+To use it, please first install the script dependencies listed in test-requirements.
+
+## Patch releases or rc>1
+To release a patch release or a release candidate after rc1, first ensure you're
+checked out in the proper branch, and then run the release.py script like so:
 ```
-./release.py --github-token <YOUR-TOKEN> --tag <TAG> --commit <COMMIT>
+./release.py --github-token YOUR_TOKEN --tag <TAG> --commit <COMMIT>
 ```
 
+If your environment variables contain RPC_GITHUB_TOKEN, you can even run it like
+```
+./release.py --tag <TAG> --commit <COMMIT>
+```
+
+## Other versions
+The calculation of next tag currently only work for patch releases and rc>1.
+In certain cases, you'll want to specify the version number that will be used
+for the next development cycle (Remember you'd still need to be in the proper branch)
+You may issue this:
+
+```
+./release.py --tag <TAG> --commit <COMMIT> --future-tag <FUTURE_TAG>
+```
+
+You could also use the --branch argument (experimental!) to force the checkout of
+a branch, instead of using the current branch name.
+```
+./release.py --tag <TAG> --commit <COMMIT> --future-tag <FUTURE_TAG> --branch <BRANCH>
+```
+Like before, this branch will be checked out from the origin repo, therefore the
+branch still needs to be created on the remote beforehand.
+
+On top of it, if you want to skip certain parts of the workflow, you can use
+the --do-not-<worfklow part> in the CLI to skip them.
+
+The workflow parts are:
+* --do-not-publish-release: Do not publish a github release for this tag
+* --do-not-update-milestones: Do not update github milestones
+* --do-not-file-docs-issue: Do not create a docs issue for this release
+  --do-not-change-files-with-release-version: Do not update code intree.
+
+Example:
+```
+./release.py --tag <TAG> --commit <COMMIT> --future-tag <FUTURE_TAG> --branch <BRANCH> --do-not-change-files-with-release-version --do-not-file-docs-issue
+```
+
+
+## Test before using it
 To test the ``release.py`` script, override the repo URLs so the tag and the release
 is not created in the offical repository, but rather a forked version of it.
 For example:
 ```
-./release.py --github-token YOUR_TOKEN --tag TAG --commit COMMIT \
-    --repo-url 'ssh://git@github.com/git-harry/rpc-openstack.git' \
-    --docs-repo-url 'ssh://git@github.com/git-harry/docs-rpc.git'
+./release.py --github-token YOUR_TOKEN --tag TAG --commit COMMIT --future-tag NTAG \
+    --repo-url 'ssh://git@github.com/alextricity25/rpc-openstack.git' \
+    --docs-repo-url 'ssh://git@github.com/alextricity25/docs-rpc.git'
 ```
