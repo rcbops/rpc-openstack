@@ -13,11 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Find running neutron services not in venv
+# Extra `when` required to ensure this is only on Nova Service nodes which should
+# be running in a venv, as otherwise this could catch a valid nova service outside
+# of a venv
+- name: Find running nova services not in venv
   shell: |
-    pgrep -a "neutron" | awk '{print $2,$3}' | grep -vP "{{ neutron_venv_bin }}/\w+(\d\.\d)?\s{1}{{ neutron_venv_bin }}/\w+"
-  register: neutron_output
-  failed_when: "neutron_output.stdout_lines|length != 0"
+    pgrep -a "nova" | awk '{print $2,$3}' | grep -vP "{{ nova_venv_bin }}/\w+[\d\.\d]?\s{1}{{ nova_venv_bin }}/\w+"
+  register: nova_output
+  when: '"nova" in hostvars["{{ inventory_hostname }}"].properties.service_name'
+  failed_when: "nova_output.stdout_lines|length != 0"
 
-- name: Display output of neutron_output
-  debug: var=neutron_output
+- name: Display output of nova_output
+  debug: var=nova_output
