@@ -134,9 +134,21 @@ neutron_neutron_conf_overrides:
 
 cinder_service_backup_program_enabled: false
 
-# We need to override the OpenStack upper constraint for Mitaka which is version 1.9.0, We should be able to remove this in Newton as the upper constraint moves to 2.3.0
 repo_build_upper_constraints_overrides:
-  - "elasticsearch==2.3.0"
+  # Due to https://bugs.launchpad.net/ceilometer/+bug/1660800, gnocchiclient
+  # must be pinned to < 3.0.0. This constraint matches what is defined in
+  # the optional dependencies specfied here:
+  # https://github.com/openstack/ceilometer/blob/stable/newton/setup.cfg#L36
+  - "gnocchiclient>=2.2.0,<3.0.0"
+
+# The Octavia repo details are added here so that the CI build for
+# artifacts is able to complete.
+# TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
+# has this information set in-tree.
+octavia_git_install_branch: 'stable/ocata'
+octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
+octavia_git_project_group: 'octavia_all'
+octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
 
 # Increase interval between checks after container start.
 # Reduces the "Wait for container ssh" error.

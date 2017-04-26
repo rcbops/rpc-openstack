@@ -118,12 +118,7 @@
     rpco_base_dir: '/opt/rpc-openstack'
     generate_client_cert: True # generate selff signed client certs
     octavia_config_overrides:
-      repo_build_git_selective: False
       octavia_loadbalancer_topology: 'ACTIVE_STANDBY'
-      octavia_git_install_branch: 'stable/ocata'
-      octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
-      octavia_git_project_group: 'octavia_all'
-      octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
       octavia_ca_private_key: "{{ cert_dir }}/private/cakey.pem"
       octavia_ca_private_key_passphrase: 'changeme'
       octavia_ca_certificate: "{{ cert_dir }}/ca_server_01.pem"
