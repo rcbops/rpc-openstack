@@ -56,7 +56,11 @@ nova_cpu_allocation_ratio: 2.0
 nova_ram_allocation_ratio: 1.0
 
 # Nova config overrides
-nova_cross_az_attach: False
+# NOTE: Due to a bug with nova, this variable cannot be set to true
+# if the environment needs to be able to boot an instance from
+# a volume
+# https://bugs.launchpad.net/nova/+bug/1648324
+#nova_cross_az_attach: False
 nova_console_type: novnc
 
 # RabbitMQ overrides
