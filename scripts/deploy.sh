@@ -16,6 +16,7 @@ export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
+export ANSIBLE_ROLE_FILE="/opt/rpc-openstack/ansible-role-requirements.yml"
 
 OA_DIR='/opt/rpc-openstack/openstack-ansible'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
