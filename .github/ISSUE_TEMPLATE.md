@@ -35,3 +35,12 @@ the backtick lines:
 ## What did you expect to happen instead of what actually happened?
 
 > Example: I expected a cinder volume snapshot to be successfully created.
+
+## Does your change require documentation?
+[ ] Yes, and I submitted an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues "Docs issues")
+[ ] Yes, and I contributed a documentation patch to [docs-rpc](https://github.com/rackerlabs/docs-rpc "docs-rpc")
+[ ] No documentation required for this change
+
+## Does your change require a release note?
+[ ] Yes, it's a pretty big deal like I am and I've made a reno note!
+[ ] Nope, this change has no major impact.
