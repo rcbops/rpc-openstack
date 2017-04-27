@@ -13,33 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install shade and its dependencies
-  pip:
-    name: "{{ item.name }}"
-    version: "{{ item.version }}"
-    extra_args: "--isolated"
-  with_items:
-    - { name: "shade", version: "1.16.0"}
-
+# TODO(evrardjp): Move back to the previous commit with os_ module in
+# a more recent branch, with compatible requirements AND playbook
+# will be targetting to good hosts directly.
 - name: Add default flavors
-  os_nova_flavor:
-    name: "{{ item.name }}"
-    vcpus: "{{ item.vcpus }}"
-    state: present
-    endpoint_type: "internal"
-    disk: "{{ item.disk }}"
-    ram: "{{ item.ram }}"
-    auth:
-      auth_url: "{{ keystone_service_internalurl }}"
-      username: "admin"
-      password: "{{ keystone_auth_admin_password }}"
-      project_name: "admin"
-      domain_name: "Default"
-    validate_certs: false
+  shell: |
+    openstack --os-cloud default flavor create --ram {{ item.RAM }} --disk {{ item.Disk }} --vcpus {{ item.VCPUs }} --public {{ item.Name }}
+  register: flavor_create
+  failed_when:
+    - flavor_create.stderr.find('already exists') == -1
+    - flavor_create.rc != 0
+  changed_when:
+    - flavor_create.rc == 0
   with_items:
-    - { name: 'm1.tiny', vcpus: '1', disk: '1', ram: '512' }
-    - { name: 'm1.small', vcpus: '1', disk: 20, ram: '2048' }
-    - { name: 'm1.medium', vcpus: '2', disk: '40', ram: '4096' }
-    - { name: 'm1.large', vcpus: '4', disk: '80', ram: '8192' }
-    - { name: 'm1.xlarge', vcpus: '8', disk: '160', ram: '16384' }
-
+    - { Name: 'm1.tiny', VCPUs: '1', Disk: '1', RAM: '512' }
+    - { Name: 'm1.small', VCPUs: '1', Disk: 20, RAM: '2048' }
+    - { Name: 'm1.medium', VCPUs: '2', Disk: '40', RAM: '4096' }
+    - { Name: 'm1.large', VCPUs: '4', Disk: '80', RAM: '8192' }
+    - { Name: 'm1.xlarge', VCPUs: '8', Disk: '160', RAM: '16384' }

@@ -105,6 +105,9 @@
 
 - include: create_default_flavors.yml
   when:  inventory_hostname == groups['utility'][0]
+  tags:
+    - rpc_support-config
+    - rpc_support-flavors
 
 - include: sos.yml
   when:
