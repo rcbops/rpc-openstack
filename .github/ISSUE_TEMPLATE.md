@@ -36,7 +36,7 @@ the backtick lines:
 
 > Example: I expected a cinder volume snapshot to be successfully created.
 
-## Does your change require documentation?
+## Do you think the documentation team wants to know about this?
 [ ] Yes, and I submitted an issue to [Docs issues](https://github.com/rackerlabs/docs-rpc/issues "Docs issues")
 [ ] Yes, and I contributed a documentation patch to [docs-rpc](https://github.com/rackerlabs/docs-rpc "docs-rpc")
 [ ] No documentation required for this change
