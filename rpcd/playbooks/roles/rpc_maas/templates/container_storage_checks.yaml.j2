@@ -6,8 +6,8 @@ period      : "{{ maas_check_period_override[label] | default(maas_check_period)
 timeout     : "{{ maas_check_timeout_override[label] | default(maas_check_timeout) }}"
 disabled    : "{{ (check_name | match(maas_excluded_checks_regex)) | ternary('true', 'false') }}"
 details     :
-    file    : run_plugin_in_venv.sh
-    args    : ["{{ maas_plugin_dir }}container_storage_check.py", "--thresh", "{{ percent_used_critical_threshold }}"]
+    file    : container_storage_check.py
+    args    : ["--thresh", "{{ percent_used_critical_threshold }}"]
 alarms      :
     container_storage_percent_used_critical:
         label                   : container_storage_percent_used--{{ ansible_hostname }}
