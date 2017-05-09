@@ -31,10 +31,42 @@ pkg_locations:
   - /opt/rpc-openstack/rpcd
 
 #
+# Set the LXC container creation to use the container repository
+#
+lxc_image_cache_server: "{{ rpco_mirror_base_url | netloc_no_port }}"
+
+# TODO(odyssey4me)
+# The 'no-validate' option should be removed once this work is done:
+#   https://github.com/rcbops/u-suk-dev/issues/1296
+lxc_cache_default_variant: "default-{{ rpc_release }}"
+lxc_cache_download_template_extra_options: "--no-validate"
+
+# TODO(odyssey4me)
+# The 'no-validate' option should be removed once this work is done:
+#   https://github.com/rcbops/u-suk-dev/issues/1296
+lxc_container_variant: "{{ lxc_cache_default_variant }}"
+lxc_container_download_template_extra_options: "--no-validate"
+
+# As we pre-build our container images, they have no ssh keys in them.
+# The ssh keys are required in order for delegation from a container to
+# another container to work. eg: os-keystone-install delegates the
+# rabbitmq and mariadb tasks from the keystone container to the
+# respective rabbit/mariadb container.
+lxc_container_commands: |
+  key="{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+  mkdir -p /root/.ssh
+  chmod 700 /root/.ssh
+  if [[ ! "$(grep -q "$key" /root/.ssh/authorized_keys)" ]]; then
+    echo "$key" | tee -a /root/.ssh/authorized_keys
+  fi
+  chmod 700 /root/.ssh/authorized_keys
+
+#
 # Set variables used for enabling/disabling the use of staged apt/container artifacts
 #
-# TODO(odyssey4me): Switch this to HTTPS before we use this in production
-# but only once the container artifact build issues with https are figured out
+# TODO(odyssey4me):
+# Switch this to HTTPS before we use this in production but only once the
+# container artifact build issues with https are figured out
 rpco_mirror_base_url: "http://rpc-repo.rackspace.com"
 
 #
@@ -48,6 +80,9 @@ rpco_gpg_key_name: "rcbops-release-signing-key.asc"
 rpco_gpg_key_id: 52AA252F #SET IN STATIC (to force key verification per release).
 
 # We won't be using the repo package cache, as we'll have a full mirror.
+# TODO (odyssey4me):
+# Implement the apt artifact staging as part of the standard
+# deploy script. However skip that stage for AIO's.
 repo_pkg_cache_enabled: no
 
 # We don't want the Trusty backports repo to be added because
@@ -129,13 +164,19 @@ logstash_apt_repos:
 logstash_apt_keys: "{{ rpco_apt_gpg_keys }}"
 
 # MAAS
+# The MAAS apt repo cannot be included in the integrated apt repository
+# due to the fact that the same package name/version is used for multiple
+# distributions, but the content and checksums are different.
 maas_apt_repos:
   - repo: "deb {{ rpco_mirror_base_url }}/apt-mirror/independant/rax-maas-{{ ansible_distribution_release }}/ {{ rpc_release }}-{{ ansible_distribution_release }} main"
     state: "present"
     filename: "rax-maas"
 maas_apt_keys: "{{ rpco_apt_gpg_keys }}"
 
-# RPC Support
+# HWRAID
+# The HWRAID apt repo cannot be included in the integrated apt repository
+# due to the fact that the same package name/version is used for multiple
+# distributions, but the content and checksums are different.
 hwraid_apt_repos:
   - repo: "deb {{ rpco_mirror_base_url }}/apt-mirror/independant/hwraid-{{ ansible_distribution_release }}/ {{ rpc_release }}-{{ ansible_distribution_release }} main"
     state: "present"
