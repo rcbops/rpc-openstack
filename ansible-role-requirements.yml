@@ -13,7 +13,7 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: 1383d0db302c6fc400a50fae4f85e77bf1633581
+  version: 65c939142991a244c1aba1a530d5cc122b7adb24
 - name: os_octavia
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
