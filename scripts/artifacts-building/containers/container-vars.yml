@@ -1,0 +1,40 @@
+---
+# Copyright 2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+build_id: "{{ ansible_date_time.date | replace('-','') }}"
+lxc_index_path: "{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}/{{ architecture_mapping.get( ansible_architecture ) }}"
+lxc_index_entry: "{{ ansible_distribution | lower }};{{ ansible_distribution_release | lower }};{{ architecture_mapping.get( ansible_architecture ) }}"
+lxc_image_folder: "/var/cache/artifacts"
+built_container_artifact_metadata_file: "{{ lxc_image_folder }}/{{ image_name }}-{{ rpc_release }}-entry"
+webserver_container_artifacts_uri: "lxc-images"
+lxc_container_cache_path: "/var/cache/lxc/download"
+compression_ratio: 7
+xz_bin:
+  centos: xz
+  ubuntu: pxz
+architecture_mapping:
+  x86_64: amd64
+  ppc64le: ppc64el
+os_distro_version: "{{ ansible_distribution | lower }}-{{ ansible_distribution_version.split('.')[:2] | join('.') }}-{{ ansible_architecture | lower }}"
+role_vars:
+  # We can't use the group vars, we need to override ourselves.
+  venv_download_url: "{{ rpco_mirror_base_url }}/venvs/{{ rpc_release }}/{{ os_distro_version }}/{{ image_name }}-{{ rpc_release }}-{{ ansible_architecture }}.tgz"
+  venv_tag: "{{ rpc_release }}"
+  developer_mode: False
+webserver_owner: "nginx"
+webserver_group: "www-data"
+rpc_mirror_container_images_list: "{{ rpco_mirror_base_url }}/meta/1.0/index-system"
+rpc_mirror_container_relative_image_location: "{{ webserver_container_artifacts_uri }}/{{ lxc_index_path }}/{{ image_name }}-{{ rpc_release }}/{{ build_id }}"
+rpc_mirror_container_full_image_location: "{{ rpco_mirror_base_url }}/{{ rpc_mirror_container_relative_image_location }}"
