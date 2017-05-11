@@ -22,31 +22,43 @@
   tasks:
     - name: Ensure metatadata folder exists
       file:
-        path: "{{ repo_remote_path }}/meta/1.0/"
+        path: "{{ repo_remote_path }}/meta/1.0"
         state: directory
         owner: "{{ webserver_owner }}"
         group: "{{ webserver_group }}"
+
     - name: Publish metadata
       copy:
         src: "/opt/list"
         dest: "{{ repo_remote_path }}/meta/1.0/index-system"
         owner: "{{ webserver_owner }}"
         group: "{{ webserver_group }}"
-    - name: Ensure lxc-images folder exists
+
+    - name: Ensure destination folders exist
       file:
-        path: "{{ repo_remote_path }}/{{ webserver_container_artifacts_uri }}/"
+        path: "{{ repo_remote_path }}/{{ webserver_container_artifacts_uri }}{{ item | regex_replace(lxc_image_folder, '') }}"
         state: directory
         owner: "{{ webserver_owner }}"
         group: "{{ webserver_group }}"
-    - name: Publish container artifact
+      with_lines: "find {{ lxc_image_folder }} -type d -links 2"
+
+    # To ensure that the push/delete removes any previous builds
+    # for the same variant, we choose to push the built artifact's
+    # parent folder to rpc-repo.
+    # eg:
+    # artifact directory: /var/cache/ubuntu/trusty/amd64/cinder-r14.1.0rc1/20170509
+    # rsync src: /var/cache/artifacts/ubuntu/trusty/amd64/cinder-r14.1.0rc1
+    # rsync dest: /var/www/repo/lxc-images/ubuntu/trusty/amd64/cinder-r14.1.0rc1
+    - name: Publish container artifacts
       synchronize:
-        src: "{{ lxc_image_folder }}/"
-        dest: "{{ repo_remote_path }}/{{ webserver_container_artifacts_uri }}"
+        src: "{{ item | dirname }}/"
+        dest: "{{ repo_remote_path }}/{{ webserver_container_artifacts_uri }}{{ (item | regex_replace(lxc_image_folder, '')) | dirname }}"
         mode: push
-        delete: no
+        delete: yes
         recursive: yes
         rsync_opts:
           - "--chown=nginx:www-data"
+      with_lines: "find {{ lxc_image_folder }} -type d -links 2"
       register: synchronize
       until: synchronize | success
       retries: 5
