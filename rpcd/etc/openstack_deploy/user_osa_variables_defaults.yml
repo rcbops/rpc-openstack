@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,173 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## Warning
-#
-# This file is controlled by the devs and will be overwritten on upgrade
-# If you wish to override the variables set here, use /etc/openstack_deploy/user_osa_variables_overrides.yml
-
+# TODO(evrardjp): Move this to group_vars/all/release.yml when possible
 # The release tag to use for the repo and venvs
+# This can't be overriden because OSA is using group_vars.
 openstack_release: "{{ rpc_release }}"
 
-# SQLAlchemy/Olso Thread Pool Settings
-rpc_conn_pool_size: 180
-rpc_response_timeout: 180
-rpc_thread_pool_size: 180
-db_max_overflow: 60
-db_max_pool_size: 120
-db_pool_timeout: 60
-
-cinder_rpc_executor_thread_pool_size: "{{ rpc_thread_pool_size }}"
-cinder_rpc_response_timeout: "{{ rpc_response_timeout }}"
-
-keystone_database_max_pool_size: "{{ db_max_pool_size }}"
-keystone_database_pool_timeout: "{{ db_pool_timeout }}"
-
-neutron_api_workers: 64
-neutron_rpc_conn_pool_size: "{{ rpc_conn_pool_size }}"
-neutron_rpc_response_timeout: "{{ rpc_response_timeout }}"
-neutron_rpc_thread_pool_size: "{{ rpc_thread_pool_size }}"
-neutron_db_max_overflow: "{{ db_max_overflow }}"
-neutron_db_max_pool_size: "{{ db_max_pool_size }}"
-neutron_db_pool_timeout: "{{ db_pool_timeout }}"
-
-nova_rpc_conn_pool_size: "{{ rpc_conn_pool_size }}"
-nova_rpc_response_timeout: "{{ rpc_response_timeout }}"
-nova_rpc_thread_pool_size: "{{ rpc_thread_pool_size }}"
-nova_db_max_overflow: "{{ db_max_overflow }}"
-nova_db_max_pool_size: "{{ db_max_pool_size }}"
-nova_db_pool_timeout: "{{ db_pool_timeout }}"
-nova_api_db_max_overflow: "{{ db_max_overflow }}"
-nova_api_db_max_pool_size: "{{ db_max_pool_size }}"
-nova_api_db_pool_timeout: "{{ db_pool_timeout }}"
-nova_cpu_allocation_ratio: 2.0
-nova_ram_allocation_ratio: 1.0
-
-# Nova config overrides
-# NOTE: Due to a bug with nova, this variable cannot be set to true
-# if the environment needs to be able to boot an instance from
-# a volume
-# https://bugs.launchpad.net/nova/+bug/1648324
-#nova_cross_az_attach: False
-nova_console_type: novnc
-
-# RabbitMQ overrides
-rabbitmq_ulimit: 65535
-
-# Memcached overrides
-# https://github.com/rcbops/rpc-openstack/issues/1048
-# memcached_memory is calculated via https://github.com/openstack/openstack-ansible-memcached_server/blob/master/defaults/main.yml#L33
-# based on container memory but this determination it not necessarily correct,
-# since memory utilization is primarily driven by the objects placed in memcached.
-memcached_connections: 16384
-
-#TODO (evrardjp): Remove this when ocata
-# Keystone overrides
-keystone_token_driver: "sql"
-
-# Galera overrides
-galera_cluster_name: rpc_galera_cluster
-
-# Ceph overrides
-ceph_mons: >
-  {% set _var = [] -%}
-  {% if 'mons' in groups -%}
-  {% for mon in groups.mons -%}
-  {% if _var.append(hostvars[mon]['ansible_ssh_host']) -%}{% endif -%}
-  {% endfor -%}
-  {% endif -%}
-  {{ _var }}
-
-# locations for the package builder to look for files that contain pip packages and git repos to build from
+# TODO(evrardjp): Move this to group_vars/all/osa.yml when
+# OSA has overridable group vars AND pkg_locations becomes a group
+# var. Alternatively, we can remove this variable when all
+# our roles will be outside /opt/rpc-openstack/
+# This var lists the locations for the package builder to
+# look for files that contain pip packages and git repos to build from
 pkg_locations:
   - ../
   - /etc/ansible/roles
   - /etc/openstack_deploy
   - /opt/rpc-openstack/rpcd
 
-# List of files to override using the OSA horizon role
-rackspace_static_files_folder: "/opt/rpc-openstack/logo_files"
-horizon_custom_uploads:
-  logo-splash:
-    src: "{{ rackspace_static_files_folder }}/logo-splash.png"
-    dest: img/logo-splash.png
-  logo:
-    src: "{{ rackspace_static_files_folder }}/logo.png"
-    dest: img/logo.png
-  favicon:
-    src: "{{ rackspace_static_files_folder }}/favicon.ico"
-    dest: img/favicon.ico
-
-# Use RPC python package index
-repo_build_pip_extra_indexes:
-  - "https://rpc-repo.rackspace.com/pools"
-
-# We pin download.ceph.com so ceph packages are not downloaded for the
-# UCA repository that was added in newton.
-# For more information please see https://github.com/rcbops/u-suk-dev/issues/747
-ceph_apt_pinned_packages:
-    - { package: "*", release: "RedHat", priority: 995 }
-
-## Enable Neutron l2_population
-# We are overriding the default value for neutron_l2_population. Please see
-# https://github.com/rcbops/rpc-openstack/issues/973 for further details.
-neutron_l2_population: True
-
-# Based on https://github.com/rcbops/rpc-openstack/issues/1149
-# L3HA has to be disabled until all major issues are fixed.
-neutron_neutron_conf_overrides:
-  DEFAULT:
-    l3_ha: False
-
-#Set the default for Neutron-HA-tool to true
-neutron_legacy_ha_tool_enabled: true
-
-cinder_service_backup_program_enabled: false
-
-repo_build_upper_constraints_overrides:
-  # Due to https://bugs.launchpad.net/ceilometer/+bug/1660800, gnocchiclient
-  # must be pinned to < 3.0.0. This constraint matches what is defined in
-  # the optional dependencies specfied here:
-  # https://github.com/openstack/ceilometer/blob/stable/newton/setup.cfg#L36
-  - "gnocchiclient>=2.2.0,<3.0.0"
-
-# The Octavia repo details are added here so that the CI build for
-# artifacts is able to complete.
-# TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
-# has this information set in-tree.
-octavia_git_install_branch: 'stable/ocata'
-octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
-octavia_git_project_group: 'octavia_all'
-octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
-
-# Increase interval between checks after container start.
-# Reduces the "Wait for container ssh" error.
-ssh_delay: 60
-
-# Use the correct secrets file
-osa_secrets_file_name: "user_osa_secrets.yml"
-
-# Disable glance image cache
-glance_flavor: keystone
-glance_glance_api_conf_overrides:
-  DEFAULT:
-    image_cache_dir: None
-
-# Adding elastic search and kibana to haproxy_extra_services
-haproxy_extra_services:
-  - service:
-      haproxy_service_name: elasticsearch
-      haproxy_backend_nodes: "{{ groups['elasticsearch'] | default([]) }}"
-      haproxy_ssl: False
-      haproxy_port: 9200
-      haproxy_balance_type: http
-      haproxy_backend_options:
-        - "httpchk /healthcheck"
-  - service:
-      haproxy_service_name: kibana_ssl
-      haproxy_backend_nodes: "{{ groups['kibana'] | default([]) }}"
-      haproxy_ssl: False
-      haproxy_port: 8443
-      haproxy_balance_type: tcp
-      haproxy_backend_options:
-        - "ssl-hello-chk"

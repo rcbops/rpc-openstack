@@ -1,5 +1,5 @@
 ---
-# Copyright 2016-2017, Rackspace US, Inc.
+# Copyright 2016, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-## Using this file
-#
-# This file is laid down only once and is used for overriding variables based on the file name.
-# This file will not be overwritten by upgrades.
+# The release tag to use
+# Note that this is set here so that the openstack_release override in osa_defaults
+# is able to use it.
+rpc_release: "{{ lookup('pipe', 'cd /opt/rpc-openstack && git describe --tags --abbrev=0') }}"
 
-# this variable is here because vars files need to have at least ONE variable defined.
-this_file_is_reserved_for_support: True
