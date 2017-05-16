@@ -156,3 +156,9 @@ update-yaml.py
 
 This script takes in two arguments, a base file and an override file,
 then merges the two together and removes any duplicates.
+
+run_tempest.yml
+---------------
+
+This playbook includes the upstream os-tempest-install.yml playbook, then
+executes tempests tests.

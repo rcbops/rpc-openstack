@@ -29,3 +29,11 @@ horizon_custom_uploads:
 # Use RPC python package index
 repo_build_pip_extra_indexes:
   - "https://rpc-repo.rackspace.com/pools"
+
+# Tempest test execution options
+tempest_run_tempest_opts:
+  - "--serial"
+# Tempest testr options
+tempest_testr_opts: []
+# Tempest tests to run. A one-line, space-delimited string
+tempest_test_sets: "scenario defcore cinder_backup"
