@@ -8,7 +8,7 @@ bashate>=0.2 # Apache-2.0
 
 
 # This is required for the docs build jobs
-sphinx>=1.3.4
+sphinx>=1.3.4,<1.6.0
 oslosphinx>=2.5.0 # Apache-2.0
 reno==2.2.0 # Apache-2.0. Latest version as of 03-20-2017
 sphinx_rtd_theme>=0.1.9
