@@ -25,6 +25,7 @@
   connection: local
   vars:
     working_dir: "{{ lookup('ENV', 'PWD') }}"
+    git_archive_dir: "{{ working_dir }}/git-archives/{{ rpc_release }}"
   tasks:
 
     - name: Lookup all the git repositories we need to update
@@ -39,11 +40,57 @@
       git:
         repo: "{{ item['url'] }}"
         dest: "{{ working_dir }}/openstackgit/{{ item['name'] }}"
-        version: "master"
-        update: true
-        force: true
+        version: "{{ item['version'] }}"
+        force: yes
       with_items: "{{ local_packages.results.0.item.remote_package_parts }}"
       register: git_clone
       until: git_clone | success
       retries: 5
       delay: 5
+
+    - name: Ensure git archive directory exists
+      file:
+        path: "{{ git_archive_dir }}"
+        state: directory
+
+    - name: Determine list of git repositories
+      set_fact:
+        existing_repos: "{{ (local_packages.results.0.item.remote_package_parts | map(attribute='name')) | list }}"
+
+    - name: Get list of existing archives
+      shell: |
+        ls -1 | sed 's/.tgz//;s/.checksum//' | uniq
+      args:
+        chdir: "{{ git_archive_dir }}"
+        executable: "/bin/bash"
+        warn: no
+      register: existing_archives
+      changed_when: false
+
+    - name: Determine new/changed repositories
+      set_fact:
+        new_repo_list: "{{ existing_repos | difference(existing_archives['stdout_lines']) }}"
+        changed_repo_list: |
+          {%- set changed_list = [] %}
+          {%- for repo in git_clone['results'] %}
+          {%-   if repo | changed %}
+          {%-     set _ = changed_list.append(repo['item']['name']) %}
+          {%-   endif %}
+          {%- endfor %}
+          {{- changed_list -}}
+
+    - name: Create/replace archive & checksum files
+      shell: |
+        rm -f {{ git_archive_dir }}/{{ item }}.tgz
+        tar -czf {{ git_archive_dir }}/{{ item }}.tgz {{ item }}
+        sha1sum {{ git_archive_dir }}/{{ item }}.tgz | awk '{print $1}' > {{ git_archive_dir }}/{{ item }}.checksum
+      args:
+        chdir: "{{ working_dir }}/openstackgit"
+        executable: "/bin/bash"
+        warn: no
+      with_items: "{{ new_repo_list | union(changed_repo_list) }}"
+      # We skip the lint test here as this task uses shell
+      # to remove a file, and to tarball a folder, all of which
+      # the lint test thinks should not be done.
+      tags:
+        - skip_ansible_lint

@@ -16,16 +16,25 @@
 # This playbook's function is to upload the git clones for all
 # git repositories use by RPC-O to rpc-repo.
 
-- name: Push the updated clones to rpc-repo
+- name: Push the git artifacts to rpc-repo
   hosts: mirrors
   vars:
     working_dir: "{{ lookup('ENV', 'PWD') }}"
+    src_git_archive_dir: "{{ working_dir }}/git-archives/{{ rpc_release }}"
+    dst_git_archive_dir: "/var/www/repo/git-archives"
   tasks:
+
+    - name: Ensure git archive directory exists
+      file:
+        path: "{{ dst_git_archive_dir }}"
+        state: directory
+        owner: "nginx"
+        group: "www-data"
 
     - name: Push updated git clones to rpc-repo
       synchronize:
-        src: "{{ working_dir }}/openstackgit"
-        dest: "/var/www/repo/"
+        src: "{{ src_git_archive_dir }}"
+        dest: "{{ dst_git_archive_dir }}/"
         mode: push
         delete: yes
         recursive: yes

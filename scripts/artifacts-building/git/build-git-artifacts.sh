@@ -23,9 +23,6 @@ set -e -u -x
 # parameters that will be supplied on the ansible-playbook CLI.
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
 
-# Set this to NO if you do not want to pull any existing data from rpc-repo.
-export PULL_FROM_MIRROR=${PULL_FROM_MIRROR:-yes}
-
 # Set this to YES if you want to push any changes made in this job to rpc-repo.
 export PUSH_TO_MIRROR=${PUSH_TO_MIRROR:-no}
 
@@ -42,20 +39,27 @@ export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 # Bootstrap Ansible
 ./scripts/bootstrap-ansible.sh
 
-# Only pull from the mirror if PULL_FROM_MIRROR is set to "YES"
+# Figure out the release version
+export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
+
+# Fetch all the git repositories and generate the git artifacts
+# The openstack-ansible CLI is used to ensure that the library path is set
 #
-# This should be avoided when used along with PUSH_TO_MIRROR == "YES"
-# as it will remove any git repositories that are there for older
-# releases. The use-case for this is a repo that changes name or is
-# removed from OSA/RPC - for the tag that included this repo to still
-# work it must have access to the git repo as it was at the time the
-# tag was published.
+openstack-ansible -i /opt/inventory \
+                  ${BASE_DIR}/scripts/artifacts-building/git/openstackgit-update.yml \
+                  -e rpc_release=${RPC_RELEASE} \
+                  ${ANSIBLE_PARAMETERS}
+
+# Only push to the mirror if PUSH_TO_MIRROR is set to "YES"
 #
-if [[ "$(echo ${PULL_FROM_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
+# This enables PR-based tests which do not change the artifacts
+#
+if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
     if [ -z ${REPO_USER_KEY+x} ] || [ -z ${REPO_USER+x} ] || [ -z ${REPO_HOST+x} ] || [ -z ${REPO_HOST_PUBKEY+x} ]; then
-        echo "Cannot download from rpc-repo as the REPO_* env vars are not set."
+        echo "Skipping upload to rpc-repo as the REPO_* env vars are not set."
         exit 1
     else
+
         # Prep the ssh key for uploading to rpc-repo
         mkdir -p ~/.ssh/
         set +x
@@ -71,34 +75,10 @@ if [[ "$(echo ${PULL_FROM_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
         echo '[mirrors]' > /opt/inventory
         echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_private_key_file='${REPO_KEYFILE}' " >> /opt/inventory
 
-        # Download the artifacts from rpc-repo
-        openstack-ansible -i /opt/inventory \
-                          ${BASE_DIR}/scripts/artifacts-building/git/openstackgit-pull-from-mirror.yml \
-                          ${ANSIBLE_PARAMETERS}
-    fi
-else
-    echo "Skipping download from rpc-repo as the PULL_FROM_MIRROR env var is not set to 'YES'."
-fi
-
-# Fetch all the git repositories
-# The openstack-ansible CLI is used to ensure that the library path is set
-#
-openstack-ansible -i /opt/inventory \
-                  ${BASE_DIR}/scripts/artifacts-building/git/openstackgit-update.yml \
-                  ${ANSIBLE_PARAMETERS}
-
-# Only push to the mirror if PUSH_TO_MIRROR is set to "YES"
-#
-# This enables PR-based tests which do not change the artifacts
-#
-if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
-    if [ -z ${REPO_USER_KEY+x} ] || [ -z ${REPO_USER+x} ] || [ -z ${REPO_HOST+x} ] || [ -z ${REPO_HOST_PUBKEY+x} ]; then
-        echo "Skipping upload to rpc-repo as the REPO_* env vars are not set."
-        exit 1
-    else
         # Upload the artifacts to rpc-repo
         openstack-ansible -i /opt/inventory \
                           ${BASE_DIR}/scripts/artifacts-building/git/openstackgit-push-to-mirror.yml \
+                          -e rpc_release=${RPC_RELEASE} \
                           ${ANSIBLE_PARAMETERS}
     fi
 else
