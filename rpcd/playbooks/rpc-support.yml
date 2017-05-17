@@ -17,4 +17,4 @@
   hosts: all
   gather_facts: yes
   roles:
-    - { role: "rcbops_openstack-ops" }
+    - role: "rcbops_openstack-ops"
