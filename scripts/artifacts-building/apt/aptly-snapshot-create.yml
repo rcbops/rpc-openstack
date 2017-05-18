@@ -92,3 +92,5 @@
       tags:
         - aptly_snapshot_merge
         - aptly_snapshot
+    - name: 'Clean aptly database'
+      command: 'aptly db cleanup'

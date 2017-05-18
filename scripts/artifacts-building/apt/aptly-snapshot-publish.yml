@@ -56,3 +56,5 @@
       changed_when: aptly_snapshot_nomerge_publish.stderr.find('already used') == -1
       tags:
         - aptly_publish
+    - name: 'Clean aptly database'
+      command: 'aptly db cleanup'
