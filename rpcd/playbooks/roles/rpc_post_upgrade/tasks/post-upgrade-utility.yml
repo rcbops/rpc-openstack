@@ -70,3 +70,20 @@
     msg: "One or more of the cinder services are in the down state. Check the output above for more detail."
   when: "'down' in '{{ item.split(' ')[-1] }}'"
   with_items: "{{ cinder_output.stdout_lines | default([]) }}"
+
+- name: Grab relevant output of orchestration service list
+  shell: |
+    . ~/openrc
+    openstack orchestration service list -c Binary -c host -c status -f value
+  register: orchestration_output
+  failed_when: "orchestration_output.rc != 0"
+
+- name: Display output of orchestration service list
+  debug:
+    var: orchestration_output
+
+- name: Fail if any of the orchestration services are down
+  fail:
+    msg: "One or more of the orchestration services are down. Check the output above for more detail."
+  when: "'down' in '{{ item.split(' ')[-1] }}'"
+  with_items: "{{ orchestration_output.stdout_lines | default([]) }}"
