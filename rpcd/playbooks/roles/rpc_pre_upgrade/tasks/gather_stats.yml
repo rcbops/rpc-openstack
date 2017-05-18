@@ -44,6 +44,13 @@
   register: neutron_agentlist_result
   delegate_to: "{{ groups['utility_all'][0] }}"
 
+- name: Gather orchestration service list
+  shell: "source ~/openrc; openstack orchestration service list --insecure"
+  args:
+    executable: /bin/bash
+  register: orchestration_servicelist_result
+  delegate_to: "{{ groups['utility_all'][0] }}"
+
 - name: Gather openstack endpoint list
   shell: "source ~/openrc; openstack --insecure endpoint list"
   args:
