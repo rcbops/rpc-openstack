@@ -23,6 +23,10 @@ set -e -u -x
 # parameters that will be supplied on the ansible-playbook CLI.
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
 
+# Set this to YES if you want to replace any existing artifacts for the current
+# release with those built in this job.
+export REPLACE_ARTIFACTS=${REPLACE_ARTIFACTS:-no}
+
 # Set this to YES if you want to push any changes made in this job to rpc-repo.
 export PUSH_TO_MIRROR=${PUSH_TO_MIRROR:-no}
 
@@ -49,6 +53,16 @@ openstack-ansible -i /opt/inventory \
                   ${BASE_DIR}/scripts/artifacts-building/git/openstackgit-update.yml \
                   -e rpc_release=${RPC_RELEASE} \
                   ${ANSIBLE_PARAMETERS}
+
+# If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
+if curl http://rpc-repo.rackspace.com/git-archives/${RPC_RELEASE}/requirements.checksum; then
+  export PUSH_TO_MIRROR="NO"
+fi
+
+# If REPLACE_ARTIFACTS is YES then force PUSH_TO_MIRROR to YES
+if [[ "$(echo ${REPLACE_ARTIFACTS} | tr [a-z] [A-Z])" == "YES" ]]; then
+  export PUSH_TO_MIRROR="YES"
+fi
 
 # Only push to the mirror if PUSH_TO_MIRROR is set to "YES"
 #

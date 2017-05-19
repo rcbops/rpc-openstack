@@ -68,12 +68,17 @@ sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${BASE_DIR}/open
 # Figure out the release version
 export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
 
-# Force replace -> PUSH
-if [[ "$(echo ${REPLACE_ARTIFACTS} | tr [a-z] [A-Z])" == "YES" ]]; then
-  export PUSH_TO_MIRROR="YES"
+# Read the OS information
+source /etc/os-release
+source /etc/lsb-release
+
+# If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
+if curl http://rpc-repo.rackspace.com/meta/1.0/index-system | grep "^${ID};${DISTRIB_CODENAME};.*${RPC_RELEASE};"; then
+  export PUSH_TO_MIRROR="NO"
 fi
-# No artifact for this release -> PUSH
-if curl http://rpc-repo.rackspace.com/meta/1.0/index-system | grep "${RPC_RELEASE}"; then
+
+# If REPLACE_ARTIFACTS is YES then set PUSH_TO_MIRROR to YES
+if [[ "$(echo ${REPLACE_ARTIFACTS} | tr [a-z] [A-Z])" == "YES" ]]; then
   export PUSH_TO_MIRROR="YES"
 fi
 

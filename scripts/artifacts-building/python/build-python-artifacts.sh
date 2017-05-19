@@ -23,9 +23,6 @@ set -e -u -x
 # parameters that will be supplied on the ansible-playbook CLI.
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:--v}
 
-# Set this to NO if you do not want to pull any existing data from rpc-repo.
-export PULL_FROM_MIRROR=${PULL_FROM_MIRROR:-yes}
-
 # Set this to YES if you want to replace any existing artifacts for the current
 # release with those built in this job.
 export REPLACE_ARTIFACTS=${REPLACE_ARTIFACTS:-no}
@@ -40,10 +37,6 @@ export BASE_DIR=${PWD}
 # We want the role downloads to be done via git
 # This ensures that there is no race condition with the artifacts-git job
 export ANSIBLE_ROLE_FETCH_MODE="git-clone"
-
-# We want to verify if artifacts exist for this OS and architecture
-export DISTRO=${DISTRO:-ubuntu-14.04}
-export ARCH=${ARCH:-x86_64}
 
 ## Main ----------------------------------------------------------------------
 
@@ -103,16 +96,19 @@ openstack-ansible setup-hosts.yml \
 openstack-ansible repo-install.yml \
                   ${ANSIBLE_PARAMETERS}
 
-# Only push to the mirror if PUSH_TO_MIRROR is set to "YES" and
-# REPLACE_ARTIFACTS is "YES" or there are no existing artifacts
-# for this release.
-#
-# This enables PR-based tests which do not change the artifacts,
-# and also prevents periodic tests from overwriting artifacts that
-# have already been published.
-#
-if [[ "$(echo ${REPLACE_ARTIFACTS} | tr [a-z] [A-Z])" != "YES" ]] && curl --fail http://rpc-repo.rackspace.com/os-releases/${RPC_RELEASE}/${DISTRO}-${ARCH}/MANIFEST.in; then
+
+# Read the OS information
+source /etc/os-release
+ARCH=$(uname -p)
+
+# If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
+if curl http://rpc-repo.rackspace.com/os-releases/${RPC_RELEASE}/${ID}-${VERSION_ID}-${ARCH}/MANIFEST.in; then
   export PUSH_TO_MIRROR="NO"
+fi
+
+# If REPLACE_ARTIFACTS is YES then set PUSH_TO_MIRROR to YES
+if [[ "$(echo ${REPLACE_ARTIFACTS} | tr [a-z] [A-Z])" == "YES" ]]; then
+  export PUSH_TO_MIRROR="YES"
 fi
 
 if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
