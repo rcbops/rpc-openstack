@@ -91,15 +91,6 @@ repo_build_upper_constraints_overrides:
   # https://github.com/openstack/ceilometer/blob/stable/newton/setup.cfg#L36
   - "gnocchiclient>=2.2.0,<3.0.0"
 
-# The Octavia repo details are added here so that the CI build for
-# artifacts is able to complete.
-# TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
-# has this information set in-tree.
-octavia_git_install_branch: 'stable/ocata'
-octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
-octavia_git_project_group: 'octavia_all'
-octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
-
 # Increase interval between checks after container start.
 # Reduces the "Wait for container ssh" error.
 ssh_delay: 60

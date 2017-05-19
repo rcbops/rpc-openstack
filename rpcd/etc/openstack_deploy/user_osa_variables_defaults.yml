@@ -30,6 +30,15 @@ pkg_locations:
   - /etc/openstack_deploy
   - /opt/rpc-openstack/rpcd
 
+# The Octavia repo details are added here so that the CI build for
+# artifacts is able to complete.
+# TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
+# has this information set in-tree.
+octavia_git_install_branch: 'stable/ocata'
+octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
+octavia_git_project_group: 'octavia_all'
+octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
+
 #
 # Set the LXC container creation to use the container repository
 #
