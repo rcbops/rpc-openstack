@@ -43,9 +43,6 @@ export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 # Bootstrap Ansible
 ./scripts/bootstrap-ansible.sh
 
-# Figure out the release version
-export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
-
 # Fetch all the git repositories and generate the git artifacts
 # The openstack-ansible CLI is used to ensure that the library path is set
 #
@@ -55,7 +52,7 @@ openstack-ansible -i /opt/inventory \
                   ${ANSIBLE_PARAMETERS}
 
 # If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
-if curl http://rpc-repo.rackspace.com/git-archives/${RPC_RELEASE}/requirements.checksum; then
+if git_artifacts_available; then
   export PUSH_TO_MIRROR="NO"
 fi
 

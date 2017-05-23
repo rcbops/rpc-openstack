@@ -43,7 +43,14 @@ export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 
 export HOST_SOURCES_REWRITE=${HOST_SOURCES_REWRITE:-"yes"}
 export HOST_UBUNTU_REPO=${HOST_UBUNTU_REPO:-"http://mirror.rackspace.com/ubuntu"}
-export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://rpc-repo.rackspace.com/apt-mirror"}
+export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://rpc-repo.rackspace.com"}
+
+# Derive the rpc_release version from the group vars
+export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
+
+# Read the OS information
+source /etc/os-release
+source /etc/lsb-release
 
 ## Functions -----------------------------------------------------------------
 
@@ -69,22 +76,69 @@ function check_submodule_status {
   esac
 }
 
-function apt_sources_back_to_stock {
+function apt_artifacts_available {
+
+  CHECK_URL="${HOST_RCBOPS_REPO}/apt-mirror/integrated/dists/${RPC_RELEASE}-${DISTRIB_CODENAME}"
+
+  if curl --output /dev/null --silent --head --fail ${CHECK_URL}; then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+function git_artifacts_available {
+
+  CHECK_URL="${HOST_RCBOPS_REPO}/git-archives/${RPC_RELEASE}/requirements.checksum"
+
+  if curl --output /dev/null --silent --head --fail ${CHECK_URL}; then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+function python_artifacts_available {
+
+  ARCH=$(uname -p)
+  CHECK_URL="${HOST_RCBOPS_REPO}/os-releases/${RPC_RELEASE}/${ID}-${VERSION_ID}-${ARCH}/MANIFEST.in"
+
+  if curl --output /dev/null --silent --head --fail ${CHECK_URL}; then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+function container_artifacts_available {
+
+  CHECK_URL="${HOST_RCBOPS_REPO}/meta/1.0/index-system"
+
+  if curl --silent --fail ${CHECK_URL} | grep "^${ID};${DISTRIB_CODENAME};.*${RPC_RELEASE};" > /dev/null; then
+    return 0
+  else
+    return 1
+  fi
+
+}
+
+function configure_apt_sources {
+
+  # Replace the existing apt sources with the artifacted sources.
+
   sed -i '/^deb-src /d' /etc/apt/sources.list
   sed -i '/-backports /d' /etc/apt/sources.list
   sed -i '/-security /d' /etc/apt/sources.list
   sed -i '/-updates /d' /etc/apt/sources.list
-}
-
-function apt_sources_use_rpc_apt_artifacts {
-  # Derive the rpc_release version from the branch name
-  RPCO_VERSION=${RPCO_VERSION:-$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)}
 
   # Add the RPC-O apt repo source
-  source /etc/lsb-release
-  echo "deb $HOST_RCBOPS_REPO/integrated/ ${RPCO_VERSION}-$DISTRIB_CODENAME main" \
+  echo "deb ${HOST_RCBOPS_REPO}/apt-mirror/integrated/ ${RPC_RELEASE}-${DISTRIB_CODENAME} main" \
     > /etc/apt/sources.list.d/rpco.list
 
   # Install the RPC-O apt repo key
-  curl $HOST_RCBOPS_REPO/rcbops-release-signing-key.asc | apt-key add -
+  curl --silent --fail ${HOST_RCBOPS_REPO}/apt-mirror/rcbops-release-signing-key.asc | apt-key add -
+
 }

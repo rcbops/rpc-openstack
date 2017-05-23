@@ -41,3 +41,11 @@ fi
 openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
                   -i "localhost," -c local \
                   -e "${BOOTSTRAP_OPTS}"
+
+# If there are no container artifacts for this release, then remove the container artifact configuration
+if ! container_artifacts_available; then
+  # Remove the AIO configuration relating to the use
+  # of container artifacts. This needs to be done
+  # because the container artifacts do not exist yet.
+  ./scripts/artifacts-building/remove-container-aio-config.sh
+fi

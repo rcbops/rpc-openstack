@@ -65,9 +65,6 @@ fi
 # be at /opt/rpc-openstack, so we link the current folder there.
 ln -sfn ${PWD} /opt/rpc-openstack
 
-# Figure out the release version
-export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
-
 # Install Ansible
 ./scripts/bootstrap-ansible.sh
 cp scripts/artifacts-building/apt/lookup/* /etc/ansible/roles/plugins/lookup/
