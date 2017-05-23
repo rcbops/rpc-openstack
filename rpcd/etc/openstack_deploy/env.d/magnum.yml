@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# The release tag to use
-# Note that this is set here so that the openstack_release override in osa_defaults
-# is able to use it.
-rpc_release: "r14.1.0rc1"
 
+container_skel:
+  magnum_container:
+    properties:
+      service_name: magnum
+      lxc_container_variant: "magnum-{{ rpc_release }}"

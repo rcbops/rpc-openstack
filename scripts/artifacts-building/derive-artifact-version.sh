@@ -1,5 +1,6 @@
----
-# Copyright 2016, Rackspace US, Inc.
+#!/bin/bash
+#
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# (c) 2017, Jean-Philippe Evrard <jean-philippe.evrard@rackspace.co.uk>
 
-# The release tag to use
-# Note that this is set here so that the openstack_release override in osa_defaults
-# is able to use it.
-rpc_release: "r14.1.0rc1"
-
+# Be the single source of truth for finding the artifact version with the static file modification.
+awk '/rpc_release/ { print $2; }' /opt/rpc-openstack/group_vars/all/release.yml | sed s'/"//'g

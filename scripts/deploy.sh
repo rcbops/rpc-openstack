@@ -58,6 +58,10 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
 
+  # TODO(odyssey4me):
+  # Remove this once the rpc_release is statically defined.
+  echo "rpc_release: $(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
+
 fi
 
 # Now use GROUP_VARS of OSA and RPC
@@ -111,6 +115,10 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   cd ${OA_DIR}/playbooks/
 
+  # The hosts must only have the base Ubuntu repository configured.
+  # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+  run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml
+
   # NOTE(mhayden): V-38642 must be skipped when using an apt repository with
   # unsigned/untrusted packages.
   # NOTE(mhayden): V-38660 halts the playbook run when it finds SNMP v1/2
@@ -122,14 +130,33 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     run_ansible setup-hosts.yml --skip-tags=V-38660
   fi
 
+  # The containers must only have the base Ubuntu repository configured.
+  # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+  # The container artifacts will have mirror.rackspace.com configured as the source,
+  # but in a CDC there may be a local mirror that's used instead. This ensures that
+  # after the container is built it is reconfigured to use that local mirror. If
+  # this is not done then the apt-get update tasks will fail when we try to deploy
+  # the services.
+  run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml -e apt_target_group=all_containers
+
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
     pushd ${RPCD_DIR}/playbooks/
       run_ansible ceph-all.yml
     popd
   fi
 
-  # setup the infrastructure
-  run_ansible setup-infrastructure.yml
+
+  # setup infrastructure
+  run_ansible unbound-install.yml
+  run_ansible ${RPCD_DIR}/playbooks/stage-python-artifacts.yml
+  run_ansible repo-server.yml
+  run_ansible haproxy-install.yml
+  run_ansible memcached-install.yml
+  run_ansible galera-install.yml
+  run_ansible rabbitmq-install.yml
+  run_ansible etcd-install.yml
+  run_ansible utility-install.yml
+  run_ansible rsyslog-install.yml
 
   # setup openstack
   run_ansible setup-openstack.yml
