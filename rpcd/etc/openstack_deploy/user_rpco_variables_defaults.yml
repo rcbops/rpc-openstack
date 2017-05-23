@@ -154,3 +154,11 @@ secure_cluster_flags:
 # this variable is required for ceph.ceph-common to function properly as our ceph playbooks
 # are not suppported by Ansible 2.1.5
 check_firewall: False
+
+# Tempest test execution options
+tempest_run_tempest_opts:
+  - "--serial"
+# Tempest testr options
+tempest_testr_opts: []
+# Tempest tests to run. A one-line, space-delimited string
+tempest_test_sets: "scenario defcore cinder_backup"
