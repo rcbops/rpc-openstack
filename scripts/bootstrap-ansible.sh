@@ -42,9 +42,8 @@ check_submodule_status
 #
 # This has the ability to be disabled for the purpose of reusing the
 # bootstrap-ansible script for putting together the apt artifacts.
-if [[ "${HOST_SOURCES_REWRITE}" == 'yes' ]]; then
-  apt_sources_back_to_stock
-  apt_sources_use_rpc_apt_artifacts
+if [[ "${HOST_SOURCES_REWRITE}" == 'yes' ]] && apt_artifacts_available; then
+  configure_apt_sources
 fi
 
 # begin the bootstrap process
