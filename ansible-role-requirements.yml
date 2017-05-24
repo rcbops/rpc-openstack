@@ -33,3 +33,7 @@
   scm: git
   src: https://github.com/openstack/openstack-ansible-lxc_hosts
   version: df227381ff3d318fcb8d7ab925f1ee66ed161ec8
+- name: rpc-role-logstash
+  scm: git
+  src: https://github.com/rcbops/rpc-role-logstash.git
+  version: e887f843b623c08ba5b0298df4df8ecd6b5303fc 
