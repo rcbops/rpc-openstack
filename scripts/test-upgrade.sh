@@ -86,6 +86,21 @@ openstack-ansible lxc-containers-destroy.yml --limit repo_all
 openstack-ansible setup-hosts.yml --limit repo_all
 
 # TASK #5
+# Bug: https://github.com/rcbops/rpc-openstack/issues/2266
+# Issue: In Liberty the console was Spice, which was moved to novnc
+#        for the Mitaka release. On upgrade this results in both novnc
+#        and Spice to run, but spice does not get updated as it is removed
+#        from the nova_console_type in
+#        /etc/openstack_deploy/user_osa_variables_defaults.yml file.
+#        A post-upgrade check for nova services will fail if a nova service
+#        from a previous release is running.
+#        The cleanest fix to this is to destroy and rebuild all console
+#        containers which will only rebuild the novnc console
+cd ${OA_DIR}/playbooks
+openstack-ansible lxc-containers-destroy.yml --limit nova_console
+openstack-ansible setup-hosts.yml --limit nova_console
+
+# TASK #6
 # Bug:   https://github.com/rcbops/u-suk-dev/issues/383
 # Issue: The ceph-all.yml playbook will fail because of the hostname
 #        changes introduced in Mitaka. This section recreates the mons
@@ -120,7 +135,7 @@ if [ $(echo ${mons} | wc -w) -gt 0 ]; then
   openstack-ansible ${RPCD_DIR}/playbooks/ceph-all.yml
 fi
 
-# TASK #6
+# TASK #7
 # https://github.com/rcbops/u-suk-dev/issues/392
 # Upgrade openstack-ansible
 pushd ${OA_DIR}
@@ -128,7 +143,7 @@ export I_REALLY_KNOW_WHAT_I_AM_DOING=true
 echo "YES" | ${OA_DIR}/scripts/run-upgrade.sh
 popd
 
-# TASK #7
+# TASK #8
 # Set upgrade variables for the RPCO playbooks
 # The variables are put into a temporary user_variables file, then deleted
 # at the end of this script.
@@ -139,7 +154,7 @@ else
   echo "logging_upgrade: true" >> ${UPGRADE_VARIABLES_FILE}
 fi
 
-# TASK #8
+# TASK #9
 # https://github.com/rcbops/u-suk-dev/issues/393
 # Run deploy-rpc-playbooks.sh
 # Ultimitely, this will run the RPCO playbooks.
@@ -149,7 +164,7 @@ export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"yes"}
 bash scripts/deploy-rpc-playbooks.sh
 
-# TASK #9
+# TASK #10
 # Bug: https://github.com/rcbops/u-suk-dev/issues/366
 # Description: Run post-upgrade tasks.
 #              For a detailed description, please see the README in
