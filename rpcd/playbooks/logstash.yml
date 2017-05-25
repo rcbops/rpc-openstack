@@ -15,5 +15,7 @@
 
 - name: Setup Logstash host
   hosts: logstash_all
+  vars:
+    - elasticsearch_host: "{{ hostvars[groups['elasticsearch'][0]]['container_address'] }}"
   roles:
-    - "logstash"
+    - "rpc-role-logstash"
