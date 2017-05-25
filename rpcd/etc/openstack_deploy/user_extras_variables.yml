@@ -137,3 +137,11 @@ secure_cluster_flags:
 # We need to exclude the original so that upgrades will work smoothly.
 maas_excluded_checks:
   - cinder_volume_check
+
+# Tempest test execution options
+tempest_run_tempest_opts:
+  - "--serial"
+# Tempest testr options
+tempest_testr_opts: []
+# Tempest tests to run. A one-line, space-delimited string
+tempest_test_sets: "scenario defcore cinder_backup"
