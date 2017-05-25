@@ -1,0 +1,12 @@
+---
+features:
+  - |
+    A new playbook has been introduced in the ``scripts/`` directory called
+    ``run_tempest.yml``. This playbook will install tempest using the upstream
+    OSA role, then execute the tempest tests defined in the sets enumerated
+    in the ``tempest_test_sets`` variable.
+  - |
+    A new variable, ``tempest_test_sets`` has been added to
+    group_vars/all/rpc-o.yml. This variable contains a space-delimited string
+    of tempest test sets to execute when running the ``scripts/run_tempest.yml``
+    playbook.
