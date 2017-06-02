@@ -42,6 +42,13 @@ openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
                   -i "localhost," -c local \
                   -e "${BOOTSTRAP_OPTS}"
 
+if ! apt_artifacts_available; then
+  # Remove the AIO configuration relating to the use
+  # of apt artifacts. This needs to be done because
+  # the apt artifacts do not exist yet.
+  sed -i '/^rpco_mirror_base_url/,$d' /etc/openstack_deploy/user_osa_variables_defaults.yml
+fi
+
 # If there are no container artifacts for this release, then remove the container artifact configuration
 if ! container_artifacts_available; then
   # Remove the AIO configuration relating to the use
