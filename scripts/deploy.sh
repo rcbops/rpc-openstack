@@ -85,11 +85,12 @@ openstack-ansible -i "localhost," patcher.yml
 
 # set permissions and lay down overrides files
 chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
-if [[ ! -f "$OA_OVERRIDES" ]]; then
-  cp "${RPCD_DIR}"/etc/openstack_deploy/user_osa_variables_overrides.yml $OA_OVERRIDES
+if [[ ! -f "${OA_OVERRIDES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_overrides.yml" "${OA_OVERRIDES}"
 fi
-if [[ ! -f "$RPCD_OVERRIDES" ]]; then
-  cp "${RPCD_DIR}"/etc/openstack_deploy/user_rpco_variables_overrides.yml $RPCD_OVERRIDES
+
+if [[ ! -f "${RPCD_OVERRIDES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_overrides.yml" "${RPCD_OVERRIDES}"
 fi
 
 # begin the openstack installation
