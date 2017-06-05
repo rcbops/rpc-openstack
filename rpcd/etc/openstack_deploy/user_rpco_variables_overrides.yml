@@ -27,4 +27,3 @@ this_file_is_also_reserved_for_support: True
 
 # Set the LB device name in CORE
 #lb_name: 'unspecified'
-

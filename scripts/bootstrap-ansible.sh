@@ -71,6 +71,11 @@ pushd ${OA_DIR}
     exit 99
   fi
 
+  # Run the RPC-MaaS "GET" playbook to clone RPC-MaaS into place.
+  ansible-playbook -i 'localhost 127.0.0.1,' \
+                   -e @"${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" \
+                   "${RPCD_DIR}/playbooks/maas-get.yml"
+
   # RPC-O has roles in its own git tree, so we need to add it to the
   # path for Ansible to search.
   sed -i "s|/etc/ansible/roles:roles|/etc/ansible/roles:roles:${RPCD_DIR}/playbooks/roles|" /usr/local/bin/openstack-ansible.rc

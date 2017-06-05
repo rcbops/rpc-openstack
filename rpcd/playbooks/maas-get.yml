@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2014, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-rpc_support_holland_password:
-kibana_password:
-fsid_uuid:
-maas_swift_accesscheck_password:
-maas_rabbitmq_password:
-maas_keystone_password:
+- name: Clone MaaS
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Clone RPC-MaaS
+      git:
+        repo: "https://github.com/rcbops/rpc-maas"
+        dest: "/opt/rpc-maas"
+        version: "{{ maas_release }}"
+  tags:
+    - maas
