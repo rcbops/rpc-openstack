@@ -183,7 +183,6 @@ fi
 if [[ ! -f /etc/openstack_deploy/user_rpco_variables_overrides.yml ]]; then
   cp "${RPCD_DIR}"/etc/openstack_deploy/user_rpco_variables_overrides.yml /etc/openstack_deploy/user_rpco_variables_overrides.yml
 fi
-
 # begin the openstack installation
 if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
