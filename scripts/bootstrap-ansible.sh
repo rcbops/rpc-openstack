@@ -26,7 +26,7 @@ source ${BASE_DIR}/scripts/functions.sh
 ## Vars ----------------------------------------------------------------------
 
 # Set the role fetch mode to any option [galaxy, git-clone]
-export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-galaxy}
+export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-git-clone}
 
 ## Main ----------------------------------------------------------------------
 
@@ -70,6 +70,11 @@ pushd ${OA_DIR}
     echo "Please set the ANSIBLE_ROLE_FETCH_MODE to either of the following options ['galaxy', 'git-clone']"
     exit 99
   fi
+
+  # Run the RPC-MaaS "GET" playbook to clone RPC-MaaS into place.
+  ansible-playbook -i 'localhost 127.0.0.1,' \
+                   -e @"${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" \
+                   "${RPCD_DIR}/playbooks/maas-get.yml"
 
   # RPC-O has roles in its own git tree, so we need to add it to the
   # path for Ansible to search.

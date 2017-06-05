@@ -15,4 +15,3 @@
 
 - include: rpc-support.yml
 - include: setup-logging.yml
-- include: setup-maas.yml

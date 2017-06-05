@@ -19,10 +19,4 @@
   roles:
     - ceph.ceph-common
 
-- name: Install MaaS
-  hosts: hosts:all_containers
-  gather_facts: true
-  roles:
-    - role: "rpc_maas"
-  tags:
-    - maas-setup
+- include: /opt/rpc-maas/playbooks/site.yml

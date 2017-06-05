@@ -92,11 +92,16 @@ cd ${RPCD_DIR}/playbooks
 
 # set permissions and lay down overrides files
 chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
-if [[ ! -f "$OA_OVERRIDES" ]]; then
-  cp "${RPCD_DIR}"/etc/openstack_deploy/user_osa_variables_overrides.yml $OA_OVERRIDES
+if [[ ! -f "${OA_OVERRIDES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_overrides.yml" "${OA_OVERRIDES}"
 fi
-if [[ ! -f "$RPCD_OVERRIDES" ]]; then
-  cp "${RPCD_DIR}"/etc/openstack_deploy/user_rpco_variables_overrides.yml $RPCD_OVERRIDES
+
+if [[ ! -f "${RPCD_OVERRIDES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_overrides.yml" "${RPCD_OVERRIDES}"
+fi
+
+if [[ ! -f "${RPCM_VARIABLES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
 fi
 
 # begin the openstack installation
