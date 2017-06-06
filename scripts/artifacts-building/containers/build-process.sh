@@ -81,7 +81,6 @@ fi
 ./scripts/artifacts-building/remove-container-aio-config.sh
 
 # Set override vars for the artifact build
-echo "rpc_release: ${RPC_RELEASE}" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
 cd scripts/artifacts-building/
 cp user_*.yml /etc/openstack_deploy/
 
