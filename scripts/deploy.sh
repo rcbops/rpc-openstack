@@ -58,10 +58,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
 
-  # TODO(odyssey4me):
-  # Remove this once the rpc_release is statically defined.
-  echo "rpc_release: $(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
-
 fi
 
 # Now use GROUP_VARS of OSA and RPC
