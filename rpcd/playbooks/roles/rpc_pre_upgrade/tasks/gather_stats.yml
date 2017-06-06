@@ -102,3 +102,4 @@
     dest: "/tmp/{{ item.item }}.pre-upgrade"
   with_items: "{{ neutron_routers_agents.results }}"
   when: item.stdout != ""
+  delegate_to: localhost
