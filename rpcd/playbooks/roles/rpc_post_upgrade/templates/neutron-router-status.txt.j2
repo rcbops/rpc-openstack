@@ -4,7 +4,7 @@
     {% if post.item == pre.item %}
       {% if 'content' in pre %}
         {% if post.stdout == pre.content | b64decode %}
-  [OK] Router {{ post.item }} did not move agents during the migration
+  [OK] Router {{ post.item }} did not move agents during the migration and is assigned an agent
         {% else %}
           {% if post.stdout == "" %}
           {# if router post upgrade has no agent assigned but did prior to the upgrade #}

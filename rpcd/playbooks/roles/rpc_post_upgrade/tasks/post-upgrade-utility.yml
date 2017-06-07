@@ -116,7 +116,7 @@
   delegate_to: localhost
   failed_when: false
 
-- name: Output into text file
+- name: Render router status template
   template:
     src: "neutron-router-status.txt.j2"
     dest: "{{ backup_dir }}/neutron-router-status-{{ datetime_stamp }}.txt"
