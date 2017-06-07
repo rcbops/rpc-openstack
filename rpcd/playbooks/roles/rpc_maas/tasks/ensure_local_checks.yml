@@ -23,5 +23,5 @@
   with_items:
     - "{{ checks }}"
   when:
-    - inventory_hostname in groups["{{ item.group }}"]
+    - "inventory_hostname in groups[item.group]"
   delegate_to: "{{ physical_host }}"

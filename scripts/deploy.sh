@@ -7,6 +7,7 @@ export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
 export DEPLOY_HAPROXY=${DEPLOY_HAPROXY:-"no"}
 export DEPLOY_OA=${DEPLOY_OA:-"yes"}
+export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export DEPLOY_ELK=${DEPLOY_ELK:-"yes"}
 export DEPLOY_MAAS=${DEPLOY_MAAS:-"no"}
 export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
@@ -163,35 +164,36 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 fi
 
 # begin the RPC installation
-cd ${RPCD_DIR}/playbooks/
-
-# build the RPC python package repository
-run_ansible repo-build.yml
-
-# configure all hosts and containers to use the RPC python packages
-run_ansible repo-pip-setup.yml
-
-# configure everything for RPC support access
-run_ansible rpc-support.yml
-
-# configure the horizon extensions
-run_ansible horizon_extensions.yml
-
-# deploy and configure RAX MaaS
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible setup-maas.yml
+if [[ "${DEPLOY_RPC}" == "yes" ]]; then
+    cd ${RPCD_DIR}/playbooks/
+    
+    # build the RPC python package repository
+    run_ansible repo-build.yml
+    
+    # configure all hosts and containers to use the RPC python packages
+    run_ansible repo-pip-setup.yml
+    
+    # configure everything for RPC support access
+    run_ansible rpc-support.yml
+    
+    # configure the horizon extensions
+    run_ansible horizon_extensions.yml
+    
+    # deploy and configure RAX MaaS
+    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+      run_ansible setup-maas.yml
+    fi
+    
+    # deploy and configure the ELK stack
+    if [[ "${DEPLOY_ELK}" == "yes" ]]; then
+      run_ansible setup-logging.yml
+    
+      # deploy the LB required for the ELK stack
+      if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
+        run_ansible haproxy.yml
+      fi
+    fi
 fi
-
-# deploy and configure the ELK stack
-if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-  run_ansible setup-logging.yml
-
-  # deploy the LB required for the ELK stack
-  if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
-    run_ansible haproxy.yml
-  fi
-fi
-
 # verify RAX MaaS
 if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
   run_ansible verify-maas.yml

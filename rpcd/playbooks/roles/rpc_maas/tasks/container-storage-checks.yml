@@ -20,4 +20,3 @@
     owner: "root"
     group: "root"
     mode: "0644"
-  delegate_to: "{{ physical_host }}"

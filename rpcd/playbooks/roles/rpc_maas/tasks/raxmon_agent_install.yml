@@ -14,14 +14,21 @@
 # limitations under the License.
 
 - name: Install plugin dir
-  file: path=/usr/lib/rackspace-monitoring-agent/plugins/ state=directory owner=root group=root mode=0755
+  file:
+    path: "{{ maas_plugin_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
 - name: Install MAAS Plugins
   synchronize:
-    src={{ maas_plugin_dir }} dest=/usr/lib/rackspace-monitoring-agent/plugins/ delete=yes
+    src: "{{ maas_source_plugin_dir }}"
+    dest: "{{ maas_plugin_dir }}"
+    delete: yes
 
 - name: List plugin files to chmod
-  shell: "ls -1 /usr/lib/rackspace-monitoring-agent/plugins/*.py"
+  shell: "ls -1 {{ maas_plugin_dir }}/*.py"
   register: plugin_files
 
 - name: Chmod listed plugin files
