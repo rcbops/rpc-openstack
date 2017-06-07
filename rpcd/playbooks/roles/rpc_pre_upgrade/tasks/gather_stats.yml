@@ -99,7 +99,6 @@
 - name: Write file containing agent for each router
   copy:
     content: "{{ item.stdout|replace('_','-') }}" # we replace here since containers will get renamed during upgrade
-    dest: "/tmp/{{ item.item }}.pre-upgrade"
+    dest: "{{ backup_dir }}/{{ item.item }}.pre-upgrade"
   with_items: "{{ neutron_routers_agents.results }}"
-  when: item.stdout != ""
   delegate_to: localhost
