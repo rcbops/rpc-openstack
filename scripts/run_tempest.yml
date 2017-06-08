@@ -13,23 +13,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Get defcore tests and set tempest_test_whitelist fact
+- name: Get defcore tests and set tempest_test_whitelist fact
+  hosts: utility_all[0]
+  gather_facts: no
+  user: root
+  tasks:
+    - name: Get defcore test list from defcore repo
+      get_url:
+        url: "{{ defcore_url }}"
+        dest: "/opt/defcore_tempest_list_{{ version_number }}"
+      delegate_to: localhost
+
+    - name: Set fact for defcore json file
+      set_fact:
+        defcore_json_file: "{{ lookup('file', '/opt/defcore_tempest_list_'~version_number) | from_json }}"
+
+    - name: Set fact for defcore tests
+      set_fact:
+        defcore_tests: "{{ defcore_tests|default([]) + item.tests.keys() }}"
+      with_items: "{{ defcore_json_file['capabilities'].values() }}"
+
+    - name: Set tempest_test_whitelist fact
+      set_fact:
+        tempest_test_whitelist: "{{ tempest_test_whitelist|default([]) + defcore_tests }}"
+  tags:
+    - tempest_install
+  vars:
+    # 2017.01 corresponds to Ocata
+    version_number: "2017.01"
+    defcore_url: "https://raw.githubusercontent.com/openstack/defcore/master/{{ version_number }}.json"
 
 # Run the tempest playbook to install tempest
 - include: ../openstack-ansible/playbooks/os-tempest-install.yml
   tags:
     - tempest_install
+  vars:
+    tempest_run: no
 
-- name: Execute Tempest Tests
-  hosts: utility[0]
+# Run the tempest tests from the os_tempest role
+- name: Run tempest tests from the os_tempest role
+  hosts: utility_all[0]
+  gather_facts: no
   user: root
-  tasks:
-    - name: Execute tempest tests
-      shell: |
-        export RUN_TEMPEST_OPTS='{{ tempest_run_tempest_opts | join(' ') }}'
-        export TESTR_OPTS='{{ tempest_testr_opts | join(' ') }}'
-        bash /opt/openstack_tempest_gate.sh {{ tempest_test_sets }}
-      changed_when: false
   tags:
     - tempest_execute_tests
-
-
+  tasks:
+    - name: Run Tempest Tests
+      include_role:
+        name: os_tempest
+        tasks_from: tempest_run

@@ -122,3 +122,9 @@ haproxy_extra_services:
       haproxy_balance_type: tcp
       haproxy_backend_options:
         - "ssl-hello-chk"
+
+# Do not run tempest as part of setup-openstack. Instead, tempest is run in deploy.sh
+# so we can control when to run it apart from setup-openstack.yml
+# See https://github.com/openstack/openstack-ansible/blob/485100fbd36adbacd6f300a34a6acd9df3fd5932/playbooks/setup-openstack.yml#L40
+tempest_install: no
+tempest_run: no

@@ -44,7 +44,7 @@
 
 - name: Wait for ElasticSearch port
   wait_for:
-    host: "{{ ansible_ssh_host }}"
+    host: "{{ ansible_host }}"
     port: "9200"
 
 - name: Setup the ElasticSearch Curator cron job
