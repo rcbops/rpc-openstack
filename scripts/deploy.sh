@@ -95,11 +95,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     # set network speed for vms
     echo "net_max_speed: 1000" >>$RPCD_VARS
 
-    # TODO(odyssey4me):
-    # This is disabled until work can be done to resolve the upgrade issues.
-    # https://github.com/rcbops/rpc-openstack/issues/2258
-    sed -i "s/cinder_service_backup_program_enabled: .*/cinder_service_backup_program_enabled: false/" /etc/openstack_deploy/user_osa_aio_variables.yml
-
     # set the necessary bits for ceph
     if [[ "$DEPLOY_CEPH" == "yes" ]]; then
       cp -a ${RPCD_DIR}/etc/openstack_deploy/conf.d/ceph.yml.aio /etc/openstack_deploy/conf.d/ceph.yml
