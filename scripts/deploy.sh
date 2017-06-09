@@ -90,10 +90,13 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/lb_name: .*/lb_name: '$(hostname)'/" $RPCD_VARS
     # set the notification_plan to the default for Rackspace Cloud Servers
     sed -i "s/maas_notification_plan: .*/maas_notification_plan: npTechnicalContactsEmail/" $RPCD_VARS
-    # the AIO needs this enabled to test the feature, but $RPCD_VARS defaults this to false
-    sed -i "s/cinder_service_backup_program_enabled: .*/cinder_service_backup_program_enabled: true/" /etc/openstack_deploy/user_variables.yml
     # set network speed for vms
     echo "net_max_speed: 1000" >>$RPCD_VARS
+
+    # TODO(odyssey4me):
+    # This is disabled until work can be done to resolve the upgrade issues.
+    # https://github.com/rcbops/rpc-openstack/issues/2258
+    sed -i "s/cinder_service_backup_program_enabled: .*/cinder_service_backup_program_enabled: false/" /etc/openstack_deploy/user_variables.yml
 
     # set the necessary bits for ceph
     if [[ "$DEPLOY_CEPH" == "yes" ]]; then
