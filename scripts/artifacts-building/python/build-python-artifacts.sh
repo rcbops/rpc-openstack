@@ -53,23 +53,10 @@ cd /opt/rpc-openstack
 sed -i "s|GROUP_VARS_PATH=.*|GROUP_VARS_PATH=\"\${GROUP_VARS_PATH:-${BASE_DIR}/openstack-ansible/playbooks/inventory/group_vars/:${BASE_DIR}/group_vars/:/etc/openstack_deploy/group_vars/}\"|" /usr/local/bin/openstack-ansible.rc
 sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${BASE_DIR}/openstack-ansible/playbooks/inventory/host_vars/:${BASE_DIR}/host_vars/:/etc/openstack_deploy/host_vars/}\"|" /usr/local/bin/openstack-ansible.rc
 
-# Figure out the release version
-export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
-
-# Remove the env.d configurations that set the build to use
-# container artifacts. We don't want this because container
-# artifacts are built using python artifacts.
-sed -i.bak '/lxc_container_variant: /d' /etc/openstack_deploy/env.d/*.yml
-
-# Remove the RPC-O default configurations that are necessary
-# for deployment, but cause the build to break due to the fact
-# that they require the container artifacts to be available,
-# but those are not yet built.
-sed -i.bak '/lxc_image_cache_server: /d' /etc/openstack_deploy/user_osa_variables_defaults.yml
-sed -i.bak '/lxc_cache_default_variant: /d' /etc/openstack_deploy/user_osa_variables_defaults.yml
-sed -i.bak '/lxc_cache_download_template_extra_options: /d' /etc/openstack_deploy/user_osa_variables_defaults.yml
-sed -i.bak '/lxc_container_variant: /d' /etc/openstack_deploy/user_osa_variables_defaults.yml
-sed -i.bak '/lxc_container_download_template_extra_options: /d' /etc/openstack_deploy/user_osa_variables_defaults.yml
+# Remove the AIO configuration relating to the use
+# of container artifacts. This needs to be done
+# because the container artifacts do not exist yet.
+./scripts/artifacts-building/remove-container-aio-config.sh
 
 # Set override vars for the artifact build
 echo "rpc_release: ${RPC_RELEASE}" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
@@ -97,12 +84,8 @@ openstack-ansible repo-install.yml \
                   ${ANSIBLE_PARAMETERS}
 
 
-# Read the OS information
-source /etc/os-release
-ARCH=$(uname -p)
-
 # If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
-if curl http://rpc-repo.rackspace.com/os-releases/${RPC_RELEASE}/${ID}-${VERSION_ID}-${ARCH}/MANIFEST.in; then
+if python_artifacts_available; then
   export PUSH_TO_MIRROR="NO"
 fi
 

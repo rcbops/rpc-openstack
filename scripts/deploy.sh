@@ -58,10 +58,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
 
-  # TODO(odyssey4me):
-  # Remove this once the rpc_release is statically defined.
-  echo "rpc_release: $(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
-
 fi
 
 # Now use GROUP_VARS of OSA and RPC
@@ -115,9 +111,11 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   cd ${OA_DIR}/playbooks/
 
-  # The hosts must only have the base Ubuntu repository configured.
-  # All updates (security and otherwise) must come from the RPC-O apt artifacting.
-  run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml
+  if apt_artifacts_available; then
+    # The hosts must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml
+  fi
 
   # NOTE(mhayden): V-38642 must be skipped when using an apt repository with
   # unsigned/untrusted packages.
@@ -130,14 +128,16 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     run_ansible setup-hosts.yml --skip-tags=V-38660
   fi
 
-  # The containers must only have the base Ubuntu repository configured.
-  # All updates (security and otherwise) must come from the RPC-O apt artifacting.
-  # The container artifacts will have mirror.rackspace.com configured as the source,
-  # but in a CDC there may be a local mirror that's used instead. This ensures that
-  # after the container is built it is reconfigured to use that local mirror. If
-  # this is not done then the apt-get update tasks will fail when we try to deploy
-  # the services.
-  run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml -e apt_target_group=all_containers
+  if apt_artifacts_available; then
+    # The containers must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    # The container artifacts will have mirror.rackspace.com configured as the source,
+    # but in a CDC there may be a local mirror that's used instead. This ensures that
+    # after the container is built it is reconfigured to use that local mirror. If
+    # this is not done then the apt-get update tasks will fail when we try to deploy
+    # the services.
+    run_ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml -e apt_target_group=all_containers
+  fi
 
   if [[ "$DEPLOY_CEPH" == "yes" ]]; then
     pushd ${RPCD_DIR}/playbooks/
@@ -148,8 +148,16 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   # setup infrastructure
   run_ansible unbound-install.yml
-  run_ansible ${RPCD_DIR}/playbooks/stage-python-artifacts.yml
-  run_ansible repo-server.yml
+
+  # If python artifacts are available, use the staging process.
+  # If they are not, then use the repo build process.
+  if git_artifacts_available && python_artifacts_available; then
+    run_ansible ${RPCD_DIR}/playbooks/stage-python-artifacts.yml
+    run_ansible repo-server.yml
+  else
+    run_ansible repo-install.yml
+  fi
+
   run_ansible haproxy-install.yml
   run_ansible memcached-install.yml
   run_ansible galera-install.yml

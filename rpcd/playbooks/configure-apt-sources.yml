@@ -16,10 +16,10 @@
 - name: Configure the default apt sources for RPC-O
   hosts: "{{ apt_target_group | default('hosts') }}"
   user: root
-  tasks:
+  pre_tasks:
 
     - name: Determine the existing Ubuntu repo configuration
-      shell: 'grep -oP "^deb \K(\[?.*\]?.*ubuntu\S*\/?)(?= {{ ansible_distribution_release }} main)" /etc/apt/sources.list'
+      shell: 'sed "s/^[ \t]*//" /etc/apt/sources.list | grep -oP "^deb \K(\[?.*\]?.*ubuntu\S*\/?)(?= {{ ansible_distribution_release }} main)"'
       register: _ubuntu_repo
       when:
         - host_ubuntu_repo is not defined
@@ -51,3 +51,12 @@
       tags:
         - always
 
+  roles:
+    # We execute the pip_install role here to ensure that all
+    # hosts have the correct rpco repo configured now that
+    # /etc/apt/sources.list has been changed to no longer
+    # include the updates repo.
+    - role: "pip_install"
+      pip_lock_to_internal_repo: False
+      pip_upstream_url: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/{{ os_distro_version }}/get-pip.py"
+      pip_install_upper_constraints: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/{{ os_distro_version }}/requirements_absolute_requirements.txt"

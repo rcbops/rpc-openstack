@@ -37,7 +37,34 @@ if [ -n "${DATA_DISK_DEVICE}" ]; then
   export BOOTSTRAP_OPTS="${BOOTSTRAP_OPTS} bootstrap_host_data_disk_device=${DATA_DISK_DEVICE}"
 fi
 
+# This toggles whether the AIO bootstrap will
+# clean out the apt sources or not. When there
+# are artifacts available, it should, because
+# the rpco sources file will be added. When
+# artifacts are not available then the updates
+# repo is needed.
+if apt_artifacts_available; then
+  export RPCO_APT_ARTIFACTS_AVAILABLE="yes"
+else
+  export RPCO_APT_ARTIFACTS_AVAILABLE="no"
+fi
+
 # Run AIO bootstrap playbook
 openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
                   -i "localhost," -c local \
                   -e "${BOOTSTRAP_OPTS}"
+
+if ! apt_artifacts_available; then
+  # Remove the AIO configuration relating to the use
+  # of apt artifacts. This needs to be done because
+  # the apt artifacts do not exist yet.
+  sed -i '/^rpco_mirror_base_url/,$d' /etc/openstack_deploy/user_osa_variables_defaults.yml
+fi
+
+# If there are no container artifacts for this release, then remove the container artifact configuration
+if ! container_artifacts_available; then
+  # Remove the AIO configuration relating to the use
+  # of container artifacts. This needs to be done
+  # because the container artifacts do not exist yet.
+  ./scripts/artifacts-building/remove-container-aio-config.sh
+fi
