@@ -31,7 +31,9 @@
   pip:
     name: "{{ item }}"
     state: latest
-    extra_args: "{{ pip_install_options | default('') }}"
+    extra_args: >-
+      {{ (pip_install_upper_constraints is defined) | ternary('--constraint ' + pip_install_upper_constraints | default(''),'') }}
+      {{ pip_install_options | default('') }}
   register: install_pip_packages
   until: install_pip_packages | success
   retries: 5

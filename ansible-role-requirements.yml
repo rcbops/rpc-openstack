@@ -13,19 +13,15 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: de006ade2f88790c43ec06a104abc895d98fe9b6
+  version: f87406880f67584b5fe562d2711734bbd63c0fdb
 - name: os_octavia
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
   version: master
-#TODO(odyssey4me):
-# When the rpc_maas SHA is updated to include the below SHA,
-# remove the workaround from rpcd/playbooks/setup-maas.yml
-# https://github.com/rcbops/rpc-maas/commit/be5a9f82592e5dfd835aa76d8a6cff2d7ea53d3f
 - name: rpc_maas
   scm: git
   src: https://github.com/rcbops/rpc-maas
-  version: 1701d34fcb106cec11ba00284ac462e78bef14e0
+  version: 52d9084c8eca07c3bcb66bbb8d7f5ab93a300bc0
 # Override the current lxc_hosts role until
 # https://github.com/openstack/openstack-ansible-lxc_hosts/commit/df227381ff3d318fcb8d7ab925f1ee66ed161ec8
 # gets taken into a SHA bump in OSA and RPC.
@@ -36,4 +32,4 @@
 - name: rpc-role-logstash
   scm: git
   src: https://github.com/rcbops/rpc-role-logstash.git
-  version: e887f843b623c08ba5b0298df4df8ecd6b5303fc 
+  version: 3f5e7a6044629e76acb1933af19f09a89e55917b

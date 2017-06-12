@@ -24,11 +24,5 @@
   gather_facts: true
   roles:
     - role: "rpc_maas"
-      #TODO(odyssey4me):
-      # This is a workaround until the below commit is included in the
-      # rpc-maas SHA we consume.
-      # https://github.com/rcbops/rpc-maas/commit/be5a9f82592e5dfd835aa76d8a6cff2d7ea53d3f
-      holland_venv_enabled: true
-      holland_venv_bin: "/openstack/venvs/holland-{{ rpc_release }}/bin"
   tags:
     - maas-setup

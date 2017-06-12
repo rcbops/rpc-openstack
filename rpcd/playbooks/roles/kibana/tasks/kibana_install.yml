@@ -39,4 +39,3 @@
   with_items: "{{ kibana_pip_packages }}"
   tags:
     - kibana-pip-packages
-

@@ -21,6 +21,9 @@
       set_fact:
         user_variables_overrides:
           apply_security_hardening: "{{ rpco_deploy_hardening }}"
+          # Tempest is turned off to prevent the tests from running by default
+          tempest_run: no
+          tempest_install: no
       when: "{{ not rpco_deploy_ceph | bool }}"
     - name: Set ceph user_variables override
       set_fact:
@@ -28,6 +31,9 @@
           apply_security_hardening: "{{ rpco_deploy_hardening }}"
           glance_default_store: rbd
           nova_libvirt_images_rbd_pool: vms
+          # Tempest is turned off to prevent the tests from running by default
+          tempest_run: no
+          tempest_install: no
       when: "{{ rpco_deploy_ceph | bool }}"
   vars:
     rpco_deploy_ceph: "{{ lookup('env', 'DEPLOY_CEPH') }}"
@@ -38,6 +44,8 @@
   vars:
     bootstrap_host_apt_distribution_suffix_list: "{{ (lookup('env', 'RPCO_APT_ARTIFACTS_AVAILABLE') | bool) | ternary([], ['updates', 'backports']) }}"
     scenario: "{% if lookup('env', 'DEPLOY_MAGNUM') == 'yes' %}magnum{% else %}{{ lookup('env', 'DEPLOY_CEPH') |bool |ternary('ceph','swift') }}{%endif%}"
+    bootstrap_host_scenario: "{% if lookup('env', 'DEPLOY_MAGNUM') == 'yes' %}magnum{% else %}{{ lookup('env', 'DEPLOY_CEPH') |bool |ternary('ceph','swift') }}{%endif%}"
+    bootstrap_user_variables_template: "user_variables.aio.yml.j2"
     bootstrap_host_user_variables_filename: "user_osa_variables_overrides.yml"
     bootstrap_host_user_secrets_filename: "user_osa_secrets.yml"
     uca_enable: no

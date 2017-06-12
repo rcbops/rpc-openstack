@@ -171,7 +171,7 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   if [[ "${DEPLOY_TEMPEST}" == "yes" ]]; then
     # Deploy tempest
-    run_ansible os-tempest-install.yml
+    run_ansible ${BASE_DIR}/scripts/run_tempest.yml
   fi
 
   if [[ "${DEPLOY_RALLY}" == "yes" ]]; then

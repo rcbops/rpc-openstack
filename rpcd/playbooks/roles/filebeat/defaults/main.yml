@@ -31,7 +31,7 @@ filebeat_logstash_port: "{{ logstash_beats_port |default(5044) }}"
 # NOTE(sigmavirus24): Once we upgrade to Ansible 2.1, we can use the extract
 # filter
 #"{{ groups['logstash_all'] | map('extract', hostvars, ['container_address']) | list }}"
-filebeat_logstash_hosts: "{% for host in groups['logstash_all'] %}{{ hostvars[host]['ansible_ssh_host'] }}:{{ filebeat_logstash_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+filebeat_logstash_hosts: "{% for host in groups['logstash_all'] %}{{ hostvars[host]['ansible_host'] }}:{{ filebeat_logstash_port }}{% if not loop.last %},{% endif %}{% endfor %}"
 
 # NOTE(sigmavirus24): Explanation of the regular expression:
 # - The Date is formatted by oslo.log as YYYY-MM-DD

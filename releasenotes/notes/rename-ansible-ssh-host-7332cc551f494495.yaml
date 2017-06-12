@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    ``ansible_ssh_host`` has been removed from Ansible 2.2 and renamed to
+    ``ansible_host``. All references of ``ansible_ssh_host`` in RPCO have
+    been renamed to ``ansible_host``.

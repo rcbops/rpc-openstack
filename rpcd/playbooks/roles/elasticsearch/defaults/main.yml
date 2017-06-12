@@ -42,7 +42,7 @@ elasticsearch_version: 2.4.1
 elasticsearch_reindex_version: 1.7.5
 
 elasticsearch_pip_packages:
-  - elasticsearch>=2.0.0,<3.0.0
+  - elasticsearch
   - elasticsearch-curator==4.0.4
   - httplib2
 
