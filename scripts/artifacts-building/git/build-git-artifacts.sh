@@ -41,7 +41,13 @@ export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 ## Main ----------------------------------------------------------------------
 
 # Bootstrap Ansible
-./scripts/bootstrap-ansible.sh
+# This script is sourced to ensure that the common
+# functions and vars are available.
+source scripts/bootstrap-ansible.sh
+
+# Now use GROUP_VARS of OSA and RPC
+sed -i "s|GROUP_VARS_PATH=.*|GROUP_VARS_PATH=\"\${GROUP_VARS_PATH:-${OA_DIR}/playbooks/inventory/group_vars/:${BASE_DIR}/group_vars/:/etc/openstack_deploy/group_vars/}\"|" /usr/local/bin/openstack-ansible.rc
+sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${OA_DIR}/playbooks/inventory/host_vars/:${BASE_DIR}/host_vars/:/etc/openstack_deploy/host_vars/}\"|" /usr/local/bin/openstack-ansible.rc
 
 # Fetch all the git repositories and generate the git artifacts
 # The openstack-ansible CLI is used to ensure that the library path is set

@@ -56,9 +56,13 @@ rm -f /opt/list
 # be at /opt/rpc-openstack, so we link the current folder there.
 ln -sfn ${PWD} /opt/rpc-openstack
 
-# Bootstrap Ansible and the AIO config
+# Bootstrap Ansible
+# This script is sourced to ensure that the common
+# functions and vars are available.
 cd /opt/rpc-openstack
-./scripts/bootstrap-ansible.sh
+source scripts/bootstrap-ansible.sh
+
+# Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
 
 # Now use GROUP_VARS of OSA and RPC
