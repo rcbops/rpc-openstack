@@ -32,7 +32,7 @@ role_vars:
   # We can't use the group vars, we need to override ourselves.
   venv_download_url: "{{ rpco_mirror_base_url | default(openstack_repo_url) }}/venvs/{{ rpc_release }}/{{ os_distro_version }}/{{ image_name }}-{{ rpc_release }}-{{ ansible_architecture }}.tgz"
   venv_tag: "{{ rpc_release }}"
-  developer_mode: False
+  developer_mode: "{{ developer_mode | default('no') }}"
 webserver_owner: "nginx"
 webserver_group: "www-data"
 rpco_mirror_apt_url: "{{ rpco_mirror_base_url | default(openstack_repo_url) }}/apt-mirror/integrated/"
