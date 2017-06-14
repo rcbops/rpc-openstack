@@ -96,6 +96,35 @@ git config --global user.name "RCBOPS gating"
 cd containers/patches/
 patch_all_roles
 
+# If we have no pre-built python artifacts available, the whole
+# container build process will fail as it is unable to find the
+# right artifacts to use. To ensure that we can still do a PR test
+# when there are no python artifacts, we need to override a few
+# things.
+if ! python_artifacts_available; then
+    # As there are no wheels available for this release, we will
+    # need to enable developer_mode for the role install.
+    echo "developer_mode: yes" >> ${OA_OVERRIDES}
+
+    # As there are is not pre-build constraints file available
+    # we will need to use those from upstream.
+    OSA_SHA=$(pushd ${OA_DIR} >/dev/null; git rev-parse HEAD; popd >/dev/null)
+    REQUIREMENTS_SHA=$(awk '/requirements_git_install_branch:/ {print $2}' ${OA_DIR}/playbooks/defaults/repo_packages/openstack_services.yml)
+    OSA_PIN_URL="https://raw.githubusercontent.com/openstack/openstack-ansible/${OSA_SHA}/global-requirement-pins.txt"
+    REQ_PIN_URL="https://raw.githubusercontent.com/openstack/requirements/${REQUIREMENTS_SHA}/upper-constraints.txt"
+    echo "pip_install_upper_constraints: ${OSA_PIN_URL} --constraint ${REQ_PIN_URL}" >> ${OA_OVERRIDES}
+
+    # As there is no get-pip.py artifact available from rpc-repo
+    # we set the var to ensure that it uses the default upstream
+    # URL.
+    echo "pip_upstream_url: https://bootstrap.pypa.io/get-pip.py" >> ${OA_OVERRIDES}
+
+    # As there is no repo server in this build, and rpc-repo
+    # has no packages available, ensure that the lock down
+    # is disabled.
+    echo "pip_lock_to_internal_repo: no" >> ${OA_OVERRIDES}
+fi
+
 # Run playbooks
 cd /opt/rpc-openstack/openstack-ansible/playbooks
 
