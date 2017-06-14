@@ -70,13 +70,19 @@ cp scripts/artifacts-building/user_rcbops_artifacts_building.yml /etc/openstack_
 # Prepare to run the playbooks
 cd /opt/rpc-openstack/openstack-ansible/playbooks
 
-# The host must only have the base Ubuntu repository configured.
-# All updates (security and otherwise) must come from the RPC-O apt artifacting.
-# This is also being done to ensure that the python artifacts are built using
-# the same sources as the container artifacts will use.
-openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
-                  -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
-                  ${ANSIBLE_PARAMETERS}
+# If the apt artifacts are not available, then this is likely
+# a PR test which is not going to upload anything, so the
+# artifacts we build do not need to be strictly set to use
+# the RPC-O apt repo.
+if apt_artifacts_available; then
+    # The host must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    # This is also being done to ensure that the python artifacts are built using
+    # the same sources as the container artifacts will use.
+    openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
+                      -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
+                      ${ANSIBLE_PARAMETERS}
+fi
 
 # Setup the repo container and build the artifacts
 openstack-ansible setup-hosts.yml \
