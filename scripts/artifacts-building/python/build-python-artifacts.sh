@@ -63,7 +63,6 @@ sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${BASE_DIR}/open
 ./scripts/artifacts-building/remove-container-aio-config.sh
 
 # Set override vars for the artifact build
-echo "rpc_release: ${RPC_RELEASE}" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
 echo "repo_build_wheel_selective: no" >> /etc/openstack_deploy/user_osa_variables_overrides.yml
 echo "repo_build_venv_selective: no" >> /etc/openstack_deploy/user_osa_variables_overrides.yml
 cp scripts/artifacts-building/user_rcbops_artifacts_building.yml /etc/openstack_deploy/
