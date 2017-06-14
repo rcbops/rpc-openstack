@@ -99,14 +99,20 @@ patch_all_roles
 # Run playbooks
 cd /opt/rpc-openstack/openstack-ansible/playbooks
 
-# The host must only have the base Ubuntu repository configured.
-# All updates (security and otherwise) must come from the RPC-O apt artifacting.
-# The host sources are modified to ensure that when the containers are prepared
-# they have our mirror included as the default. This happens because in the
-# lxc_hosts role the host apt sources are copied into the container cache.
-openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
-                  -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
-                  ${ANSIBLE_PARAMETERS}
+# If the apt artifacts are not available, then this is likely
+# a PR test which is not going to upload anything, so the
+# artifacts we build do not need to be strictly set to use
+# the RPC-O apt repo.
+if apt_artifacts_available; then
+    # The host must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    # The host sources are modified to ensure that when the containers are prepared
+    # they have our mirror included as the default. This happens because in the
+    # lxc_hosts role the host apt sources are copied into the container cache.
+    openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
+                      -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
+                      ${ANSIBLE_PARAMETERS}
+fi
 
 # Setup the host
 openstack-ansible setup-hosts.yml --limit lxc_hosts,hosts
