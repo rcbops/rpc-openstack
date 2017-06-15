@@ -40,3 +40,10 @@ rpco_mirror_apt_deb_line: "deb {{ rpco_mirror_apt_url }} {{ rpc_release }}-{{ an
 rpc_mirror_container_images_list: "{{ rpco_mirror_base_url | default(openstack_repo_url) }}/meta/1.0/index-system"
 rpc_mirror_container_relative_image_location: "{{ webserver_container_artifacts_uri }}/{{ lxc_index_path }}/{{ image_name }}-{{ rpc_release }}/{{ build_id }}"
 rpc_mirror_container_full_image_location: "{{ rpco_mirror_base_url | default(openstack_repo_url) }}/{{ rpc_mirror_container_relative_image_location }}"
+
+#
+# TODO(odyssey4me):
+# Remove this once https://review.openstack.org/474720 has merged
+# and is available in RPC-O.
+#
+keystone_developer_mode: "{{ developer_mode | default('no') }}"
