@@ -29,7 +29,9 @@ source ${BASE_DIR}/scripts/functions.sh
 cd ${RPCD_DIR}/playbooks/
 
 # configure everything for RPC support access
-run_ansible rpc-support.yml
+if [[ "${DEPLOY_SUPPORT_ROLE}" == "yes" ]]; then
+  run_ansible rpc-support.yml
+fi
 
 # deploy and configure the ELK stack
 if [[ "${DEPLOY_ELK}" == "yes" ]]; then
