@@ -62,6 +62,14 @@
         test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
       tags:
         - always
+    # TODO(odyssey4me):
+    # Remove this once all roles have developer mode package
+    # install tasks which include git.
+    - name: When using developer_mode install git
+      apt:
+        name: "git-core"
+        state: present
+      when: "developer_mode | bool"
   tags:
     - always
 
