@@ -35,9 +35,3 @@ conf_directory_mode: 755
 holland_venv_enabled: True
 holland_venv_bin: "/openstack/venvs/holland-{{ rpc_release }}/bin"
 holland_venv: "/openstack/venvs/holland-{{ rpc_release }}"
-
-date_stamp: "{{ ansible_date_time.date }}"
-time_stamp: "{{ ansible_date_time.time }}"
-datetime_stamp: "{{ date_stamp }}-{{ time_stamp }}"
-local_home: "{{ lookup('env', 'HOME') }}"
-backup_dir: "{{ local_home }}/rpc13-upgrade-{{ date_stamp }}"
