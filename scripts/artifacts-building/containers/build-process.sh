@@ -169,9 +169,13 @@ for cnt in ${role_list}; do
                     ${ANSIBLE_PARAMETERS}
 done
 
-# test one container build contents
-openstack-ansible containers/test-built-container.yml
-openstack-ansible containers/test-built-container-idempotency-test.yml | tee /tmp/output.txt; grep -q 'changed=0.*failed=0' /tmp/output.txt && { echo 'Idempotence test: pass';  } || { echo 'Idempotence test: fail' && exit 1; }
+# If there are no python artifacts, then the containers built are unlikely
+# to be idempotent, so skip this test.
+if python_artifacts_available; then
+    # test one container build contents
+    openstack-ansible containers/test-built-container.yml
+    openstack-ansible containers/test-built-container-idempotency-test.yml | tee /tmp/output.txt; grep -q 'changed=0.*failed=0' /tmp/output.txt && { echo 'Idempotence test: pass';  } || { echo 'Idempotence test: fail' && exit 1; }
+fi
 
 if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
   if [ -z ${REPO_USER_KEY+x} ] || [ -z ${REPO_USER+x} ] || [ -z ${REPO_HOST+x} ] || [ -z ${REPO_HOST_PUBKEY+x} ]; then
