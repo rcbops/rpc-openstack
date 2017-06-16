@@ -39,7 +39,6 @@ export RPCD_OVERRIDES='/etc/openstack_deploy/user_rpco_variables_overrides.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-''}
-export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 
 export HOST_SOURCES_REWRITE=${HOST_SOURCES_REWRITE:-"yes"}
 export HOST_UBUNTU_REPO=${HOST_UBUNTU_REPO:-"http://mirror.rackspace.com/ubuntu"}
@@ -54,8 +53,30 @@ source /etc/lsb-release
 
 ## Functions -----------------------------------------------------------------
 
+# Cater for the use of the FORKS env var for backwards compatibility (Newton
+#  and older). It should be removed in Pike.
+if [ -n "${FORKS+set}" ]; then
+  export ANSIBLE_FORKS=${FORKS}
+fi
+
+# The default SSHD configuration has MaxSessions = 10. If a deployer changes
+#  their SSHD config, then the ANSIBLE_FORKS may be set to a higher number. We
+#  set the value to 10 or the number of CPU's, whichever is less. This is to
+#  balance between performance gains from the higher number, and CPU
+#  consumption. If ANSIBLE_FORKS is already set to a value, then we leave it
+#  alone.
+#  ref: https://bugs.launchpad.net/openstack-ansible/+bug/1479812
+if [ -z "${ANSIBLE_FORKS:-}" ]; then
+  CPU_NUM=$(grep -c ^processor /proc/cpuinfo)
+  if [ ${CPU_NUM} -lt "10" ]; then
+    export ANSIBLE_FORKS=${CPU_NUM}
+  else
+    export ANSIBLE_FORKS=10
+  fi
+fi
+
 function run_ansible {
-  openstack-ansible ${ANSIBLE_PARAMETERS} --forks ${FORKS} $@
+  openstack-ansible ${ANSIBLE_PARAMETERS} $@
 }
 
 function check_submodule_status {

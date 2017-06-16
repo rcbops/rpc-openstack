@@ -124,17 +124,10 @@ DEPLOY_SWIFT       | yes                                | Deploy swift          
 DEPLOY_HARDENING   | yes                                | Deploy openstack-ansible-security role               |
 DEPLOY_RPC         | yes                                | Deploy the RPCO specific variables                   |
 BOOTSTRAP_OPTS     |                                    | Any options used for the bootstrap process           | Only used if DEPLOY_AIO=yes
-FORKS              | `grep -c ^processor /proc/cpuinfo` | Number of forks Ansible may use                      | May have issues if FORKS > SSHD's MaxSessions. Adjust accordingly
 ANSIBLE_PARAMETERS |                                    | Additional paramters passed to Ansible               |
 
 All of the variables for deploy.sh are made available by sourcing the [functions.sh](https://github.com/rcbops/rpc-openstack/blob/master/scripts/functions.sh) script
 
-For instance to adjust the number of forks Ansible is able to use:
-
-```
-export FORKS=10
-./scripts/deploy.sh
-```
 # Linting
 
 If you would like to lint against a version of ansible that is not the
