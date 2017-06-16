@@ -93,6 +93,11 @@ git config --global user.email "rcbops@rackspace.com"
 git config --global user.name "RCBOPS gating"
 
 # Patch the roles
+# TODO(odyssey4me):
+# Remove the patcher process once the following have merged
+# and are available to RPC-O:
+# https://review.openstack.org/474734
+# https://review.openstack.org/474730
 cd containers/patches/
 patch_all_roles
 
