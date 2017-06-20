@@ -1,0 +1,36 @@
+---
+- name: Add resource load to deployment
+  hosts: utility_all[0]
+  tasks:
+    - name: Install virtualenv
+      pip:
+        name: "virtualenv"
+    - name: Prepare a virtualenv for generate_resources.py
+      pip:
+        name: "{{ item }}"
+        virtualenv: "{{ venv }}"
+        extra_args: "--isolated"
+      with_items:
+        - "ipaddress==1.0.18"
+        - "keystoneauth1==2.21.0"
+        - "python-cinderclient==2.2.0"
+        - "python-glanceclient==2.7.0"
+        - "python-neutronclient==6.3.0"
+        - "python-novaclient==9.0.0"
+    - name: Generate resources
+      script: "../generate_resources.py --servers {{ server_count }} --volumes {{ volume_count }} --networks {{ network_count }} --infinite-quotas"
+      environment:
+        OS_ENDPOINT_TYPE: "internalURL"
+        OS_USERNAME: "admin"
+        OS_PASSWORD: "{{ keystone_auth_admin_password }}"
+        OS_PROJECT_NAME: "admin"
+        OS_AUTH_URL: "{{ keystone_service_internalurl }}"
+        OS_USER_DOMAIN_NAME: "Default"
+        OS_PROJECT_DOMAIN_NAME: "Default"
+        PATH: "{{ venv }}/bin"
+    - name: Remove virtualenv
+      file:
+        path: "{{ venv }}"
+        state: "absent"
+  vars:
+    venv: "/tmp/load_gen_venv"
