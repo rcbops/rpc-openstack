@@ -56,9 +56,13 @@ rm -f /opt/list
 # be at /opt/rpc-openstack, so we link the current folder there.
 ln -sfn ${PWD} /opt/rpc-openstack
 
-# Bootstrap Ansible and the AIO config
+# Bootstrap Ansible
+# This script is sourced to ensure that the common
+# functions and vars are available.
 cd /opt/rpc-openstack
-./scripts/bootstrap-ansible.sh
+source scripts/bootstrap-ansible.sh
+
+# Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
 
 # Now use GROUP_VARS of OSA and RPC
@@ -89,20 +93,60 @@ git config --global user.email "rcbops@rackspace.com"
 git config --global user.name "RCBOPS gating"
 
 # Patch the roles
+# TODO(odyssey4me):
+# Remove the patcher process once the following have merged
+# and are available to RPC-O:
+# https://review.openstack.org/474734
+# https://review.openstack.org/474730
 cd containers/patches/
 patch_all_roles
+
+# If we have no pre-built python artifacts available, the whole
+# container build process will fail as it is unable to find the
+# right artifacts to use. To ensure that we can still do a PR test
+# when there are no python artifacts, we need to override a few
+# things.
+if ! python_artifacts_available; then
+    # As there are no wheels available for this release, we will
+    # need to enable developer_mode for the role install.
+    echo "developer_mode: yes" >> ${OA_OVERRIDES}
+
+    # As there are is not pre-build constraints file available
+    # we will need to use those from upstream.
+    OSA_SHA=$(pushd ${OA_DIR} >/dev/null; git rev-parse HEAD; popd >/dev/null)
+    REQUIREMENTS_SHA=$(awk '/requirements_git_install_branch:/ {print $2}' ${OA_DIR}/playbooks/defaults/repo_packages/openstack_services.yml)
+    OSA_PIN_URL="https://raw.githubusercontent.com/openstack/openstack-ansible/${OSA_SHA}/global-requirement-pins.txt"
+    REQ_PIN_URL="https://raw.githubusercontent.com/openstack/requirements/${REQUIREMENTS_SHA}/upper-constraints.txt"
+    echo "pip_install_upper_constraints: ${OSA_PIN_URL} --constraint ${REQ_PIN_URL}" >> ${OA_OVERRIDES}
+
+    # As there is no get-pip.py artifact available from rpc-repo
+    # we set the var to ensure that it uses the default upstream
+    # URL.
+    echo "pip_upstream_url: https://bootstrap.pypa.io/get-pip.py" >> ${OA_OVERRIDES}
+
+    # As there is no repo server in this build, and rpc-repo
+    # has no packages available, ensure that the lock down
+    # is disabled.
+    echo "pip_lock_to_internal_repo: no" >> ${OA_OVERRIDES}
+fi
 
 # Run playbooks
 cd /opt/rpc-openstack/openstack-ansible/playbooks
 
-# The host must only have the base Ubuntu repository configured.
-# All updates (security and otherwise) must come from the RPC-O apt artifacting.
-# The host sources are modified to ensure that when the containers are prepared
-# they have our mirror included as the default. This happens because in the
-# lxc_hosts role the host apt sources are copied into the container cache.
-openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
-                  -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
-                  ${ANSIBLE_PARAMETERS}
+# If the apt artifacts are not available, then this is likely
+# a PR test which is not going to upload anything, so the
+# artifacts we build do not need to be strictly set to use
+# the RPC-O apt repo.
+if apt_artifacts_available; then
+    # The host must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    # The host sources are modified to ensure that when the containers are prepared
+    # they have our mirror included as the default. This happens because in the
+    # lxc_hosts role the host apt sources are copied into the container cache.
+    openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
+                      -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
+                      ${ANSIBLE_PARAMETERS}
+fi
 
 # Setup the host
 openstack-ansible setup-hosts.yml --limit lxc_hosts,hosts
@@ -118,7 +162,7 @@ openstack-ansible containers/artifact-build-chroot.yml \
 
 # Build the list of roles to build containers for
 role_list=""
-role_list="${role_list} elasticsearch kibana logstash memcached_server"
+role_list="${role_list} elasticsearch kibana rpc-role-logstash memcached_server"
 role_list="${role_list} os_cinder os_glance os_heat os_horizon os_ironic"
 role_list="${role_list} os_keystone os_neutron os_nova os_swift os_tempest"
 role_list="${role_list} rabbitmq_server repo_server rsyslog_server"
@@ -130,9 +174,13 @@ for cnt in ${role_list}; do
                     ${ANSIBLE_PARAMETERS}
 done
 
-# test one container build contents
-openstack-ansible containers/test-built-container.yml
-openstack-ansible containers/test-built-container-idempotency-test.yml | tee /tmp/output.txt; grep -q 'changed=0.*failed=0' /tmp/output.txt && { echo 'Idempotence test: pass';  } || { echo 'Idempotence test: fail' && exit 1; }
+# If there are no python artifacts, then the containers built are unlikely
+# to be idempotent, so skip this test.
+if python_artifacts_available; then
+    # test one container build contents
+    openstack-ansible containers/test-built-container.yml
+    openstack-ansible containers/test-built-container-idempotency-test.yml | tee /tmp/output.txt; grep -q 'changed=0.*failed=0' /tmp/output.txt && { echo 'Idempotence test: pass';  } || { echo 'Idempotence test: fail' && exit 1; }
+fi
 
 if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
   if [ -z ${REPO_USER_KEY+x} ] || [ -z ${REPO_USER+x} ] || [ -z ${REPO_HOST+x} ] || [ -z ${REPO_HOST_PUBKEY+x} ]; then

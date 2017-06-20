@@ -19,18 +19,18 @@
 - name: Check integrity
   hosts: lxc_container_artifact
   connection: chroot
-  # Gether facts is necessary
+  # Gather facts is necessary
   vars_files:
     - container-vars.yml
   vars:
     image_name: "{{ lookup('env', 'CONTAINER_TYPE') | default('keystone', True) }}"
     official_repos:
-      - "deb http://mirror.rackspace.com/ubuntu trusty main universe"
+      - "deb http://mirror.rackspace.com/ubuntu {{ ansible_distribution_release }} main universe"
       - "{{ rpco_mirror_apt_deb_line }}"
   tasks:
     - name: Fetch get-pip for comparison
       get_url:
-        url: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/get-pip.py"
+        url: "{{ rpco_mirror_base_url | default(openstack_repo_url) }}/os-releases/{{ rpc_release }}/get-pip.py"
         dest: /opt/get-pip.py
         force: yes #Ensure it's redownloaded for testing purposes, not directly ok.
     - name: List all the active apt sources

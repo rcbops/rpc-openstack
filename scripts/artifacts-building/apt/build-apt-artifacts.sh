@@ -87,14 +87,15 @@ set -x
 # Ensure that the repo server public key is a known host
 grep "${REPO_HOST}" ~/.ssh/known_hosts || echo "${REPO_HOST} $(cat $REPO_HOST_PUBKEY)" >> ~/.ssh/known_hosts
 
-#Append host to [mirrors] group
+# Create an inventory to use
 echo '[mirrors]' > /opt/inventory
 echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_private_key_file='${REPO_KEYFILE}' " >> /opt/inventory
+echo "localhost ansible_python_interpreter='/usr/bin/python2'" >> /opt/inventory
 
 # Execute the playbooks
 cd ${BASE_DIR}/scripts/artifacts-building/apt
-ansible-playbook aptly-pre-install.yml ${ANSIBLE_PARAMETERS}
+ansible-playbook aptly-pre-install.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
 ansible-playbook aptly-all.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
 
 source /opt/rpc-openstack/openstack-ansible/scripts/openstack-ansible.rc
-ansible-playbook apt-artifacts-testing.yml ${ANSIBLE_PARAMETERS}
+ansible-playbook apt-artifacts-testing.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}

@@ -1,7 +1,7 @@
-From c8c1d0cd310563b4cec0bfae23791ee4c74f2f57 Mon Sep 17 00:00:00 2001
-From: RCBOPS gating <rcbops@rackspace.com>
-Date: Wed, 1 Mar 2017 11:58:22 +0000
-Subject: [PATCH] Cleanup artifact building
+From 902979d2d1978945994aeccc6b81f670cf3729b6 Mon Sep 17 00:00:00 2001
+From: Jesse Pretorius <jesse.pretorius@rackspace.co.uk>
+Date: Wed, 14 Jun 2017 15:58:17 +0100
+Subject: [PATCH] Remove ssh key generation
 
 Some tasks can't be changed upstream and have to be fixed here.
 ---
@@ -9,7 +9,7 @@ Some tasks can't be changed upstream and have to be fixed here.
  1 file changed, 1 deletion(-)
 
 diff --git a/tasks/repo_post_install.yml b/tasks/repo_post_install.yml
-index 7fb1949..34cb748 100644
+index d51f85d..8d5154f 100644
 --- a/tasks/repo_post_install.yml
 +++ b/tasks/repo_post_install.yml
 @@ -45,7 +45,6 @@
@@ -20,3 +20,6 @@ index 7fb1949..34cb748 100644
    tags:
      - pkg-repo-user
      - repo-key
+-- 
+2.11.0 (Apple Git-81)
+
