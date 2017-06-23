@@ -69,7 +69,7 @@
       apt:
         name: "git-core"
         state: present
-      when: "developer_mode | bool"
+      when: "(developer_mode | default('no')) | bool"
   tags:
     - always
 
