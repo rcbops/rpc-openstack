@@ -22,6 +22,9 @@
       file:
         path: "{{ item }}"
         state: directory
+        mode: "0755"
+        owner: "{{ webservice_owner }}"
+        group: "www-data"
       with_items:
         - "{{ aptly_user_home }}"
         - "{{ artifacts_root_folder }}"
@@ -65,4 +68,5 @@
         src: "{{ aptly_custom_gpg_pubkey_file }}"
         dest: "{{ aptly_custom_gpg_pubkey_file }}"
         owner: "{{ webservice_owner }}"
+        group: "www-data"
       when: action=="push-gpg"
