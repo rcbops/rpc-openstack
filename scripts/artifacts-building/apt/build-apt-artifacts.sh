@@ -88,9 +88,10 @@ set -x
 grep "${REPO_HOST}" ~/.ssh/known_hosts || echo "${REPO_HOST} $(cat $REPO_HOST_PUBKEY)" >> ~/.ssh/known_hosts
 
 # Create an inventory to use
-echo '[mirrors]' > /opt/inventory
-echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_private_key_file='${REPO_KEYFILE}' " >> /opt/inventory
+echo '[all]' > /opt/inventory
 echo "localhost ansible_python_interpreter='/usr/bin/python2'" >> /opt/inventory
+echo '[mirrors]' >> /opt/inventory
+echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_private_key_file='${REPO_KEYFILE}' " >> /opt/inventory
 
 # Execute the playbooks
 cd ${BASE_DIR}/scripts/artifacts-building/apt
