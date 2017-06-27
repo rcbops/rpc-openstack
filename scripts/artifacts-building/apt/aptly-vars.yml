@@ -417,7 +417,7 @@ aptly_mirrors:
     do_update: "{{ aptly_mirror_do_updates }}"
   - name: hwraid-xenial
     archive_url: http://hwraid.le-vert.net/ubuntu/
-    distribution: wily
+    distribution: xenial
     component1:
       - main
     state: "present"
