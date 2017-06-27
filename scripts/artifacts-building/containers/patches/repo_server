@@ -1,7 +1,7 @@
-From c8c1d0cd310563b4cec0bfae23791ee4c74f2f57 Mon Sep 17 00:00:00 2001
-From: RCBOPS gating <rcbops@rackspace.com>
-Date: Wed, 1 Mar 2017 11:58:22 +0000
-Subject: [PATCH] Cleanup artifact building
+From 4ab0085ae573c88fc0cce353b9c19c58e8d9433b Mon Sep 17 00:00:00 2001
+From: Jesse Pretorius <jesse.pretorius@rackspace.co.uk>
+Date: Fri, 23 Jun 2017 13:25:24 +0100
+Subject: [PATCH] Remove ssh key generation
 
 Some tasks can't be changed upstream and have to be fixed here.
 ---
@@ -20,3 +20,6 @@ index 7fb1949..34cb748 100644
    tags:
      - pkg-repo-user
      - repo-key
+--
+2.11.0 (Apple Git-81)
+

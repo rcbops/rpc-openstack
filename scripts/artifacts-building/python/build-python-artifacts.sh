@@ -44,9 +44,13 @@ export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 # be at /opt/rpc-openstack, so we link the current folder there.
 ln -sfn ${PWD} /opt/rpc-openstack
 
-# bootstrap Ansible and the AIO config
+# Bootstrap Ansible
+# This script is sourced to ensure that the common
+# functions and vars are available.
 cd /opt/rpc-openstack
-./scripts/bootstrap-ansible.sh
+source scripts/bootstrap-ansible.sh
+
+# Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
 
 # Now use GROUP_VARS of OSA and RPC
@@ -59,7 +63,6 @@ sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${BASE_DIR}/open
 ./scripts/artifacts-building/remove-container-aio-config.sh
 
 # Set override vars for the artifact build
-echo "rpc_release: ${RPC_RELEASE}" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
 echo "repo_build_wheel_selective: no" >> /etc/openstack_deploy/user_osa_variables_overrides.yml
 echo "repo_build_venv_selective: no" >> /etc/openstack_deploy/user_osa_variables_overrides.yml
 cp scripts/artifacts-building/user_rcbops_artifacts_building.yml /etc/openstack_deploy/
@@ -67,13 +70,38 @@ cp scripts/artifacts-building/user_rcbops_artifacts_building.yml /etc/openstack_
 # Prepare to run the playbooks
 cd /opt/rpc-openstack/openstack-ansible/playbooks
 
-# The host must only have the base Ubuntu repository configured.
-# All updates (security and otherwise) must come from the RPC-O apt artifacting.
-# This is also being done to ensure that the python artifacts are built using
-# the same sources as the container artifacts will use.
-openstack-ansible /opt/rpc-openstack/rpcd/playbooks/configure-apt-sources.yml \
-                  -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
-                  ${ANSIBLE_PARAMETERS}
+# If the apt artifacts are not available, then this is likely
+# a PR test which is not going to upload anything, so the
+# artifacts we build do not need to be strictly set to use
+# the RPC-O apt repo.
+if apt_artifacts_available; then
+    # The python artifacts are not available at this point, so we need to
+    # force the use of the upstream constraints for the pip_install role
+    # to execute properly when the apt source configuration playbook
+    # is executed.
+    if ! python_artifacts_available; then
+        # As there are is not pre-build constraints file available
+        # we will need to use those from upstream.
+        OSA_SHA=$(pushd ${OA_DIR} >/dev/null; git rev-parse HEAD; popd >/dev/null)
+        REQUIREMENTS_SHA=$(awk '/requirements_git_install_branch:/ {print $2}' ${OA_DIR}/playbooks/defaults/repo_packages/openstack_services.yml)
+        OSA_PIN_URL="https://raw.githubusercontent.com/openstack/openstack-ansible/${OSA_SHA}/global-requirement-pins.txt"
+        REQ_PIN_URL="https://raw.githubusercontent.com/openstack/requirements/${REQUIREMENTS_SHA}/upper-constraints.txt"
+        sed -i "s|pip_install_upper_constraints: .*|pip_install_upper_constraints: ${OSA_PIN_URL} --constraint ${REQ_PIN_URL}|" ${RPCD_DIR}/playbooks/configure-apt-sources.yml
+
+        # As there is no get-pip.py artifact available from rpc-repo
+        # we set the var to ensure that it uses the default upstream
+        # URL.
+        echo "s|pip_upstream_url: .*|pip_upstream_url: https://bootstrap.pypa.io/get-pip.py|" ${RPCD_DIR}/playbooks/configure-apt-sources.yml
+    fi
+
+    # The host must only have the base Ubuntu repository configured.
+    # All updates (security and otherwise) must come from the RPC-O apt artifacting.
+    # This is also being done to ensure that the python artifacts are built using
+    # the same sources as the container artifacts will use.
+    openstack-ansible ${RPCD_DIR}/playbooks/configure-apt-sources.yml \
+                      -e "host_ubuntu_repo=http://mirror.rackspace.com/ubuntu" \
+                      ${ANSIBLE_PARAMETERS}
+fi
 
 # Setup the repo container and build the artifacts
 openstack-ansible setup-hosts.yml \
