@@ -1,0 +1,57 @@
+---
+# Copyright 2014-2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Init lists
+  set_fact:
+    install_packages: []
+    packages_files_list: []
+
+- name: Build list of all the Packages files used
+  set_fact:
+    packages_files_list: "{{ packages_files_list }} + [ '{{ package_files_path }}/{{ item[0] }}-{{ distribution_release }}-{{ item[1] }}-amd64' ]"
+  with_together:
+    - ['rpcrepo', 'ubuntu', 'ubuntu']
+    - ['main', 'main', 'universe']
+
+- name: Creating a list of all the packages files existing for the distribution_release based on the Packages files
+  set_fact:
+    all_packages: |-
+      {% set package_list = []  %}
+      {% for package_file in packages_files_list %}
+      {%   for key, value in lookup('packages_file',package_file).iteritems() %}
+      {%     set _ = package_list.append(key) %}
+      {%   endfor %}
+      {% endfor %}
+      {{ package_list }}
+
+- name: Create a list of the packages to install based on roles
+  set_fact:
+    install_packages: "{{ install_packages }} + [ '{{ item }}' ]"
+  with_packages_to_install:
+    - from:
+        - /etc/ansible/roles
+      for: "{{ distribution_release }}"
+      pkg_blacklist:
+        - "{% raw %}.*{{.*}}.*{% endraw %}"
+      var_blacklist:
+        - nova_compute_powervm_distro_packages
+
+- name: How many packages have to be installed at max?
+  debug:
+    msg: "The answer is: {{ install_packages | length }}"
+
+- name: List packages to be installed which are not in rpc-repo or ubuntu distribution release
+  debug:
+    msg: "{{ install_packages | difference(all_packages) }}"

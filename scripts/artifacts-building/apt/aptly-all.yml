@@ -17,38 +17,60 @@
   vars:
     aptly_mirror_do_updates: "False"
 
+
+
 - include: sync-with-mirror.yml
   when: "{{ lookup('ENV','PULL_FROM_MIRROR') | bool }}"
   vars:
     action: "pull-aptly"
 
+
+
 - include: aptly-install-and-mirror.yml
   vars:
     aptly_mirror_do_updates: "True"
 
-# The behavior is changed if RECREATE_SNAPSHOTS is true.
-- include: aptly-snapshot-create.yml
-  vars:
-    distribution_release: "trusty"
 
-- include: aptly-snapshot-create.yml
-  vars:
-    distribution_release: "xenial"
 
-- include: aptly-snapshot-publish.yml
-  when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
-  vars:
-    distribution_release: "trusty"
+- name: Create/publish snapshot(s) for the release
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - aptly-vars.yml
+  become_user: aptly
+  become: True
+  become_method: sudo
+  tasks:
 
-- include: aptly-snapshot-publish.yml
-  when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
-  vars:
-    distribution_release: "xenial"
+    - include: aptly-snapshot-create.yml
+      with_items: "{{ aptly_miko_mapping[rpc_series].keys() }}"
+      loop_control:
+        loop_var: distribution_release
+      tags:
+        - aptly_snapshot_create
+
+    - include: aptly-snapshot-publish.yml
+      when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
+      with_items: "{{ aptly_miko_mapping[rpc_series].keys() }}"
+      loop_control:
+        loop_var: distribution_release
+      tags:
+        - aptly_snapshot_publish
+
+    - name: 'Clean aptly database'
+      command: 'aptly db cleanup'
+      tags:
+        - aptly_db_cleanup
+
+
 
 - include: sync-with-mirror.yml
   when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
   vars:
     action: "push-aptly"
+
+
 
 - include: sync-with-mirror.yml
   when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"

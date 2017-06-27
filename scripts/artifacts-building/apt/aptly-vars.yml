@@ -24,6 +24,9 @@ webservice_owner: "nginx"
 
 rpc_release: "{{ lookup('pipe', '/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh') }}"
 
+# We need the series (major version) for the snapshot mappings
+rpc_series: "{{ rpc_release.split('.')[0] }}"
+
 # Prepare for aptly, repos to clone.
 aptly_clone_this_first:
   - repo: "https://github.com/evrardjp/ansible-role-aptly.git"
@@ -42,47 +45,71 @@ aptly_architectures:
 #  - ppc64el
 aptly_dependency_follow_suggests: True
 #aptly_mirror_do_updates: True
+
+#
 # mapping for Miko (Merge) snapshots.
+#
+
 # This is a list of the repo/mirror snapshots (slushies) that will appear in the miko* snapshots
+# for each release series.
 aptly_miko_mapping:
-  trusty:
-    - "slushie-{{ rpc_release }}-ubuntu-updates-trusty"
-    - "slushie-{{ rpc_release }}-ubuntu-backports-trusty"
-    - "slushie-{{ rpc_release }}-uca-mitaka-updates-trusty"
-    - "slushie-{{ rpc_release }}-mariadb-10.0-trusty"
-    - "slushie-{{ rpc_release }}-percona-trusty"
-    - "slushie-{{ rpc_release }}-haproxy-trusty"
-    - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
-    - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
-    - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
-    - "slushie-{{ rpc_release }}-elastic-beats-ALL"
-    - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
-    - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
-  xenial:
-    - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
-    - "slushie-{{ rpc_release }}-uca-newton-updates-xenial"
-    - "slushie-{{ rpc_release }}-mariadb-10.0-xenial"
-    - "slushie-{{ rpc_release }}-mariadb-10.1-xenial"
-    - "slushie-{{ rpc_release }}-percona-xenial"
-    - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
-    - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
-    - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
-    - "slushie-{{ rpc_release }}-elastic-beats-ALL"
-    - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
-    - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+  r14:
+    trusty:
+      - "slushie-{{ rpc_release }}-ubuntu-updates-trusty"
+      - "slushie-{{ rpc_release }}-ubuntu-backports-trusty"
+      - "slushie-{{ rpc_release }}-uca-mitaka-updates-trusty"
+      - "slushie-{{ rpc_release }}-mariadb-10.0-trusty"
+      - "slushie-{{ rpc_release }}-percona-trusty"
+      - "slushie-{{ rpc_release }}-haproxy-trusty"
+      - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
+      - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
+      - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-beats-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+    xenial:
+      - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
+      - "slushie-{{ rpc_release }}-uca-newton-updates-xenial"
+      - "slushie-{{ rpc_release }}-mariadb-10.0-xenial"
+      - "slushie-{{ rpc_release }}-percona-xenial"
+      - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
+      - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
+      - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-beats-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+  r15:
+    xenial:
+      - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
+      - "slushie-{{ rpc_release }}-mariadb-10.1-xenial"
+      - "slushie-{{ rpc_release }}-percona-xenial"
+      - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
+      - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
+      - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-beats-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+
 # mapping for N (NOT MERGE) snapshots
 # This is a list of the repo/mirror snapshots (slushies) that will be published separately.
 aptly_n_mapping:
-  trusty:
-    - src: "slushie-{{ rpc_release }}-hwraid-trusty"
-      dest: "hwraid-trusty"
-    - src: "slushie-{{ rpc_release }}-rax-maas-trusty"
-      dest: "rax-maas-trusty"
-  xenial:
-    - src: "slushie-{{ rpc_release }}-hwraid-xenial"
-      dest: "hwraid-xenial"
-    - src: "slushie-{{ rpc_release }}-rax-maas-xenial"
-      dest: "rax-maas-xenial"
+  r14:
+    trusty:
+      - src: "slushie-{{ rpc_release }}-hwraid-trusty"
+        dest: "hwraid-trusty"
+      - src: "slushie-{{ rpc_release }}-rax-maas-trusty"
+        dest: "rax-maas-trusty"
+    xenial:
+      - src: "slushie-{{ rpc_release }}-hwraid-xenial"
+        dest: "hwraid-xenial"
+      - src: "slushie-{{ rpc_release }}-rax-maas-xenial"
+        dest: "rax-maas-xenial"
+  r15:
+    xenial:
+      - src: "slushie-{{ rpc_release }}-hwraid-xenial"
+        dest: "hwraid-xenial"
+      - src: "slushie-{{ rpc_release }}-rax-maas-xenial"
+        dest: "rax-maas-xenial"
 
 # list of snapshots to skip
 aptly_dont_snapshot_list: []
