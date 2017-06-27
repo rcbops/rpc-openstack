@@ -81,6 +81,7 @@ aptly_miko_mapping:
   r15:
     xenial:
       - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
+      - "slushie-{{ rpc_release }}-uca-ocata-updates-xenial"
       - "slushie-{{ rpc_release }}-mariadb-10.1-xenial"
       - "slushie-{{ rpc_release }}-percona-xenial"
       - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
@@ -185,6 +186,21 @@ aptly_mirrors:
   - name: uca-newton-updates-xenial
     archive_url: http://ubuntu-cloud.archive.canonical.com/ubuntu
     distribution: xenial-updates/newton
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "EC4926EA"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+  - name: uca-ocata-updates-xenial
+    archive_url: http://ubuntu-cloud.archive.canonical.com/ubuntu
+    distribution: xenial-updates/ocata
     component1:
       - main
     state: "present"
