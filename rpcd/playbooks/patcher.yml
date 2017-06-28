@@ -24,3 +24,6 @@
   user: root
   roles:
     - { role: "patcher", tags: [ "patcher" ] }
+  vars:
+    patcher_files:
+      - neutron-metadata-checksum-fix.patch

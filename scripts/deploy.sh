@@ -92,6 +92,7 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
     sed -i "s/maas_notification_plan: .*/maas_notification_plan: npTechnicalContactsEmail/" $RPCD_VARS
     # set network speed for vms
     echo "net_max_speed: 1000" >>$RPCD_VARS
+    echo "neutron_metadata_checksum_fix: yes" >> /etc/openstack_deploy/user_variables.yml
 
     # TODO(odyssey4me):
     # This is disabled until work can be done to resolve the upgrade issues.
@@ -201,20 +202,6 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   # setup the infrastructure
   run_ansible setup-infrastructure.yml
-
-  # This section is duplicated from OSA/run-playbooks as RPC doesn't currently
-  # make use of run-playbooks. (TODO: hughsaunders)
-  # Note that switching to run-playbooks may inadvertently convert to repo build from repo clone.
-  # When running in an AIO, we need to drop the following iptables rule in any neutron_agent containers
-  # to ensure that instances can communicate with the neutron metadata service.
-  # This is necessary because in an AIO environment there are no physical interfaces involved in
-  # instance -> metadata requests, and this results in the checksums being incorrect.
-  if [ "${DEPLOY_AIO}" == "yes" ]; then
-    ansible neutron_agent -m command \
-                          -a '/sbin/iptables -t mangle -A POSTROUTING -p tcp --sport 80 -j CHECKSUM --checksum-fill'
-    ansible neutron_agent -m shell \
-                          -a 'DEBIAN_FRONTEND=noninteractive apt-get install iptables-persistent'
-  fi
 
   # setup openstack
   run_ansible setup-openstack.yml
