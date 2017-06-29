@@ -17,40 +17,105 @@
   vars:
     aptly_mirror_do_updates: "False"
 
-- include: sync-with-mirror.yml
-  when: "{{ lookup('ENV','PULL_FROM_MIRROR') | bool }}"
-  vars:
-    action: "pull-aptly"
+
+
+- name: Pull apt artifacts from rpc-repo
+  hosts: mirrors
+  vars_files:
+    - aptly-vars.yml
+  tags:
+    - pull_from_mirror
+  tasks:
+    - name: Synchronize artifacts
+      synchronize:
+        src: "{{ aptly_user_home }}"
+        dest: "{{ artifacts_aptrepos_dest_folder | dirname }}"
+        mode: pull
+        delete: yes
+        rsync_opts: "--quiet --stats --log-file='/var/log/rpc-repo.log' --chown={{ aptly_user }}:www-data"
+      register: synchronize
+      until: synchronize | success
+      retries: 5
+      delay: 5
+      when: "{{ lookup('ENV','PULL_FROM_MIRROR') | bool }}"
+
+
 
 - include: aptly-install-and-mirror.yml
   vars:
     aptly_mirror_do_updates: "True"
 
-# The behavior is changed if RECREATE_SNAPSHOTS is true.
-- include: aptly-snapshot-create.yml
-  vars:
-    distribution_release: "trusty"
 
-- include: aptly-snapshot-create.yml
-  vars:
-    distribution_release: "xenial"
 
-- include: aptly-snapshot-publish.yml
-  when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
-  vars:
-    distribution_release: "trusty"
+- name: Create/publish snapshot(s) for the release
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  become_user: aptly
+  become: True
+  become_method: sudo
+  vars_files:
+    - aptly-vars.yml
+  tasks:
 
-- include: aptly-snapshot-publish.yml
-  when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
-  vars:
-    distribution_release: "xenial"
+    - include: aptly-snapshot-create.yml
+      with_items: "{{ aptly_miko_mapping[rpc_series].keys() }}"
+      loop_control:
+        loop_var: distribution_release
+      tags:
+        - aptly_snapshot_create
 
-- include: sync-with-mirror.yml
-  when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
-  vars:
-    action: "push-aptly"
+    - include: aptly-snapshot-publish.yml
+      when: "{{ lookup('ENV','PUBLISH_SNAPSHOT') | bool }}"
+      with_items: "{{ aptly_miko_mapping[rpc_series].keys() }}"
+      loop_control:
+        loop_var: distribution_release
+      tags:
+        - aptly_snapshot_publish
 
-- include: sync-with-mirror.yml
-  when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
-  vars:
-    action: "push-gpg"
+    - name: 'Clean aptly database'
+      command: 'aptly db cleanup'
+      tags:
+        - aptly_db_cleanup
+
+
+
+- name: Push apt artifacts to rpc-repo
+  hosts: mirrors
+  vars_files:
+    - aptly-vars.yml
+  tags:
+    - push_to_mirror
+  tasks:
+    - name: Ensure the folders are present on the repo before we try to sync them
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+        owner: "{{ webservice_owner }}"
+        group: "www-data"
+      with_items:
+        - "{{ aptly_user_home }}"
+        - "{{ artifacts_root_folder }}"
+      when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
+
+    - name: Synchronize artifacts
+      synchronize:
+        src: "{{ aptly_user_home }}"
+        dest: "{{ artifacts_aptrepos_dest_folder | dirname }}"
+        mode: push
+        delete: yes
+        rsync_opts: "--quiet --stats --log-file='/var/log/rpc-repo.log' --chown={{ webservice_owner }}:www-data"
+      register: synchronize
+      until: synchronize | success
+      retries: 5
+      delay: 5
+      when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
+
+    - name: Sync apt public key with mirror
+      copy:
+        src: "{{ aptly_custom_gpg_pubkey_file }}"
+        dest: "{{ aptly_custom_gpg_pubkey_file }}"
+        owner: "{{ webservice_owner }}"
+        group: "www-data"
+      when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"

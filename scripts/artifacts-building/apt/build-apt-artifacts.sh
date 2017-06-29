@@ -93,6 +93,10 @@ echo "localhost ansible_python_interpreter='/usr/bin/python2'" >> /opt/inventory
 echo '[mirrors]' >> /opt/inventory
 echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_private_key_file='${REPO_KEYFILE}' " >> /opt/inventory
 
+# Remove the previously used rpc-repo.log file to prevent
+# it growing too large. We want a fresh log for every job.
+[ -e /var/log/rpc-repo.log ] && rm -f /var/log/rpc-repo.log
+
 # Execute the playbooks
 cd ${BASE_DIR}/scripts/artifacts-building/apt
 ansible-playbook aptly-pre-install.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
