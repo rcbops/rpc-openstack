@@ -1,0 +1,49 @@
+diff --git a/playbooks/roles/os_neutron/defaults/main.yml b/playbooks/roles/os_neutron/defaults/main.yml
+index e86b2e9..01e5b79 100644
+--- a/playbooks/roles/os_neutron/defaults/main.yml
++++ b/playbooks/roles/os_neutron/defaults/main.yml
+@@ -355,6 +355,13 @@ neutron_lbaas_apt_packages:
+ neutron_apt_remove_packages:
+   - conntrackd
+
++# When running in an AIO, we need to implement an iptables rule in any
++# neutron_agent containers to that ensure instances can communicate with
++# the neutron metadata service. This is necessary because in an AIO
++# environment there are no physical interfaces involved in instance ->
++# metadata requests, and this results in the checksums being incorrect.
++neutron_metadata_checksum_fix: False
++
+ # neutron packages that must be installed before anything else
+ neutron_requires_pip_packages:
+   - virtualenv
+diff --git a/playbooks/roles/os_neutron/tasks/neutron_post_install.yml b/playbooks/roles/os_neutron/tasks/neutron_post_install.yml
+index 2e5830b..a7cb55f 100644
+--- a/playbooks/roles/os_neutron/tasks/neutron_post_install.yml
++++ b/playbooks/roles/os_neutron/tasks/neutron_post_install.yml
+@@ -160,3 +160,26 @@
+     - not neutron_venv_enabled | bool
+   tags:
+     - neutron-command-bin
++
++- name: Drop metadata iptables checksum fix
++  copy:
++    src: "/opt/rpc-openstack/rpcd/patches/os_neutron/post-up-metadata-checksum"
++    dest: "/etc/network/if-up.d/post-up-metadata-checksum"
++    owner: "root"
++    group: "root"
++    mode: "0755"
++  when:
++    - neutron_metadata_checksum_fix | bool
++    - inventory_hostname in groups[neutron_services['neutron-linuxbridge-agent']['group']]
++  tags:
++    - neutron-config
++    - neutron-checksum-fix
++
++- name: Run metadata iptables checksum fix
++  command: /etc/network/if-up.d/post-up-metadata-checksum
++  when:
++    - neutron_metadata_checksum_fix | bool
++    - inventory_hostname in groups[neutron_services['neutron-linuxbridge-agent']['group']]
++  tags:
++    - neutron-config
++    - neutron-checksum-fix
