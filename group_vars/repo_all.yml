@@ -13,18 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-container_skel:
-  ironic_api_container:
-    properties:
-      service_name: ironic
-      lxc_container_variant: "ironic-{{ rpc_release }}"
-  ironic_conductor_container:
-    properties:
-      service_name: ironic
-      lxc_container_variant: "ironic-{{ rpc_release }}"
-  ironic_compute_container:
-    properties:
-      is_metal: false
-      service_name: nova
-      lxc_container_variant: "ironic-{{ rpc_release }}"
+lxc_container_variant: "repo_server-{{ rpc_release }}"

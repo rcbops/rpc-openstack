@@ -13,9 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-container_skel:
-  magnum_container:
-    properties:
-      service_name: magnum
-      lxc_container_variant: "magnum-{{ rpc_release }}"
+lxc_container_variant: "kibana-{{ rpc_release }}"

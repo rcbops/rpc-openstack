@@ -13,13 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-container_skel:
-  neutron_agents_container:
-    properties:
-      service_name: neutron
-      lxc_container_variant: "neutron-{{ rpc_release }}"
-  neutron_server_container:
-    properties:
-      service_name: neutron
-      lxc_container_variant: "neutron-{{ rpc_release }}"
+lxc_container_variant: "magnum-{{ rpc_release }}"

@@ -13,8 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  keystone_container:
-    properties:
-      service_name: keystone
-      lxc_container_variant: "keystone-{{ rpc_release }}"
+lxc_container_variant: "logstash-{{ rpc_release }}"

@@ -18,7 +18,7 @@
 # Remove the env.d configurations that set the build to use
 # container artifacts. We don't want this because container
 # artifacts do not currently exist when this script is used.
-sed -i.bak '/lxc_container_variant: /d' /etc/openstack_deploy/env.d/*.yml
+sed -i.bak '/lxc_container_variant: /d' /opt/rpc-openstack/group_vars/*.yml
 
 # Remove the RPC-O default configurations that are necessary
 # for deployment, but cause the build to break due to the fact

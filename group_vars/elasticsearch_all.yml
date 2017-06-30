@@ -13,12 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  heat_apis_container:
-    properties:
-      service_name: heat
-      lxc_container_variant: "heat-{{ rpc_release }}"
-  heat_engine_container:
-    properties:
-      service_name: heat
-      lxc_container_variant: "heat-{{ rpc_release }}"
+lxc_container_variant: "elasticsearch-{{ rpc_release }}"
