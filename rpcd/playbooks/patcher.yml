@@ -26,4 +26,4 @@
     - { role: "patcher", tags: [ "patcher" ] }
   vars:
     patcher_files:
-      - neutron-metadata-checksum-fix.patch
+      - os_neutron/neutron-metadata-checksum-fix.patch
