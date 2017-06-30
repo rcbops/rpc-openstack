@@ -132,26 +132,13 @@
       with_items:
         - name: "user_osa_variables_defaults.yml"
           mode: "0440"
-        - name: "env.d/cinder.yml"
         - name: "env.d/elasticsearch.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
-        - name: "env.d/glance.yml"
-        - name: "env.d/heat.yml"
-        - name: "env.d/horizon.yml"
-        - name: "env.d/ironic.yml"
-        - name: "env.d/keystone.yml"
         - name: "env.d/kibana.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
         - name: "env.d/logstash.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
-        - name: "env.d/magnum.yml"
-        - name: "env.d/memcache.yml"
-        - name: "env.d/neutron.yml"
-        - name: "env.d/nova.yml"
-        - name: "env.d/pkg_repo.yml"
-        - name: "env.d/rsyslog.yml"
-        - name: "env.d/swift.yml"
-        - name: "env.d/utility.yml"
+        - name: env.d/nova.yml
 
     - name: Template the RPC-O config files
       config_template:

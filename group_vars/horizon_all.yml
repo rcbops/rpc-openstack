@@ -1,5 +1,5 @@
 ---
-# Copyright 2014, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  nova_compute_container:
-    contains:
-      - neutron_linuxbridge_agent
-      - neutron_openvswitch_agent
-      - nova_compute
+lxc_container_variant: "horizon-{{ rpc_release }}"

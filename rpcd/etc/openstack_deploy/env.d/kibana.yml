@@ -12,4 +12,3 @@ container_skel:
       - kibana
     properties:
       service_name: kibana
-      lxc_container_variant: "kibana-{{ rpc_release }}"
