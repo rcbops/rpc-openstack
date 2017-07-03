@@ -52,3 +52,6 @@
       delay: "5"
       when:
         - maas_use_api | bool
+
+  vars:
+    maas_use_api: true
