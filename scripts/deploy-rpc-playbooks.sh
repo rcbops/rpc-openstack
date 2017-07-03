@@ -36,13 +36,15 @@ if [[ "${DEPLOY_ELK}" == "yes" ]]; then
   run_ansible setup-logging.yml
 fi
 
+# Download the latest release of rpc-maas
+run_ansible maas-get.yml
+
 # deploy and configure RAX MaaS
 if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+  # Run the rpc-maas setup process
   run_ansible setup-maas.yml
-fi
 
-# verify RAX MaaS is running after all necessary
-# playbooks have been run
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+  # verify RAX MaaS is running after all necessary
+  # playbooks have been run
   run_ansible verify-maas.yml
 fi

@@ -19,4 +19,5 @@
   roles:
     - ceph.ceph-common
 
+- include: maas-get.yml
 - include: /opt/rpc-maas/playbooks/site.yml
