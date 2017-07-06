@@ -61,3 +61,6 @@ maas_fqdn_extension: ""
 maas_release: master
 maas_venv: "/openstack/venvs/maas-{{ maas_release }}"
 maas_venv_bin: "{{ maas_venv }}/bin"
+
+# Allow all of the host machiens running maas agents to restart once at the end of a maas playbook.
+maas_restart_independent: false
