@@ -138,7 +138,6 @@
           condition: "{{ rpco_deploy_elk | bool }}"
         - name: "env.d/logstash.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
-        - name: env.d/nova.yml
 
     - name: Template the RPC-O config files
       config_template:
