@@ -21,13 +21,6 @@
 # The release tag to use
 # Note that this is set here so that the openstack_release override in osa_defaults
 # is able to use it.
-## Rackspace Cloud Details
-rackspace_cloud_auth_url: https://identity.api.rackspacecloud.com/v2.0
-rackspace_cloud_tenant_id: SomeTenantID
-rackspace_cloud_username: SomeUserName
-rackspace_cloud_password: SomeUsersPassword
-rackspace_cloud_api_key: SomeAPIKey
-
 rpc_release: "{{ lookup('pipe', 'cd /opt/rpc-openstack && git describe --tags --abbrev=0') }}"
 
 # Ceph options
@@ -65,11 +58,3 @@ secure_cluster: true
 # List of secure flags to set on for a pool (options for the list are nodelete, nopgchange, nosizechange - prevents deletion, pg from changing and size from changing respectively).
 secure_cluster_flags:
   - nodelete
-
-# Tempest test execution options
-tempest_run_tempest_opts:
-  - "--serial"
-# Tempest testr options
-tempest_testr_opts: []
-# Tempest tests to run. A one-line, space-delimited string
-tempest_test_sets: "scenario defcore cinder_backup"

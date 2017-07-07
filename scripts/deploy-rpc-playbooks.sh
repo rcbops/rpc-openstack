@@ -33,7 +33,7 @@ run_ansible rpc-support.yml
 
 # deploy and configure the ELK stack
 if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-    run_ansible setup-logging.yml
+  run_ansible setup-logging.yml
 fi
 
 # Download the latest release of rpc-maas
