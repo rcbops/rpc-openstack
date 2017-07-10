@@ -13,8 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  swift_proxy_container:
-    properties:
-      service_name: swift
-      lxc_container_variant: "swift-{{ rpc_release }}"
+lxc_container_variant: "glance-{{ rpc_release }}"

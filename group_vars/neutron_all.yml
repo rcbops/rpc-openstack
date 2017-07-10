@@ -13,8 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  rsyslog_container:
-    properties:
-      service_name: rsyslog
-      lxc_container_variant: "rsyslog_server-{{ rpc_release }}"
+lxc_container_variant: "neutron-{{ rpc_release }}"
