@@ -36,13 +36,19 @@ if [[ "${DEPLOY_ELK}" == "yes" ]]; then
   run_ansible setup-logging.yml
 fi
 
-# deploy and configure RAX MaaS
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible setup-maas.yml
+if [[ ! -f "${RPCM_VARIABLES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
 fi
 
-# verify RAX MaaS is running after all necessary
-# playbooks have been run
+# Download the latest release of rpc-maas
+run_ansible maas-get.yml
+
+# deploy and configure RAX MaaS
 if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+  # Run the rpc-maas setup process
+  run_ansible setup-maas.yml
+
+  # verify RAX MaaS is running after all necessary
+  # playbooks have been run
   run_ansible verify-maas.yml
 fi

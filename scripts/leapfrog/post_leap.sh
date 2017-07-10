@@ -19,12 +19,20 @@
 set -e -u -x
 set -o pipefail
 
+export RPCM_VARIABLES=${RPCM_VARIABLES:-/etc/openstack_deploy/user_rpcm_variables.yml}
+
 echo "POST LEAP STEPS"
+
+if [[ ! -f "${RPCM_VARIABLES}" ]]; then
+  cp "${RPCO_DEFAULT_FOLDER}/rpcd/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
+fi
+
 if [[ ! -f "${UPGRADE_LEAP_MARKER_FOLDER}/deploy-rpc.complete" ]]; then
   pushd ${RPCO_DEFAULT_FOLDER}/rpcd/playbooks/
     unset ANSIBLE_INVENTORY
     sed -i 's#export ANSIBLE_INVENTORY=.*#export ANSIBLE_INVENTORY="${ANSIBLE_INVENTORY:-/opt/rpc-openstack/openstack-ansible/playbooks/inventory}"#g' /usr/local/bin/openstack-ansible.rc
     openstack-ansible setup-logging.yml
+    openstack-ansible maas-get.yml
     openstack-ansible setup-maas.yml
     # TODO(add support role)
   popd

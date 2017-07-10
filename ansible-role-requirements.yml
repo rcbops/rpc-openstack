@@ -18,14 +18,6 @@
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
   version: master
-#TODO(odyssey4me):
-# When the rpc_maas SHA is updated to include the below SHA,
-# remove the workaround from rpcd/playbooks/setup-maas.yml
-# https://github.com/rcbops/rpc-maas/commit/be5a9f82592e5dfd835aa76d8a6cff2d7ea53d3f
-- name: rpc_maas
-  scm: git
-  src: https://github.com/rcbops/rpc-maas
-  version: 1701d34fcb106cec11ba00284ac462e78bef14e0
 # Override the current lxc_hosts role until
 # https://github.com/openstack/openstack-ansible-lxc_hosts/commit/df227381ff3d318fcb8d7ab925f1ee66ed161ec8
 # gets taken into a SHA bump in OSA and RPC.
