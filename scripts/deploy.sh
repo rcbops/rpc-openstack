@@ -18,6 +18,7 @@ export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export ANSIBLE_ROLE_FILE="/opt/rpc-openstack/ansible-role-requirements.yml"
+export RPCM_VARIABLES='/etc/openstack_deploy/user_rpcm_variables.yml'
 
 OA_DIR='/opt/rpc-openstack/openstack-ansible'
 RPCD_DIR='/opt/rpc-openstack/rpcd'
@@ -113,6 +114,10 @@ which openstack-ansible || ./scripts/bootstrap-ansible.sh
 cd ${RPCD_DIR}/playbooks
 openstack-ansible -i "localhost," patcher.yml
 
+if [[ ! -f "${RPCM_VARIABLES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
+fi
+
 # begin the openstack installation
 if [[ "${DEPLOY_OA}" == "yes" ]]; then
   cd ${OA_DIR}/playbooks/
@@ -166,11 +171,6 @@ if [[ "${DEPLOY_RPC}" == "yes" ]]; then
     # configure the horizon extensions
     run_ansible horizon_extensions.yml
     
-    # deploy and configure RAX MaaS
-    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-      run_ansible setup-maas.yml
-    fi
-    
     # deploy and configure the ELK stack
     if [[ "${DEPLOY_ELK}" == "yes" ]]; then
       run_ansible setup-logging.yml
@@ -179,6 +179,20 @@ if [[ "${DEPLOY_RPC}" == "yes" ]]; then
       if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
         run_ansible haproxy.yml
       fi
+    fi
+
+   # Get MaaS: This will always run which will get the latest code but do
+   # nothing with it unless setup-maas.yml is run.
+   run_ansible maas-get.yml
+
+   # deploy and configure RAX MaaS
+    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
+      # Run the rpc-maas setup process
+      run_ansible setup-maas.yml
+
+      # verify RAX MaaS is running after all necessary
+      # playbooks have been run
+      run_ansible verify-maas.yml
     fi
 fi
 # verify RAX MaaS

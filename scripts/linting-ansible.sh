@@ -26,8 +26,13 @@ LOCAL_INVENTORY='[all]\nlocalhost ansible_connection=local'
 
 pushd rpcd/playbooks/
   echo "Running ansible-playbook syntax check"
+  # NOTE(cloudnull): Gather the playbooks for lint checks skipping maas. The
+  #                  MaaS Playbook is skipped because it's included and not
+  #                  present on the system until after ansible is bootstrapped.
+  PLAYBOOKS="$(ls -1 *.yml | grep -v maas) "
+
   # Do a basic syntax check on all playbooks and roles.
-  ansible-playbook -i <(echo $LOCAL_INVENTORY) --syntax-check *.yml --list-tasks
+  ansible-playbook -i <(echo $LOCAL_INVENTORY) --syntax-check ${PLAYBOOKS} --list-tasks
   # Perform a lint check on all playbooks and roles.
   ansible-lint --version
   # Skip ceph roles because they're submodules and not ours to lint
@@ -40,9 +45,10 @@ pushd rpcd/playbooks/
   rm -r roles/ceph-osd
   echo "Running ansible-lint"
   # Lint playbooks and roles
-  ansible-lint *.yml
+  ansible-lint ${PLAYBOOKS}
   # Revert changes to deleting submodules
   git checkout .
   # Re-clone the submodules for the next run
   git submodule update >/dev/null
 popd
+
