@@ -56,6 +56,10 @@ source scripts/bootstrap-ansible.sh
 # Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
 
+# Remove all host group allocations to ensure
+# that no containers are created in the inventory.
+rm -f /etc/openstack_deploy/conf.d/*
+
 # If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
 if container_artifacts_available; then
   export PUSH_TO_MIRROR="NO"
