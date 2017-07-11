@@ -18,10 +18,3 @@
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
   version: master
-# Override the current lxc_hosts role until
-# https://github.com/openstack/openstack-ansible-lxc_hosts/commit/df227381ff3d318fcb8d7ab925f1ee66ed161ec8
-# gets taken into a SHA bump in OSA and RPC.
-- name: lxc_hosts
-  scm: git
-  src: https://github.com/openstack/openstack-ansible-lxc_hosts
-  version: df227381ff3d318fcb8d7ab925f1ee66ed161ec8
