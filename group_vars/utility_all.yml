@@ -13,8 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-container_skel:
-  repo_container:
-    properties:
-      service_name: repo
-      lxc_container_variant: "repo_server-{{ rpc_release }}"
+lxc_container_variant: "tempest-{{ rpc_release }}"
