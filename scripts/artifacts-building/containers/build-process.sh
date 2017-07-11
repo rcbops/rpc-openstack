@@ -56,6 +56,10 @@ source scripts/bootstrap-ansible.sh
 # Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
 
+# Remove all host group allocations to ensure
+# that no containers are created in the inventory.
+rm -f /etc/openstack_deploy/conf.d/*
+
 # Now use GROUP_VARS of OSA and RPC
 sed -i "s|GROUP_VARS_PATH=.*|GROUP_VARS_PATH=\"\${GROUP_VARS_PATH:-${BASE_DIR}/openstack-ansible/playbooks/inventory/group_vars/:${BASE_DIR}/group_vars/:/etc/openstack_deploy/group_vars/}\"|" /usr/local/bin/openstack-ansible.rc
 sed -i "s|HOST_VARS_PATH=.*|HOST_VARS_PATH=\"\${HOST_VARS_PATH:-${BASE_DIR}/openstack-ansible/playbooks/inventory/host_vars/:${BASE_DIR}/host_vars/:/etc/openstack_deploy/host_vars/}\"|" /usr/local/bin/openstack-ansible.rc
