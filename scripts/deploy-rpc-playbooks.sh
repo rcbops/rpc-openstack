@@ -41,6 +41,12 @@ if [[ ! -f "${RPCM_VARIABLES}" ]]; then
 fi
 
 # Download the latest release of rpc-maas
+# TODO(odyssey4me):
+# Remove this once rpc-gating no longer tries
+# to run rpc-maas as its own thing and instead
+# just uses deploy.sh end-to-end. This line
+# should not be necessary as setup-maas.yml
+# below includes maas-get.yml
 run_ansible maas-get.yml
 
 # deploy and configure RAX MaaS
