@@ -4,17 +4,14 @@
 A Leapfrog upgrade is a major upgrade that skips at least one release. Currently
 RPCO supports leapfrog upgrades from kilo to newton-14.1.
 
-#### Terms
-
-
+#### Terms
 * [RPCO](https://github.com/rcbops/rpc-openstack): Rackspace Private Cloud powered by OpenStack
 * [OSA](https://github.com/openstack/openstack-ansible):  OpenStack Ansible
 * [OSA-OPS](https://github.com/openstack/openstack-ansible-ops):  OpenStack Operations
 * [Kilo](https://github.com/rcbops/rpc-openstack/tree/kilo): The RPCO release of OpenStack Kilo
-* [Newton-14.1](https://github.com/rcbops/rpc-openstack/tree/newton-14.1) The second RPCO release of OpenStack Newton. This version includes Leapfrog upgrade tools.
+* [Newton-14.1](https://github.com/rcbops/rpc-openstack/tree/newton-14.1): The second RPCO release of OpenStack Newton. This version includes Leapfrog upgrade tools.
 
-## Pre Leapfrog Tasks
-
+## Pre Leapfrog Tasks
 * Verify that the kilo deployment is healthy.
 * Perform Database housekeeping to prevent unnecessary migrations.
 
