@@ -147,3 +147,8 @@ ANSIBLE_VERSION='>=2.0' tox -e ansible-lint
 
 # Gating
 Please see the documentation in [rpc-gating/README.md](https://github.com/rcbops/rpc-gating/blob/master/README.md)
+
+
+# Leapfrog upgrades
+Please refer to [scripts/leapfrog/README.md](scripts/leapfrog/README.md)
+for documentation on the leapfrog upgrade process.
