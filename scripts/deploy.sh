@@ -3,6 +3,10 @@
 set -e -u -x
 set -o pipefail
 
+## Functions -----------------------------------------------------------------
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
+source ${BASE_DIR}/scripts/functions.sh
+
 export ADMIN_PASSWORD=${ADMIN_PASSWORD:-"secrete"}
 export DEPLOY_AIO=${DEPLOY_AIO:-"no"}
 export DEPLOY_HAPROXY=${DEPLOY_HAPROXY:-"no"}
@@ -14,14 +18,11 @@ export DEPLOY_TEMPEST=${DEPLOY_TEMPEST:-"no"}
 export DEPLOY_CEILOMETER=${DEPLOY_CEILOMETER:-"no"}
 export DEPLOY_CEPH=${DEPLOY_CEPH:-"no"}
 export DEPLOY_SWIFT=${DEPLOY_SWIFT:-"yes"}
-export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
-export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export ANSIBLE_ROLE_FILE="/opt/rpc-openstack/ansible-role-requirements.yml"
 export RPCM_VARIABLES='/etc/openstack_deploy/user_rpcm_variables.yml'
 
 OA_DIR='/opt/rpc-openstack/openstack-ansible'
-RPCD_DIR='/opt/rpc-openstack/rpcd'
 RPCD_VARS='/etc/openstack_deploy/user_extras_variables.yml'
 RPCD_SECRETS='/etc/openstack_deploy/user_extras_secrets.yml'
 
@@ -164,38 +165,20 @@ if [[ "${DEPLOY_RPC}" == "yes" ]]; then
     
     # configure all hosts and containers to use the RPC python packages
     run_ansible repo-pip-setup.yml
-    
-    # configure everything for RPC support access
-    run_ansible rpc-support.yml
-    
+
+  # configure everything for RPC support access
+    export DEPLOY_SUPPORT_ROLE="yes"
+
+  # begin the RPC installation
+    bash ${BASE_DIR}/scripts/deploy-rpc-playbooks.sh
+
     # configure the horizon extensions
     run_ansible horizon_extensions.yml
-    
-    # deploy and configure the ELK stack
+
     if [[ "${DEPLOY_ELK}" == "yes" ]]; then
-      run_ansible setup-logging.yml
-    
       # deploy the LB required for the ELK stack
       if [[ "${DEPLOY_HAPROXY}" == "yes" ]]; then
         run_ansible haproxy.yml
       fi
     fi
-
-   # Get MaaS: This will always run which will get the latest code but do
-   # nothing with it unless setup-maas.yml is run.
-   run_ansible maas-get.yml
-
-   # deploy and configure RAX MaaS
-    if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-      # Run the rpc-maas setup process
-      run_ansible setup-maas.yml
-
-      # verify RAX MaaS is running after all necessary
-      # playbooks have been run
-      run_ansible verify-maas.yml
-    fi
-fi
-# verify RAX MaaS
-if [[ "${DEPLOY_MAAS}" == "yes" ]]; then
-  run_ansible verify-maas.yml
 fi
