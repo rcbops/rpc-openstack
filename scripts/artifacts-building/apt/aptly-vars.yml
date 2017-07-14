@@ -87,7 +87,7 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
       - "slushie-{{ rpc_release }}-elastic-logstash-5.5-ALL"
       - "slushie-{{ rpc_release }}-elastic-kibana-5.5-ALL"
-      - "slushie-{{ rpc_release }}-elastic-beats-ALL"
+      - "slushie-{{ rpc_release }}-elastic-beats-5.5-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-5.5-ALL"
 
 # mapping for N (NOT MERGE) snapshots
@@ -429,7 +429,7 @@ aptly_mirrors:
     update_flags:
       - "-keyring='trustedkeys.gpg'"
     do_update: "{{ aptly_mirror_do_updates }}"
-  - name: elastic-beats-ALL
+  - name: elastic-beats-5.5-ALL
     archive_url: http://artifacts.elastic.co/packages/5.x/apt
     distribution: stable
     component1:
