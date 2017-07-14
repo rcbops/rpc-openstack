@@ -85,11 +85,10 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-mariadb-10.1-xenial"
       - "slushie-{{ rpc_release }}-percona-xenial"
       - "slushie-{{ rpc_release }}-rabbitmq-downloaded-packages-{{ rpc_release }}-ALL"
-      - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
-      - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-logstash-5.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-kibana-5.5-ALL"
       - "slushie-{{ rpc_release }}-elastic-beats-ALL"
-      - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
-      - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-5.5-ALL"
 
 # mapping for N (NOT MERGE) snapshots
 # This is a list of the repo/mirror snapshots (slushies) that will be published separately.
@@ -387,6 +386,66 @@ aptly_mirrors:
     do_update: "{{ aptly_mirror_do_updates }}"
   - name: elastic-es-2.x-ALL
     archive_url: http://packages.elastic.co/elasticsearch/2.x/debian
+    distribution: stable
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "D88E42B4"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+- name: elastic-logstash-5.5-ALL
+    archive_url: http://artifacts.elastic.co/packages/5.x/apt
+    distribution: stable
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "D88E42B4"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+  - name: elastic-kibana-5.5-ALL
+    archive_url: http://artifacts.elastic.co/packages/5.x/apt
+    distribution: stable
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "D88E42B4"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+  - name: elastic-beats-ALL
+    archive_url: http://artifacts.elastic.co/packages/5.x/apt
+    distribution: stable
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "D88E42B4"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+    - name: elastic-es-5.5-ALL
+    archive_url: http://artifacts.elastic.co/packages/5.x/apt
     distribution: stable
     component1:
       - main
