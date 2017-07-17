@@ -1,0 +1,9 @@
+---
+- hosts: hosts
+  gather_facts: no
+  tasks:
+    - shell: "rm -f {% raw %}/etc/rackspace-monitoring-agent.conf.d/*${{% endraw %}{{ item }}{% raw %}}*{% endraw %}"
+      args:
+        executable: /bin/bash
+      with_file:
+        - "/etc/openstack_deploy/leapfrog_remove_remaining_old_containers"
