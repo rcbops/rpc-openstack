@@ -14,8 +14,20 @@
 # limitations under the License.
 
 # the pip packages to install
+# Only beaver is required, the rest are there to constrain the version of deps.
 beaver_pip_packages:
   - "beaver==33.3.0"
+  - "boto==2.48.0"
+  - "conf-d==0.0.4"
+  - "glob2==0.3"
+  - "kafka-python==1.3.3"
+  - "lockfile==0.12.2"
+  - "mosquitto==1.2.3"
+  - "msgpack-pure==0.1.3"
+  - "pika==0.10.0"
+  - "python-daemon==1.6.1"
+  - "redis==2.10.5"
+  - "setuptools==24.0.2"
 
 # the beaver daemon settings
 beaver_daemon_log: "/var/log/beaver/beaver.log"
