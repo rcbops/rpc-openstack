@@ -399,7 +399,7 @@ aptly_mirrors:
     update_flags:
       - "-keyring='trustedkeys.gpg'"
     do_update: "{{ aptly_mirror_do_updates }}"
-- name: elastic-logstash-5.5-ALL
+  - name: elastic-logstash-5.5-ALL
     archive_url: http://artifacts.elastic.co/packages/5.x/apt
     distribution: stable
     component1:
