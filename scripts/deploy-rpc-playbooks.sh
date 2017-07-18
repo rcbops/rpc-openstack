@@ -36,6 +36,10 @@ if [[ "${DEPLOY_ELK}" == "yes" ]]; then
   run_ansible setup-logging.yml
 fi
 
+if [[ ! -f "${RPCM_VARIABLES}" ]]; then
+  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
+fi
+
 # Download the latest release of rpc-maas
 # TODO(odyssey4me):
 # Remove this once rpc-gating no longer tries
