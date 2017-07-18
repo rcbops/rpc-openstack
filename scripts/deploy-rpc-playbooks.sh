@@ -67,7 +67,7 @@ if [[ "${DEPLOY_TELEGRAF}" == "yes" ]]; then
     if [[ -n "${BUILD_TAG}" ]]; then
         # user_rpco_variables_overrides are generated at every build, so
         # we are fine to just echo it.
-        echo 'maas_job_reference: "${BUILD_TAG}"' >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
+        echo "maas_job_reference: '${BUILD_TAG}'" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
         # Telegraph shipping is done to influx nodes belonging to
         # influx_telegraf_targets | union(influx_all)
         cat >> /etc/openstack_deploy/user_rpco_variables_overrides.yml << EOF
