@@ -58,3 +58,11 @@ secure_cluster: true
 # List of secure flags to set on for a pool (options for the list are nodelete, nopgchange, nosizechange - prevents deletion, pg from changing and size from changing respectively).
 secure_cluster_flags:
   - nodelete
+
+# Tempest test execution options
+tempest_run_tempest_opts:
+  - "--serial"
+# Tempest testr options
+tempest_testr_opts: []
+# Tempest tests to run. A one-line, space-delimited string
+tempest_test_sets: "scenario defcore cinder_backup"
