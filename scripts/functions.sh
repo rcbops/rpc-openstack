@@ -18,7 +18,7 @@
 # Gating
 export BUILD_TAG=${BUILD_TAG:-}
 export INFLUX_IP=${INFLUX_IP:-}
-export INFLUX_PORT=${INFLUX_IP:-"8086"}
+export INFLUX_PORT=${INFLUX_PORT:-"8086"}
 
 # Other
 export DEPLOY_SUPPORT_ROLE=${DEPLOY_SUPPORT_ROLE:-"no"}
