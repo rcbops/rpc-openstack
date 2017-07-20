@@ -34,6 +34,7 @@ export OA_DIR="${BASE_DIR}/openstack-ansible"
 export OA_OVERRIDES='/etc/openstack_deploy/user_osa_variables_overrides.yml'
 export RPCD_DIR="${BASE_DIR}/rpcd"
 export RPCD_OVERRIDES='/etc/openstack_deploy/user_rpco_variables_overrides.yml'
+export RPCM_VARIABLES='/etc/openstack_deploy/user_rpcm_variables.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-''}
