@@ -173,17 +173,6 @@ filebeat_logging_paths:
       negate: 'true'
       match: after
   - paths:
-    - '/var/log/magnum/*.log'
-    document_type: openstack
-    tags:
-    - openstack
-    - oslofmt
-    - magnum
-    multiline:
-      pattern: "{{ multiline_openstack_pattern }}"
-      negate: 'true'
-      match: after
-  - paths:
     - '/var/log/octavia/*.log'
     document_type: openstack
     tags:
