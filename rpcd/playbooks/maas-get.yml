@@ -13,19 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Add MaaS apt keys
-  apt_key:
-    url: "{{ item.url }}"
-    state: "{{ item.state }}"
-  with_items: "{{ maas_apt_keys }}"
-  when: "ansible_distribution_version in ['12.04', '13.04', '13.10', '14.04'] and maas_apt_keys is defined"
-
-- name: Add Container repos
-  apt_repository:
-    repo: "{{ item.repo }}"
-    state: "{{ item.state }}"
-  with_items: "{{ maas_apt_repos }}"
-  when: "ansible_distribution_version in ['12.04', '13.04', '13.10', '14.04'] and maas_apt_repos is defined"
-  register: add_repos
-  until: add_repos|success
-  retries: 3
+- name: Clone MaaS
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Clone RPC-MaaS
+      git:
+        repo: "https://github.com/rcbops/rpc-maas"
+        dest: "/opt/rpc-maas"
+        version: "{{ maas_release }}"
+    - name: Ensure openstack_deploy exists
+      file:
+        dest: "/etc/openstack_deploy"
+        state: directory
+    - name: Copy over base maas vars
+      copy:
+        src: "/opt/rpc-maas/tests/user_mitaka_vars.yml"
+        dest: "/etc/openstack_deploy/user_rpcm_default_variables.yml"
+  tags:
+    - maas

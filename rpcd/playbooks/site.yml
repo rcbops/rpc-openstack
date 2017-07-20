@@ -14,5 +14,4 @@
 # limitations under the License.
 
 - include: rpc-support.yml
-- include: setup-maas.yml
 - include: setup-logging.yml
