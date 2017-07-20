@@ -140,3 +140,6 @@ ANSIBLE_VERSION='>=2.0' tox -e ansible-lint
 
 # Gating
 Please see the documentation in [rpc-gating/README.md](https://github.com/rcbops/rpc-gating/blob/master/README.md)
+
+# Testing
+Please see [Testing](Testing.md) for an overview of RPCO testing.
