@@ -41,10 +41,9 @@ tempest_venv_bin: "/openstack/venvs/tempest-{{ tempest_venv_tag }}/bin"
 # artifacts is able to complete.
 # TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
 # has this information set in-tree.
-octavia_git_install_branch: 'stable/ocata'
 octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
+octavia_git_install_branch: '66fe6d327f56db9cf00c2474890705b2fa9d41cf' # HEAD of "stable/ocata" as of 31.05.2017
 octavia_git_project_group: 'octavia_all'
-octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
 
 #
 # Set the LXC container creation to use the container repository

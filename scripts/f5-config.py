@@ -60,9 +60,6 @@ MONITORS = [
     r'create ltm monitor http ' + PART + PREFIX_NAME + '_MON_HTTP_KEYSTONE_ADMIN { defaults-from'
     r' http destination *:35357 recv "200 OK" send "HEAD /v3 HTTP/1.1\r\nHost:'
     r' rpc\r\n\r\n" }',
-    r'create ltm monitor http ' + PART + PREFIX_NAME + '_MON_HTTP_MAGNUM { defaults-from'
-    r' http destination *:9511 recv "200 OK" send "HEAD /v1 HTTP/1.1\r\nHost:'
-    r' rpc\r\n\r\n" }',
     r'create ltm monitor http ' + PART + PREFIX_NAME + '_MON_HTTP_NOVA_API_METADATA {'
     r' defaults-from http destination *:8775 recv "200 OK" send "HEAD /'
     r' HTTP/1.1\r\nHost: rpc\r\n\r\n" }',
@@ -411,15 +408,6 @@ POOL_PARTS = {
         'backend_port': 9418,
         'mon_type': PART + PREFIX_NAME + '_MON_TCP_REPO_GIT',
         'group': 'pkg_repo',
-        'hosts': []
-    },
-    'magnum': {
-        'port': 9511,
-        'backend_port': 9511,
-        'mon_type': PART + PREFIX_NAME + '_MON_HTTP_MAGNUM',
-        'group': 'magnum_all',
-        'make_public': True,
-        'x-forwarded-proto': True,
         'hosts': []
     }
 }
