@@ -19,3 +19,41 @@
     - role: "rpc_pre_upgrade"
   tags:
     - rpc-pre-upgrades
+
+- name: Run nova DB hygiene on shadow_instance tables
+  hosts: galera_all[0]
+  gather_facts: false
+  user: root
+  tasks:
+    - name: Prune the shadow instance tables
+      shell: |
+        mysql -sNL \
+              --unbuffered \
+              -e "delete from {{ item }} where deleted>0;" {{ nova_galera_database | default('nova') }}
+      with_items:
+        - shadow_instance_actions
+        - shadow_instance_actions_events
+        - shadow_instance_extra
+        - shadow_instance_faults
+        - shadow_instance_group_member
+        - shadow_instance_group_policy
+        - shadow_instance_groups
+        - shadow_instance_id_mappings
+        - shadow_instance_info_caches
+        - shadow_instance_metadata
+        - shadow_instance_system_metadata
+        - shadow_instance_type_extra_specs
+        - shadow_instance_type_projects
+        - shadow_instance_types
+        - shadow_instances
+
+- name: Run nova DB hygiene on instance tables
+  hosts: nova_api_os_compute[0]
+  gather_facts: false
+  user: root
+  tasks:
+    - name: Archive all nova deleted instances
+      command: "{{ nova_bin }}/nova-manage db archive_deleted_rows --until-complete"
+  vars:
+    nova_venv_tag: "{{ venv_tag }}"
+    nova_bin: "/openstack/venvs/nova-{{ nova_venv_tag }}/bin"
