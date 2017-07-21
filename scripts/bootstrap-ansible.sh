@@ -73,6 +73,6 @@ pushd ${OA_DIR}
 
   # RPC-O has roles in its own git tree, so we need to add it to the
   # path for Ansible to search.
-  sed -i "s|/etc/ansible/roles:roles|/etc/ansible/roles:roles:${RPCD_DIR}/playbooks/roles|" /usr/local/bin/openstack-ansible.rc
+  sed -i "s|/etc/ansible/roles:|/etc/ansible/roles:${RPCD_DIR}/playbooks/roles:|" /usr/local/bin/openstack-ansible.rc
 
 popd

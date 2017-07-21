@@ -38,15 +38,6 @@ export BASE_DIR=${PWD}
 # This ensures that there is no race condition with the artifacts-git job
 export ANSIBLE_ROLE_FETCH_MODE="git-clone"
 
-## Functions ----------------------------------------------------------------------
-
-function patch_all_roles {
-    for role_name in *; do
-        cd /etc/ansible/roles/$role_name;
-        git am <  /opt/rpc-openstack/scripts/artifacts-building/containers/patches/$role_name;
-    done
-}
-
 ## Main ----------------------------------------------------------------------
 
 # Ensure no remnants (not necessary if ephemeral host, but useful for dev purposes
@@ -64,6 +55,10 @@ source scripts/bootstrap-ansible.sh
 
 # Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
+
+# Remove all host group allocations to ensure
+# that no containers are created in the inventory.
+rm -f /etc/openstack_deploy/conf.d/*
 
 # Now use GROUP_VARS of OSA and RPC
 sed -i "s|GROUP_VARS_PATH=.*|GROUP_VARS_PATH=\"\${GROUP_VARS_PATH:-${BASE_DIR}/openstack-ansible/playbooks/inventory/group_vars/:${BASE_DIR}/group_vars/:/etc/openstack_deploy/group_vars/}\"|" /usr/local/bin/openstack-ansible.rc
@@ -87,19 +82,6 @@ fi
 # Set override vars for the artifact build
 cd scripts/artifacts-building/
 cp user_*.yml /etc/openstack_deploy/
-
-# Prepare role patching
-git config --global user.email "rcbops@rackspace.com"
-git config --global user.name "RCBOPS gating"
-
-# Patch the roles
-# TODO(odyssey4me):
-# Remove the patcher process once the following have merged
-# and are available to RPC-O:
-# https://review.openstack.org/474734
-# https://review.openstack.org/474730
-cd containers/patches/
-patch_all_roles
 
 # If we have no pre-built python artifacts available, the whole
 # container build process will fail as it is unable to find the

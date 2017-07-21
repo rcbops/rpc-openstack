@@ -16,6 +16,8 @@
 - name: Create artifact container
   hosts: localhost
   connection: local
+  vars:
+    image_name: "{{ role_name | replace('os_', '') }}"
   vars_files:
     - container-vars.yml
   tasks:
@@ -39,7 +41,7 @@
     - name: Prepare group of master lxc hosts
       add_host:
         name: "/var/lib/lxc/LXC_NAME/rootfs/"
-        groups: "lxc_container_artifact_chroots"
+        groups: "lxc_container_artifact_chroots,{{ image_name }}_all"
         container_name: "LXC_NAME"
         physical_host: "localhost"
   tags:
