@@ -56,6 +56,15 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
         ../scripts/update-yaml.py "/${filename}" "${filename}";
       done
     popd
+
+    add_config all
+    if [[ "${TARGET:-}" == "aio" ]]; then
+      add_config aio
+    fi
+    if [[ "${TRIGGER:-}" == "pr" ]]; then
+      add_config pr
+    fi
+
     # ensure that the elasticsearch JVM heap size is limited
     sed -i 's/# elasticsearch_heap_size_mb/elasticsearch_heap_size_mb/' $RPCD_VARS
     # set the kibana admin password
@@ -77,17 +86,15 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
       # In production, the OSDs will run on bare metal however in the AIO we'll put them in containers
       # so the MONs think we have 3 OSDs on different hosts.
       sed -i 's/is_metal: true/is_metal: false/' /etc/openstack_deploy/env.d/ceph.yml
-
       sed -i "s/journal_size:.*/journal_size: 1024/" $RPCD_VARS
-      echo "monitor_interface: eth1" | tee -a $RPCD_VARS
-      echo "public_network: 172.29.236.0/22" | tee -a $RPCD_VARS
       sed -i "s/raw_multi_journal:.*/raw_multi_journal: false/" $RPCD_VARS
-      echo "osd_directory: true" | tee -a $RPCD_VARS
-      echo "osd_directories:" | tee -a $RPCD_VARS
-      echo "  - /var/lib/ceph/osd/mydir1" | tee -a $RPCD_VARS
-      sed -i "s/glance_default_store:.*/glance_default_store: rbd/" /etc/openstack_deploy/user_variables.yml
-      echo "nova_libvirt_images_rbd_pool: vms" | tee -a /etc/openstack_deploy/user_variables.yml
-      echo "cinder_ceph_client_uuid:"  | tee -a /etc/openstack_deploy/user_secrets.yml
+      add_config ceph
+    else
+      if [[ "$DEPLOY_SWIFT" == "yes" ]]; then
+        echo "glance_default_store: swift" | tee -a /etc/openstack_deploy/user_osa_variables_defaults.yml
+      else
+        echo "glance_default_store: file" | tee -a /etc/openstack_deploy/user_osa_variables_defaults.yml
+      fi
     fi
     # set the ansible inventory hostname to the host's name
     sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
