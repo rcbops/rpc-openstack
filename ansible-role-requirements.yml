@@ -14,3 +14,10 @@
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
   version: 1383d0db302c6fc400a50fae4f85e77bf1633581
+  # TODO(odyssey4me):
+  # Remove this override once https://review.openstack.org/486754/ merges
+  # and is included in the RPC-O SHA bump.
+- name: plugins
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-plugins
+  version: 782460644902f391cadb83e61c882956c0e569ee
