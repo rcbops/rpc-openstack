@@ -13,7 +13,9 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: f87406880f67584b5fe562d2711734bbd63c0fdb
+  # openstack-ops does not mirror the RPCO branch process.
+  # The SHA is from its ocata-15.0 branch.
+  version: 9cafb5d87463ba927a9315bd85dcc23e05683089
 - name: os_octavia
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
