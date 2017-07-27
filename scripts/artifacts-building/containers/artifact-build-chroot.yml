@@ -44,6 +44,18 @@
         groups: "lxc_container_artifact_chroots,{{ image_name }}_all"
         container_name: "LXC_NAME"
         physical_host: "localhost"
+    # The nova role uses the with_random_choice lookup. The lookup is
+    # processed before the task, so the lookup must be able to work
+    # even if the task is not processed. For the lookup to work, the
+    # group used by the lookup must have at least one member.
+    - name: Populate the nova_conductor group
+      add_host:
+        name: "/var/lib/lxc/LXC_NAME/rootfs/"
+        groups: "nova_conductor"
+        container_name: "LXC_NAME"
+        physical_host: "localhost"
+      when:
+        - "image_name == 'nova'"
   tags:
     - always
 
