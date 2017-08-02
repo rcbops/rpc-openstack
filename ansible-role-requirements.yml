@@ -25,3 +25,9 @@
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-plugins
   version: f49519df7f07a4b0ab487479598fa150d7ed7e1a
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: lxc_hosts
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
+  version: 676a0b586565976715093f4360b712f83b1ba4a7
