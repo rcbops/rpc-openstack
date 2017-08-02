@@ -10,5 +10,5 @@ Series Release Notes
 
 .. toctree::
    :maxdepth: 1
-   
-   newton-14.0
+
+   newton

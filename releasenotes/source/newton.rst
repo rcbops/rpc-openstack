@@ -3,4 +3,4 @@
 ==============================
 
 .. release-notes:: Release Notes
-    :branch: origin/newton-14.0
+    :branch: origin/newton
