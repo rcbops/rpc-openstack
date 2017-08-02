@@ -63,7 +63,16 @@ fi
 
 # The derive-artifact-version.sh script expects the git clone to
 # be at /opt/rpc-openstack, so we link the current folder there.
-ln -sfn ${PWD} /opt/rpc-openstack
+if [[ "${PWD}" != "/opt/rpc-openstack" ]]; then
+  ln -sfn ${PWD} /opt/rpc-openstack
+fi
+
+# Remove any previous installed plugins, libraries,
+# facts and ansible/openstack-ansible refs. This
+# ensures that as we upgrade/downgrade on the long
+# running jenkins slave we do not get interference
+# from previously installed/configured items.
+rm -rf /etc/ansible /etc/openstack_deploy /usr/local/bin/ansible* /usr/local/bin/openstack-ansible*
 
 # Install Ansible
 ./scripts/bootstrap-ansible.sh
