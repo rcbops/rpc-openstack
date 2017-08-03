@@ -7,3 +7,7 @@
 - name: ceph.ceph-osd
   src: https://github.com/ceph/ansible-ceph-osd.git
   version: 434a13f4d3ee3f60c410052d2670d5dfea034bf8
+- name: os_neutron
+  scm: git
+  src: https://github.com/rcbops/neutron.git
+  version: 0e75032744fac365b4f3ff1df67f5009a31a3994
