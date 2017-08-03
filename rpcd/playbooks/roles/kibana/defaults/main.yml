@@ -25,7 +25,7 @@ kibana_pip_packages:
   - httplib2  # NOTE(sigmavirus24): Need this for the uri module
 
 kibana_apt_packages:
-  - kibana
+  - kibana=4.5.4
   - apache2
   - python-passlib
 
