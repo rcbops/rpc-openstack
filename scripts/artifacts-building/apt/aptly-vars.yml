@@ -90,6 +90,16 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-elastic-kibana-5.5-ALL"
       - "slushie-{{ rpc_release }}-elastic-beats-5.5-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-5.5-ALL"
+      # TODO(odyssey4me):
+      # Remove these once the patch merges which switches the version
+      # used to the more recent ones.
+      # https://github.com/rcbops/rpc-openstack/pull/2332
+      # ref: https://rpc-openstack.atlassian.net/browse/RE-173
+      - "slushie-{{ rpc_release }}-elastic-logstash-2.3-ALL"
+      - "slushie-{{ rpc_release }}-elastic-kibana-4.5-ALL"
+      - "slushie-{{ rpc_release }}-elastic-beats-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
+      - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
 
 # mapping for N (NOT MERGE) snapshots
 # This is a list of the repo/mirror snapshots (slushies) that will be published separately.
