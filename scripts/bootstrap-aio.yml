@@ -235,8 +235,6 @@
         mode: "{{ item.mode | default(omit) }}"
       when: "{{ (item.condition | default(True)) | bool }}"
       with_items:
-        - name: "user_osa_variables_defaults.yml"
-          mode: "0440"
         - name: "env.d/elasticsearch.yml"
           condition: "{{ rpco_deploy_elk | bool }}"
         - name: "env.d/kibana.yml"
