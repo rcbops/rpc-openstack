@@ -86,8 +86,11 @@ fi
 
 cd ${RPCD_DIR}/playbooks
 
-# set permissions and lay down overrides files
+# Copy the current user-space defaults file and make it read-only
+cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_defaults.yml" /etc/openstack_deploy/
 chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
+
+# Copy the default override files if they do not exist
 if [[ ! -f "${OA_OVERRIDES}" ]]; then
   cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_overrides.yml" "${OA_OVERRIDES}"
 fi
