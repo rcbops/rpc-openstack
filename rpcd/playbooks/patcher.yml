@@ -28,3 +28,4 @@
     patcher_files:
       - openstack-hosts-u-suk-dev-issues-1629.patch
       - os_neutron/neutron-metadata-checksum-fix.patch
+      - os_cinder_add_backend_api_check.patch
