@@ -24,3 +24,15 @@
   scm: git
   src: https://github.com/rcbops/rpc-role-logstash.git
   version: 3f5e7a6044629e76acb1933af19f09a89e55917b
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: lxc_hosts
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
+  version: fdd159a0238cede501e91a9850c47b4692d334c9
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: rabbitmq_server
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-rabbitmq_server
+  version: e944366f98f358d600f79062465a31ee11cecf4b
