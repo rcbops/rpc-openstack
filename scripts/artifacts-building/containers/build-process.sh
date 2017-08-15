@@ -45,7 +45,9 @@ rm -f /opt/list
 
 # The derive-artifact-version.sh script expects the git clone to
 # be at /opt/rpc-openstack, so we link the current folder there.
-ln -sfn ${PWD} /opt/rpc-openstack
+if [[ "${PWD}" != "/opt/rpc-openstack" ]]; then
+  ln -sfn ${PWD} /opt/rpc-openstack
+fi
 
 # Bootstrap Ansible
 # This script is sourced to ensure that the common
@@ -55,6 +57,9 @@ source scripts/bootstrap-ansible.sh
 
 # Bootstrap the AIO configuration
 ./scripts/bootstrap-aio.sh
+
+# Copy the current user-space defaults file
+cp "/opt/rpc-openstack/rpcd/etc/openstack_deploy/user_osa_variables_defaults.yml" /etc/openstack_deploy/
 
 # Remove all host group allocations to ensure
 # that no containers are created in the inventory.
