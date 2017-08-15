@@ -32,6 +32,11 @@ pkg_locations:
 
 # TODO(odyssey4me):
 # Remove this once RPC-O consumes a SHA which includes
+# the backport of https://review.openstack.org/493868
+use_percona_upstream: yes
+
+# TODO(odyssey4me):
+# Remove this once RPC-O consumes a SHA which includes
 # https://review.openstack.org/463568 and
 # https://review.openstack.org/466670
 tempest_venv_tag: "{{ venv_tag }}"
