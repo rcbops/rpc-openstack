@@ -42,5 +42,5 @@ tempest_venv_bin: "/openstack/venvs/tempest-{{ tempest_venv_tag }}/bin"
 # TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
 # has this information set in-tree.
 octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
-octavia_git_install_branch: '66fe6d327f56db9cf00c2474890705b2fa9d41cf' # HEAD of "stable/ocata" as of 31.05.2017
+octavia_git_install_branch: '3e3716ca94b3ac1379638a661bceaac9a6d250cd' # HEAD of "stable/ocata" as of 15.08.2017
 octavia_git_project_group: 'octavia_all'
