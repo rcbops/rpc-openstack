@@ -30,13 +30,6 @@ pkg_locations:
   - /etc/openstack_deploy
   - /opt/rpc-openstack/rpcd
 
-# TODO(odyssey4me):
-# Remove this once RPC-O consumes a SHA which includes
-# https://review.openstack.org/463568 and
-# https://review.openstack.org/466670
-tempest_venv_tag: "{{ venv_tag }}"
-tempest_venv_bin: "/openstack/venvs/tempest-{{ tempest_venv_tag }}/bin"
-
 # The Octavia repo details are added here so that the CI build for
 # artifacts is able to complete.
 # TODO(odyssey4me): Remove this when RPC-O switches to Ocata which
