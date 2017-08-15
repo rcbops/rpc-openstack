@@ -29,10 +29,28 @@
 - name: lxc_hosts
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
-  version: fdd159a0238cede501e91a9850c47b4692d334c9
+  version: c43ed430bb567c6ad861bd93b7459d89d6e22db6
 # TODO(odyssey4me)
 # Remove this once this SHA is included in our OSA SHA
 - name: rabbitmq_server
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-rabbitmq_server
-  version: e944366f98f358d600f79062465a31ee11cecf4b
+  version: 8aadc9701f8aeb7b8d2c8f2748b3efc426447c5c
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: lxc_container_create
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-lxc_container_create
+  version: 258dad41ced7f9511d4e388470a759f46d9509fa
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: galera_client
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-galera_client
+  version: 8cc60641a5a8a9f7db31a11426c48f4f8a6e8f9a
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: galera_server
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-galera_server
+  version: 878c32c08d18c67fe85918a0d257069a9df2a533

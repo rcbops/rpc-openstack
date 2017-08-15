@@ -60,9 +60,10 @@ rabbitmq_erlang_repo: "{{ rpco_apt_repo }}"
 rabbitmq_gpg_keys: "{{ rpco_apt_gpg_keys }}"
 
 # ceph_client wiring
-ceph_apt_repos:
-  uca: "{{ rpco_apt_repo }}"
-ceph_pkg_source: "uca"
+# We use 'distro' to avoid any apt repo being setup by the ceph roles.
+# The repository needed (RPC-O apt artifacts repo) will already be on
+# the host.
+ceph_pkg_source: "distro"
 
 # galera_client role wiring
 galera_client_repo: "{{ rpco_mirror_apt_deb_line }}"
