@@ -29,7 +29,7 @@
 - name: lxc_hosts
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
-  version: c43ed430bb567c6ad861bd93b7459d89d6e22db6
+  version: 35cb1ffd23b194491cde02312d3066362d9e5c13
 # TODO(odyssey4me)
 # Remove this once this SHA is included in our OSA SHA
 - name: rabbitmq_server
