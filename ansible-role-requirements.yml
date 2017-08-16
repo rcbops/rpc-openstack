@@ -53,4 +53,4 @@
 - name: galera_server
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-galera_server
-  version: 878c32c08d18c67fe85918a0d257069a9df2a533
+  version: b043c21352f24582fde9ecc8c406add5c4c4014f
