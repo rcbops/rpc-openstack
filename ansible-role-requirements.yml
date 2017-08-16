@@ -19,15 +19,38 @@
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
   version: master
 # TODO(odyssey4me):
-# Remove this override once https://review.openstack.org/485592 merges
-# and is included in the RPC-O SHA bump.
+# Remove this once this SHA is included in our OSA SHA
 - name: plugins
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-plugins
-  version: f49519df7f07a4b0ab487479598fa150d7ed7e1a
+  version: d9669419bf63d92c7fd0702ee6ca48fab3ea0a0a
 # TODO(odyssey4me)
 # Remove this once this SHA is included in our OSA SHA
 - name: lxc_hosts
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-lxc_hosts
-  version: 676a0b586565976715093f4360b712f83b1ba4a7
+  version: 91588f18a4a0667e6bcad8c30c1601d877384e7b
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: rabbitmq_server
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-rabbitmq_server
+  version: 6546786a28ad5e28a9158c1eb3912915b427e9f7
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: lxc_container_create
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-lxc_container_create
+  version: 08ba32ab2c99878d87628494042bfadf6f67697b
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: galera_client
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-galera_client
+  version: 3e8b1e91cce4dea6b61fbb73b887d1cabf286ddc
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: galera_server
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-galera_server
+  version: 2a14d3ba2fa11dcde7a306bbc02e7338488db008
