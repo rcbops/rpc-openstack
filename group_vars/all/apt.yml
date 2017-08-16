@@ -29,6 +29,16 @@ rpco_gpg_key_location: "{{ rpco_mirror_base_url }}/apt-mirror/"
 rpco_gpg_key_name: "rcbops-release-signing-key.asc"
 rpco_gpg_key_id: 52AA252F #SET IN STATIC (to force key verification per release).
 
+# In order for the lxc cache prep process to make use
+# of the extra rpco apt source we need to ensure that
+# the repo source file is copied into the cache prior
+# to doing any package actions. This var is set here
+# (instead of in a scoped lxc_hosts group_var) to make
+# it simpler to remove all apt artifact configuration
+# in one file removal.
+lxc_container_cache_files_from_host:
+  - "/etc/apt/sources.list.d/{{ rpco_mirror_apt_filename }}.list"
+
 # We won't be using the repo package cache, as we'll have a full mirror.
 # TODO (odyssey4me):
 # Implement the apt artifact staging as part of the standard
