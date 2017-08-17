@@ -34,13 +34,14 @@ def parse_args():
                         help='The path to the file with defaults.')
     parser.add_argument('--output-file', dest='output_file', required=True,
                         help='The path to the new overrides file location')
-    parser.add_argument('--for-testing-take-new-vars-only', dest='testing',
-                        action="store_true",
-                        help="don't take old overrides over new defaults")
-    parser.add_argument('--for-testing-keep-old-overrides-only',
-                        dest='testing_keep_overrides',
-                        action="store_true",
-                        help="take old overrides over new defaults")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--for-testing-take-new-vars-only', dest='testing',
+                       action="store_true",
+                       help="don't take old overrides over new defaults")
+    group.add_argument('--for-testing-keep-old-overrides-only',
+                       dest='testing_keep_overrides',
+                       action="store_true",
+                       help="take old overrides over new defaults")
     return parser.parse_args()
 
 
@@ -119,7 +120,7 @@ def main():
                 returned_combined[key] = returned_combined['NEW_DEFAULTS'][key]
             del returned_combined['NEW_DEFAULTS']
             del returned_combined['OLD_OVERRIDES']
-        if args.testing_keep_overrides:
+        elif args.testing_keep_overrides:
             for k in returned_combined['OLD_OVERRIDES'].keys():
                 returned_combined[k] = returned_combined['OLD_OVERRIDES'][k]
             del returned_combined['NEW_DEFAULTS']
