@@ -108,8 +108,8 @@ echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_priva
 
 # Execute the playbooks
 cd ${BASE_DIR}/scripts/artifacts-building/apt
-ansible-playbook aptly-pre-install.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
-ansible-playbook aptly-all.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
+ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} aptly-pre-install.yml
+ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} aptly-all.yml
 
 source /opt/rpc-openstack/openstack-ansible/scripts/openstack-ansible.rc
-ansible-playbook apt-artifacts-testing.yml -i /opt/inventory ${ANSIBLE_PARAMETERS}
+ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} apt-artifacts-testing.yml
