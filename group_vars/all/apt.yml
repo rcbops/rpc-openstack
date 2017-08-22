@@ -119,20 +119,6 @@ logstash_apt_repos:
   - "{{ rpco_apt_repo }}"
 logstash_apt_keys: "{{ rpco_apt_gpg_keys }}"
 
-# MAAS
-# The MAAS apt repo cannot be included in the integrated apt repository
-# due to the fact that the same package name/version is used for multiple
-# distributions, but the content and checksums are different.
-maas_repos:
-  repo: "deb {{ rpco_mirror_base_url }}/apt-mirror/independant/rax-maas-{{ ansible_distribution_release }}/ {{ rpc_release }}-{{ ansible_distribution_release }} main"
-  state: "present"
-  filename: "rax-maas"
-
-maas_keys:
-  hash_id:  "{{ rpco_gpg_key_id }}"
-  url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
-  state: "present"
-
 # HWRAID
 # The HWRAID apt repo cannot be included in the integrated apt repository
 # due to the fact that the same package name/version is used for multiple
