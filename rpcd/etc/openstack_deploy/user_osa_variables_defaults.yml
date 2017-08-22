@@ -69,3 +69,9 @@ maas_influxdata_key:
   id:  "{{ rpco_gpg_key_id }}"
   url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
 
+# Grafana
+maas_grafana_repo: "{{ rpco_apt_repo }}"
+maas_grafana_key:
+  id:  "{{ rpco_gpg_key_id }}"
+  url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
+
