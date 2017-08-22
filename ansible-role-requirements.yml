@@ -54,3 +54,9 @@
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-galera_server
   version: 2a14d3ba2fa11dcde7a306bbc02e7338488db008
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: haproxy_server
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-haproxy_server
+  version: 0ec4e0e490554dd5832c646426a3bfa8ef38be04
