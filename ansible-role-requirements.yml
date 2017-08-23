@@ -20,10 +20,23 @@
   scm: git
   src: https://github.com/openstack/openstack-ansible-os_octavia.git
   version: f8c0f7689ecd9651b27a7bf58cbdac35e0c48793
-- name: rpc-role-logstash
+# NOTE(cloudnull) Logging Specific roles
+- name: logstash
   scm: git
   src: https://github.com/rcbops/rpc-role-logstash.git
-  version: 3f5e7a6044629e76acb1933af19f09a89e55917b
+  version: 5ee5229e9b80e1193b1dd4ba56ef16edf244f237
+- name: filebeat
+  scm: git
+  src: https://github.com/rcbops/rpc-role-filebeat.git
+  version: b2335fa52684c43a42e4e5bfd0bd988d51536457
+- name: kibana
+  scm: git
+  src: https://github.com/rcbops/rpc-role-kibana.git
+  version: 432e684e061cf30f1b11640e1a8d2e3ddd065538
+- name: elasticsearch
+  scm: git
+  src: https://github.com/elastic/ansible-elasticsearch
+  version: 0bffa37035652fc06b547c8ef68c2aaf15b92f80
 # TODO(odyssey4me)
 # Remove this once this SHA is included in our OSA SHA
 - name: lxc_hosts

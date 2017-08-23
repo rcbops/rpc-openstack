@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,17 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Install Filebeat Apt Packages
-  apt:
-    pkg: "{{ item }}"
-    state: latest
-    update_cache: yes
-    cache_valid_time: 600
-  register: install_beats_apt_packages
-  until: install_beats_apt_packages|success
-  retries: 5
-  delay: 2
-  with_items: "{{ filebeat_apt_packages }}"
-  tags:
-    - "filebeat-apt-packages"
-    - "filebeat-install"
+openstack_user_kernel_options:
+  - key: 'vm.max_map_count'
+    value: 262144
+  - key: 'vm.mmap_min_addr'
+    value: 65536
+  - key: 'kernel.kptr_restrict'
+    value: 1
+  - key: 'net.ipv4.tcp_syncookies'
+    value: 1
+  - key: 'kernel.sysrq'
+    value: 176
+  - key: 'fs.protected_hardlinks'
+    value: 1
+  - key: 'fs.protected_symlinks'
+    value: 1
+  - key: 'kernel.yama.ptrace_scope'
+    value: 1
+  - key: 'kernel.printk'
+    value: '4 4 1 7'

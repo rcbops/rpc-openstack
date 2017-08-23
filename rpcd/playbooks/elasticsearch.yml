@@ -1,5 +1,5 @@
 ---
-# Copyright 2015, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 
 - name: Setup ElasticSearch host
   hosts: elasticsearch_all
+  environment:
+    ES_SKIP_SET_KERNEL_PARAMETERS: "true"
   pre_tasks:
     - name: Create ElasticSearch data directory on host
       file:
@@ -54,6 +56,9 @@
       tags:
         - elasticsearch-pre-install
   roles:
-    - "elasticsearch"
+    - role: "elasticsearch"
+      tags:
+        - skip_ansible_lint
+
   vars:
     is_metal: "{{ properties.is_metal | default(False) }}"

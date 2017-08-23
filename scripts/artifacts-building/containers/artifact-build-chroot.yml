@@ -96,7 +96,7 @@
     skip_tags:
       - config
     skip_handlers: True
-    image_name: "{{ role_name | replace('os_', '') | replace('rpc-role-', '') }}"
+    image_name: "{{ role_name | replace('os_', '') }}"
   vars_files:
     - container-vars.yml
   pre_tasks:
@@ -129,7 +129,7 @@
   vars_files:
     - container-vars.yml
   vars:
-    image_name: "{{ role_name | replace('os_', '') | replace('rpc-role-', '') }}"
+    image_name: "{{ role_name | replace('os_', '') }}"
   tasks:
     - name: Set artifact facts
       set_fact:
@@ -190,7 +190,7 @@
   vars_files:
     - container-vars.yml
   vars:
-    image_name: "{{ role_name | replace('os_', '') | replace('rpc-role-', '') }}"
+    image_name: "{{ role_name | replace('os_', '') }}"
   tasks:
     - name: Check if the list exist to avoid re-hitting the server
       stat:

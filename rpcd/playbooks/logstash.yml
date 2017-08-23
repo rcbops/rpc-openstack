@@ -1,5 +1,5 @@
 ---
-# Copyright 2015, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 
 - name: Setup Logstash host
   hosts: logstash_all
+  environment:
+    ES_SKIP_SET_KERNEL_PARAMETERS: "true"
   vars:
     - elasticsearch_host: "{{ hostvars[groups['elasticsearch'][0]]['container_address'] }}"
   roles:
-    - "rpc-role-logstash"
+    - role: "logstash"
+
