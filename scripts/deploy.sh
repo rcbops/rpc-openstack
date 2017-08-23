@@ -84,20 +84,10 @@ if [[ "${DEPLOY_ELK}" != "yes" ]]; then
   rm -f /etc/openstack_deploy/env.d/{elasticsearch,logstash,kibana}.yml
 fi
 
+# Copy the current default user-space extra-vars files
+copy_default_user_space_files
+
 cd ${RPCD_DIR}/playbooks
-
-# Copy the current user-space defaults file and make it read-only
-cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_defaults.yml" /etc/openstack_deploy/
-chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
-
-# Copy the default override files if they do not exist
-if [[ ! -f "${OA_OVERRIDES}" ]]; then
-  cp "${RPCD_DIR}/etc/openstack_deploy/user_osa_variables_overrides.yml" "${OA_OVERRIDES}"
-fi
-
-if [[ ! -f "${RPCD_OVERRIDES}" ]]; then
-  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_overrides.yml" "${RPCD_OVERRIDES}"
-fi
 
 # begin the openstack installation
 if [[ "${DEPLOY_OA}" == "yes" ]]; then

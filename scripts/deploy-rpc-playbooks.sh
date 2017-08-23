@@ -25,6 +25,9 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
+# Copy the current default user-space extra-vars files
+copy_default_user_space_files
+
 # begin the RPC installation
 cd ${RPCD_DIR}/playbooks/
 
@@ -36,10 +39,6 @@ fi
 # deploy and configure the ELK stack
 if [[ "${DEPLOY_ELK}" == "yes" ]]; then
     run_ansible setup-logging.yml
-fi
-
-if [[ ! -f "${RPCM_VARIABLES}" ]]; then
-  cp "${RPCD_DIR}/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
 fi
 
 # Download the latest release of rpc-maas
@@ -71,10 +70,10 @@ if [[ "${DEPLOY_TELEGRAF}" == "yes" ]]; then
     if [[ -n "${BUILD_TAG}" ]]; then
         # user_rpco_variables_overrides are generated at every build, so
         # we are fine to just echo it.
-        echo "maas_job_reference: '${BUILD_TAG}'" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
+        echo "maas_job_reference: '${BUILD_TAG}'" >> ${RPCD_OVERRIDES}
         # Telegraph shipping is done to influx nodes belonging to
         # influx_telegraf_targets | union(influx_all)
-        cat >> /etc/openstack_deploy/user_rpco_variables_overrides.yml << EOF
+        cat >> ${RPCD_OVERRIDES} << EOF
 influx_telegraf_targets:
   - "http://$INFLUX_IP:$INFLUX_PORT"
 EOF

@@ -19,13 +19,7 @@
 set -e -u -x
 set -o pipefail
 
-export RPCM_VARIABLES=${RPCM_VARIABLES:-/etc/openstack_deploy/user_rpcm_variables.yml}
-
 echo "POST LEAP STEPS"
-
-if [[ ! -f "${RPCM_VARIABLES}" ]]; then
-  cp "${RPCO_DEFAULT_FOLDER}/rpcd/etc/openstack_deploy/user_rpcm_variables.yml" "${RPCM_VARIABLES}"
-fi
 
 if [[ ! -f "${UPGRADE_LEAP_MARKER_FOLDER}/deploy-rpc.complete" ]]; then
   pushd ${RPCO_DEFAULT_FOLDER}/rpcd/playbooks/
