@@ -15,6 +15,9 @@
 
 ## Vars ----------------------------------------------------------------------
 
+# OSA SHA
+export OSA_RELEASE=${OSA_RELEASE:-"045c4c5601a7f1d2e63303c7420e9fd518704c4b"}
+
 # Gating
 export BUILD_TAG=${BUILD_TAG:-}
 export INFLUX_IP=${INFLUX_IP:-}
@@ -86,24 +89,6 @@ fi
 
 function run_ansible {
   openstack-ansible ${ANSIBLE_PARAMETERS} $@
-}
-
-function check_submodule_status {
-  # Confirm OA_DIR is properly checked out
-  submodulestatus=$(git submodule status ${OA_DIR})
-  case "${submodulestatus:0:1}" in
-    "-")
-      echo "ERROR: rpc-openstack submodule is not properly checked out"
-      exit 1
-      ;;
-    "+")
-      echo "WARNING: rpc-openstack submodule does not match the expected SHA"
-      ;;
-    "U")
-      echo "ERROR: rpc-openstack submodule has merge conflicts"
-      exit 1
-      ;;
-  esac
 }
 
 function copy_default_user_space_files {

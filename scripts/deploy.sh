@@ -35,9 +35,6 @@ if [[ "$DEPLOY_AIO" != "yes" ]] && [[ "$DEPLOY_HARDENING" != "yes" ]]; then
   exit 1
 fi
 
-# Check the openstack-ansible submodule status
-check_submodule_status
-
 # Bootstrap Ansible
 source "$(dirname "${0}")/bootstrap-ansible.sh"
 
