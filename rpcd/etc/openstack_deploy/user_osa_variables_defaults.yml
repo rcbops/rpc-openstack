@@ -205,3 +205,6 @@ openstack_kernel_options:
 
 neutron_git_repo: https://github.com/rcbops/neutron.git
 neutron_git_install_branch: 0e75032744fac365b4f3ff1df67f5009a31a3994
+
+galera_package_url: "https://www.percona.com/downloads/XtraBackup/Percona-XtraBackup-2.3.5/binary/debian/trusty/x86_64/percona-xtrabackup_2.3.5-1.trusty_amd64.deb"
+galera_package_sha256: "7b407be253b922f8bb772d87877486c0ce8eef8af1304abec702dba962b497dd"
