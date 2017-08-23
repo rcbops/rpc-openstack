@@ -42,9 +42,46 @@ maas_target_alias: public0_v4
 maas_monitor_cinder_backup: "{{ cinder_service_backup_program_enabled | default(false) }}"
 
 # MaaS pathing and versions
-maas_release: master
+maas_release: "1.0.0"
 maas_venv: "/openstack/venvs/maas-{{ maas_release }}"
 maas_venv_bin: "{{ maas_venv }}/bin"
 
 # Allow all of the host machiens running maas agents to restart once at the end of a maas playbook.
 maas_restart_independent: false
+
+# Apt artifact repo configuration
+# The rest of the apt artifact repo configuration is held in
+# group_vars/all/apt.yml but due to the way that the rpc-maas
+# implementation is done we cannot use group_vars to override
+# the defaults, so we have to use extra-vars.
+# TODO(odyssey4me):
+# Refactor the rpc-maas implementation to make use of roles
+# to implement the base repo/software so that these settings
+# can be implemented in group_vars instead of extra-vars.
+
+# MAAS
+# The MAAS apt repo cannot be included in the integrated apt repository
+# due to the fact that the same package name/version is used for multiple
+# distributions, but the content and checksums are different.
+maas_repos:
+  repo: "deb {{ rpco_mirror_base_url }}/apt-mirror/independant/rax-maas-{{ ansible_distribution_release }}/ {{ rpc_release }}-{{ ansible_distribution_release }} main"
+  state: "present"
+  filename: "rax-maas"
+
+maas_keys:
+  hash_id:  "{{ rpco_gpg_key_id }}"
+  url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
+  state: "present"
+
+# Influxdata
+maas_influxdata_repo: "{{ rpco_apt_repo }}"
+maas_influxdata_key:
+  id:  "{{ rpco_gpg_key_id }}"
+  url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
+
+# Grafana
+maas_grafana_repo: "{{ rpco_apt_repo }}"
+maas_grafana_key:
+  id:  "{{ rpco_gpg_key_id }}"
+  url: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
+

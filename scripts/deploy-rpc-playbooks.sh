@@ -25,6 +25,9 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
+# Copy the current default user-space extra-vars files
+copy_default_user_space_files
+
 # begin the RPC installation
 cd ${RPCD_DIR}/playbooks/
 
@@ -67,10 +70,10 @@ if [[ "${DEPLOY_TELEGRAF}" == "yes" ]]; then
     if [[ -n "${BUILD_TAG}" ]]; then
         # user_rpco_variables_overrides are generated at every build, so
         # we are fine to just echo it.
-        echo "maas_job_reference: '${BUILD_TAG}'" >> /etc/openstack_deploy/user_rpco_variables_overrides.yml
+        echo "maas_job_reference: '${BUILD_TAG}'" >> ${RPCD_OVERRIDES}
         # Telegraph shipping is done to influx nodes belonging to
         # influx_telegraf_targets | union(influx_all)
-        cat >> /etc/openstack_deploy/user_rpco_variables_overrides.yml << EOF
+        cat >> ${RPCD_OVERRIDES} << EOF
 influx_telegraf_targets:
   - "http://$INFLUX_IP:$INFLUX_PORT"
 EOF

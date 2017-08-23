@@ -44,7 +44,6 @@ export OA_DIR="${BASE_DIR}/openstack-ansible"
 export OA_OVERRIDES='/etc/openstack_deploy/user_osa_variables_overrides.yml'
 export RPCD_DIR="${BASE_DIR}/rpcd"
 export RPCD_OVERRIDES='/etc/openstack_deploy/user_rpco_variables_overrides.yml'
-export RPCM_VARIABLES='/etc/openstack_deploy/user_rpcm_variables.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
 
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-''}
@@ -104,6 +103,30 @@ function check_submodule_status {
       exit 1
       ;;
   esac
+}
+
+function copy_default_user_space_files {
+    # Copy the current default user space files and make them read-only
+    cp ${RPCD_DIR}/etc/openstack_deploy/user_*_defaults.yml /etc/openstack_deploy/
+    chmod 0440 /etc/openstack_deploy/user_*_defaults.yml
+
+    # Remove previous defaults files to ensure no conflicts
+    # with the current defaults.
+    if [[ -e /etc/openstack_deploy/user_rpcm_variables.yml ]]; then
+      rm -f /etc/openstack_deploy/user_rpcm_variables.yml
+    fi
+    if [[ -e /etc/openstack_deploy/user_rpcm_default_variables.yml ]]; then
+      rm -f /etc/openstack_deploy/user_rpcm_default_variables.yml
+    fi
+
+    # Copy the default override files if they do not exist
+    if [[ ! -f "${OA_OVERRIDES}" ]]; then
+      cp "${RPCD_DIR}/${OA_OVERRIDES}" "${OA_OVERRIDES}"
+    fi
+
+    if [[ ! -f "${RPCD_OVERRIDES}" ]]; then
+      cp "${RPCD_DIR}/${RPCD_OVERRIDES}" "${RPCD_OVERRIDES}"
+    fi
 }
 
 function apt_artifacts_available {
