@@ -177,6 +177,13 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
     # Deploy rally
     run_ansible os-rally-install.yml
   fi
+
+  if [[ "${DEPLOY_UPGRADE_TOOLS}" == "yes" ]]; then
+    # Deploy upgrade tools which will exercise the code paths, perform backups,
+    #  and provide reports on the environment health.
+    run_ansible ${BASE_DIR}/rpcd/playbooks/rpc-pre-upgrade.yml
+    run_ansible ${BASE_DIR}/rpcd/playbooks/rpc-post-upgrade.yml
+  fi
 fi
 
 if [[ "${DEPLOY_RPC}" == "yes" ]]; then

@@ -13,92 +13,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Check rabbit cluster status
-  shell: "rabbitmqctl cluster_status"
-  register: rabbitmqctl_result
-  delegate_to: "{{ groups['rabbitmq_all'][0] }}"
-
-- name: Check mysql cluster status
-  shell: "mysql -e \"show status like 'wsrep_clu%'\""
-  register: mysqlstatus_result
-  delegate_to: "{{ groups['galera_all'][0] }}"
-
 - name: Gather nova service-list
   shell: "source ~/openrc; nova --insecure service-list"
   args:
     executable: /bin/bash
   register: nova_servicelist_result
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather cinder service-list
   shell: "source ~/openrc; cinder --insecure service-list"
   register: cinder_servicelist_result
   args:
     executable: /bin/bash
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather neutron agent-list
   shell: "source ~/openrc; neutron --insecure agent-list"
   args:
     executable: /bin/bash
   register: neutron_agentlist_result
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather orchestration service list
   shell: "source ~/openrc; openstack orchestration service list --insecure"
   args:
     executable: /bin/bash
   register: orchestration_servicelist_result
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Gather openstack endpoint list
   shell: "source ~/openrc; openstack --insecure endpoint list"
   args:
     executable: /bin/bash
   register: endpointlist_result
-  delegate_to: "{{ groups['utility_all'][0] }}"
-
-- name: Gather running instances from mysql
-  shell: "mysql -BN -e \"select uuid from instances where deleted=0 and vm_state='active' order by uuid\" nova"
-  args:
-    executable: /bin/bash
-  register: running_instances_result
-  delegate_to: "{{ groups['galera_all'][0] }}"
-
-- name: Gather instance-volume mappings from mysql
-  shell: "mysql -e \"select v.id,v.provider_location,va.attached_host,va.instance_uuid,va.mountpoint from volumes v join volume_attachment va on v.id = va.volume_id where v.deleted = 0 and v.attach_status='attached'\" cinder"
-  args:
-    executable: /bin/bash
-  register: instance_volume_mappings_result
-  delegate_to: "{{ groups['galera_all'][0] }}"
-
-- name: Output into text file
-  template:
-    src: "{{ item }}.txt.j2"
-    dest: "{{ backup_dir }}/{{ item }}-{{ datetime_stamp }}.txt"
-  with_items:
-    - status
-    - instance-volume-mappings
-    - running-instances
 
 - name: Obtain a list of neutron routers
-  shell: |
-    . {{ ansible_env.HOME }}/openrc
-    neutron router-list -f value --column id
+  shell: source ~/openrc; neutron router-list -f value --column id
+  args:
+    executable: /bin/bash
   register: neutron_routers
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Check agent assigned to each neutron router
-  shell: |
-    . {{ ansible_env.HOME }}/openrc
-    neutron l3-agent-list-hosting-router -f value --column host {{ item }}
+  shell: source ~/openrc; neutron l3-agent-list-hosting-router -f value --column host {{ item }}
+  args:
+    executable: /bin/bash
   with_items: "{{ neutron_routers.stdout_lines }}"
   register: neutron_routers_agents
-  delegate_to: "{{ groups['utility_all'][0] }}"
 
 - name: Write file containing agent for each router
   copy:
     content: "{{ item.stdout|replace('_','-') }}" # we replace here since containers will get renamed during upgrade
     dest: "{{ backup_dir }}/{{ item.item }}.pre-upgrade"
   with_items: "{{ neutron_routers_agents.results }}"
+  delegate_to: localhost
+
+- name: Output into text file
+  template:
+    src: "templates/status-os.txt.j2"
+    dest: "{{ backup_dir }}/status-os-{{ datetime_stamp }}.txt"
   delegate_to: localhost

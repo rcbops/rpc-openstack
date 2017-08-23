@@ -13,26 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Create upgrade backup directory
-  file:
-    path: "{{ backup_dir }}"
-    state: directory
-
-- name: Backup the /etc/openstack_deploy directory
-  command: "tar czf {{ backup_dir }}/openstack_deploy-{{ datetime_stamp }}.tar.gz /etc/openstack_deploy"
-  tags:
-    - skip_ansible_lint
-
 # Commenting this out for now - I think this is a pointless task, this should be done before anything else happens.
 #- name: Backup original playbooks
 #  command: "tar czf {{ backup_dir }}/rpc-openstack-{{ datetime_stamp }}.tar.gz {{ backup_dir }}"
 
 - name: Perform a DB backup (using xtrabackup)
   shell: "innobackupex --stream=xbstream --compress - > /var/backup/galera-backup-{{ datetime_stamp }}.xbstream"
-  delegate_to: "{{ groups['galera_all'][0] }}"
+  register: backup_db
+  until: backup_db|success
+  retries: 5
+  delay: 2
 
 - name: Copy xtrabackup
   synchronize:
     mode: pull
-    src: "{{ groups['galera_all'][0] }}:/var/backup/galera-backup-{{ datetime_stamp }}.xbstream"
+    src: "/var/backup/galera-backup-{{ datetime_stamp }}.xbstream"
     dest: "{{ backup_dir }}/galera-backup-{{ datetime_stamp }}.xbstream"

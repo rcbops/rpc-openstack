@@ -13,12 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Setup hosts for rpc-pre-upgrades
-  hosts: localhost
-  roles:
-    - role: "rpc_pre_upgrade"
-  tags:
-    - rpc-pre-upgrades
+- include: upgrades/pre-upgrade.yml
 
 - name: Run nova DB hygiene on shadow_instance tables
   hosts: galera_all[0]
