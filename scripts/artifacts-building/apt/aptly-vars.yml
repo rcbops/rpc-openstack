@@ -67,6 +67,8 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-elastic-beats-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+      - "slushie-{{ rpc_release }}-influxdata-trusty"
+      - "slushie-{{ rpc_release }}-grafana-jessie-ALL"
     xenial:
       - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
       - "slushie-{{ rpc_release }}-uca-newton-updates-xenial"
@@ -78,6 +80,8 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-elastic-beats-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
+      - "slushie-{{ rpc_release }}-influxdata-xenial"
+      - "slushie-{{ rpc_release }}-grafana-jessie-ALL"
 
 # mapping for N (NOT MERGE) snapshots
 # This is a list of the repo/mirror snapshots (slushies) that will be published separately.
@@ -123,7 +127,7 @@ aptly_mirrors:
       - main
       - universe
     create_flags:
-      - "-filter='apparmor | cgmanager | lxc'"
+      - "-filter='Name (% apparmor*) | Name (% cgmanager*) | Name (% lxc*)'"
       - "-filter-with-deps"
       - "-keyring='trustedkeys.gpg'"
     update_flags:
@@ -162,6 +166,7 @@ aptly_mirrors:
       keyring: "trustedkeys.gpg"
     create_flags:
       - "-keyring='trustedkeys.gpg'"
+      - "-filter='!Version (% *ubuntu1~16.04*)'"
     update_flags:
       - "-keyring='trustedkeys.gpg'"
     do_update: "{{ aptly_mirror_do_updates }}"
@@ -404,6 +409,54 @@ aptly_mirrors:
     state: "present"
     gpg:
       key: "D05AB914"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+
+  - name: influxdata-trusty
+    archive_url: https://repos.influxdata.com/ubuntu
+    distribution: trusty
+    component1:
+      - stable
+    state: "present"
+    gpg:
+      key: "2582E0C5"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+
+  - name: influxdata-xenial
+    archive_url: https://repos.influxdata.com/ubuntu
+    distribution: xenial
+    component1:
+      - stable
+    state: "present"
+    gpg:
+      key: "2582E0C5"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+    do_update: "{{ aptly_mirror_do_updates }}"
+
+  - name: grafana-jessie-ALL
+    archive_url: https://packagecloud.io/grafana/stable/debian
+    distribution: jessie
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "D59097AB"
       server: "hkp://keyserver.ubuntu.com:80"
       keyring: "trustedkeys.gpg"
     create_flags:

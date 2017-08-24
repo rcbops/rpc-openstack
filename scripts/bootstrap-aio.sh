@@ -43,10 +43,24 @@ fi
 # the rpco sources file will be added. When
 # artifacts are not available then the updates
 # repo is needed.
+# The RPCO_APT_ARTIFACTS_AVAILABLE env var is
+# used to provide the right information to the
+# bootstrap-aio.yml playbook which rewrites the
+# /etc/apt/sources.list file.
 if apt_artifacts_available; then
   export RPCO_APT_ARTIFACTS_AVAILABLE="yes"
 else
   export RPCO_APT_ARTIFACTS_AVAILABLE="no"
+  rm -f ${BASE_DIR}/group_vars/all/apt.yml
+  sed -i '/^# Apt artifact repo configuration$/,$d' ${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_defaults.yml
+fi
+
+# If there are no container artifacts for this release, then remove the container artifact configuration
+if ! container_artifacts_available; then
+  # Remove the AIO configuration relating to the use
+  # of container artifacts. This needs to be done
+  # because the container artifacts do not exist yet.
+  ./scripts/artifacts-building/remove-container-aio-config.sh
 fi
 
 # Run AIO bootstrap playbook
@@ -62,20 +76,3 @@ openstack-ansible -vvv ${BASE_DIR}/scripts/bootstrap-aio.yml \
 # defaults are taken in openstack-ansible.rc
 unset GROUP_VARS_PATH
 unset HOST_VARS_PATH
-
-
-
-if ! apt_artifacts_available; then
-  # Remove the AIO configuration relating to the use
-  # of apt artifacts. This needs to be done because
-  # the apt artifacts do not exist yet.
-  sed -i '/^rpco_mirror_base_url/,$d' /etc/openstack_deploy/user_osa_variables_defaults.yml
-fi
-
-# If there are no container artifacts for this release, then remove the container artifact configuration
-if ! container_artifacts_available; then
-  # Remove the AIO configuration relating to the use
-  # of container artifacts. This needs to be done
-  # because the container artifacts do not exist yet.
-  ./scripts/artifacts-building/remove-container-aio-config.sh
-fi
