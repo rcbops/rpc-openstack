@@ -1,17 +1,3 @@
-RabbitMQ Cluster status as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
-
-{% for line in rabbitmqctl_result.stdout_lines %}
-{{ line }}
-{% endfor %}
-
-
-MySQL wsrep var status as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
-
-{% for line in mysqlstatus_result.stdout_lines %}
-{{ line }}
-{% endfor %}
-
-
 nova service-list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
 
 {% for line in nova_servicelist_result.stdout_lines %}
@@ -25,11 +11,13 @@ cinder service-list output as at {{ ansible_date_time.date }}-{{ ansible_date_ti
 {{ line }}
 {% endfor %}
 
+
 orchestration service list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
 
 {% for line in orchestration_servicelist_result.stdout_lines %}
 {{ line }}
 {% endfor %}
+
 
 neutron agent-list output as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
 

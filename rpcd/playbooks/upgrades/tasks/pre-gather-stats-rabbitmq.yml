@@ -13,4 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: upgrades/post-upgrade.yml
+- name: Check rabbit cluster status
+  shell: "rabbitmqctl cluster_status"
+  register: rabbitmqctl_result
+
+- name: Output into text file
+  template:
+    src: "templates/stats-rabbitmq.txt.j2"
+    dest: "{{ backup_dir }}/stats-rabbitmq-{{ datetime_stamp }}.txt"
+  delegate_to: localhost

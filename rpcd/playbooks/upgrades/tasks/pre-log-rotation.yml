@@ -13,19 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Backup database/repository/vars_files
-- include: backup.yml
+- name: Rotate openstack aggregate logs
+  shell: 'find /openstack/log -name *\.log -size 64M -ls -exec gzip --suffix -$$.gz {} \;'
+  register: large_logs
 
-# Gather info on:
-# OpenStack service status
-# Rabbit/galera cluster status
-# Running instances
-# Volume mappings
-- include: gather_stats.yml
-
-# Gather swift-recon md5 output
-- include: gather_swift_stats.yml
-  when: groups['swift_proxy']|default([])|length > 0
-
-# Perform log rotation and cleanup
-- include: log_rotation.yml
+- name: Compressed logs
+  debug: var=large_logs.stdout_lines

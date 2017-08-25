@@ -1,9 +1,9 @@
 ---
 features:
-  - A new role has been created, rpc_post_upgrade, to assist
-    operators with capturing the state of an environment
+  - A new playbook has been created, ``post-upgrade.yml``, to
+    assist operators with capturing the state of an environment
     after an upgrade.
 upgrade:
-  - A new role has been created, rpc_post_upgrade, to assist
-    operators with capturing the state of an environment
-    after an upgrade
+  - A new playbook has been created, ``post-upgrade.yml``, to
+    assist operators with capturing the state of an environment
+    after an upgrade.

@@ -13,34 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Rotate openstack aggregate logs
-  shell: 'find /openstack/log -name *\.log -size 64M -ls -exec gzip --suffix -$$.gz {} \;'
-  register: large_logs
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['hosts'] }}"
-
-- name: Compressed logs
-  debug: var=large_logs.stdout_lines
-
 - name: Stop rsyslog
   service:
     name: rsyslog
     state: stopped
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['rsyslog_container'] }}"
 
 - name: Clean up rsyslog forward and state files
   shell: 'rm -rf /var/spool/rsyslog/srvr* /var/spool/rsyslog/state*'
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['rsyslog_container'] }}"
   tags:
     - skip_ansible_lint
 
 - name: Verify directories are empty before proceeding
   shell: 'du -hcs /var/spool/rsyslog'
   register: spool_count
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['rsyslog_container'] }}"
 
 - name: Spool directory file counts
   debug: var=spool_count
@@ -49,5 +34,3 @@
   service:
     name: rsyslog
     state: started
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['rsyslog_container'] }}"

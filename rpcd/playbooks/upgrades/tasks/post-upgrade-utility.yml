@@ -64,7 +64,7 @@
 
 - name: Write file listing ports in build status
   template:
-    src: "neutron-port-status.txt.j2"
+    src: "templates/neutron-port-status.txt.j2"
     dest: "{{ backup_dir }}/neutron_ports_in_build_status-{{ datetime_stamp }}.post-upgrade"
   delegate_to: localhost
 
@@ -136,6 +136,6 @@
 
 - name: Render router status template
   template:
-    src: "neutron-router-status.txt.j2"
+    src: "templates/neutron-router-status.txt.j2"
     dest: "{{ backup_dir }}/neutron-router-status-{{ datetime_stamp }}.txt"
   delegate_to: localhost

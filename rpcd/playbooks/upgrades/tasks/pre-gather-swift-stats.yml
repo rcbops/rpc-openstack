@@ -16,14 +16,13 @@
 - name: Determine running version of swift
   shell: "pgrep -fao swift | sed -r 's_.*(swift-[0-9.]+).*_\\1_'"
   register: running_swift
-  delegate_to: "{{ groups['swift_proxy'][0] }}"
 
 - name: Gather swift recon output
   shell: "/openstack/venvs/{{ running_swift.stdout }}/bin/swift-recon -arul --md5"
   register: swiftrecon_result
-  delegate_to: "{{ groups['swift_proxy'][0] }}"
 
 - name: Output swift recon stats into text
   template:
-    src: "swift_recon.txt.j2"
+    src: "templates/stats-swift_recon.txt.j2"
     dest: "{{ backup_dir }}/swift_recon-{{ datetime_stamp }}.txt"
+  delegate_to: localhost

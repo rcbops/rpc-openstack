@@ -1,5 +1,5 @@
 ---
-# Copyright 2016, Rackspace US, Inc.
+# Copyright 2017, Rackspace US, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,4 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: upgrades/post-upgrade.yml
+- name: Create upgrade backup directory
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+
+- name: Backup the /etc/openstack_deploy directory
+  command: "tar czf {{ backup_dir }}/openstack_deploy-{{ datetime_stamp }}.tar.gz /etc/openstack_deploy"
+  tags:
+    - skip_ansible_lint
