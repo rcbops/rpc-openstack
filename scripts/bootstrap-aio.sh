@@ -52,6 +52,7 @@ if apt_artifacts_available; then
 else
   export RPCO_APT_ARTIFACTS_AVAILABLE="no"
   rm -f ${BASE_DIR}/group_vars/all/apt.yml
+  sed -i '/^# Apt artifact repo configuration$/,$d' ${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_defaults.yml
 fi
 
 # If there are no container artifacts for this release, then remove the container artifact configuration

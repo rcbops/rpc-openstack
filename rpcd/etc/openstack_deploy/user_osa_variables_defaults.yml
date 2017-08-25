@@ -37,3 +37,4 @@ pkg_locations:
 octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
 octavia_git_install_branch: '3e3716ca94b3ac1379638a661bceaac9a6d250cd' # HEAD of "stable/ocata" as of 15.08.2017
 octavia_git_project_group: 'octavia_all'
+
