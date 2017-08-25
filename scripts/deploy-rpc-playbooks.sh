@@ -78,6 +78,19 @@ influx_telegraf_targets:
   - "http://$INFLUX_IP:$INFLUX_PORT"
 EOF
     fi
+    if [[ "${GENERATE_TEST_SERVERS:-0}" != "0" ]]; then
+        cat >> ${RPCD_OVERRIDES} << EOF
+server_count: ${GENERATE_TEST_SERVERS:-0}
+volume_count: ${GENERATE_TEST_VOLUMES:-0}
+network_count: ${GENERATE_TEST_NETWORKS:-0}
+EOF
+        run_ansible generate-resources.yml
+    fi
+    if [[ -e "/etc/generated_resources.json" ]]; then
+        cat >> ${RPCD_OVERRIDES} << EOF
+telegraf_plugin_ping_urls: $(cat /etc/generated_resources.json)
+EOF
+    fi
     run_ansible /opt/rpc-maas/playbooks/maas-tigkstack-telegraf.yml
 fi
 
