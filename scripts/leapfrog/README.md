@@ -2,14 +2,14 @@
 
 #### Overview
 A Leapfrog upgrade is a major upgrade that skips at least one release. Currently
-RPCO supports leapfrog upgrades from kilo to r14.1.0 (newton).
+RPCO supports leapfrog upgrades from kilo to r14.2.0 (newton).
 
 #### Terms
 * [RPCO](https://github.com/rcbops/rpc-openstack): Rackspace Private Cloud powered by OpenStack
 * [OSA](https://github.com/openstack/openstack-ansible):  OpenStack Ansible
 * [OSA-OPS](https://github.com/openstack/openstack-ansible-ops):  OpenStack Operations
 * [Kilo](https://github.com/rcbops/rpc-openstack/tree/kilo): The RPCO release of OpenStack Kilo
-* [r14.1.0](https://github.com/rcbops/rpc-openstack/tree/r14.1.0): The second RPCO release of OpenStack Newton. This version includes Leapfrog upgrade tools.
+* [r14.2.0](https://github.com/rcbops/rpc-openstack/tree/r14.2.0): The second RPCO release of OpenStack Newton. This version includes Leapfrog upgrade tools.
 
 ## Pre Leapfrog Tasks
 * Verify that the kilo deployment is healthy and at the latest version.
@@ -17,7 +17,7 @@ RPCO supports leapfrog upgrades from kilo to r14.1.0 (newton).
 
 ## Executing a leapfrog upgrade
 
-The first step is to checkout the RPC-O r14.1.0 tag. This will remove
+The first step is to checkout the RPC-O r14.2.0 tag. This will remove
 any uncommitted information from the rpco repo, so back that up if it is
 required.
 
@@ -29,15 +29,15 @@ git reset --hard
 git clean -df
 popd
 git fetch origin
-git checkout r14.1.0
+git checkout r14.2.0
 git submodule update
 git status
 ```
 
 It is crucial that the rpco repo and openstack-ansible submodule are both clean
-and at the appropriate SHAs for r14.1.0 at this stage. The [github
-r14.1.0 tag
-page](https://github.com/rcbops/rpc-openstack/tree/r14.1.0) shows both SHAs,
+and at the appropriate SHAs for r14.2.0 at this stage. The [github
+r14.2.0 tag
+page](https://github.com/rcbops/rpc-openstack/tree/r14.2.0) shows both SHAs,
 the RPCO SHA is the latest commit, and the OSA SHA is shown as an annotation
 after @ on the openstack-ansible submodule.
 
