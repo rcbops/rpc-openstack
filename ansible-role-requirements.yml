@@ -60,3 +60,15 @@
   scm: git
   src: https://git.openstack.org/openstack/openstack-ansible-haproxy_server
   version: 0ec4e0e490554dd5832c646426a3bfa8ef38be04
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: os_keystone
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-os_keystone
+  version: 308497e1e005f4867010464f431ddd72b7a149b4
+# TODO(odyssey4me)
+# Remove this once this SHA is included in our OSA SHA
+- name: os_nova
+  scm: git
+  src: https://git.openstack.org/openstack/openstack-ansible-os_nova
+  version: 91677876e5cf5de7305437d4dcffe4263f0701c5
