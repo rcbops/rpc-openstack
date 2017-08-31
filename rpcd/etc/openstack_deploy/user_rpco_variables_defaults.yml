@@ -86,4 +86,6 @@ tempest_run_tempest_opts:
 # Tempest testr options
 tempest_testr_opts: []
 # Tempest tests to run. A one-line, space-delimited string
-tempest_test_sets: "scenario defcore cinder_backup"
+# NOTE: We do not test cinder_backup in mitaka branch due to this:
+#       https://github.com/rcbops/rpc-openstack/issues/2258
+tempest_test_sets: "scenario defcore"

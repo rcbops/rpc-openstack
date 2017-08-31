@@ -30,9 +30,10 @@ source ${BASE_DIR}/scripts/functions.sh
 # Issue: Variables files have been reorganized, run a migration script to move
 #        them to the new location.
 # WARNING: In no way should the migrate-yaml.py script be run with
-#          --for-testing-take-new-vars-only in production environments.
+#          --for-testing-take-new-vars-only or --for-testing-keep-old-overrides-only
+#          in production environments.
 if [[ ! -f "/etc/openstack_deploy/user_rpco_variables_overrides.yml" ]]; then
-  "${BASE_DIR}"/scripts/migrate-yaml.py --for-testing-take-new-vars-only \
+  "${BASE_DIR}"/scripts/migrate-yaml.py --for-testing-keep-old-overrides-only \
       --defaults "${RPCD_DIR}"/etc/openstack_deploy/user_rpco_variables_defaults.yml \
       --overrides /etc/openstack_deploy/user_extras_variables.yml \
       --output-file /etc/openstack_deploy/user_rpco_variables_overrides.yml
