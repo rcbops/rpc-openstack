@@ -126,7 +126,24 @@ In order for a PR to be merged, the following criteria should be met:
 * The second +1 reviewer should merge the patch.
 
 #### Backports<a name="backports"></a>
-The owner is responsible for backporting the commit if necessary. Backport pull requests must reference the original issue using the 'Connects' keyword.
+Once a change merges into a newer branch, such as master, the owner of the
+patch should consider if the patch belongs in an older branch. If this is
+useful, the developer should:
+
+1. Cherry pick the commit into the older branch using the  `-x` flag (which
+   references the commit in the newer branch).
+1. Push that commit to their fork.
+1. Submit a pull request.
+1. Edit the title of the pull request in Github and add a [Backport] prefix
+   so that reviewers know it is a backported patch.
+
+Backports should be proposed **after** the patch lands in the newer branch.
+This ensures that the same exact patch that **fully merges** into the newer
+branch is the one that makes it into the older branch.
+
+If the backported patch needs updates to resolve conflicts, mention those
+conflicts in the commit message of the backport. This speeds up the review
+process.
 
 ## Documentation impact<a name="documentation-impact"></a>
 
