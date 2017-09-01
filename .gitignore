@@ -63,3 +63,8 @@ releasenotes/build
 
 # Editor files
 .idea
+
+# Mac OS X files
+*.DS_Store
+.AppleDouble
+.LSOverride
