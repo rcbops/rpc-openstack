@@ -155,6 +155,7 @@ pushd ${LEAPFROG_DIR}
 
     if [[ ! -f "${UPGRADE_LEAP_MARKER_FOLDER}/osa-leap.complete" ]]; then
         pushd openstack-ansible-ops/leap-upgrades/
+            export PRE_SETUP_INFRASTRUCTURE_HOOK=${RPCO_DEFAULT_FOLDER}/rpcd/playbooks/stage-python-artifacts.yml
             export REDEPLOY_EXTRA_SCRIPT=${RPCO_DEFAULT_FOLDER}/scripts/leapfrog/pre_redeploy.sh
             . ./run-stages.sh
         popd
