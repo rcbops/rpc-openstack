@@ -14,3 +14,7 @@
 # limitations under the License.
 
 lxc_container_variant: "nova-{{ rpc_release }}"
+
+# TODO(odyssey4me):
+# This is a workaround until https://review.openstack.org/499121
+nova_bin: "/openstack/venvs/nova-{{ nova_venv_tag }}/bin"

@@ -47,9 +47,11 @@ export OA_OPS_REPO=${OA_OPS_REPO:-'https://github.com/openstack/openstack-ansibl
 # Please bump the following when a patch for leapfrog is merged into osa-ops
 # If you are developping, just clone your ops repo into (by default)
 # /opc/rpc-leapfrog/openstack-ansible-ops
-export OA_OPS_REPO_BRANCH=${OA_OPS_REPO_BRANCH:-'202e6038643e9835affd2f9f2a1934f8c3dda726'}
+export OA_OPS_REPO_BRANCH=${OA_OPS_REPO_BRANCH:-'50f3fd6df7579006748a00c271bb03d22b17ae89'}
 # Instead of storing the debug's log of run in /tmp, we store it in an
 # folder that will get archived for gating logs
+export REDEPLOY_OA_FOLDER="${RPCO_DEFAULT_FOLDER}/openstack-ansible"
+export BOOTSTRAP_ANSIBLE_FOLDER="${RPCO_DEFAULT_FOLDER}"
 export DEBUG_PATH="/var/log/osa-leapfrog-debug.log"
 export UPGRADE_LEAP_MARKER_FOLDER="/etc/openstack_deploy/upgrade-leap"
 export PRE_LEAP_STEPS="${NEWTON_BASE_DIR}/scripts/leapfrog/pre_leap.sh"
