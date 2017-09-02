@@ -184,13 +184,6 @@
         - name: swift.yml.aio
         - name: ceph.yml.aio
           path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy/conf.d' }}"
-    openstack_user_config_overrides:
-      shared-infra_hosts:
-        aio1:
-          affinity:
-            galera_container: 3
-            rabbit_mq_container: 3
-          ip: 172.29.236.100
 
 - name: Execute the RPC-O AIO adjustments
   hosts: localhost
