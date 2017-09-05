@@ -55,6 +55,10 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
 
+  if [[ "${DEPLOY_IRONIC}" == "yes" ]]; then
+    # execute ironic pre-config playbook
+    run_ansible ${BASE_DIR}/scripts/ironic/playbooks/ironic-pre-config.yml
+  fi
 fi
 
 # move OSA secrets to correct locations
@@ -150,6 +154,13 @@ if [[ "${DEPLOY_OA}" == "yes" ]]; then
 
   # setup openstack
   run_ansible setup-openstack.yml
+
+  if [[ "${DEPLOY_IRONIC}" == "yes" ]]; then
+    # execute post-install steps for ironic
+    run_ansible ${BASE_DIR}/scripts/ironic/playbooks/ironic-post-install-config.yml
+    # re-run os-ironic-install again
+    run_ansible ${OA_DIR}/playbooks/os-ironic-install.yml
+  fi
 
   if [[ "${DEPLOY_TEMPEST}" == "yes" ]]; then
     # Deploy tempest
