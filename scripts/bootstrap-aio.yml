@@ -37,7 +37,7 @@
   include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
   vars:
     bootstrap_host_apt_distribution_suffix_list: "{{ (lookup('env', 'RPCO_APT_ARTIFACTS_AVAILABLE') | bool) | ternary([], ['updates', 'backports']) }}"
-    scenario: "{{ (lookup('env', 'DEPLOY_CEPH') | bool) | ternary('ceph','swift') }}"
+    scenario: "{% if lookup('env', 'DEPLOY_IRONIC') == 'yes' %}ironic{% else %}{{ lookup('env', 'DEPLOY_CEPH') |bool |ternary('ceph','swift') }}{%endif%}"
     bootstrap_host_user_variables_filename: "user_osa_variables_overrides.yml"
     bootstrap_host_user_secrets_filename: "user_osa_secrets.yml"
     uca_enable: no
@@ -62,6 +62,16 @@
         - name: swift.yml.aio
         - name: ceph.yml.aio
           path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy/conf.d' }}"
+      ironic:
+        - name: cinder.yml.aio
+        - name: glance.yml.aio
+        - name: heat.yml.aio
+        - name: horizon.yml.aio
+        - name: keystone.yml.aio
+        - name: neutron.yml.aio
+        - name: nova.yml.aio
+        - name: swift.yml.aio
+        - name: ironic.yml.aio
 
 - name: Execute the RPC-O AIO adjustments
   hosts: localhost
