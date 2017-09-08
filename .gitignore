@@ -57,6 +57,7 @@ target/
 rpcd/playbooks/roles/ceph.ceph-common
 rpcd/playbooks/roles/ceph.ceph-mon
 rpcd/playbooks/roles/ceph.ceph-osd
+openstack-ansible
 
 # Files created by releasenotes build
 releasenotes/build

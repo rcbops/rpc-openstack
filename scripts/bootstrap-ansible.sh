@@ -30,8 +30,35 @@ export ANSIBLE_ROLE_FETCH_MODE=${ANSIBLE_ROLE_FETCH_MODE:-git-clone}
 
 ## Main ----------------------------------------------------------------------
 
-# Check the openstack-ansible submodule status
-check_submodule_status
+# If the installation is an upgrade the $OS_DIR path will alredy exist from a
+#  previous submodule checkout. In the event that it does exist, this will move
+#  the directory to the proper location.
+if git config --file "${BASE_DIR}/.gitmodules" --name-only --get-regexp path | grep -q "openstack-ansible" && [[ -d "${OA_DIR}" ]]; then
+  mv "${OA_DIR}" /opt/openstack-ansible
+elif [[ ! -L "${BASE_DIR}/openstack-ansible" ]] && [[ -d "${BASE_DIR}/openstack-ansible/.git" ]]; then
+  mv "${OA_DIR}" /opt/openstack-ansible
+elif [[ ! -d "/opt/openstack-ansible" ]]; then
+  git clone https://git.openstack.org/openstack/openstack-ansible /opt/openstack-ansible
+fi
+
+# Check that the OA_DIR is a symlink.
+# NOTE(cloudnull): this is only needed to keep the legacy interface intact. Once
+#                  we're able to get away from the submodule pattern entirely
+#                  and clean up the code that expects this nested OSA path we
+#                  can remove the link and just use the already documented,
+#                  upstream, directory pathing.
+if [[ ! -L "${BASE_DIR}/openstack-ansible" ]]; then
+  if [[ -d "${BASE_DIR}/openstack-ansible" ]]; then
+    rm -rf "${BASE_DIR}/openstack-ansible"
+  fi
+  ln -sf /opt/openstack-ansible "${BASE_DIR}/openstack-ansible"
+fi
+
+# Run git checkout on OSA
+pushd "/opt/openstack-ansible"
+  git checkout "${OSA_RELEASE}"
+popd
+
 
 # The deployment host must only have the base Ubuntu repository configured.
 # All updates (security and otherwise) must come from the RPC-O apt artifacting.

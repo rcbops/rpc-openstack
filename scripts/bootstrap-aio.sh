@@ -24,9 +24,6 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
-# Check the openstack-ansible submodule status
-check_submodule_status
-
 # Get minimum disk size
 DATA_DISK_MIN_SIZE="$((1024**3 * $(awk '/bootstrap_host_data_disk_min_size/{print $2}' ${OA_DIR}/tests/roles/bootstrap-host/defaults/main.yml) ))"
 # Determine the largest secondary disk device available for repartitioning which meets the minimum size requirements

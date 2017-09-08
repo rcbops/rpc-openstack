@@ -25,9 +25,6 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
-# Check the openstack-ansible submodule status
-check_submodule_status
-
 # begin the bootstrap process
 pushd ${OA_DIR}
     openstack-ansible ${RPCD_DIR}/playbooks/stage-apt-artifacts.yml
