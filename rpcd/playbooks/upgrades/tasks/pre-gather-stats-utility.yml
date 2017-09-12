@@ -13,6 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: Gather openstack CLI version
+  shell: "source ~/openrc; openstack --version 2>&1"
+  args:
+    executable: /bin/bash
+  register: openstack_cli_version
+
+- name: Gather neutron CLI version
+  shell: "source ~/openrc; neutron --version 2>&1"
+  args:
+    executable: /bin/bash
+  register: neutron_cli_version
+
 - name: Gather nova service-list
   shell: "source ~/openrc; nova --insecure service-list"
   args:
@@ -36,6 +48,14 @@
   args:
     executable: /bin/bash
   register: orchestration_servicelist_result
+  when: openstack_cli_version.stdout.split('openstack')[1] >= "2.3.0"
+
+- name: Gather heat service list
+  shell: "source ~/openrc; heat --insecure service-list"
+  args:
+    executable: /bin/bash
+  register: orchestration_servicelist_result
+  when: openstack_cli_version.stdout.split('openstack')[1] < "2.3.0"
 
 - name: Gather openstack endpoint list
   shell: "source ~/openrc; openstack --insecure endpoint list"
@@ -44,13 +64,13 @@
   register: endpointlist_result
 
 - name: Obtain a list of neutron routers
-  shell: source ~/openrc; neutron router-list -f value --column id
+  shell: source ~/openrc; neutron router-list -f table --column id |awk '/([A-Fa-f0-9]+\-)+[A-Fa-f0-9]+/ {print $2}'
   args:
     executable: /bin/bash
   register: neutron_routers
 
 - name: Check agent assigned to each neutron router
-  shell: source ~/openrc; neutron l3-agent-list-hosting-router -f value --column host {{ item }}
+  shell: source ~/openrc; neutron l3-agent-list-hosting-router -f table --column host {{ item }} |awk '/([A-Fa-f0-9]+\-)+[A-Fa-f0-9]+/ {print $2}'
   args:
     executable: /bin/bash
   with_items: "{{ neutron_routers.stdout_lines }}"
