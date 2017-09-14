@@ -1,0 +1,23 @@
+#!/bin/bash -xe
+
+# This script is called by Jenkins to generate release notes.
+
+# The resulting notes must be written to $WORKSPACE/artifacts/release_notes
+
+# It runs in docker as it requires pandoc which is an apt package, and
+# apt packages can't be installed on shared Jenkins slaves.
+
+docker_tag="${BUILD_TAG:-rpco_reno_$(date +%d%m%Y_%H%M)}"
+docker_tag_filtered="$(tr A-Z a-z <<<$docker_tag |tr -dc 'a-z0-9-_.')"
+docker build \
+  -f \
+  gating/generate_release_notes/release_notes_dockerfile \
+  -t $docker_tag_filtered .
+docker run \
+  -e "PREVIOUS_TAG=${RE_HOOK_PREVIOUS_VERSION}" \
+  -e "NEW_TAG=${RE_HOOK_VERSION}" \
+  -v "$(pwd)":"$(pwd)" \
+  -w "$(pwd)" \
+  $docker_tag_filtered
+
+cp notes.md "${RE_HOOK_RELEASE_NOTES}"
