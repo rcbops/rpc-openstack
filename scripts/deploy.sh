@@ -65,11 +65,6 @@ if [[ ! -f /etc/openstack_deploy/user_osa_secrets.yml ]] && [[ -f /etc/openstack
   mv /etc/openstack_deploy/user_secrets.yml /etc/openstack_deploy/user_osa_secrets.yml
 fi
 
-if [[ "${DEPLOY_MAGNUM}" == "yes" ]]; then
-  run_ansible ${BASE_DIR}/contrib/magnum/magnum_playbook.yml
-  run_ansible ${BASE_DIR}/contrib/octavia/playbook.yml
-fi
-
 # update the RPC-O secrets
 bash ${BASE_DIR}/scripts/update-secrets.sh
 
