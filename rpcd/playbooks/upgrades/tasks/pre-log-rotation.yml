@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Rotate openstack aggregate logs
-  shell: 'find /openstack/log -name *\.log -size 64M -ls -exec gzip --suffix -$$.gz {} \;'
+  shell: 'find /openstack/log -name \*\.log -size 64M -ls -exec gzip --suffix -$$.gz {} \;'
   register: large_logs
 
 - name: Compressed logs
