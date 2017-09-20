@@ -66,6 +66,7 @@ haproxy_gpg_keys: "{{ rpco_apt_gpg_keys }}"
 # RabbitMQ
 rabbitmq_install_method: "external_repo"
 rabbitmq_repo: "{{ rpco_apt_repo }}"
+rabbitmq_erlang_repo: "{{ rpco_apt_repo }}"
 rabbitmq_gpg_keys: "{{ rpco_apt_gpg_keys }}"
 
 # ceph_client wiring
