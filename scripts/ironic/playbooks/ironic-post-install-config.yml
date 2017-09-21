@@ -12,14 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+- name: Ironic post install config
+  hosts: utility_all[0]
+  tasks:
+    - name: Setup neutron network
+      shell: ". /root/openrc && neutron net-create --shared --provider:physical_network tftp --provider:network_type flat tftp"
 
-lxc_container_variant: "ironic-{{ rpc_release }}"
-extra_lb_vip_addresses:
-  - "{{ external_lb_vip_address }}"
-ironic_openstack_api_url: "{{ external_lb_vip_address }}:{{ ironic_service_port }}"
-ironic_swift_endpoint: "{{ external_lb_vip_address }}:8080"
-nova_scheduler_use_baremetal_filters: False
-ironic_neutron_cleaning_network_name: "tftp"
-ironic_ironic_conf_overrides:
-  conductor:
-      automated_clean: true
+    - name: Setup neutron subnet
+      shell: ". /root/openrc && neutron subnet-create --name ironic-tftp --allocation-pool start=172.29.233.0,end=172.29.234.0  --dns-nameserver=4.4.4.4 tftp 172.29.232.0/22"
+
