@@ -75,78 +75,83 @@
         - lookup ('env', 'JOB_NAME') != ""
 
     # migrated from rpc-gating/rpc_jobs/rpc_aio.yml
-    - name: Set scenario specific user variables
+    - name: Set ceph scenario specific user variables
       set_fact:
-        scenario_user_variables_overrides:
-          ceph:
-            ceph_stable_release: "hammer"
-            cinder_cinder_conf_overrides:
-                DEFAULT:
-                    default_volume_type: ceph
-            cinder_service_backup_driver: cinder.backup.drivers.ceph
-            tempest_service_available_swift: false
-            glance_default_store: rbd
-            nova_libvirt_images_rbd_pool: vms
-    - name: Add scenario user vars to user_variables_overrides
+        scenario_user_variables_overrides_ceph:
+          ceph_stable_release: "hammer"
+          cinder_cinder_conf_overrides:
+              DEFAULT:
+                  default_volume_type: ceph
+          cinder_service_backup_driver: cinder.backup.drivers.ceph
+          tempest_service_available_swift: false
+          glance_default_store: rbd
+          nova_libvirt_images_rbd_pool: vms
+    - name: Add ceph scenario user vars to user_variables_overrides
       set_fact:
-        user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides[SCENARIO])}}"
+        user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_ceph)}}"
       when:
         - SCENARIO is defined
-        - SCENARIO in scenario_user_variables_overrides
+        - SCENARIO == "ceph"
 
     # migrated from rpc-gating/rpc_jobs/rpc_aio.yml
-    - name: Set trigger specific user variables
+    - name: Set PR trigger specific user variables
       set_fact:
-        trigger_user_variables_overrides:
-          pr:
-            maas_use_api: false
-    - name: Add trigger user vars to user_variables_overrides
+        trigger_user_variables_overrides_pr:
+          maas_use_api: false
+    - name: Add PR trigger user vars to user_variables_overrides
       set_fact:
-        user_variables_overrides: "{{ user_variables_overrides|combine(trigger_user_variables_overrides[TRIGGER])}}"
+        user_variables_overrides: "{{ user_variables_overrides|combine(trigger_user_variables_overrides_pr)}}"
       when:
         - TRIGGER is defined
-        - TRIGGER in trigger_user_variables_overrides
+        - TRIGGER == "pr"
 
     # migrated from rpc-gating/playbooks/vars/{aio,onmetal}.yml
-    - name: Set target specific user variables
+    - name: Set AIO target specific user variables
       set_fact:
-        target_user_variables_overrides:
-          aio:
-            # Ensure raw_multi_journal is False for upgrades.
-            # This is because of the way migrate-yaml.py behaves with the
-            # '--for-testing-take-new-vars-only'; meaning that the new
-            # default variables will be set in the user_*_variables_overrides.yml
-            # file. Since raw_multi_journal is set to False as part of the deploy.sh
-            # process, but is set to True in Mitaka's
-            # user_rpco_user_variables_defaults.yml file, this will result in
-            # migrate-yaml.py adding 'raw_multi_journal: True' in the overrides.
-            # To avoid this behavior in gate, it is overridden here.
-            # The same is true for journal_size, and maas_notification_plan.
-            raw_multi_journal: false
-            journal_size: 1024
-            osd_directory: true
-            tempest_test_sets: "scenario defcore"
-            tempest_run_tempest_opts:
-              - "--serial"
-          mnaio:
-            apply_security_hardening: false
-            maas_fqdn_extension: ".{{ lookup('env', 'NODE_NAME') }}"
-            memory_used_percentage_warning_threshold: 99.0
-            memory_used_percentage_critical_threshold: 99.5
-            net_max_speed: 1000
-            lb_name: "{{ lookup('env', 'NODE_NAME') }}"
-            maas_external_ip_address: "{{ ansible_default_ipv4.address }}"
-            tempest_testr_opts:
-              - '--concurrency 3'
-            tempest_run_tempest_opts: []
-
-    - name: Add target user vars to user_variables_overrides
+        target_user_variables_overrides_aio:
+          # Ensure raw_multi_journal is False for upgrades.
+          # This is because of the way migrate-yaml.py behaves with the
+          # '--for-testing-take-new-vars-only'; meaning that the new
+          # default variables will be set in the user_*_variables_overrides.yml
+          # file. Since raw_multi_journal is set to False as part of the deploy.sh
+          # process, but is set to True in Mitaka's
+          # user_rpco_user_variables_defaults.yml file, this will result in
+          # migrate-yaml.py adding 'raw_multi_journal: True' in the overrides.
+          # To avoid this behavior in gate, it is overridden here.
+          # The same is true for journal_size, and maas_notification_plan.
+          raw_multi_journal: false
+          journal_size: 1024
+          osd_directory: true
+          tempest_test_sets: "scenario defcore"
+          tempest_run_tempest_opts:
+            - "--serial"
+    - name: Add AIO target user vars to user_variables_overrides
       set_fact:
-        user_variables_overrides: "{{ user_variables_overrides|combine(target_user_variables_overrides[TARGET])}}"
+        user_variables_overrides: "{{ user_variables_overrides|combine(target_user_variables_overrides_aio)}}"
       when:
         - TARGET is defined
-        - TARGET in target_user_variables_overrides
+        - TARGET == "aio"
 
+    # migrated from rpc-gating/playbooks/vars/{aio,onmetal}.yml
+    - name: Set MNAIO target specific user variables
+      set_fact:
+        target_user_variables_overrides_mnaio:
+          apply_security_hardening: false
+          maas_fqdn_extension: ".{{ lookup('env', 'NODE_NAME') }}"
+          memory_used_percentage_warning_threshold: 99.0
+          memory_used_percentage_critical_threshold: 99.5
+          net_max_speed: 1000
+          lb_name: "{{ lookup('env', 'NODE_NAME') }}"
+          maas_external_ip_address: "{{ ansible_default_ipv4.address }}"
+          tempest_testr_opts:
+            - '--concurrency 3'
+          tempest_run_tempest_opts: []
+    - name: Add MNAIO target user vars to user_variables_overrides
+      set_fact:
+        user_variables_overrides: "{{ user_variables_overrides|combine(target_user_variables_overrides_mnaio)}}"
+      when:
+        - TARGET is defined
+        - TARGET == "mnaio"
   vars:
     rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
     TRIGGER: "{{ lookup('env', 'TRIGGER')}}"
