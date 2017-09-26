@@ -40,9 +40,12 @@ were built.
    variable. They are combined into snapshots per release, then combined into
    an integrated snapshot as specified in the variable ``aptly_miko_mapping``.
 
-   Apt repositories which provide the same package name across two different
-   distributions with sdifferent contents have to be published as independent
-   repositories. Those are defined in the ``aptly_n_mapping`` variable.
+   Some packages are not built properly for multiple distributions. They are
+   built using the same package name, same version number, but different
+   contents for each distribution. The repositories for these packages are
+   published independently and can be found on
+   [rpc-repo](http://rpc-repo.rackspace.com/apt-mirror/independant/).
+   These are defined in the ``aptly_n_mapping`` variable.
 
    Only one Apt artifact build can be executed at a time across all
    series/tests as the test executes on a long running host which has
@@ -77,15 +80,26 @@ were built.
    [rpc-repo](http://rpc-repo.rackspace.com/lxc-images/). The job executes
    ``scripts/artifacts-building/containers/build-process.sh``.
 
+
+#### Artifact Build Tests
+
 As RPC-O executes deploy tests in PR's where the value for ``rpc_release`` is
 being changed in the PR, the artifact build scripts have been designed to
 adapt based on whether the previous artifacts exist for the given release or
-not. The PR tests are also implemented in parallel so that they give results
-back quickly, whereas the periodic jobs are set to run in the proper sequence.
-The PR jobs are all read-only (they do not upload to rpc-repo), but the
-periodic jobs will upload to rpc-repo if artifacts for the given release do
-not exist yet. To replace artifacts for a series, execute the periodic job
-for the series with ``REPLACE_ARTIFACTS`` set to ``YES``.
+not.
+
+The PR tests are implemented in parallel so that they give results back
+quickly. They are designed to simply exercise the build scripts to verify
+that changes are not breaking them. The PR tests are all read-only - they
+do not upload any results to rpc-repo.
+
+Periodic jobs are designed to build new artifacts in the proper sequence,
+ensuring that artifacts which depend on each other are built using their
+dependencies. If a set of artifacts does not already exist on rpc-repo
+for the given ``rpc_release``, the periodic job will upload artifacts
+for it if the build is successful. To replace artifacts for a series,
+execute the periodic job for the series with ``REPLACE_ARTIFACTS`` set to
+``YES``.
 
 #### Artifact Consumption Process
 
@@ -100,7 +114,7 @@ OSA to consume our artifacts instead of using the default upstream artifacts.
   ``rpcd/playbooks/stage-python-artifacts.yml``, then consumed as they are in
   any normal RPC-O/OSA deployment. The RPC-O deployment script skips the
   repo-build playbook to save time, but changes in the repo-build process in
-  OSA mean that if the repo0build playbook is run it will skip all the build
+  OSA mean that if the repo-build playbook is run it will skip all the build
   processes anyway as long as none of the requirements have changed.
 
 * Container artifact consumption is implemented through the use of the
