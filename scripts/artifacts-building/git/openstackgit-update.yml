@@ -33,6 +33,7 @@
         msg: "Looking up repositories"
       with_py_pkgs:
         - "{{ working_dir }}/"
+        - "/opt/openstack-ansible"
         - "/etc/ansible/roles"
       register: local_packages
 
