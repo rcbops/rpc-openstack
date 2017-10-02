@@ -15,6 +15,46 @@ RPCO supports leapfrog upgrades from kilo to r14.2.0 (newton).
 * Verify that the kilo deployment is healthy and at the latest version.
 * Perform Database housekeeping to prevent unnecessary migrations.
 
+### F5 Modifications
+
+In cases where an F5 is used to facilitate load balancing several monitors,
+virtual-servers and pools will need to be added or modified. While our F5
+processing script will provide an actual diff on a per-environment basis, here
+are the high-level changes that will need to be made.
+
+###### ADD monitors:
+
+- Add the git repo pointed at the repo server on port 9418
+- Add the repo cache pointed at the repo server on port 3142
+- Add the novnc console pointed at the console containers on port 6080
+- Add an http monitor for the horizon containers on port 80
+
+###### ADD pools:
+
+- Add a new pool for galera on port 3306
+- Add a new pool for the git repo on port 9418
+- Add a new pool for the repo cache on port 3142
+- Add a new pool for the novnc console on port 6080
+
+###### MODIFY pools:
+
+- Update the horizon pool for port 443
+- Update the horizon pool to forward port 80 to 443
+
+###### ADD virtual-servers:
+
+- Add a new virtual-server for galera on port 3307
+- Add a new virtual-server for novnc on port 6080
+- Add a new virtual-server for novnc with SSL on port 6080
+- Add a new virtual-server for the git repo on port 9418
+- Add a new virtual-server for the repo cache on port 3142
+
+###### MODIFY virtual-servers:
+
+- Update the galera virtual-server for mirroring
+- Update the horizon virtual-server for an ssl cert
+
+
 ## Executing a leapfrog upgrade
 
 The first step is to checkout the RPC-O r14.2.0 tag. This will remove
