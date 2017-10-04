@@ -42,7 +42,6 @@
       set_fact:
         gating_user_variables_overrides:
           maas_notification_plan: npTechnicalContactsEmail
-          nova_virt_type: qemu
           maas_auth_method: "token"
           maas_auth_token: "{{lookup('env', 'MAAS_AUTH_TOKEN')}}"
           maas_api_url: "{{lookup('env', 'MAAS_API_URL')}}"
@@ -152,6 +151,33 @@
       when:
         - TARGET is defined
         - TARGET == "mnaio"
+    - name: Set ironic scenario specific user variables
+      set_fact:
+        scenario_user_variables_overrides_ironic:
+          tempest_plugins:
+            - name: ironic-tempest-plugin
+              package: ironic
+          tempest_service_available_ironic: True
+          tempest_test_sets: defcore ironic_api
+
+    - name: Add ironic scenario user vars to user_variables_overrides
+      set_fact:
+        user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_ironic)}}"
+      when:
+        - SCENARIO is defined
+        - SCENARIO == "ironic-multihypervisor"
+
+    - name: Set specific user variables for all scenarios but ironic
+      set_fact:
+        scenario_user_variables_overrides_non_ironic:
+          nova_virt_type: qemu
+
+    - name: Add non-ironic scenario user vars to user_variables_overrides
+      set_fact:
+        user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_non_ironic)}}"
+      when:
+        - SCENARIO is defined
+        - SCENARIO != "ironic-multihypervisor"
   vars:
     rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
     TRIGGER: "{{ lookup('env', 'TRIGGER')}}"
