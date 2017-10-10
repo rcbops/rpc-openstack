@@ -12,16 +12,14 @@ WORKSPACE="${WORKSPACE:-$PWD}"
 # Note for local testing: this script expects to be executed from the root
 # of an rpco clone, checkout at master.
 
-# Get current head of stable/ocata
-git clone "https://github.com/openstack/openstack-ansible" ${WORKSPACE}/oa
-pushd ${WORKSPACE}/oa
-  git checkout $osa_branch
-  osa_sha="$(git log -n 1 --format=%H)"
-popd
+# Prepare the submodule
+git submodule init
+git submodule update
 
-# Insert current SHA into functions.sh
-sed -i '/OSA_RELEASE:-/ c\
-export OSA_RELEASE=${OSA_RELEASE:-"'${osa_sha}'"}' scripts/functions.sh
+# Set the submodule to the head of the appropriate branch
+pushd openstack-ansible
+git checkout origin/${osa_branch}
+popd
 
 
 # Update rpc_release. The mainline branch should always be one version
