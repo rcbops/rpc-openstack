@@ -187,3 +187,26 @@ function configure_apt_sources {
   curl --silent --fail ${HOST_RCBOPS_REPO}/apt-mirror/rcbops-release-signing-key.asc | apt-key add -
 
 }
+
+function safe_to_replace_artifacts {
+
+  # This function is used by the artifact pipeline to determine whether it
+  # is safe to rebuild artifacts for the current head of the mainline branch.
+  # It is only ever safe when the mainline and rc branches are different
+  # versions or if there is no rc branch. When this is the case, the function
+  # will return 0.
+
+  rc_branch="master-rc"
+
+  if git show origin/${rc_branch} &>/dev/null; then
+    rc_branch_version="$(git show origin/${rc_branch}:group_vars/all/release.yml \
+                         | awk '/rpc_release/{print $2}' | tr -d '"')"
+    if [[ "${rc_branch_version}" == "${RPC_RELEASE}" ]]; then
+      return 1
+    else
+      return 0
+    fi
+  else
+    return 0
+  fi
+}
