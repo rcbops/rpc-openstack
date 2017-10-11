@@ -34,3 +34,15 @@ pushd $OSA_PATH
         exit 1
     fi
 popd
+
+# Remove horizon static files variables from user_variables.yml as this is now
+# maintained in group_vars.
+if grep '^rackspace_static_files_folder\:' /etc/openstack_deploy/user_variables.yml; then
+  sed -i '/^rackspace_static_files_folder:.*/d' /etc/openstack_deploy/user_variables.yml
+fi
+
+# Remove horizon_custom_uploads block from user_variables.yml as this is maintained in
+# group_vars
+if grep '^horizon_custom_uploads\:' /etc/openstack_deploy/user_variables.yml; then
+  sed -i '/horizon_custom_uploads:/,/src:.*logo-splash.png/d' /etc/openstack_deploy/user_variables.yml
+fi
