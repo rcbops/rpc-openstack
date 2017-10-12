@@ -16,7 +16,7 @@
 ## Vars ----------------------------------------------------------------------
 
 # OSA SHA
-export OSA_RELEASE=${OSA_RELEASE:-"27fbd63f21baa74319a273310d94e2c9477ae601"} # Head of stable/ocata as of 2017-09-20
+export OSA_RELEASE=${OSA_RELEASE:-"385a271b6245ce113200cb195e44d8dfd239e227"}
 
 # Gating
 export BUILD_TAG=${BUILD_TAG:-}
