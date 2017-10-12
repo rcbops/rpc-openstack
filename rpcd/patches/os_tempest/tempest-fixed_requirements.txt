@@ -1,0 +1,34 @@
+# The order of packages is significant, because pip processes them in the order
+# of appearance. Changing the order has an impact on the overall integration
+# process, which may cause wedges in the gate later.
+pbr===1.8.1
+cliff===1.15.0
+jsonschema===2.5.1
+testtools===1.8.1
+paramiko===1.16.0
+netaddr===0.7.18
+testrepository===0.0.20
+pyOpenSSL===0.15.1
+oslo.concurrency===2.6.0
+oslo.config===2.4.0
+oslo.i18n===3.1.0
+oslo.log===1.11.0
+oslo.serialization===2.1.0
+oslo.utils===3.2.0
+six===1.10.0
+fixtures===1.4.0
+testscenarios===0.5.0
+PyYAML===3.11
+stevedore===1.10.0
+prettytable===0.7.2
+os-testr===0.6.0
+urllib3===1.12
+cmd2===0.6.8
+cryptography===1.1.2
+extras===0.0.3
+functools32===3.2.3.post2
+pyparsing===2.0.6
+python-mimeparse===0.1.4
+traceback2===1.4.0
+unicodecsv===0.14.1
+unittest2===1.1.0

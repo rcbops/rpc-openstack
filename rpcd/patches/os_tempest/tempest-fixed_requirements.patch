@@ -1,0 +1,23 @@
+diff --git a/playbooks/roles/os_tempest/tasks/tempest_install.yml b/playbooks/roles/os_tempest/tasks/tempest_install.yml
+index 377d186..1fc4fe8 100644
+--- a/playbooks/roles/os_tempest/tasks/tempest_install.yml
++++ b/playbooks/roles/os_tempest/tasks/tempest_install.yml
+@@ -42,6 +42,18 @@
+     - tempest-git-clone
+     - tempest-pip-install
+
++- name: Drop fixed requirements in
++  copy:
++    src: "/opt/rpc-openstack/rpcd/patches/os_tempest/tempest-fixed_requirements.txt"
++    dest: "{{ tempest_git_dest }}/requirements.txt"
++    owner: "root"
++    group: "root"
++    mode: "0755"
++    force: "yes"
++  tags:
++    - tempest-pip-packages
++    - tempest-pip-install
++
+ - name: Install pip packages for tempest
+   pip:
+     name: "{{ item }}"
