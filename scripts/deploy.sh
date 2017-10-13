@@ -36,7 +36,7 @@ if [[ "$DEPLOY_AIO" != "yes" ]] && [[ "$DEPLOY_HARDENING" != "yes" ]]; then
 fi
 
 # Bootstrap Ansible
-source "$(dirname "${0}")/bootstrap-ansible.sh"
+source "${BASE_DIR}/scripts/bootstrap-ansible.sh"
 
 # Install the Ansible Run Analyser callback. This is used to gather task failure
 # information in gate jobs.
@@ -49,7 +49,7 @@ fi
 if [[ "${DEPLOY_AIO}" == "yes" ]]; then
 
   # execute the AIO configuration bootstrap
-  source "$(dirname "${0}")/bootstrap-aio.sh"
+  source "${BASE_DIR}/scripts/bootstrap-aio.sh"
 
   # set the ansible inventory hostname to the host's name
   sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
