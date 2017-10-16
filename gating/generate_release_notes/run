@@ -16,6 +16,7 @@ docker build \
 docker run \
   -e "PREVIOUS_TAG=${RE_HOOK_PREVIOUS_VERSION}" \
   -e "NEW_TAG=${RE_HOOK_VERSION}" \
+  -e "REPO_URL=${RE_HOOK_REPO_HTTP_URL}" \
   -v "$(pwd)":"$(pwd)" \
   -w "$(pwd)" \
   $docker_tag_filtered
