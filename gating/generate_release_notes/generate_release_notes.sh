@@ -2,5 +2,6 @@
 
 # This script is run within a docker container to generate release notes.
 
-rpc-differ --debug -r "$REPO_URL" --update "$PREVIOUS_TAG" "$NEW_TAG" --file notes.rst
-pandoc --from rst --to markdown_github < notes.rst > notes.md
+/generate_commit_diff_notes.sh
+/generate_reno_report.sh $NEW_TAG reno_report.md
+cat reno_report.md diff_notes.md > all_notes.md
