@@ -22,7 +22,9 @@ source ${BASE_DIR}/scripts/functions.sh
 # Copy the tempest results to the job results folder
 mkdir -p ${RE_HOOK_RESULT_DIR}
 find /var/lib/lxc/*utility*/ -type f -name 'tempest_results.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
-find /opt/kibana-selenium -type f -name 'nosetests.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
+
+# NOTE(cloudnull): This task is ignored until we have a maintainer for ELK.
+# find /opt/kibana-selenium -type f -name 'nosetests.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
 
 # Copy the job artifacts to the job artifacts folder
 export RSYNC_CMD="rsync --archive --safe-links --ignore-errors --quiet --no-perms --no-owner --no-group"
@@ -36,8 +38,9 @@ mkdir -vp \
     "${RE_HOOK_ARTIFACT_DIR}/etc/openstack" \
     "${RE_HOOK_ARTIFACT_DIR}/kibana"
 
+# NOTE(cloudnull): This task is ignored until we have a maintainer for ELK.
 # Copy the kibana-selenium screen captures
-${RSYNC_CMD} /opt/kibana-selenium/*.png "${RE_HOOK_ARTIFACT_DIR}/kibana/" || true
+# ${RSYNC_CMD} /opt/kibana-selenium/*.png "${RE_HOOK_ARTIFACT_DIR}/kibana/" || true
 
 # Copy the host and container log files
 ${RSYNC_CMD} /var/log/ "${RE_HOOK_ARTIFACT_DIR}/logs/host" || true

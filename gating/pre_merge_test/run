@@ -58,22 +58,24 @@ openstack-ansible ${BASE_DIR}/scripts/run_tempest.yml --skip-tags tempest_execut
 openstack-ansible ${BASE_DIR}/scripts/run_tempest.yml --tags tempest_execute_tests -vv ||\
   openstack-ansible ${BASE_DIR}/scripts/run_tempest.yml --tags tempest_execute_tests -vv
 
-# Execute Kibana Selenium Tests
-cd /opt/kibana-selenium
 
-# Work around https://github.com/pypa/virtualenv/issues/1029
-export VIRTUAL_ENV_DISABLE_PROMPT=true
-
-set +x; source .venv/bin/activate; set -x
-
-export PYTHONPATH=$(pwd)
-export PATH=$PATH:./phantomjs-2.1.1-linux-x86_64/bin
-
-# Remove any existing screenshots from old runs
-rm -f *.png
-export PASSWORD=$(grep -Ir kibana_password /etc/openstack_deploy/ | tail -1 | sed 's|.*:||')
-
-python conf-gen.py --secure --password $PASSWORD \
-  --vip-file /etc/openstack_deploy/openstack_user_config.yml
-
-nosetests -sv --with-xunit testrepo/kibana/kibana.py
+# NOTE(cloudnull): This task is ignored until we have a maintainer for ELK.
+# # Execute Kibana Selenium Tests
+# cd /opt/kibana-selenium
+#
+# # Work around https://github.com/pypa/virtualenv/issues/1029
+# export VIRTUAL_ENV_DISABLE_PROMPT=true
+#
+# set +x; source .venv/bin/activate; set -x
+#
+# export PYTHONPATH=$(pwd)
+# export PATH=$PATH:./phantomjs-2.1.1-linux-x86_64/bin
+#
+# # Remove any existing screenshots from old runs
+# rm -f *.png
+# export PASSWORD=$(grep -Ir kibana_password /etc/openstack_deploy/ | tail -1 | sed 's|.*:||')
+#
+# python conf-gen.py --secure --password $PASSWORD \
+#   --vip-file /etc/openstack_deploy/openstack_user_config.yml
+#
+# nosetests -sv --with-xunit testrepo/kibana/kibana.py
