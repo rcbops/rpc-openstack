@@ -1,0 +1,68 @@
+---
+# Copyright 2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Configure the default python sources for RPC-O
+  hosts: localhost
+  environment: "{{ deployment_environment_variables | default({}) }}"
+  connection: local
+  user: root
+  pre_tasks:
+    - name: Check for artifacts (wheels)
+      uri:
+        url: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/{{ repo_build_os_distro_version }}/MANIFEST.in"
+        method: HEAD
+      failed_when: false
+      register: check_artifacts_wheels
+
+    - name: Check for artifacts (git)
+      uri:
+        url: "{{ rpco_mirror_base_url }}/git-archives/{{ rpc_release }}/requirements.checksum"
+        method: HEAD
+      failed_when: false
+      register: check_artifacts_git
+
+    - name: Set artifacts enabled
+      set_fact:
+        artifact_enabled: "{{ (check_artifacts_wheels.status == 200) and (check_artifacts_git.status == 200) }}"
+
+  tasks:
+    - name: Notify the Deployer
+      debug:
+        msg: |
+          ********************* NOTICE! *********************
+          At this time there is no good way to override the repo-build process
+          so that we can stash our python wheels into the repo container at build
+          time without directly overriding the repo-build playbook. To make this
+          work we're forcably linking the repo-build playbook to our own
+          `stage-python-artifacts.yml`. Hopfully in the future we can simply
+          define the code path in a more intellegent way.
+          ********************* NOTICE! *********************
+      when:
+        - artifact_enabled | bool
+
+    - name: Pause for effect
+      pause:
+        seconds: 5
+      when:
+        - artifact_enabled | bool
+
+    - name: Link "repo-build.yml" to "stage-python-artifacts.yml"
+      file:
+        src: "{{ playbook_dir }}/stage-python-artifacts.yml"
+        dest: /opt/openstack-ansible/playbooks/repo-build.yml
+        force: true
+        state: link
+      when:
+        - artifact_enabled | bool

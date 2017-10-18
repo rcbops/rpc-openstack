@@ -1,45 +1,39 @@
 #!/bin/bash -xe
 
-## Update OSA SHA to head of stable/ocata
-
+## Update OSA SHA to head of stable/pike
 # These var must be set per branch of RPC-Openstack
-osa_branch=stable/ocata
+osa_branch=stable/pike
 rpco_branch=${BRANCH:-master} # BRANCH injected by Jenkins.
 
 # Env vars injected by Jenkins:
-WORKSPACE="${WORKSPACE:-$PWD}"
+WORKSPACE="${WORKSPACE:-/opt}"
 
 # Note for local testing: this script expects to be executed from the root
 # of an rpco clone, checkout at master.
 
-# Get current head of stable/ocata
-git clone "https://github.com/openstack/openstack-ansible" ${WORKSPACE}/oa
-pushd ${WORKSPACE}/oa
+# Get current head of osa
+osa_dir="${WORKSPACE}/openstack-ansible"
+git clone "https://github.com/openstack/openstack-ansible" ${WORKSPACE}/openstack-ansible
+pushd ${WORKSPACE}/openstack-ansible
   git checkout $osa_branch
   osa_sha="$(git log -n 1 --format=%H)"
 popd
-
-# Insert current SHA into functions.sh
-sed -i '/OSA_RELEASE:-/ c\
-export OSA_RELEASE=${OSA_RELEASE:-"'${osa_sha}'"}' scripts/functions.sh
+sed -i "s|^export OSA_RELEASE.*|export OSA_RELEASE=\"\${OSA_RELEASE:-${osa_sha}}\"|g" scripts/functions.sh
 
 
 ## Update rpc-maas to latest tag
-
-# 1. Get latest maas tag
 rpc_maas_dir="${WORKSPACE}/rpc-maas"
 git clone https://github.com/rcbops/rpc-maas $rpc_maas_dir
 pushd $rpc_maas_dir
   # the maas repo includes old tags eg v9.x.x and 9.x.x when the version
-  # at the time of writing is 1.x.x. All tags that include a character
-  # or that start with 9 or 10 are filtered out.
+  #  at the time of writing is 1.x.x. All tags that include a character
+  #  or that start with 9 or 10 are filtered out.
   latest_maas_tag="$(git tag -l |grep -v '[a-zA-Z]\|^\(9\.\|10\.\)' |sort -n |tail -n 1)"
 popd
-
-# 2. Insert latest maas tag into rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml
-# Insert current SHA into functions.sh
+# Insert latest maas tag into rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml
+#  Insert current SHA into functions.sh
 sed -i '/^maas_release:/ c\
-maas_release: "'${latest_maas_tag}'"' rpcd/etc/openstack_deploy/user_rpco_variables_defaults.yml
+maas_release: "'${latest_maas_tag}'"' etc/openstack_deploy/group_vars/all/release.yml
 
 
 # can't use derive-artifact-version.sh as that hardcodes the rpc repo path
@@ -80,8 +74,7 @@ update_rpc_release(){
 # Get RC branch version
 rc_branch="${rpco_branch}-rc"
 git fetch origin
-if git show origin/${rc_branch}
-then
+if git show origin/${rc_branch}; then
   update_rpc_release
 else
   echo "RC branch ${rc_branch} not found, skipping rpc_release version bump.

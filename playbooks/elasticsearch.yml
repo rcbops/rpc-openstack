@@ -1,0 +1,63 @@
+---
+# Copyright 2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Setup ElasticSearch host
+  hosts: elasticsearch_all
+  environment: "{{ deployment_environment_variables | default({}) }}"
+  pre_tasks:
+    - name: Create ElasticSearch data directory on host
+      file:
+        path: "/openstack/{{ container_name }}/var/lib/elasticsearch"
+        state: directory
+        group: "root"
+        owner: "root"
+        mode:  "0755"
+        recurse: no
+      delegate_to: "{{ physical_host }}"
+      when: not (is_metal | bool)
+    - name: ElasticSearch extra lxc config
+      lxc_container:
+        name: "{{ container_name }}"
+        container_command: |
+          [[ ! -d "/var/lib/elasticsearch" ]] && mkdir -p "/var/lib/elasticsearch"
+        container_config:
+          - "lxc.mount.entry=/openstack/{{ container_name }}/var/lib/elasticsearch var/lib/elasticsearch none bind 0 0"
+          - "lxc.aa_profile=unconfined"
+      delegate_to: "{{ physical_host }}"
+      when: not (is_metal | bool)
+      tags:
+        - elasticsearch-pre-install
+    - name: Flush net cache
+      command: /usr/local/bin/lxc-system-manage flush-net-cache
+      delegate_to: "{{ physical_host }}"
+      when: not (is_metal | bool)
+      tags:
+        - elasticsearch-pre-install
+    - name: Wait for container ssh
+      wait_for:
+        port: "22"
+        delay: 5
+        host: "{{ container_address }}"
+      delegate_to: "{{ physical_host }}"
+      when: not (is_metal | bool)
+      tags:
+        - elasticsearch-pre-install
+  roles:
+    - role: "elasticsearch"
+      tags:
+        - skip_ansible_lint
+
+  vars:
+    is_metal: "{{ properties.is_metal | default(False) }}"

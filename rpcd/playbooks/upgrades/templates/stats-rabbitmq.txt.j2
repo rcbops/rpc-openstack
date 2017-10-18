@@ -1,5 +1,0 @@
-RabbitMQ Cluster status as at {{ ansible_date_time.date }}-{{ ansible_date_time.time }}
-
-{% for line in rabbitmqctl_result.stdout_lines %}
-{{ line }}
-{% endfor %}

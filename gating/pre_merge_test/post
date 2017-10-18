@@ -2,7 +2,7 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -e -u -x
+set -euv
 set -o pipefail
 
 ## Vars ----------------------------------------------------------------------
@@ -14,17 +14,12 @@ export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
 ## Functions -----------------------------------------------------------------
-export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-source ${BASE_DIR}/scripts/functions.sh
+source ../../scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
 # Copy the tempest results to the job results folder
 mkdir -p ${RE_HOOK_RESULT_DIR}
-find /var/lib/lxc/*utility*/ -type f -name 'tempest_results.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
-
-# NOTE(cloudnull): This task is ignored until we have a maintainer for ELK.
-# find /opt/kibana-selenium -type f -name 'nosetests.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
 
 # Copy the job artifacts to the job artifacts folder
 export RSYNC_CMD="rsync --archive --safe-links --ignore-errors --quiet --no-perms --no-owner --no-group"
@@ -37,10 +32,6 @@ mkdir -vp \
     "${RE_HOOK_ARTIFACT_DIR}/etc/host" \
     "${RE_HOOK_ARTIFACT_DIR}/etc/openstack" \
     "${RE_HOOK_ARTIFACT_DIR}/kibana"
-
-# NOTE(cloudnull): This task is ignored until we have a maintainer for ELK.
-# Copy the kibana-selenium screen captures
-# ${RSYNC_CMD} /opt/kibana-selenium/*.png "${RE_HOOK_ARTIFACT_DIR}/kibana/" || true
 
 # Copy the host and container log files
 ${RSYNC_CMD} /var/log/ "${RE_HOOK_ARTIFACT_DIR}/logs/host" || true
@@ -55,9 +46,12 @@ ${RSYNC_ETC_CMD} /etc/ "${RE_HOOK_ARTIFACT_DIR}/etc/host/" || true
 if which lxc-ls &> /dev/null; then
   for CONTAINER_NAME in `lxc-ls -1`; do
     CONTAINER_PID=$(lxc-info -p -n ${CONTAINER_NAME} | awk '{print $2}')
-    ETC_DIR="/proc/${CONTAINER_PID}/root/etc/"
-    ${RSYNC_ETC_CMD} ${ETC_DIR} "${RE_HOOK_ARTIFACT_DIR}/etc/openstack/${CONTAINER_NAME}/" || true
+    CONTAINER_ROOT_DIR="/proc/${CONTAINER_PID}/root/"
+    CONTAINER_ETC_DIR="${CONTAINER_ROOT_DIR}/etc/"
+    if echo ${CONTAINER_NAME} | grep "utility"; then
+      find "${CONTAINER_ROOT_DIR}" -type f -name 'tempest_results.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
+    fi
+    ${RSYNC_ETC_CMD} ${CONTAINER_ETC_DIR} "${RE_HOOK_ARTIFACT_DIR}/etc/openstack/${CONTAINER_NAME}/" || true
   done
 fi
-
 echo "#### END LOG COLLECTION ###"
