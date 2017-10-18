@@ -21,4 +21,4 @@ docker run \
   -w "$(pwd)" \
   $docker_tag_filtered
 
-cp notes.md "${RE_HOOK_RELEASE_NOTES}"
+cp all_notes.md "${RE_HOOK_RELEASE_NOTES}"
