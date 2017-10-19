@@ -21,19 +21,19 @@
     - name: Setup neutron subnet
       shell: ". /root/openrc && neutron subnet-create --name ironic-tftp --allocation-pool start=172.29.233.0,end=172.29.234.0  --dns-nameserver=4.4.4.4 tftp 172.29.232.0/22"
 
-    - name: Configure the cleaning network
+    - name: Gather cleaning network UUID
+      shell: source ~/openrc; neutron net-list | grep tftp | awk '{print $2}'
+      args:
+        executable: /bin/bash
+      register: neutron_tftp_network_uuid
+
+    - name: Put UUID in the overrides file
+      blockinfile:
+        dest: "/etc/openstack_deploy/user_osa_variables_overrides.yml"
+        block: |
+          ironic_ironic_conf_overrides:
+            neutron:
+              cleaning_network_uuid: "{{ neutron_tftp_network_uuid.stdout }}"
+            conductor:
+              automated_clean: true
       delegate_to: localhost
-      config_template:
-         src: "/etc/openstack_deploy/user_osa_variables_overrides.yml"
-         dest: "/etc/openstack_deploy/user_osa_variables_overrides.yml"
-         owner: "root"
-         group: "root"
-         mode: "0644"
-         config_overrides: "{{ ironic_cleaning_config }}"
-         config_type: "yaml"
-  vars:
-    ironic_cleaning_config:
-      ironic_neutron_cleaning_network_name: "tftp"
-      ironic_ironic_conf_overrides:
-        conductor:
-          automated_clean: true

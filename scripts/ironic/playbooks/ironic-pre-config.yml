@@ -23,13 +23,13 @@
           auto none
           auto br-ironic-ipmi
           iface br-ironic-ipmi inet static
+              bridge_ports none
               bridge_stp off
               bridge_waitport 10
               bridge_fd 0
-              bridge_ports none
+              offload-sg off
               address 172.29.228.100
               netmask 255.255.252.0
-              offload-sg off
 
           auto none
           iface none inet manual
@@ -38,10 +38,10 @@
               bridge_stp off
               bridge_waitport 10
               bridge_fd 0
+              offload-sg off
               bridge_ports none
               address 172.29.232.100
               netmask 255.255.252.0
-              offload-sg off
 
     - name: Start the ironic network interfaces
       command: "ifup {{ item }}"
@@ -60,15 +60,18 @@
         config_type: "yaml"
         list_extend: true
 
-    - name: Configure ironic OSA variables
-      config_template:
-        src: "/etc/openstack_deploy/user_osa_variables_overrides.yml"
+    - name: Add additional configs to OSA variables
+      blockinfile:
         dest: "/etc/openstack_deploy/user_osa_variables_overrides.yml"
-        owner: "root"
-        group: "root"
-        mode: "0644"
-        config_overrides: "{{ ironic_osa_config }}"
-        config_type: "yaml"
+        block: |
+          neutron_dhcp_config:
+            dhcp-option-force: "26,1500"
+            dhcp-ignore: "tag:!known"
+            log-facility: "/var/log/neutron/dnsmasq.log"
+          nova_scheduler_use_baremetal_filters: False
+          ironic_openstack_driver_list: 
+            -  agent_ipmitool
+            -  fake
 
   vars:
     ironic_network_config:
@@ -99,14 +102,3 @@
               group_binds:
                 - neutron_linuxbridge_agent
                 - ironic_all
-    ironic_osa_config:
-      extra_lb_vip_addresses:
-        - "{{ external_lb_vip_address }}"
-      ironic_openstack_api_url: "{{ external_lb_vip_address }}:{{ ironic_service_port }}"
-      ironic_swift_endpoint: "{{ external_lb_vip_address }}:8080"
-      neutron_dhcp_config:
-        dhcp-option-force: "26,1500"
-        dhcp-ignore: "tag:!known"
-        log-facility: "/var/log/neutron/dnsmasq.log"
-      nova_scheduler_use_baremetal_filters: False
-      ironic_openstack_driver_list: "agent_ipmitool, fake"
