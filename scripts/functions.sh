@@ -36,6 +36,7 @@ export DEPLOY_SUPPORT_ROLE=${DEPLOY_SUPPORT_ROLE:-"no"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
 export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export DEPLOY_ARA=${DEPLOY_ARA:-"no"}
+export DEPLOY_ARTIFACTING=${DEPLOY_ARTIFACTING:-"yes"}
 export DEPLOY_IRONIC=${DEPLOY_IRONIC:-"no"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
@@ -110,6 +111,7 @@ function copy_default_user_space_files {
 }
 
 function apt_artifacts_available {
+  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/apt-mirror/integrated/dists/${RPC_RELEASE}-${DISTRIB_CODENAME}"
 
@@ -122,6 +124,7 @@ function apt_artifacts_available {
 }
 
 function git_artifacts_available {
+  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/git-archives/${RPC_RELEASE}/requirements.checksum"
 
@@ -134,6 +137,7 @@ function git_artifacts_available {
 }
 
 function python_artifacts_available {
+  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
 
   ARCH=$(uname -p)
   CHECK_URL="${HOST_RCBOPS_REPO}/os-releases/${RPC_RELEASE}/${ID}-${VERSION_ID}-${ARCH}/MANIFEST.in"
@@ -147,6 +151,7 @@ function python_artifacts_available {
 }
 
 function container_artifacts_available {
+  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/meta/1.0/index-system"
 
