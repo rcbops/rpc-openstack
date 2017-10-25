@@ -185,10 +185,7 @@
         - name: ceph.yml.aio
           path: "{{ lookup('env', 'RPCD_DIR') ~ '/etc/openstack_deploy/conf.d' }}"
       ironic:
-        - name: cinder.yml.aio
         - name: glance.yml.aio
-        - name: heat.yml.aio
-        - name: horizon.yml.aio
         - name: keystone.yml.aio
         - name: neutron.yml.aio
         - name: nova.yml.aio
