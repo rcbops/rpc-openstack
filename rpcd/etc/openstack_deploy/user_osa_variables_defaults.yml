@@ -39,3 +39,6 @@ octavia_git_repo: 'https://git.openstack.org/openstack/octavia'
 octavia_git_project_group: 'octavia_all'
 octavia_git_install_fragments: "venvwithindex=True&ignorerequirements=True"
 
+# Use rcbops version of neutron-lbaas for post newton EOL patches
+neutron_lbaas_git_repo: https://github.com/rcbops/neutron-lbaas.git
+neutron_lbaas_git_install_branch: 2c68e0c642be83e0d07f8c867072b24a8608f3de
