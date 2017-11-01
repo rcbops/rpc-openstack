@@ -189,7 +189,7 @@ function safe_to_replace_artifacts {
   # versions or if there is no rc branch. When this is the case, the function
   # will return 0.
 
-  rc_branch="master-rc"
+  rc_branch="newton-rc"
 
   if git show origin/${rc_branch} &>/dev/null; then
     rc_branch_version="$(git show origin/${rc_branch}:group_vars/all/release.yml \
