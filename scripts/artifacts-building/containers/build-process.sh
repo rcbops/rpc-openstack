@@ -65,9 +65,23 @@ cp "/opt/rpc-openstack/rpcd/etc/openstack_deploy/user_osa_variables_defaults.yml
 # that no containers are created in the inventory.
 rm -f /etc/openstack_deploy/conf.d/*
 
-# If there are artifacts for this release, then set PUSH_TO_MIRROR to NO
-if container_artifacts_available; then
-  export PUSH_TO_MIRROR="NO"
+# Figure out when it is safe to automatically replace artifacts
+if [[ "$(echo ${PUSH_TO_MIRROR} | tr [a-z] [A-Z])" == "YES" ]]; then
+
+  if container_artifacts_available; then
+    # If there are artifacts for this release already, and it is not
+    # safe to replace them, then set PUSH_TO_MIRROR to NO to prevent
+    # them from being overwritten.
+    if ! safe_to_replace_artifacts; then
+      export PUSH_TO_MIRROR="NO"
+
+    # If there are artifacts for this release already, and it is safe
+    # to replace them, then set REPLACE_ARTIFACTS to YES to ensure
+    # that they do get replaced.
+    else
+      export REPLACE_ARTIFACTS="YES"
+    fi
+  fi
 fi
 
 # If REPLACE_ARTIFACTS is YES then set PUSH_TO_MIRROR to YES
