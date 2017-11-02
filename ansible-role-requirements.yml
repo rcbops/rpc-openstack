@@ -10,10 +10,6 @@
   scm: git
   src: https://github.com/ceph/ansible-ceph-osd.git
   version: 434a13f4d3ee3f60c410052d2670d5dfea034bf8
-- name: os_octavia
-  scm: git
-  src: https://github.com/openstack/openstack-ansible-os_octavia.git
-  version: f8c0f7689ecd9651b27a7bf58cbdac35e0c48793
 # NOTE(cloudnull) Logging Specific roles
 - name: logstash
   scm: git
