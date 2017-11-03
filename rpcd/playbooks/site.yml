@@ -14,5 +14,4 @@
 # limitations under the License.
 
 - include: horizon_extensions.yml
-- include: rpc-support.yml
 - include: setup-logging.yml
