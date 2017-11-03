@@ -1,0 +1,5 @@
+---
+upgrade:
+  - The rpc-support role is removed from the RPC-O distribution
+    and now individually maintained as standalone module
+    `openstack-ops <https://github.com/rsoprivatecloud/openstack-ops>`_
