@@ -125,6 +125,19 @@ if ! python_artifacts_available; then
     # has no packages available, ensure that the lock down
     # is disabled.
     echo "pip_lock_to_internal_repo: no" >> ${OA_OVERRIDES}
+
+    # As newton reaches EOL, developer_mode no longer works
+    # as it tries to make use of the stable/newton branch
+    # which no longer exists.
+    # We implement the override here to cater for PR tests
+    # only.
+    eol_repo_list="cinder glance heat horizon keystone magnum_dashboard"
+    eol_repo_list="${eol_repo_list} neutron neutron_dynamic_routing"
+    eol_repo_list="${eol_repo_list} neutron_fwaas neutron_lbaas"
+    eol_repo_list="${eol_repo_list} neutron_vpnaas swift"
+    for svc in ${eol_repo_list}; do
+      echo "${svc}_git_install_branch: newton-eol" >> ${OA_OVERRIDES}
+    done
 fi
 
 # Run playbooks
