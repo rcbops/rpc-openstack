@@ -150,5 +150,5 @@ Please see the documentation in [rpc-gating/README.md](https://github.com/rcbops
 
 
 # Leapfrog upgrades
-Please refer to [scripts/leapfrog/README.md](scripts/leapfrog/README.md)
+Please refer to [rpc-upgrades/README.rst](https://github.com/rcbops/rpc-upgrades/blob/master/README.rst)
 for documentation on the leapfrog upgrade process.
