@@ -45,9 +45,6 @@ any packages or git sources into wheels and deploys them to the local repo
 server(s).
 * `repo-pip-setup.yml` - updates the pip configuration on all of the containers
 to include the rpc-openstack source that was created by `repo-build.yml`.
-* `rpc-support.yml` - provides holland backup service, support SSH key
-distribution, custom security group rules, bashrc settings, and other
-miscellaneous tasks helpful to support personnel.
 * `setup-maas.yml` - deploys, sets up, and installs Rackspace
 [MaaS](http://www.rackspace.com/cloud/monitoring) checks
 for Rackspace Private Clouds.
