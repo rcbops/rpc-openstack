@@ -16,5 +16,4 @@
 - include: repo-build.yml
 - include: repo-pip-setup.yml
 - include: horizon_extensions.yml
-- include: rpc-support.yml
 - include: setup-logging.yml
