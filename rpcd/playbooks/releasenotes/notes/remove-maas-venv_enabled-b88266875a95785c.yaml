@@ -1,6 +1,0 @@
----
-deprecations:
-  - |
-    The maas_venv_enabled variable has been removed from the verify-maas.yml
-    playbook. The rpc-maas-tool.py script will now always run from it's own
-    virtualenv.

@@ -10,22 +10,25 @@ environments are fine, so long as they have spare RAM and disk available for
 some temporary virtual machines.  The RPC environment must have a utility
 container and hardware virtualization (such as Intel VMX) must be enabled.
 
-## Installing `refstack-client`
+### Installing `refstack-client`
 
 Within the utility container, run the following:
 
-    git clone https://github.com/openstack/refstack-client /root/refstack-client
-    rm -rf ~/.pip
-    cd /root/refstack-client
-    ./setup_env
+``` shell
+git clone https://github.com/openstack/refstack-client /root/refstack-client
+rm -rf ~/.pip
+cd /root/refstack-client
+./setup_env
+```
 
 You should now have `refstack-client` installed into a virtual environment
 along with tempest in `/root/refstack-client/.venv`.
 
-## Get the RefStack test list
+### Get the RefStack test list
 
 The list of RefStack tests is revised regularly (every 6-8 months) and you will
-need the latest list from the [RefStack site](https://refstack.openstack.org/#/).
+need the latest list from the
+[RefStack site](https://refstack.openstack.org/#/).
 Go to the [DefCore Guidelines](https://refstack.openstack.org/#/guidelines) tab
 and ensure the following items are selected:
 
@@ -40,20 +43,20 @@ Click **Test List** on the right side of the page and note the `wget` line
 provided in the pop-up window. Run that `wget` line within `/root/refstack-
 client/` directory in the utility container.
 
-## Install tempest
+### Install tempest
 
 From the deployment host, install tempest into the utility container:
 
     cd /opt/rpc-openstack/openstack-ansible/playbooks
     openstack-ansible os-tempest-install.yml
 
-## Configure tempest
+### Configure tempest
 
 Refstack now requires pre-provisioned credentials and the corresponding
 accounts file to funtion. Create an accounts file in ~/.tempest/etc/ called
 accounts.yaml with the following content:
 
-```
+``` yaml
 - username: 'admin'
   tenant_name: 'admin'
   password: 'yourpasswordhere'
@@ -62,38 +65,43 @@ accounts.yaml with the following content:
     router: 'router'
 ```
 
-Next, change add the following line to the ``[auth]`` section in
-``~/.tempest/etc/tempest.conf``:
+Next, change add the following line to the `[auth]` section in
+`~/.tempest/etc/tempest.conf`:
 
+``` conf
+test_accounts_file = ~/.tempest/etc/accounts.yaml
 ```
-test_accounts_file=~/.tempest/etc/accounts.yaml
-```
-Finally, in the same file, modify ``use_dynamic_credentials`` by setting it
-to ``False``:
-```
+
+Finally, in the same file, modify `use_dynamic_credentials` by setting it
+to `False`:
+
+``` conf
 use_dynamic_credentials = False
 ```
 
 For more information please see: https://docs.openstack.org/developer/tempest/configuration.html#pre-provisioned-credentials
 
-## Run RefStack
+### Run RefStack
 
 Go back to the utility container and run `refstack-client`:
 
-    cd /root/refstack-client
-    source .venv/bin/activate
-    ./refstack-client test \
-      -c ~/.tempest/etc/tempest.conf \
-      --upload \
-      --test-list 2017.01-test-list.txt \
-      -v | tee -a reflog.txt
+``` shell
+cd /root/refstack-client
+source .venv/bin/activate
+./refstack-client test \
+  -c ~/.tempest/etc/tempest.conf \
+  --upload \
+  --test-list 2017.01-test-list.txt \
+  -v | tee -a reflog.txt
+```
 
 It will take 20-40 minutes to run, depending on the speed of your server(s).
 When the run is complete, you will see a URL printed at the end of the output.
 This URL contains the detailed results for your RefStack run and the results
 must show 100% compliance for required tests.
 
-As an example, [this is our Newton (14.0) report](https://refstack.openstack.org/#/results/6a4a6cb4-13ba-42d2-8789-f456060370ca)
+As an example,
+[this is our Newton (14.0) report](https://refstack.openstack.org/#/results/6a4a6cb4-13ba-42d2-8789-f456060370ca)
 
 ## Troubleshooting
 
@@ -103,12 +111,14 @@ a regex for tests that you want to run.
 
 Here's an example:
 
-    cd /root/refstack-client
-    source .venv/bin/activate
-    ./refstack-client test \
-      -c /opt/tempest_untagged/etc/tempest.conf \
-      -v \
-      -- --regex 'test_list_servers_filtered_by_ip_regex'
+``` shell
+cd /root/refstack-client
+source .venv/bin/activate
+./refstack-client test \
+  -c /opt/tempest_untagged/etc/tempest.conf \
+  -v \
+  -- --regex 'test_list_servers_filtered_by_ip_regex'
+```
 
 Only the test(s) with `test_list_servers_filtered_by_ip_regex` in their name
 will run again.  You can troubleshoot failing tests by:
@@ -121,7 +131,7 @@ will run again.  You can troubleshoot failing tests by:
 
 ## Notify the OpenStack Foundation
 
-Start by sending a formal request to the [Interop list](mailto:interop@openstack.org).
-This creates a ticket with the OpenStack Foundation to have the DefCore results
-updated. You can also ping `hogepoge` in `#refstack` on Freenode to see if the
-process has changed.
+Start by sending a formal request to the
+[Interop list](mailto:interop@openstack.org). This creates a ticket with the
+OpenStack Foundation to have the DefCore results updated. You can also ping
+`hogepoge` in `#refstack` on Freenode to see if the process has changed.
