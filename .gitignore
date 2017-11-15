@@ -47,6 +47,9 @@ ehthumbs.db
 Thumbs.db
 .eggs
 
+# Sphinx documentation
+docs/_build/
+
 # User driven backup files #
 ############################
 *.bak
