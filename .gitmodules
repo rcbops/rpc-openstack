@@ -1,4 +1,4 @@
 [submodule "scripts/artifacts-building"]
 	path = scripts/artifacts-building
-	url = https://github.com/cloudnull/rpc-artifacts
+	url = https://github.com/rcbops/rpc-artifacts
 	branch = master

@@ -13,8 +13,8 @@ WORKSPACE="${WORKSPACE:-/opt}"
 
 # Get current head of osa
 osa_dir="${WORKSPACE}/openstack-ansible"
-git clone "https://github.com/openstack/openstack-ansible" ${WORKSPACE}/openstack-ansible
-pushd ${WORKSPACE}/openstack-ansible
+git clone "https://github.com/openstack/openstack-ansible" ${osa_dir}
+pushd ${osa_dir}
   git checkout $osa_branch
   osa_sha="$(git log -n 1 --format=%H)"
 popd
