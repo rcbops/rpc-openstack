@@ -24,4 +24,4 @@ rpc_release: "r16.0.0"
 openstack_release: "{{ rpc_release }}"
 
 # Set the release of the maas
-maas_release: master
+maas_release: "1.3.1"
