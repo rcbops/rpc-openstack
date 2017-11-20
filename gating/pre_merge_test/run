@@ -10,13 +10,10 @@ echo "+-------------------- ENV VARS --------------------+"
 env
 echo "+-------------------- ENV VARS --------------------+"
 
-## Vars ----------------------------------------------------------------------
-
-export DEPLOY_AIO="true"
-
-## Functions -----------------------------------------------------------------
-
 ## Main ----------------------------------------------------------------------
 
-# Run the deployment script
-bash -c "$(readlink -f $(dirname ${0})/../../scripts/deploy.sh)"
+if [ $RE_JOB_ACTION == "tox-test" ]; then
+  bash -c "$(readlink -f $(dirname ${0})/run_tox.sh)"
+else
+  bash -c "$(readlink -f $(dirname ${0})/run_deploy.sh)"
+fi
