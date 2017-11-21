@@ -14,6 +14,8 @@
 # limitations under the License.
 
 - include: elasticsearch.yml
+  when:
+    - not lookup('env', 'UPGRADE_ELASTICSEARCH') | bool
 - include: logstash.yml
 - include: kibana.yml
 - include: filebeat.yml
