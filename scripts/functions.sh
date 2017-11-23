@@ -16,7 +16,7 @@
 ## Vars ----------------------------------------------------------------------
 
 # OSA SHA
-export OSA_RELEASE="${OSA_RELEASE:-da37351ca0a96ed38de72f3e00a7549a024cb810}"
+export OSA_RELEASE="${OSA_RELEASE:-00faad15e17d0a99abfc1faab0d33a53bdb3474a}"
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 
 # Gating
