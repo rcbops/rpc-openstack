@@ -1,16 +1,23 @@
-# RPC-OpenStack
+# Rackspace Private Cloud - OpenStack
 
-Rackspace Private Cloud (RPC-OpenStack)
+The RPC-OpenStack repository contains additional scripts, variables, and
+options for deploying an OpenStack cloud. It is a thin wrapper around the
+[OpenStack-Ansible](https://github.com/openstack/openstack-ansible)
+deployment framework that is part of the OpenStack namespace.
 
-----
+## Deployment options
 
-### OpenStack-Ansible integration
+There are two different types of RPC-OpenStack deployments available:
 
-This repository installs
-[openstack-ansible](https://github.com/openstack/openstack-ansible)
-and provides for additional RPC-OpenStack value-added software.
+* **All-In-One (AIO) Deployment.** An AIO is a quick way to test a
+  RPC-OpenStack deployment. All of the cloud's internal services are deployed
+  on the same server, which could be a physical server or a virtual machine.
 
-#### Quick Start with an RPC-OpenStack All-In-One(AIO)
+* **Production Deployment.** Production deployments should be done on more
+  than one server with at least three nodes available to run the internal
+  cloud services.
+
+### All-In-One (AIO) Deployment Quickstart
 
 Clone the RPC-OpenStack repository:
 
@@ -18,15 +25,21 @@ Clone the RPC-OpenStack repository:
 git clone https://github.com/rcbops/rpc-openstack /opt/rpc-openstack
 ```
 
-Run the ``deploy.sh`` script. It is recommended to run this script in either
-a tmux or screen session. It will take about 90 minutes to complete:
+Start a screen or tmux session (to ensure that the deployment continues even
+if the ssh connection is broken) and run `deploy.sh`:
+
+Run the ``deploy.sh`` script within a tmux or screen session:
 
 ``` shell
+tmux
 cd /opt/rpc-openstack
 DEPLOY_AIO=true OSA_RELEASE="stable/pike" ./scripts/deploy.sh
 ```
 
-#### Basic Overview (non-AIO deployments):
+The `deploy.sh` script will run all of the necessary playbooks to deploy an
+AIO cloud and it normally completes in 90 to 120 minutes.
+
+### Production Deployment Guide
 
 Clone the RPC-OpenStack repository:
 
@@ -34,9 +47,13 @@ Clone the RPC-OpenStack repository:
 git clone https://github.com/rcbops/rpc-openstack /opt/rpc-openstack
 ```
 
-Run the deploy.sh script to perform a basic Installation.
+Start a screen or tmux session (to ensure that the deployment continues even
+if the ssh connection is broken) and run `deploy.sh`:
+
+Run the ``deploy.sh`` script within a tmux or screen session:
 
 ``` shell
+tmux
 cd /opt/rpc-openstack
 OSA_RELEASE="stable/pike" ./scripts/deploy.sh
 ```
@@ -55,7 +72,7 @@ Upon completion of the deployment run `scripts/deploy-rpco.sh` script to
 apply the RPC-OpenStack value added services; you may also run the playbooks
 `site-logging.yml` to accomplish much of the same things.
 
-### Gating
+### Testing & Gating
 
 Please see the documentation in [rpc-gating/README.md](https://github.com/rcbops/rpc-gating/blob/master/README.md)
 
