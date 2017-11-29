@@ -32,11 +32,13 @@
         dest: "{{ artifacts_aptrepos_dest_folder | dirname }}"
         mode: pull
         delete: yes
+        group: no
+        owner: no
         rsync_opts:
           - "--quiet"
           - "--stats"
           - "--log-file='/var/log/rpc-repo.log'"
-          - "--chown={{ aptly_user }}:www-data"
+          - "--chown='{{ aptly_user }}:www-data'"
       register: synchronize
       until: synchronize | success
       retries: 5
@@ -113,7 +115,7 @@
           - "--quiet"
           - "--stats"
           - "--log-file='/var/log/rpc-repo.log'"
-          - "--chown={{ webservice_owner }}:www-data"
+          - "--chown='{{ webservice_owner }}:www-data'"
       register: synchronize
       until: synchronize | success
       retries: 5
