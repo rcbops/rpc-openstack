@@ -111,6 +111,8 @@
         dest: "{{ artifacts_aptrepos_dest_folder | dirname }}"
         mode: push
         delete: yes
+        group: no
+        owner: no
         rsync_opts:
           - "--quiet"
           - "--stats"
@@ -129,3 +131,17 @@
         owner: "{{ webservice_owner }}"
         group: "www-data"
       when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
+
+    # The rsync to rpc-repo does not always set
+    # the right user:group, so we force the right
+    # user:group ownership over all the files in
+    # the artifact directory here.
+    - name: Set appropriate owner and group
+      file:
+        path: "{{ artifacts_aptrepos_dest_folder }}"
+        state: directory
+        owner: "{{ webservice_owner }}"
+        group: "www-data"
+        recurse: yes
+      when: "{{ lookup('ENV','PUSH_TO_MIRROR') | bool }}"
+
