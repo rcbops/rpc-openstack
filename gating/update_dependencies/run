@@ -11,6 +11,10 @@ WORKSPACE="${WORKSPACE:-/opt}"
 # Note for local testing: this script expects to be executed from the root
 # of an rpco clone, checkout at master.
 
+# Pull in the latest version of the rpc-artifacts using the submodule. Remove
+# and revise this when the use of submodules has been terminated.
+git submodule update --init --remote
+
 # Get current head of osa
 osa_dir="${WORKSPACE}/openstack-ansible"
 git clone "https://github.com/openstack/openstack-ansible" ${osa_dir}
@@ -34,7 +38,6 @@ popd
 #  Insert current SHA into functions.sh
 sed -i '/^maas_release:/ c\
 maas_release: "'${latest_maas_tag}'"' etc/openstack_deploy/group_vars/all/release.yml
-
 
 # can't use derive-artifact-version.sh as that hardcodes the rpc repo path
 extract_rpc_release(){
