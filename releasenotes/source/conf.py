@@ -61,6 +61,9 @@ master_doc = 'index'
 # builder = 'deconst-serial'
 builder = 'deconst-single'
 
+# Exclude content from elastic search index
+deconst_default_unsearchable = True
+
 # General information about the project.
 project = u'Rackspace Private Cloud powered by OpenStack Release Notes'
 copyright = u'2016, Rackspace'
