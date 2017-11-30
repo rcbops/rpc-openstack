@@ -28,19 +28,6 @@
   vars:
     rabbitmq_package_url: "{{ _rabbitmq_package_url }}"
 
-  # The rsync from rpc-repo does not always set
-  # the right user:group, so we force the right
-  # user:group ownership over all the files in
-  # the aptly home directory here.
-  pre_tasks:
-    - name: Set appropriate owner and group
-      file:
-        path: "{{ aptly_user_home }}"
-        state: directory
-        owner: "{{ aptly_user }}"
-        group: "www-data"
-        recurse: yes
-
   #role will install aptly and update the mirrors
   roles:
     - infOpen.aptly
