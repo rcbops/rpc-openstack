@@ -2,11 +2,15 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -e -u -x
+set -euv
 set -o pipefail
 
 ## Main ----------------------------------------------------------------------
 
-if [ $RE_JOB_ACTION != "tox-test" ]; then
-  bash -c "$(readlink -f $(dirname ${0})/post_deploy.sh)"
-fi
+apt-get update
+apt-get install -y wget
+
+pip install 'tox!=2.4.0,>=2.3'
+
+tmp_tox_dir=$(mktemp -d)
+tox -e $RE_JOB_SCENARIO --workdir $tmp_tox_dir
