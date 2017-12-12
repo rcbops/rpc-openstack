@@ -40,8 +40,6 @@
         ephemeral: "{{ item.ephemeral }}"
       with_items: "{{ openstack_vm_flavors }}"
 
-  environment: "{{ deployment_environment_variables | default({}) }}"
-
   vars_files:
     - vars/openstack-service-config.yml
 
