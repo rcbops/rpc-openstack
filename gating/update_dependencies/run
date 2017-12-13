@@ -3,9 +3,14 @@
 export GATING_PATH="$(readlink -f $(dirname ${0}))"
 source "${GATING_PATH}/../../scripts/functions.sh"
 
+# Install the semver library to manipulate the
+# rpc_release version strings
+pip install semver==2.7.9
+
 ## Update OSA SHA to head of stable/pike
 # These var must be set per branch of RPC-Openstack
 rpco_branch="${BRANCH:-master}" # BRANCH injected by Jenkins.
+rc_branch="${rpco_branch}-rc"
 
 # Env vars injected by Jenkins:
 WORKSPACE="${WORKSPACE:-/opt}"
@@ -22,7 +27,7 @@ osa_dir="${WORKSPACE}/openstack-ansible"
 git clone "https://github.com/openstack/openstack-ansible" "${osa_dir}"
 pushd "${osa_dir}"
   git checkout "${OSA_RELEASE}"
-  osa_sha="$(git log -n 1 --format=%H)"
+  export OSA_SHA="$(git log -n 1 --format=%H)"
 popd
 
 ## Update rpc-maas to latest tag
@@ -32,63 +37,28 @@ pushd "${rpc_maas_dir}"
   # the maas repo includes old tags eg v9.x.x and 9.x.x when the version
   #  at the time of writing is 1.x.x. All tags that include a character
   #  or that start with 9 or 10 are filtered out.
-  latest_maas_tag="$(git tag -l |grep -v '[a-zA-Z]\|^\(9\.\|10\.\)' |sort -n |tail -n 1)"
+  export MAAS_TAG="$(git tag -l |grep -v '[a-zA-Z]\|^\(9\.\|10\.\)' |sort -n |tail -n 1)"
 popd
 
-# Write to the rpc-release file
-python <<EOC
-import yaml
-release_file = "${GATING_PATH}/../../playbooks/vars/rpc-release.yml"
-with open(release_file) as f:
-  x = yaml.safe_load(f.read())
-release_data = x['rpc_product_releases']["${RPC_PRODUCT_RELEASE}"]
-release_data['maas_release'] = "${latest_maas_tag}"
-release_data['osa_release'] = "${osa_sha}"
-with open(release_file, 'w') as f:
-  f.write(yaml.safe_dump(x, default_flow_style=False, width=1000))
-print('Product release set: [%s]' % release_data)
-EOC
+## Check what version is set in the RC branch
 
-# can't use derive-artifact-version.sh as that hardcodes the rpc repo path
-extract_rpc_release(){
-  awk '/^rpc_release/{print $2}' | tr -d '"'
-}
+# We can only use this method once this file exists in the RC branch, so
+# we have to implement the new method and a fall back to the old method.
 
-update_rpc_release(){
-  rc_branch_version="$(git show origin/${rc_branch}:etc/openstack_deploy/group_vars/all/release.yml \
-                      | extract_rpc_release)"
-  echo "rpc_release version from rc-branch (${rc_branch}): ${rc_branch_version}"
+new_file_to_fetch="origin/${rc_branch}:playbooks/vars/rpc-release.yml"
+old_file_to_fetch="origin/${rc_branch}:etc/openstack_deploy/group_vars/all/release.yml"
+release_data_file="${WORKSPACE}/rc-release-data.yml"
 
-  current_branch_version="$(extract_rpc_release < etc/openstack_deploy/group_vars/all/release.yml)"
-  echo "rpc_release version from current branch (${rpco_branch}): ${current_branch_version}"
+# new method
+if git cat-file -e ${new_file_to_fetch} 2>/dev/null; then
+  git show ${new_file_to_fetch} > ${release_data_file}
+  export RC_BRANCH_VERSION=$(${GATING_PATH}/get-rpc_release.py ${release_data_file})
 
-  # Extract the required version info
-  major_version="$( echo ${rc_branch_version} | cut -d. -f1 )"
-  minor_version="$( echo ${rc_branch_version} | cut -d. -f2 )"
-  patch_version="$( echo ${rc_branch_version} | cut -d. -f3 )"
+# old method
+elif git cat-file -e ${old_file_to_fetch} 2>/dev/null; then
+  git show ${old_file_to_fetch} > ${release_data_file}
+  export RC_BRANCH_VERSION=$(awk '/^rpc_release/{print $2}' ${release_data_file} | tr -d '"')
 
-  # increment the minor version
-  minor_version="$(( minor_version + 1 ))"
-
-  incremented_version="${major_version}.${minor_version}.${patch_version}"
-  echo "Incremented rpc_release version: ${incremented_version}"
-
-  sed -i "s/${current_branch_version}/${incremented_version}/" \
-    etc/openstack_deploy/group_vars/all/release.yml
-}
-
-# Update rpc_release. The mainline branch should always be one version
-# ahead of the rc branch, as the next rc branch will be cut from mainline
-# post release.
-
-# This update script will only ever run against a mainline branch, as
-# dependencies should not change once an RC branch has been cut.
-
-# Get RC branch version
-rc_branch="${rpco_branch}-rc"
-git fetch origin
-if git show "origin/${rc_branch}"; then
-  update_rpc_release
 else
   echo "RC branch ${rc_branch} not found, skipping rpc_release version bump.
 If there is no RC branch then the mainline branch is considered unreleased
@@ -96,3 +66,7 @@ and therefore the rpc_release value is left alone. It is still important
 for the dependencies to be updated regularly though, so that part continues
 to be done."
 fi
+
+# Execute the update of all the data
+export RELEASE_FILE="${GATING_PATH}/../../playbooks/vars/rpc-release.yml"
+${GATING_PATH}/release-update.py
