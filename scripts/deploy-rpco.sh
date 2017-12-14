@@ -27,9 +27,9 @@ source "${SCRIPT_PATH}/functions.sh"
 
 ## Main ----------------------------------------------------------------------
 
-# Generate the scretes required for the deployment.
+# Generate the secrets required for the deployment.
 if [[ ! -f "/etc/openstack_deploy/user_rpco_secrets.yml" ]]; then
-  cp /etc/openstack_deploy/user_rpco_secrets.yml.example /etc/openstack_deploy/user_rpco_secrets.yml
+  cp ${SCRIPT_PATH}/../etc/openstack_deploy/user_rpco_secrets.yml.example /etc/openstack_deploy/user_rpco_secrets.yml
 fi
 
 for file_name in user_secrets.yml user_rpco_secrets.yml; do
@@ -54,12 +54,12 @@ pushd /opt/rpc-maas/playbooks
       # Set the rpc_maas vars.
       if [[ ! -f "/etc/openstack_deploy/user_rpco_maas_variables.yml" ]]; then
         envsubst < \
-          /etc/openstack_deploy/user_rpco_maas_variables.yml.example > \
+          ${SCRIPT_PATH}/../etc/openstack_deploy/user_rpco_maas_variables.yml.example > \
           /etc/openstack_deploy/user_rpco_maas_variables.yml
       fi
 
       # If influx port and IP are set enable the variable
-      sed -i 's|^# influx_telegraf_targets|influx_telegraf_targets|g' /etc/openstack_deploy/user_rpc_maas_variables.yml
+      sed -i 's|^# influx_telegraf_targets|influx_telegraf_targets|g' /etc/openstack_deploy/user_rpco_maas_variables.yml
     fi
     # Run the rpc-maas setup process
     openstack-ansible site.yml
