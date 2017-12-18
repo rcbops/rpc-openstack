@@ -18,7 +18,7 @@
   environment: "{{ deployment_environment_variables | default({}) }}"
   connection: local
   user: root
-  pre_tasks:
+  tasks:
     - name: Ensure local facts directory exists
       file:
         dest: "/etc/ansible/facts.d"
@@ -127,24 +127,7 @@
       when:
         - py_artifact_found | bool
         - py_artifact_enabled | bool
-  roles:
-    # We execute the pip_install role here to ensure that all
-    # hosts have the correct rpco repo configured now that
-    # /etc/apt/sources.list has been changed to no longer
-    # include the updates repo. This assumes it's been executed
-    # after the configure-apt-sources.yml playbook. If this option is
-    # undefined this role will skip.
-    - role: "pip_install"
-      pip_lock_to_internal_repo: false
-      internal_lb_vip_address: localhost
-      pip_upstream_url: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/{{ repo_build_os_distro_version }}/get-pip.py"
-      pip_install_upper_constraints: "{{ rpco_mirror_base_url }}/os-releases/{{ rpc_release }}/{{ repo_build_os_distro_version }}/requirements_absolute_requirements.txt"
-      when:
-        - py_artifact_found | bool
-        - py_artifact_enabled | bool
-        - apt_artifact_enabled | default(false) | bool
 
-  post_tasks:
     - name: Set artifact local fact
       ini_file:
         dest: "/etc/ansible/facts.d/rpc_openstack.fact"
