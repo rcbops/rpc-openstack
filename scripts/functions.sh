@@ -55,6 +55,7 @@ done
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 export HOST_RCBOPS_DOMAIN="rpc-repo.rackspace.com"
 export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://${HOST_RCBOPS_DOMAIN}"}
+export RPCO_APT_ARTIFACTS_MODE=${RPCO_APT_ARTIFACTS_MODE:-"strict"}
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
 export RPC_ANSIBLE_VERSION="2.3.2.0"

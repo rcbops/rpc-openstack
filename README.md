@@ -82,6 +82,22 @@ export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stab
 openstack-ansible site-artifacts.yml
 ```
 
+###### Optional | Enable 'loose' mode for apt artifacts
+
+It is possible to set the apt artifact implementation to be done in 'loose'
+mode which leaves the existing apt sources in place when doing the deployment.
+This ensures that if packages are already installed on the target hosts which
+are newer than those available in the RPC-O artifacts, the apt install process
+will leave them in place. This helps with initial deployments to allow a
+transition from an unmanaged environment, to a 'loose' managed environment
+and later it can be switched to a 'strict' managed environment which only
+uses the artifacts which were used in testing.
+
+``` shell
+cd /opt/rpc-openstack
+openstack-ansible site-artifacts.yml -e 'apt_artifact_mode="loose"'
+```
+
 ###### Optional | Disable Artifacts
 
 It is possible to disable parts of the artifact deployment system RPC-OpenStack
