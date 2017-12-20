@@ -67,6 +67,12 @@ for the dependencies to be updated regularly though, so that part continues
 to be done."
 fi
 
+
+# Execute role requirements file update
+export ROLE_REQUIREMENTS_FILE="${GATING_PATH}/../../ansible-role-${RPC_PRODUCT_RELEASE}-requirements.yml"
+${GATING_PATH}/role-requirements-update.py
+
+
 # Execute the update of all the data
 export RELEASE_FILE="${GATING_PATH}/../../playbooks/vars/rpc-release.yml"
 ${GATING_PATH}/release-update.py
