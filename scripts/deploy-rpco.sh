@@ -19,8 +19,6 @@ set -euv
 set -o pipefail
 
 ## Vars ----------------------------------------------------------------------
-# NOTE(cloudnull): See comment further down, but this should be removed later.
-export MARKER="/tmp/deploy-rpc-commit.complete"
 
 export SCRIPT_PATH="$(readlink -f $(dirname ${0}))"
 
@@ -28,23 +26,6 @@ export SCRIPT_PATH="$(readlink -f $(dirname ${0}))"
 source "${SCRIPT_PATH}/functions.sh"
 
 ## Main ----------------------------------------------------------------------
-
-# NOTE(cloudnull): Drop a marker after Deploying RPC-OpenStack and check for
-#                  it's existance. This is here because our CIT gating system
-#                  calls this script a mess of times with different
-#                  environment variables instead of leveraging a stable
-#                  interface and controlling the systems code paths within
-#                  a set of well known and understanable test scripts.
-#                  Because unwinding this within the CIT gate is impossible
-#                  at this time and there's no stable interface to consume
-#                  we check for and drop a marker file once the basic AIO
-#                  has been created. If the marker is found we skip trying to
-#                  build everything again.
-# NOTE(cloudnull): Remove this when we have a sane test interface.
-if [ "${DEPLOY_AIO}" != false ] && [[ -f "${MARKER}" ]]; then
-  echo "RPC-O has already been deployed, remove \"${MARKER}\" to run again."
-  exit 0
-fi
 
 # Generate the scretes required for the deployment.
 if [[ ! -f "/etc/openstack_deploy/user_rpco_secrets.yml" ]]; then
@@ -84,6 +65,3 @@ pushd /opt/rpc-maas/playbooks
     openstack-ansible site.yml
   fi
 popd
-
-## Drop the RPC-OpenStack marker file.
-touch ${MARKER}
