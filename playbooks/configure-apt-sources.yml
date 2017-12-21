@@ -82,6 +82,18 @@
       tags:
         - always
 
+    - name: Disable other artifacts if apt is disabled
+      ini_file:
+        dest: "/etc/ansible/facts.d/rpc_openstack.fact"
+        section: "rpc_artifacts"
+        option: "{{ item.option }}"
+        value: "{{ item.value }}"
+      with_items:
+        - { option: "container_artifact_enabled", value: false }
+        - { option: "py_artifact_enabled", value: false }
+      when:
+        - not apt_artifact_enabled | bool
+
   tasks:
     - name: Sync artifact files (all)
       copy:
