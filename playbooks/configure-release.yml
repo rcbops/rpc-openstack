@@ -166,6 +166,25 @@
         - skip_ansible_lint
 
   post_tasks:
+    - name: Remove legacy user variable files
+      file:
+        dest: "/etc/openstack_deploy/{{ item }}"
+        state: absent
+      with_items:
+        - "user_extras_variables.yml"
+        - "user_liberty_vars.yml"
+        - "user_master_vars.yml"
+        - "user_newton_vars.yml"
+        - "user_osa_variables_defaults.yml"
+        - "user_osa_varibles_defaults.yml"
+        - "user_rpc_maas_variables.yml"
+        - "user_rpcm_default_variables.yml"
+        - "user_rpcm_variables_defaults.yml"
+        - "user_rpcm_variables.yml"
+        - "user_rpco_user_variables_defaults.yml"
+        - "user_rpco_variables_defaults.yml"
+        - "user_variables.yml"
+
     - name: Set product release local fact
       ini_file:
         dest: "/etc/ansible/facts.d/rpc_openstack.fact"
