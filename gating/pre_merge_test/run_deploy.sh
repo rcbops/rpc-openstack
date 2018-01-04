@@ -33,6 +33,12 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
+if [[ "${RE_JOB_ACTION}" == "deploy_no_artifacts" ]]; then
+  export DEPLOY_ARTIFACTING="no"
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
+fi
+
 # Set the appropriate scenario variables
 if [[ "${RE_JOB_SCENARIO}" == "ceph" ]]; then
   export DEPLOY_CEPH="yes"
