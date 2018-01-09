@@ -33,12 +33,6 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
-if [[ "${RE_JOB_ACTION}" == "deploy_no_artifacts" ]]; then
-  export DEPLOY_ARTIFACTING="no"
-  apt-get update
-  DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
-fi
-
 # Set the appropriate scenario variables
 if [[ "${RE_JOB_SCENARIO}" == "ceph" ]]; then
   export DEPLOY_CEPH="yes"
@@ -47,8 +41,16 @@ elif [[ "${RE_JOB_SCENARIO}" == "ironic" ]]; then
   export DEPLOY_IRONIC="yes"
 fi
 
-if [[ ${RE_JOB_IMAGE} =~ loose$ ]]; then
+if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
+  # Set the env var to disable artifact usage
+  export DEPLOY_ARTIFACTING="no"
 
+  # Upgrade to the absolute latest
+  # available packages.
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+
+elif [[ ${RE_JOB_IMAGE} =~ loose_artifacts$ ]]; then
   # Set the apt artifact mode
   export RPCO_APT_ARTIFACTS_MODE="loose"
 
