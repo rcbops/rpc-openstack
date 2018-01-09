@@ -101,7 +101,18 @@
         dest: "/etc/openstack_deploy/group_vars/all/{{ item | basename }}"
       with_items:
         - files/apt.yml
-        - files/maas.yml
+      run_once: true
+      delegate_to: localhost
+      when:
+        - apt_artifact_found | bool
+        - apt_artifact_enabled | bool
+
+    - name: Sync artifact files (all)
+      copy:
+        src: "{{ item }}"
+        dest: "/etc/openstack_deploy/{{ item | basename }}"
+      with_items:
+        - files/user_rpcm_variables.yml
       run_once: true
       delegate_to: localhost
       when:
