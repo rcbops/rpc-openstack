@@ -120,16 +120,25 @@
         force: "{{ osa_force_clone | default(false) }}"
 
     - name: Copy basic files into place
-      command: "cp -Rv /opt/openstack-ansible/etc/openstack_deploy /etc/openstack_deploy"
+      shell: |
+        rsync -av \
+              --include='*.yml' --include='*/' --exclude='*' \
+              "/opt/openstack-ansible/etc/openstack_deploy/" \
+              /etc/openstack_deploy/
       args:
+        executable: /bin/bash
         creates: /etc/openstack_deploy
+      tags:
+        - skip_ansible_lint
 
     - name: Sync configuration for RPC-OpenStack files
       shell: |
         rsync -av \
-              --exclude '*.bak' \
+              --include='*.yml' --include='*/' --exclude='*' \
               "{{ playbook_dir }}/../etc/openstack_deploy/" \
               /etc/openstack_deploy/
+      args:
+        executable: /bin/bash
       when:
         - rpc_product_bootstrapped != rpc_product_new_bootstrap
       tags:
