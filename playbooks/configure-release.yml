@@ -189,7 +189,6 @@
         - "user_rpc_maas_variables.yml"
         - "user_rpcm_default_variables.yml"
         - "user_rpcm_variables_defaults.yml"
-        - "user_rpcm_variables.yml"
         - "user_rpco_user_variables_defaults.yml"
         - "user_rpco_variables_defaults.yml"
         - "user_variables.yml"
