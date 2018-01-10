@@ -43,7 +43,7 @@ fi
 
 if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
   # Set the env var to disable artifact usage
-  export DEPLOY_ARTIFACTING="no"
+  export RPC_APT_ARTIFACT_ENABLED="no"
 
   # Upgrade to the absolute latest
   # available packages.
@@ -52,7 +52,7 @@ if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
 
 elif [[ ${RE_JOB_IMAGE} =~ loose_artifacts$ ]]; then
   # Set the apt artifact mode
-  export RPCO_APT_ARTIFACTS_MODE="loose"
+  export RPC_APT_ARTIFACT_MODE="loose"
 
   # Upgrade to the absolute latest
   # available packages.

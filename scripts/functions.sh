@@ -36,7 +36,6 @@ export DEPLOY_SUPPORT_ROLE=${DEPLOY_SUPPORT_ROLE:-"no"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
 export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export DEPLOY_ARA=${DEPLOY_ARA:-"no"}
-export DEPLOY_ARTIFACTING=${DEPLOY_ARTIFACTING:-"yes"}
 export DEPLOY_IRONIC=${DEPLOY_IRONIC:-"no"}
 export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
@@ -54,7 +53,8 @@ export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export HOST_SOURCES_REWRITE=${HOST_SOURCES_REWRITE:-"yes"}
 export HOST_UBUNTU_REPO=${HOST_UBUNTU_REPO:-"http://mirror.rackspace.com/ubuntu"}
 export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://rpc-repo.rackspace.com"}
-export RPCO_APT_ARTIFACTS_MODE=${RPCO_APT_ARTIFACTS_MODE:-"strict"}
+export RPC_APT_ARTIFACT_ENABLED=${RPC_APT_ARTIFACT_ENABLED:-"yes"}
+export RPC_APT_ARTIFACT_MODE=${RPC_APT_ARTIFACT_MODE:-"strict"}
 
 # Derive the rpc_release version from the group vars
 export RPC_RELEASE="$(/opt/rpc-openstack/scripts/artifacts-building/derive-artifact-version.sh)"
@@ -115,7 +115,7 @@ function copy_default_user_space_files {
 }
 
 function apt_artifacts_available {
-  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
+  [[ "${RPC_APT_ARTIFACT_ENABLED}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/apt-mirror/integrated/dists/${RPC_RELEASE}-${DISTRIB_CODENAME}"
 
@@ -128,7 +128,7 @@ function apt_artifacts_available {
 }
 
 function git_artifacts_available {
-  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
+  [[ "${RPC_APT_ARTIFACT_ENABLED}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/git-archives/${RPC_RELEASE}/requirements.checksum"
 
@@ -141,7 +141,7 @@ function git_artifacts_available {
 }
 
 function python_artifacts_available {
-  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
+  [[ "${RPC_APT_ARTIFACT_ENABLED}" != "yes" ]] && return 1
 
   ARCH=$(uname -p)
   CHECK_URL="${HOST_RCBOPS_REPO}/os-releases/${RPC_RELEASE}/${ID}-${VERSION_ID}-${ARCH}/MANIFEST.in"
@@ -155,7 +155,7 @@ function python_artifacts_available {
 }
 
 function container_artifacts_available {
-  [[ "${DEPLOY_ARTIFACTING}" != "yes" ]] && return 1
+  [[ "${RPC_APT_ARTIFACT_ENABLED}" != "yes" ]] && return 1
 
   CHECK_URL="${HOST_RCBOPS_REPO}/meta/1.0/index-system"
 
@@ -169,7 +169,7 @@ function container_artifacts_available {
 
 function configure_apt_sources {
 
-  if [[ "${RPCO_APT_ARTIFACTS_MODE}" == "strict" ]]; then
+  if [[ "${RPC_APT_ARTIFACT_MODE}" == "strict" ]]; then
 
     # Backup the original sources file
     if [[ ! -f "/etc/apt/sources.list.original" ]]; then
