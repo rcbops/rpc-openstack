@@ -47,7 +47,8 @@ if [ "${DEPLOY_AIO}" != false ]; then
   # RO-3316 has been resolved.
   openstack-ansible -i 'localhost,' \
                     -e 'apt_target_group=localhost' \
-                    -e "apt_artifact_mode='${RPCO_APT_ARTIFACTS_MODE}'" \
+                    -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
+                    -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
                     -e 'container_artifact_enabled=false' \
                     "${SCRIPT_PATH}/../playbooks/site-artifacts.yml"
 
