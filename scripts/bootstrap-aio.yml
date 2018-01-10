@@ -22,7 +22,7 @@
         user_variables_overrides:
           ## Implement the appropriate override for the apt artifact
           ## deployment mode.
-          rpco_apt_artifacts_mode: "{{ lookup('env', 'RPCO_APT_ARTIFACTS_MODE') }}"
+          rpco_apt_artifacts_mode: "{{ lookup('env', 'RPC_APT_ARTIFACT_MODE') }}"
           ## Three vars below migrated from existing boostrap-aio task.
           apply_security_hardening: "{{ rpco_deploy_hardening }}"
           # Tempest is turned off to prevent the tests from running by default
@@ -222,7 +222,7 @@
   vars:
     bootstrap_host_apt_distribution_suffix_list: >-
       {{ ((lookup('env', 'RPCO_APT_ARTIFACTS_AVAILABLE') | bool) and
-          (lookup('env', 'RPCO_APT_ARTIFACTS_MODE') == 'strict'))
+          (lookup('env', 'RPC_APT_ARTIFACT_MODE') == 'strict'))
           | ternary([], ['updates', 'backports']) }}
     scenario: >-
       {%- if lookup('env', 'DEPLOY_IRONIC') | bool -%}
