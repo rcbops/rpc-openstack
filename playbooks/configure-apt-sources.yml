@@ -28,7 +28,7 @@
         mode:  "0755"
         recurse: no
 
-    - name: initialize local facts
+    - name: Initialize local facts
       ini_file:
         dest: "/etc/ansible/facts.d/rpc_openstack.fact"
         section: "rpc_artifacts"
@@ -46,12 +46,19 @@
       set_fact:
         rpc_openstack: "{{ ansible_local['rpc_openstack']['rpc_artifacts'] }}"
 
-    - name: Set the rpc-artifact variables
+    - name: Set apt_artifact_enabled (based on previous settings)
       set_fact:
         apt_artifact_enabled: "{{ rpc_openstack['apt_artifact_enabled'] }}"
       when:
         - rpc_openstack['apt_artifact_enabled'] is defined
         - apt_artifact_enabled is undefined
+
+    - name: Set apt_artifact_mode (based on previous settings)
+      set_fact:
+        apt_artifact_mode: "{{ rpc_openstack['apt_artifact_mode'] }}"
+      when:
+        - rpc_openstack['apt_artifact_mode'] is defined
+        - apt_artifact_mode is undefined
 
     - name: Check for artifacts
       uri:
@@ -60,15 +67,21 @@
       failed_when: false
       register: check_artifacts
 
-    - name: Set artifacts found
+    - name: Set apt_artifact_found
       set_fact:
         apt_artifact_found: "{{ check_artifacts.status == 200 }}"
 
-    - name: Set artifacts enabled
+    - name: Set apt_artifact_enabled (based on whether they exist)
       set_fact:
         apt_artifact_enabled: "{{ apt_artifact_found | bool }}"
       when:
         - apt_artifact_enabled is undefined
+
+    - name: Set apt_artifact_mode default value
+      set_fact:
+        apt_artifact_mode: "strict"
+      when:
+        - apt_artifact_mode is undefined
 
     - name: Check if artifacts are enabled but not found
       fail:
@@ -79,6 +92,17 @@
       when:
         - apt_artifact_enabled | bool
         - not apt_artifact_found | bool
+      tags:
+        - always
+
+    - name: Check if artifact mode is set incorrectly
+      fail:
+        msg: |
+          The apt artifact mode is set to the invalid value of '{{ apt_artifact_mode }}'.
+          The deployment has halted. Valid values are 'strict' or 'loose'.
+      when:
+        - apt_artifact_enabled | bool
+        - apt_artifact_mode not in ['strict', 'loose']
       tags:
         - always
 
@@ -138,7 +162,14 @@
         - apt_artifact_found | bool
         - apt_artifact_enabled | bool
 
-    - name: Replace the apt sources file with our content
+    - name: Backup the original sources file
+      copy:
+        src: /etc/apt/sources.list
+        dest: /etc/apt/sources.list.original
+        remote_src: yes
+        force: no
+
+    - name: Replace the apt sources file with our content (artifact 'strict' mode)
       copy:
         content: |
           # Base repository
@@ -149,6 +180,22 @@
       when:
         - apt_artifact_found | bool
         - apt_artifact_enabled | bool
+        - apt_artifact_mode == "strict"
+
+    # Set rpco_apt_sources_restore_source to 'local' to have the
+    # original apt sources file from the deploy host be pushed out
+    # to all hosts and containers.
+    - name: Restore the original sources file (artifact 'loose' mode)
+      copy:
+        src: /etc/apt/sources.list.original
+        dest: /etc/apt/sources.list
+        remote_src: "{{ rpco_apt_sources_restore_source | default('remote') == 'remote' }}"
+        force: yes
+      register: apt_sources_restore
+      when:
+        - apt_artifact_found | bool
+        - apt_artifact_enabled | bool
+        - apt_artifact_mode != "strict"
 
     - name: Create the rpco apt sources file
       copy:
@@ -174,26 +221,13 @@
         - apt_artifact_found | bool
         - apt_artifact_enabled | bool
 
-    - name: Remove extra sources
-      lineinfile:
-        dest: /etc/apt/sources.list
-        state: absent
-        regexp: "{{ item }}"
-      with_items:
-        - "^deb-src"
-        - "-backports"
-        - "-security"
-        - "-updates"
-      when:
-        - apt_artifact_found | bool
-        - apt_artifact_enabled | bool
-
     - name: Update apt-cache
       apt:
         update_cache: yes
       when:
-        - (apt_artifact_found | bool) and (apt_sources_configure | changed or apt_sources_configure_rpco | changed)
         - apt_artifact_enabled | bool
+        - apt_artifact_found | bool
+        - apt_sources_configure | changed or apt_sources_configure_rpco | changed or apt_sources_restore | changed
 
   post_tasks:
     - name: Set artifact local fact
@@ -203,8 +237,12 @@
         option: "{{ item.option }}"
         value: "{{ item.value }}"
       with_items:
-        - { option: "apt_artifact_enabled", value: "{{ apt_artifact_enabled }}" }
-        - { option: "apt_artifact_found", value: "{{ apt_artifact_found }}" }
+        - option: "apt_artifact_enabled"
+          value: "{{ apt_artifact_enabled }}"
+        - option: "apt_artifact_found"
+          value: "{{ apt_artifact_found }}"
+        - option: "apt_artifact_mode"
+          value: "{{ apt_artifact_mode }}"
 
   vars:
     ansible_python_interpreter: "/usr/bin/python"
