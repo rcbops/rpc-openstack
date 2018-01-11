@@ -41,15 +41,10 @@ if [ "${DEPLOY_AIO}" != false ]; then
   basic_install
 
   # Implement the artifact configuration
-
-  # NOTE(odyssey4me):
-  # Re-enable container artifacts once
-  # RO-3316 has been resolved.
   openstack-ansible -i 'localhost,' \
                     -e 'apt_target_group=localhost' \
                     -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
                     -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
-                    -e 'container_artifact_enabled=false' \
                     "${SCRIPT_PATH}/../playbooks/site-artifacts.yml"
 
   # Install OpenStack-Ansible
