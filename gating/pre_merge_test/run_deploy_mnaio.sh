@@ -93,6 +93,8 @@ pushd /opt/openstack-ansible-ops/multi-node-aio
   # By default the MNAIO deploys metering services, so we override
   # osa_enable_meter to prevent those services from being deployed.
   sed -i 's/osa_enable_meter: true/osa_enable_meter: false/' playbooks/group_vars/all.yml
+  # bump up cryptography version to avoid exception detailed in RLM-1104
+  pip install cryptography==1.5 --upgrade
 popd
 
 # build the multi node aio
