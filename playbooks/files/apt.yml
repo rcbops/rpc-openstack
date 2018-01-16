@@ -83,9 +83,8 @@ user_external_repos_list:
   - "{{ rpco_apt_repo }}"
 
 # Elasticsearch
-elasticsearch_apt_repos:
-  - "{{ rpco_apt_repo }}"
-elasticsearch_apt_keys: "{{ rpco_apt_gpg_keys }}"
+es_apt_key: "{{ rpco_gpg_key_location }}{{ rpco_gpg_key_name }}"
+es_apt_url: "{{ rpco_mirror_apt_deb_line }}"
 
 # Filebeat
 filebeat_apt_gpg_keys: "{{ rpco_apt_gpg_keys }}"
