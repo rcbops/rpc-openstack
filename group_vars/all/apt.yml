@@ -134,4 +134,4 @@ hwraid_apt_keys: "{{ rpco_apt_gpg_keys }}"
 #  being deployed.
 # This setting may be overridden by overriding it in the
 # /etc/openstack_deploy/user_*.yml files.
-rpco_apt_artifacts_mode: "strict"
+rpco_apt_artifacts_mode: "{{ lookup('env', 'RPC_APT_ARTIFACT_MODE') | default('strict', true) }}"
