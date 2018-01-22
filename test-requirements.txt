@@ -12,11 +12,3 @@ sphinx>=1.3.4,<1.6.0
 oslosphinx>=2.5.0 # Apache-2.0
 reno==2.2.0 # Apache-2.0. Latest version as of 03-20-2017
 sphinx_rtd_theme>=0.1.9
-
-# release.py testing
-github3.py>=1.0.0a4
-mock
-sh
-rpc_differ>=0.2.1
-pandoc>=1.0.0b2
-osa_differ>=0.2.2
