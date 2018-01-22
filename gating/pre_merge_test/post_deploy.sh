@@ -14,7 +14,7 @@ export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
 ## Functions -----------------------------------------------------------------
-source ../../scripts/functions.sh
+source $(dirname ${0})/../../scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
