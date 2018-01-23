@@ -43,12 +43,6 @@
       tags:
         - always
 
-    # TODO(odyssey4me):
-    # Remove this task once RO-3316 is resolved.
-    - name: Disable the use of container artifacts
-      set_fact:
-        container_artifact_enabled: no
-
     - name: Set the rpc-openstack variables
       set_fact:
         rpc_openstack: "{{ ansible_local['rpc_openstack']['rpc_artifacts'] }}"
