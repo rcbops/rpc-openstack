@@ -65,8 +65,6 @@ export INFRA_VM_SERVER_RAM=16384
 # artifact settings
 export RPC_APT_ARTIFACT_ENABLED="${RPC_APT_ARTIFACT_ENABLED:-yes}"
 export RPC_APT_ARTIFACT_MODE="${RPC_APT_ARTIFACT_MODE:-strict}"
-# RO-3316 - Disable container artifact usage
-export RPC_CONTAINER_ARTIFACT_ENABLED=false
 
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
@@ -161,7 +159,6 @@ ${MNAIO_SSH} <<EOC
                       -e 'apt_target_group=localhost' \
                       -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
                       -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
-                      -e "container_artifact_enabled='${RPC_CONTAINER_ARTIFACT_ENABLED}'" \
                       site-artifacts.yml
     openstack-ansible openstack-ansible-install.yml
   popd
