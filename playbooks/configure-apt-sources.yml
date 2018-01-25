@@ -135,6 +135,7 @@
       copy:
         src: "{{ item }}"
         dest: "/etc/openstack_deploy/{{ item | basename }}"
+        mode: "0444"
       with_items:
         - files/user_rpcm_variables.yml
       run_once: true
