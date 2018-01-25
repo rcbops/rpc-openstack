@@ -1,7 +1,7 @@
 - name: logstash
   scm: git
   src: https://github.com/rcbops/rpc-role-logstash.git
-  version: f42bd2ccdc9c4608e2a357a9f088e3873a6ecad4
+  version: df5e033dbd9942c091299079a470b192c2f20050
 - name: filebeat
   scm: git
   src: https://github.com/rcbops/rpc-role-filebeat.git
@@ -17,4 +17,4 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: 8a3b7e6008d71b684c3d6a80428f06840714c593
+  version: a3b20009b4bab4758a33116575bd04422f19bda1
