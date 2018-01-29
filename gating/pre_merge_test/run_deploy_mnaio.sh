@@ -127,7 +127,32 @@ elif [[ "${RE_JOB_SCENARIO}" == "ironic" ]]; then
   echo "export DEPLOY_IRONIC=yes" >> /opt/rpc-openstack/RE_ENV
 fi
 
-# prepare rpc-o configs
+# generate infra1 deploy script
+cat > /opt/rpc-openstack/deploy-infra1.sh <<EOF
+#!/bin/bash
+set -evu
+# starts the deploy from infra1 vm
+source /opt/rpc-openstack/RE_ENV
+pushd /opt/rpc-openstack
+  scripts/deploy.sh
+popd
+pushd /opt/rpc-openstack/playbooks
+  openstack-ansible -i 'localhost,' \
+                    -e 'apt_target_group=localhost' \
+                    -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
+                    -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
+                    site-artifacts.yml
+  openstack-ansible openstack-ansible-install.yml
+popd
+pushd /opt/openstack-ansible/scripts
+  python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
+popd
+pushd /opt/openstack-ansible/playbooks
+  openstack-ansible setup-everything.yml
+popd
+EOF
+
+# sync rpc-o to infra and prepare rpc-o configs
 set -xe
 echo "+---------------- MNAIO RELEASE AND KERNEL --------------+"
 lsb_release -a
@@ -144,30 +169,12 @@ ${MNAIO_SSH} <<EOC
   cp -R /opt/openstack-ansible/etc/openstack_deploy /etc
   cp /etc/openstack_deploy/user_variables.yml.bak /etc/openstack_deploy/user_variables.yml
   cp -R /opt/rpc-openstack/etc/openstack_deploy/* /etc/openstack_deploy/
+  chmod +x /opt/rpc-openstack/deploy-infra1.sh
   rm -rf /opt/openstack-ansible
   rm /usr/local/bin/openstack-ansible
 EOC
 
 # start the rpc-o install from infra1
-${MNAIO_SSH} <<EOC
-  source /opt/rpc-openstack/RE_ENV
-  pushd /opt/rpc-openstack
-    scripts/deploy.sh
-  popd
-  pushd /opt/rpc-openstack/playbooks
-    openstack-ansible -i 'localhost,' \
-                      -e 'apt_target_group=localhost' \
-                      -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
-                      -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
-                      site-artifacts.yml
-    openstack-ansible openstack-ansible-install.yml
-  popd
-  pushd /opt/openstack-ansible/scripts
-    python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
-  popd
-  pushd /opt/openstack-ansible/playbooks
-    openstack-ansible setup-everything.yml
-  popd
-EOC
+${MNAIO_SSH} "/opt/rpc-openstack/deploy-infra1.sh"
 
 echo "MNAIO RPC-O deploy completed..."
