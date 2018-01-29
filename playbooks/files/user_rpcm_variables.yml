@@ -13,6 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# NOTICE! ANY CHANGE IN THIS FILE WILL BE REMOVED DURING A PLAYBOOK RUN.
+# PLEASE PLACE MAAS OVERRIDES IN A USER CONTROLLED VARIABLE FILE.
+
+
 # Apt artifact repo configuration
 # The rest of the apt artifact repo configuration is held in
 # group_vars/all/apt.yml but due to the way that the rpc-maas
