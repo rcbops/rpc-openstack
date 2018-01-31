@@ -21,11 +21,17 @@ if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
 elif [[ ${RE_JOB_IMAGE} =~ loose_artifacts$ ]]; then
   # Set the apt artifact mode
   export RPC_APT_ARTIFACT_MODE="loose"
+  export RPC_APT_ARTIFACT_ENABLED="yes"
 
   # Upgrade to the absolute latest
   # available packages.
   apt-get update
   DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade
+
+elif [[ ${RE_JOB_IMAGE} =~ strict_artifacts$ ]]; then
+  # Set the apt artifact mode
+  export RPC_APT_ARTIFACT_MODE="strict"
+  export RPC_APT_ARTIFACT_ENABLED="yes"
 fi
 
 # In order to get the value for rpc_release, we need to use

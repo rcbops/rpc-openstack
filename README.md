@@ -98,20 +98,23 @@ cd /opt/rpc-openstack
 openstack-ansible site-artifacts.yml -e 'apt_artifact_mode="loose"'
 ```
 
-###### Optional | Disable Artifacts
+###### Optional | Toggle Artifacts
 
-It is possible to disable parts of the artifact deployment system RPC-OpenStack
-provides. To disable the artifact components any of the following variables
-can be set to **false** when running the `site-artifacts.yml` playbook.
+It is possible to toggle parts of the artifact deployment system RPC-OpenStack
+provides. To toggle any of the artifact components the following variables
+can be set to **true** or **false** when running the `site-artifacts.yml`
+playbook. By default artifacting is disabled.
 
 * apt_artifact_enabled
 * container_artifact_enabled
 * py_artifact_enabled
 
-If these variables are unset, they will automatically flip to **true** when the
-respective artifacts are found. These settings are stored in the local fact file
-`/etc/ansible/facts.d/rpc_openstack.fact`. If a deployer needs to completely
-reset the state of artifacts, this file can be removed or modified as needed.
+If a deployer needs to forcibly modify or reset the state of artifacts,
+everything is stored as a local fact in the
+`/etc/ansible/facts.d/rpc_openstack.fact` file which can be removed or modified
+as needed.
+
+**Example Command to disable artifacts**
 
 ``` shell
 openstack-ansible site-artifacts.yml -e 'apt_artifact_enabled=false' \
