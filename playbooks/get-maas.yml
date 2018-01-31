@@ -23,10 +23,15 @@
         repo: "https://github.com/rcbops/rpc-maas"
         dest: "/opt/rpc-maas"
         version: "{{ maas_release }}"
-    - name: Ensure openstack_deploy exists
-      file:
-        dest: "/etc/openstack_deploy"
-        state: directory
+    - name: Stat /etc/openstack_deploy
+      stat:
+        path: "/etc/openstack_deploy"
+      register: stat_openstack_deploy
+    - name: Fail when /etc/openstack_deploy doesn't exist
+      fail:
+        msg: "/etc/openstack_deploy is required but doesn't exist"
+      when:
+        - not stat_openstack_deploy.stat.exists
     - name: Copy over base maas vars
       copy:
         src: "/opt/rpc-maas/tests/user_master_vars.yml"
