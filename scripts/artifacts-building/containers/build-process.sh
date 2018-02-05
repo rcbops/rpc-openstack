@@ -131,10 +131,10 @@ if ! python_artifacts_available; then
     # which no longer exists.
     # We implement the override here to cater for PR tests
     # only.
-    eol_repo_list="cinder glance heat horizon keystone magnum_dashboard"
+    eol_repo_list="cinder glance heat horizon ironic keystone magnum_dashboard"
     eol_repo_list="${eol_repo_list} neutron neutron_dynamic_routing"
     eol_repo_list="${eol_repo_list} neutron_fwaas neutron_lbaas"
-    eol_repo_list="${eol_repo_list} neutron_vpnaas swift"
+    eol_repo_list="${eol_repo_list} neutron_vpnaas nova swift"
     for svc in ${eol_repo_list}; do
       echo "${svc}_git_install_branch: newton-eol" >> ${OA_OVERRIDES}
     done
