@@ -61,6 +61,17 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '-c',
+    '--release_component',
+    action=EnvDefault,
+    default='rpc',
+    envvar='RPC_PRODUCT_COMPONENT',
+    help='Release component, optionally set using the RPC_PRODUCT_COMPONENT'
+         'environment variable.',
+    required=False
+)
+
 # Parse arguments
 args = parser.parse_args()
 
@@ -80,8 +91,8 @@ except KeyError as e:
     print >> sys.stderr, "Unable to find release '%s'." % args.release_series
     sys.exit(1)
 
-# Get the current rpc_release version
-rpc_release = release_data['rpc_release']
+# Get the current component release version
+component_release = release_data['%s_release' % args.release_component]
 
-# Print out the rpc_release value
-print(rpc_release)
+# Print out the component_release value
+print(component_release)
