@@ -50,15 +50,9 @@
       regexp: "bind.*"
       replace: "bind {{ ansible_default_ipv4.address }}:5000"
 
-  - name: List stopped containers
-    shell: |
-      lxc-ls -f | awk '/STOPPED.*openstack/{print $1}'
-    register: stopped_containers
-
   - name: Start stopped containers
     shell: |
-      lxc-start -d -n {{ item }}
-    with_items: "{{ stopped_containers.stdout_lines }}"
+      lxc-autostart --all
 
   - name: Restart haproxy
     service:
