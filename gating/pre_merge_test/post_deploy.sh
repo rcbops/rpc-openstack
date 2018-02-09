@@ -83,8 +83,6 @@ if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]]; then
 
   ln -s /opt/rpc-openstack/gating/thaw/run /gating/thaw/run
 
-  distro="$(lsb_release --codename --short)"
-
-  echo "rpc_${RPC_RELEASE}_${distro}" > /gating/thaw/image_name
+  echo "rpc-${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}" > /gating/thaw/image_name
   echo "### END SNAPSHOT PREP ###"
 fi
