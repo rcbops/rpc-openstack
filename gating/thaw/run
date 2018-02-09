@@ -16,6 +16,8 @@ cp /opt/root_ssh_backup/.ssh/id_rsa.pub /root/.ssh
 cp /opt/root_ssh_backup/.ssh/known_hosts /root/.ssh ||:
 ssh-keyscan localhost >> /root/.ssh/known_hosts
 
+# Remove Jenkins workspace reference from openstack-ansible.rc
+sed -i -e 's@/var/lib/jenkins/workspace/.*/rpc-openstack@/opt/rpc-openstack@g' /usr/local/bin/openstack-ansible.rc
 
 cd /opt/rpc-openstack/openstack-ansible/playbooks/
 
