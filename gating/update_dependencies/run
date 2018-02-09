@@ -61,7 +61,7 @@ if [[ -e ${osa_dir} ]]; then
 fi
 git clone "https://github.com/openstack/openstack-ansible" "${osa_dir}"
 pushd "${osa_dir}"
-  git checkout "${OSA_RELEASE}"
+  git checkout "${OSA_RELEASE_BRANCH}"
   export OSA_SHA="$(git log -n 1 --format=%H)"
 popd
 

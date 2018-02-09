@@ -35,12 +35,12 @@ export BUILD_TAG="${BUILD_TAG:-testing}"
 # RPC-OpenStack product release, this variable is used in the config playbooks.
 export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-pike}"
 
-# OSA release
-if [ -z ${OSA_RELEASE+x} ]; then
+# OSA release branch
+if [ -z ${OSA_RELEASE_BRANCH+x} ]; then
   if [[ "${RPC_PRODUCT_RELEASE}" != "master" ]]; then
-    export OSA_RELEASE="stable/${RPC_PRODUCT_RELEASE}"
+    export OSA_RELEASE_BRANCH="stable/${RPC_PRODUCT_RELEASE}"
   else
-    export OSA_RELEASE="master"
+    export OSA_RELEASE_BRANCH="master"
   fi
 fi
 
