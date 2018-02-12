@@ -38,6 +38,9 @@ export RE_JOB_TRIGGER="${RE_JOB_TRIGGER:-PR}"
 export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
+## Functions -----------------------------------------------------------------
+source /opt/rpc-openstack/scripts/functions.sh
+
 ## OSA MNAIO Vars
 export PARTITION_HOST="true"
 export NETWORK_BASE="172.29"
@@ -51,6 +54,7 @@ export SETUP_HOST="true"
 export SETUP_VIRSH_NET="true"
 export VM_IMAGE_CREATE="true"
 export DEPLOY_OSA="true"
+export OSA_BRANCH="${OSA_RELEASE}"
 export PRE_CONFIG_OSA="true"
 export RUN_OSA="false"
 export CONFIGURE_OPENSTACK="false"
@@ -68,9 +72,6 @@ export RPC_APT_ARTIFACT_MODE="${RPC_APT_ARTIFACT_MODE:-strict}"
 
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
-
-## Functions -----------------------------------------------------------------
-source /opt/rpc-openstack/scripts/functions.sh
 
 ## Main --------------------------------------------------------------------
 
