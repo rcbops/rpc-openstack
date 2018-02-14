@@ -35,12 +35,12 @@ export BUILD_TAG="${BUILD_TAG:-testing}"
 # RPC-OpenStack product release, this variable is used in the config playbooks.
 export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-pike}"
 
-# OSA release
-if [ -z ${OSA_RELEASE+x} ]; then
+# OSA release branch
+if [ -z ${OSA_RELEASE_BRANCH+x} ]; then
   if [[ "${RPC_PRODUCT_RELEASE}" != "master" ]]; then
-    export OSA_RELEASE="stable/${RPC_PRODUCT_RELEASE}"
+    export OSA_RELEASE_BRANCH="stable/${RPC_PRODUCT_RELEASE}"
   else
-    export OSA_RELEASE="master"
+    export OSA_RELEASE_BRANCH="master"
   fi
 fi
 
@@ -58,6 +58,7 @@ export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://${HOST_RCBOPS_DOMAIN}"}
 export RPC_APT_ARTIFACT_ENABLED=${RPC_APT_ARTIFACT_ENABLED:-"no"}
 export RPC_APT_ARTIFACT_MODE=${RPC_APT_ARTIFACT_MODE:-"strict"}
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py)"
+export OSA_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c osa)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
 export RPC_ANSIBLE_VERSION="2.3.2.0"
 export RPC_ANSIBLE="${HOST_RCBOPS_REPO}/pools/${RPC_OS}/ansible/ansible-${RPC_ANSIBLE_VERSION}-py2-none-any.whl"
