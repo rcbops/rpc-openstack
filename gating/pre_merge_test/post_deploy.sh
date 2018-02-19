@@ -19,43 +19,23 @@ source ${BASE_DIR}/scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
-# Copy the tempest results to the job results folder
-mkdir -p ${RE_HOOK_RESULT_DIR}
-find /var/lib/lxc/*utility*/ -type f -name 'tempest_results.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
-find /opt/kibana-selenium -type f -name 'nosetests.xml' -exec cp {} ${RE_HOOK_RESULT_DIR}/ \;
-
-# Copy the job artifacts to the job artifacts folder
-export RSYNC_CMD="rsync --archive --safe-links --ignore-errors --quiet --no-perms --no-owner --no-group"
-export RSYNC_ETC_CMD="${RSYNC_CMD} --no-links --exclude selinux/"
-
 echo "#### BEGIN LOG COLLECTION ###"
-mkdir -vp \
-    "${RE_HOOK_ARTIFACT_DIR}/logs/host" \
-    "${RE_HOOK_ARTIFACT_DIR}/logs/openstack" \
-    "${RE_HOOK_ARTIFACT_DIR}/etc/host" \
-    "${RE_HOOK_ARTIFACT_DIR}/etc/openstack" \
-    "${RE_HOOK_ARTIFACT_DIR}/kibana"
 
-# Copy the kibana-selenium screen captures
-${RSYNC_CMD} /opt/kibana-selenium/*.png "${RE_HOOK_ARTIFACT_DIR}/kibana/" || true
+collect_logs_cmd="ansible-playbook"
+collect_logs_cmd+=" --ssh-common-args='-o StrictHostKeyChecking=no'"
+collect_logs_cmd+=" --extra-vars='artifacts_dir=${RE_HOOK_ARTIFACT_DIR}'"
+collect_logs_cmd+=" --extra-vars='result_dir=${RE_HOOK_RESULT_DIR}'"
 
-# Copy the host and container log files
-${RSYNC_CMD} /var/log/ "${RE_HOOK_ARTIFACT_DIR}/logs/host" || true
-if [ -d "/openstack/log" ]; then
-  ${RSYNC_CMD} /openstack/log/ "${RE_HOOK_ARTIFACT_DIR}/logs/openstack" || true
+if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
+  collect_logs_cmd+=" --extra-vars='target_hosts=pxe_servers'"
+  collect_logs_cmd+=" --inventory='/opt/openstack-ansible-ops/multi-node-aio/playbooks/inventory/hosts'"
+else
+  collect_logs_cmd+=" --extra-vars='target_hosts=localhost'"
 fi
 
-# Copy the host /etc directory
-${RSYNC_ETC_CMD} /etc/ "${RE_HOOK_ARTIFACT_DIR}/etc/host/" || true
+collect_logs_cmd+=" $(dirname ${0})/collect_logs.yml"
 
-# Loop over each container and archive its /etc directory
-if which lxc-ls &> /dev/null; then
-  for CONTAINER_NAME in `lxc-ls -1`; do
-    CONTAINER_PID=$(lxc-info -p -n ${CONTAINER_NAME} | awk '{print $2}')
-    ETC_DIR="/proc/${CONTAINER_PID}/root/etc/"
-    ${RSYNC_ETC_CMD} ${ETC_DIR} "${RE_HOOK_ARTIFACT_DIR}/etc/openstack/${CONTAINER_NAME}/" || true
-  done
-fi
+eval $collect_logs_cmd || true
 
 echo "#### END LOG COLLECTION ###"
 
