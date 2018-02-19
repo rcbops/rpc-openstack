@@ -91,8 +91,7 @@ if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]]; then
   ln -s /opt/rpc-openstack/gating/thaw/run /gating/thaw/run
 
   rpc_release="$(extract_rpc_release </opt/rpc-openstack/group_vars/all/release.yml)"
-  distro="$(lsb_release --codename --short)"
 
-  echo "rpc_${rpc_release}_${distro}" > /gating/thaw/image_name
+  echo "rpc-${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}" > /gating/thaw/image_name
   echo "### END SNAPSHOT PREP ###"
 fi
