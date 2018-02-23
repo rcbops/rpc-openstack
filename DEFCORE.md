@@ -47,14 +47,16 @@ client/` directory in the utility container.
 
 From the deployment host, install tempest into the utility container:
 
+``` shell
     cd /opt/rpc-openstack/openstack-ansible/playbooks
     openstack-ansible os-tempest-install.yml
+```
 
 ### Configure tempest
 
 Refstack now requires pre-provisioned credentials and the corresponding
-accounts file to funtion. Create an accounts file in ~/.tempest/etc/ called
-accounts.yaml with the following content:
+accounts file to funtion. Create an accounts file in `~/.tempest/etc/` called
+`accounts.yaml` with the following content:
 
 ``` yaml
 - username: 'admin'
@@ -69,7 +71,7 @@ Next, change add the following line to the `[auth]` section in
 `~/.tempest/etc/tempest.conf`:
 
 ``` conf
-test_accounts_file = ~/.tempest/etc/accounts.yaml
+test_accounts_file = /root/.tempest/etc/accounts.yaml
 ```
 
 Finally, in the same file, modify `use_dynamic_credentials` by setting it
