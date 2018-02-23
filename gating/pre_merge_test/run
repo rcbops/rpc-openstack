@@ -34,3 +34,6 @@ elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
 else
   bash -c "$(readlink -f $(dirname ${0})/run_deploy.sh)"
 fi
+if [[ $RE_JOB_ACTION == "system" ]]; then
+  bash -c "$(readlink -f $(dirname ${0})/run_system_tests.sh)"
+fi
