@@ -197,7 +197,7 @@
         user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_ironic)}}"
       when:
         - SCENARIO is defined
-        - SCENARIO == "ironic-multihypervisor"
+        - (SCENARIO == "ironic-multihypervisor" or SCENARIO == "ironic")
 
     - name: Set specific user variables for all scenarios but ironic
       set_fact:
@@ -209,7 +209,7 @@
         user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_non_ironic)}}"
       when:
         - SCENARIO is defined
-        - SCENARIO != "ironic-multihypervisor"
+        - (SCENARIO != "ironic-multihypervisor" or SCENARIO != "ironic")
   vars:
     rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
     TRIGGER: "{{ lookup('env', 'TRIGGER')}}"
