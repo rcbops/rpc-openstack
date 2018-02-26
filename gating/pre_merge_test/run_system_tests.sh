@@ -38,5 +38,8 @@ git submodule update --recursive
 ./execute_tests.sh
 
 # 3. Collect results from script
-cp test_results.tar "${RE_HOOK_ARTIFACT_DIR}"
+tar -xf test_results.tar -C "${RE_HOOK_RESULTS_DIR}"
+
+# 4. Collect logs from script
+# Molecule does not produce logs outside of STDOUT
 popd
