@@ -196,20 +196,18 @@
       set_fact:
         user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_ironic)}}"
       when:
-        - SCENARIO is defined
-        - (SCENARIO == "ironic-multihypervisor" or SCENARIO == "ironic")
+        - SCENARIO is defined and "ironic" in SCENARIO
 
     - name: Set specific user variables for all scenarios but ironic
       set_fact:
         scenario_user_variables_overrides_non_ironic:
-          nova_virt_type: qemu
+          nova_virt_type: ironic
 
     - name: Add non-ironic scenario user vars to user_variables_overrides
       set_fact:
         user_variables_overrides: "{{ user_variables_overrides|combine(scenario_user_variables_overrides_non_ironic)}}"
       when:
-        - SCENARIO is defined
-        - (SCENARIO != "ironic-multihypervisor" or SCENARIO != "ironic")
+        - SCENARIO is defined and "ironic" not in SCENARIO
   vars:
     rpco_deploy_hardening: "{{ lookup('env', 'DEPLOY_HARDENING') }}"
     TRIGGER: "{{ lookup('env', 'TRIGGER')}}"
