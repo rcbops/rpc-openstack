@@ -202,7 +202,7 @@
     - name: Set specific user variables for all scenarios but ironic
       set_fact:
         scenario_user_variables_overrides_non_ironic:
-          nova_virt_type: qemu
+          nova_virt_type: ironic
 
     - name: Add non-ironic scenario user vars to user_variables_overrides
       set_fact:
