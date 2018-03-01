@@ -49,12 +49,3 @@
       dest: /etc/haproxy/conf.d/keystone_service
       regexp: "bind.*"
       replace: "bind {{ ansible_default_ipv4.address }}:5000"
-
-  - name: Start stopped containers
-    shell: |
-      lxc-autostart --all
-
-  - name: Restart haproxy
-    service:
-      name: haproxy
-      state: restarted
