@@ -64,6 +64,9 @@ export INFRA_VM_SERVER_RAM=16384
 
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
+# place variable in file to be sourced by parent calling script 'run'
+export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
+echo "export MNAIO_SSH=\"${MNAIO_SSH}\"" > "${MNAIO_VAR_FILE}"
 
 ## Functions -----------------------------------------------------------------
 source /opt/rpc-openstack/scripts/functions.sh
