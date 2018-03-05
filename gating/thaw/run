@@ -25,4 +25,13 @@ cd /opt/openstack-ansible/playbooks/
 export ANSIBLE_GATHERING=implicit
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/thaw.yml
 openstack-ansible -t haproxy_server-config haproxy-install.yml
+
+lxc-autostart --all
+
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/haproxycheck.yml
+
+# Remove the /gating directory to prevent any further snapshots from being
+# taken.
+if [[ -d "/gating" ]]; then
+    rm -rf /gating
+fi
