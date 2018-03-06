@@ -41,7 +41,6 @@ Vagrant.configure("2") do |config|
         apt-get -y install git build-essential gcc libssl-dev libffi-dev python-dev
         git clone -b master --recursive https://github.com/rcbops/rpc-openstack.git /opt/rpc-openstack
         cd /opt/rpc-openstack/
-        git submodule update
         export DEPLOY_AIO=yes
         ./scripts/deploy.sh
       SHELL
@@ -59,7 +58,6 @@ Vagrant.configure("2") do |config|
         apt-get -y install git build-essential gcc libssl-dev libffi-dev python-dev
         git clone -b ocata --recursive https://github.com/rcbops/rpc-openstack.git /opt/rpc-openstack
         cd /opt/rpc-openstack/
-        git submodule update
         export DEPLOY_AIO=yes
         ./scripts/deploy.sh
       SHELL
@@ -77,7 +75,6 @@ Vagrant.configure("2") do |config|
         apt-get -y install git build-essential gcc libssl-dev libffi-dev python-dev
         git clone -b newton --recursive https://github.com/rcbops/rpc-openstack.git /opt/rpc-openstack
         cd /opt/rpc-openstack/
-        git submodule update
         export DEPLOY_AIO=yes
         ./scripts/deploy.sh
       SHELL

@@ -36,7 +36,7 @@ if [[ "$(pip --disable-pip-version-check freeze | grep semver)" != "semver==${se
   pip install semver==${semver_version}
 fi
 
-## Update OSA SHA to head of stable/pike
+## Update OSA SHA to head of stable/XXX
 # These var must be set per branch of RPC-Openstack
 rpco_branch="${BRANCH:-master}" # BRANCH injected by Jenkins.
 rc_branch="${rpco_branch}-rc"
@@ -46,10 +46,6 @@ WORKSPACE="${WORKSPACE:-/opt}"
 
 # Note for local testing: this script expects to be executed from the root
 # of an rpco clone, checkout at master.
-
-# Pull in the latest version of the rpc-artifacts using the submodule. Remove
-# and revise this when the use of submodules has been terminated.
-git submodule update --init --remote
 
 ## Get current head of osa
 # We clean up any existing directory to make

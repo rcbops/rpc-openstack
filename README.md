@@ -37,7 +37,7 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 tmux
 cd /opt/rpc-openstack
 export DEPLOY_AIO=true
-export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
@@ -61,64 +61,14 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
 #### Configure and deploy the cloud
 
 To configure the installation please refer to the upstream OpenStack-Ansible
-documentation regarding basic [system setup](https://docs.openstack.org/project-deploy-guide/openstack-ansible/pike/configure.html).
-
-##### Artifact Setup
-
-Prior to running the OpenStack-Ansible playbooks ensure your system(s) are using
-the latest artifacts. To ensure all hosts have are using the same artifacted
-release, run the `site-artifacts.yml` playbook.
-
-``` shell
-cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stable product will be used
-openstack-ansible site-artifacts.yml
-```
-
-###### Optional | Enable 'loose' mode for apt artifacts
-
-It is possible to set the apt artifact implementation to be done in 'loose'
-mode which leaves the existing apt sources in place when doing the deployment.
-This ensures that if packages are already installed on the target hosts which
-are newer than those available in the RPC-O artifacts, the apt install process
-will leave them in place. This helps with initial deployments to allow a
-transition from an unmanaged environment, to a 'loose' managed environment
-and later it can be switched to a 'strict' managed environment which only
-uses the artifacts which were used in testing.
-
-``` shell
-cd /opt/rpc-openstack
-openstack-ansible site-artifacts.yml -e 'apt_artifact_mode="loose"'
-```
-
-###### Optional | Toggle Artifacts
-
-It is possible to toggle parts of the artifact deployment system RPC-OpenStack
-provides. To toggle any of the artifact components the following variables
-can be set to **true** or **false** when running the `site-artifacts.yml`
-playbook. By default artifacting is disabled.
-
-* apt_artifact_enabled
-* py_artifact_enabled
-
-If a deployer needs to forcibly modify or reset the state of artifacts,
-everything is stored as a local fact in the
-`/etc/ansible/facts.d/rpc_openstack.fact` file which can be removed or modified
-as needed.
-
-**Example Command to disable artifacts**
-
-``` shell
-openstack-ansible site-artifacts.yml -e 'apt_artifact_enabled=false' \
-                                     -e 'py_artifact_enabled=false'
-```
+documentation regarding basic [system setup](https://docs.openstack.org/project-deploy-guide/openstack-ansible/queens/configure.html).
 
 ##### OpenStack-Ansible Installation
 
@@ -129,7 +79,7 @@ created for convenience and will maintain impotency.
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
 openstack-ansible openstack-ansible-install.yml
 ```
 
@@ -147,7 +97,7 @@ openstack-ansible site-release.yml openstack-ansible-install.yml -e 'osa_release
 ##### Running the playbooks
 
 Once the deploy configuration has been completed please refer to the
-OpenStack-Ansible documentation regarding [running the playbooks](https://docs.openstack.org/project-deploy-guide/openstack-ansible/pike/run-playbooks.html).
+OpenStack-Ansible documentation regarding [running the playbooks](https://docs.openstack.org/project-deploy-guide/openstack-ansible/queens/run-playbooks.html).
 
 ----
 
@@ -175,36 +125,34 @@ openstack-ansible site-openstack.yml
 ### Perform an Intra-Series Product Upgrade
 
 To run a basic system upgrade set the `${RPC_PRODUCT_RELEASE}` option, re-run
-`deploy.sh`, and setup the artifact configuration for the deployment.
+`deploy.sh`.
 
 ``` shell
 tmux
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="pike"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
-openstack-ansible site-artifacts.yml
 openstack-ansible openstack-ansible-install.yml
 ```
 
-Once basic system configuration has completed, [run through the upgrade process](https://docs.openstack.org/openstack-ansible/pike/user/minor-upgrade.html)
+Once basic system configuration has completed, [run through the upgrade process](https://docs.openstack.org/openstack-ansible/queens/user/minor-upgrade.html)
 for the specified product release.  
 
 ### Perform a Major Product Upgrade (BETA)
 
 To run a major upgrade set the `${RPC_PRODUCT_RELEASE}` option, re-run
-`deploy.sh`, and setup the artifact configuration for the deployment.
+`deploy.sh`.
 
 ``` shell
 tmux
 cd /opt/rpc-openstack
 export RPC_PRODUCT_RELEASE="master"  # This needs to be set to the new product
 ./scripts/deploy.sh
-openstack-ansible site-artifacts.yml
 openstack-ansible openstack-ansible-install.yml
 ```
 
-Once the deployment is ready either [run the major upgrade script](https://docs.openstack.org/openstack-ansible/pike/user/script-upgrade.html)
-or [run the manual upgrade](https://docs.openstack.org/openstack-ansible/pike/user/manual-upgrade.html)
+Once the deployment is ready either [run the major upgrade script](https://docs.openstack.org/openstack-ansible/queens/user/script-upgrade.html)
+or [run the manual upgrade](https://docs.openstack.org/openstack-ansible/queens/user/manual-upgrade.html)
 process.
 
 ### Testing and Gating

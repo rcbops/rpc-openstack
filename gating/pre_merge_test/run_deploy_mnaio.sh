@@ -66,10 +66,6 @@ export DEFAULT_MIRROR_HOSTNAME=mirror.rackspace.com
 export DEFAULT_MIRROR_DIR=/ubuntu
 export INFRA_VM_SERVER_RAM=16384
 
-# artifact settings
-export RPC_APT_ARTIFACT_ENABLED="${RPC_APT_ARTIFACT_ENABLED:-yes}"
-export RPC_APT_ARTIFACT_MODE="${RPC_APT_ARTIFACT_MODE:-strict}"
-
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
 # place variable in file to be sourced by parent calling script 'run'
@@ -113,34 +109,6 @@ echo "Multi Node AIO setup completed..."
 # capture all RE_ variables for push to infra1
 env | grep RE_ | sed 's/^/export /' > /opt/rpc-openstack/RE_ENV
 
-# check if we're using artifacts or not
-if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
-  export RPC_APT_ARTIFACT_ENABLED="no"
-  echo "export RPC_APT_ARTIFACT_ENABLED=no" >> /opt/rpc-openstack/RE_ENV
-  ${MNAIO_SSH} "apt-get -qq update; DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade"
-
-elif [[ ${RE_JOB_IMAGE} =~ loose_artifacts$ ]]; then
-  # Set the apt artifact mode
-  export RPC_APT_ARTIFACT_MODE="loose"
-  echo "export RPC_APT_ARTIFACT_MODE=loose" >> /opt/rpc-openstack/RE_ENV
-  ${MNAIO_SSH} "apt-get -qq update; DEBIAN_FRONTEND=noninteractive apt-get -y dist-upgrade"
-
-elif [[ ${RE_JOB_IMAGE} =~ strict_artifacts$ ]]; then
-  # Set the apt artifact mode
-  export RPC_APT_ARTIFACT_MODE="strict"
-  echo "export RPC_APT_ARTIFACT_MODE=strict" >> /opt/rpc-openstack/RE_ENV
-  export RPC_APT_ARTIFACT_ENABLED="yes"
-  echo "export RPC_APT_ARTIFACT_ENABLED=yes" >> /opt/rpc-openstack/RE_ENV
-fi
-
-# Set the appropriate scenario variables
-if [[ "${RE_JOB_SCENARIO}" == "ceph" ]]; then
-  echo "export DEPLOY_CEPH=yes" >> /opt/rpc-openstack/RE_ENV
-  echo "export DEPLOY_SWIFT=no" >> /opt/rpc-openstack/RE_ENV
-elif [[ "${RE_JOB_SCENARIO}" == "ironic" ]]; then
-  echo "export DEPLOY_IRONIC=yes" >> /opt/rpc-openstack/RE_ENV
-fi
-
 # generate infra1 deploy script
 cat > /opt/rpc-openstack/deploy-infra1.sh <<EOF
 #!/bin/bash
@@ -151,11 +119,6 @@ pushd /opt/rpc-openstack
   scripts/deploy.sh
 popd
 pushd /opt/rpc-openstack/playbooks
-  openstack-ansible -i 'localhost,' \
-                    -e 'apt_target_group=localhost' \
-                    -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
-                    -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
-                    site-artifacts.yml
   openstack-ansible openstack-ansible-install.yml
 popd
 pushd /opt/openstack-ansible/scripts

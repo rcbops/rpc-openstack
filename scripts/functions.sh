@@ -33,7 +33,7 @@ export INFLUX_PORT="${INFLUX_PORT:-8086}"
 export BUILD_TAG="${BUILD_TAG:-testing}"
 
 # RPC-OpenStack product release, this variable is used in the config playbooks.
-export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-pike}"
+export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-queens}"
 
 # OSA release branch
 if [ -z ${OSA_RELEASE_BRANCH+x} ]; then
@@ -54,15 +54,10 @@ done
 # Other
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 export HOST_RCBOPS_DOMAIN="rpc-repo.rackspace.com"
-export HOST_RCBOPS_REPO=${HOST_RCBOPS_REPO:-"http://${HOST_RCBOPS_DOMAIN}"}
-export RPC_APT_ARTIFACT_ENABLED=${RPC_APT_ARTIFACT_ENABLED:-"no"}
-export RPC_APT_ARTIFACT_MODE=${RPC_APT_ARTIFACT_MODE:-"strict"}
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml)"
 export OSA_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c osa)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
-export RPC_ANSIBLE_VERSION="2.3.2.0"
-export RPC_ANSIBLE="${HOST_RCBOPS_REPO}/pools/${RPC_OS}/ansible/ansible-${RPC_ANSIBLE_VERSION}-py2-none-any.whl"
-export RPC_LINKS="${HOST_RCBOPS_REPO}/links"
+export RPC_ANSIBLE_VERSION="2.4.3.0"
 
 # Validate that RPC_RELEASE is set and has a value
 # before continuing. If it is not, then something has

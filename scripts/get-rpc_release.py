@@ -54,7 +54,7 @@ parser.add_argument(
     '-r',
     '--release_series',
     action=EnvDefault,
-    default='pike',
+    default='queens',
     envvar='RPC_PRODUCT_RELEASE',
     help='Release series, optionally set using the RPC_PRODUCT_RELEASE'
          'environment variable.',
