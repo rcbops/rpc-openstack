@@ -74,13 +74,6 @@ Next, change add the following line to the `[auth]` section in
 test_accounts_file = /root/.tempest/etc/accounts.yaml
 ```
 
-Finally, in the same file, modify `use_dynamic_credentials` by setting it
-to `False`:
-
-``` conf
-use_dynamic_credentials = False
-```
-
 For more information please see: https://docs.openstack.org/developer/tempest/configuration.html#pre-provisioned-credentials
 
 ### Run RefStack
@@ -104,6 +97,7 @@ must show 100% compliance for required tests.
 
 As an example,
 [this is our Newton (14.0) report](https://refstack.openstack.org/#/results/6a4a6cb4-13ba-42d2-8789-f456060370ca)
+[and this is our Pike (16.0) report](https://refstack.openstack.org/#/results/2d2e8eaa-4cf5-4494-a418-97dbb1fee74a)
 
 ## Troubleshooting
 
