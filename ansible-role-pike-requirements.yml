@@ -5,11 +5,11 @@
 - name: filebeat
   scm: git
   src: https://github.com/rcbops/rpc-role-filebeat.git
-  version: ce4c1b16e9bfd7b27a874b95218cde2bc1293bec
+  version: 4bbf30df1fb3c36c3e0a9fbfebd999d3ed087a57
 - name: kibana
   scm: git
   src: https://github.com/rcbops/rpc-role-kibana.git
-  version: 342fa3b2af826c6cae3c4b6e91edb112f5ba883b
+  version: cc4821fa4487df87564e009aaccd421465e14ce3
 - name: elasticsearch
   scm: git
   src: https://github.com/elastic/ansible-elasticsearch
@@ -17,4 +17,4 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: a4fedd0a6218be84a77c62b0377ff2e133e8ad72
+  version: 80a0b6579c7404a885038778391fd7113a2c9272
