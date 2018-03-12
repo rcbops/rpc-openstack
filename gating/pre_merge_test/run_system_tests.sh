@@ -29,20 +29,29 @@ pushd "${SYS_TEST_SOURCE}"
 
 # Checkout defined branch
 git checkout "${SYS_TEST_BRANCH}"
+echo "${SYS_TEST_SOURCE} at SHA $(git rev-parse HEAD)"
 
 # Gather submodules
 git submodule init
 git submodule update --recursive
 
-
+# fail softly if the tests or artifact gathering fails
+set +e
 # 2. Execute script from repo
 ./execute_tests.sh
+[[ $? -ne 0 ]] && RC=$?  # record non-zero exit code
 
 # 3. Collect results from script
-mkdir -p "${RE_HOOK_RESULT_DIR}" || true      #ensure that result dir exists
+mkdir -p "${RE_HOOK_RESULT_DIR}" || true      # ensure that result dir exists
 tar -xf test_results.tar -C "${RE_HOOK_RESULT_DIR}"
+# record non-zero exit code if not already recorded
+[[ $? -ne 0 ]] && [[ ! -z ${RC+x} ]] && RC=$?
 
 # 4. Collect logs from script
 mkdir -p "${RE_HOOK_ARTIFACT_DIR}" || true    #ensure that artifact dir exists
 # Molecule does not produce logs outside of STDOUT
+# record non-zero exit code if not already recorded
+[[ $? -ne 0 ]] && [[ ! -z ${RC+x} ]] && RC=$?
 popd
+# if exit code is recorded, use it, otherwise let it exit naturally
+[[ -z ${RC+x} ]] && exit ${RC}
