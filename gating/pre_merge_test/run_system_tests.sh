@@ -21,8 +21,7 @@ export SYS_INVENTORY="/opt/openstack-ansible/playbooks/inventory"
 
 ## Main ----------------------------------------------------------------------
 
-
-# 1. Clone test repo into working directory.
+# 1. Clone test repository into working directory.
 pushd "${SYS_WORKING_DIR}"
 git clone "${SYS_TEST_SOURCE_REPO}"
 pushd "${SYS_TEST_SOURCE}"
@@ -37,21 +36,23 @@ git submodule update --recursive
 
 # fail softly if the tests or artifact gathering fails
 set +e
-# 2. Execute script from repo
+
+# 2. Execute script from repository
 ./execute_tests.sh
 [[ $? -ne 0 ]] && RC=$?  # record non-zero exit code
 
 # 3. Collect results from script
-mkdir -p "${RE_HOOK_RESULT_DIR}" || true      # ensure that result dir exists
+mkdir -p "${RE_HOOK_RESULT_DIR}" || true  # ensure that result directory exists
 tar -xf test_results.tar -C "${RE_HOOK_RESULT_DIR}"
 # record non-zero exit code if not already recorded
 [[ $? -ne 0 ]] && [[ ! -z ${RC+x} ]] && RC=$?
 
 # 4. Collect logs from script
-mkdir -p "${RE_HOOK_ARTIFACT_DIR}" || true    #ensure that artifact dir exists
+mkdir -p "${RE_HOOK_ARTIFACT_DIR}" || true  # ensure that artifact directory exists
 # Molecule does not produce logs outside of STDOUT
 # record non-zero exit code if not already recorded
 [[ $? -ne 0 ]] && [[ ! -z ${RC+x} ]] && RC=$?
 popd
+
 # if exit code is recorded, use it, otherwise let it exit naturally
 [[ -z ${RC+x} ]] && exit ${RC}
