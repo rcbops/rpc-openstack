@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Deploy virualenv for testing enironment molecule/ansible-playbook/infratest
+## Deploy virtualenv for testing environment molecule/ansible-playbook/infratest
 
 ## Shell Opts ----------------------------------------------------------------
 
