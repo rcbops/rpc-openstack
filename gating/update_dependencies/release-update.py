@@ -72,9 +72,9 @@ if rpc_rc_release == rpc_release:
         rpc_release_semver_new = semver.bump_prerelease(rpc_release_semver)
 
     # Otherwise, this is a standard release and we
-    # just need to do a minor version increment.
+    # just need to do a patch version increment.
     else:
-        rpc_release_semver_new = semver.bump_minor(rpc_release_semver)
+        rpc_release_semver_new = semver.bump_patch(rpc_release_semver)
 
     # Now add the 'r' prefix back on for the final version
     rpc_release = "r" + rpc_release_semver_new
