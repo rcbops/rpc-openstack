@@ -28,6 +28,8 @@ export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
 ## Main ----------------------------------------------------------------------
 
+echo "rpc-openstack at SHA $(git rev-parse HEAD)"
+
 if [[ $RE_JOB_ACTION == "tox-test" ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_tox.sh)"
 elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
