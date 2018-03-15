@@ -69,7 +69,7 @@
   tasks:
     - name: Install the OpenStack-Ansible
       shell: |
-        ANSIBLE_ROLE_FILE='/tmp/does-not-exist' ./scripts/bootstrap-ansible.sh
+        ./scripts/bootstrap-ansible.sh
       args:
         chdir: "/opt/openstack-ansible"
       when:

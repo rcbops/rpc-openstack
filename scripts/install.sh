@@ -44,18 +44,7 @@ function install_ansible_source {
   /opt/rpc-ansible/bin/pip install "ansible==${RPC_ANSIBLE_VERSION}"
 }
 
-function install_ansible_wheel {
-  /opt/rpc-ansible/bin/pip install --trusted-host "${HOST_RCBOPS_DOMAIN}" \
-                                   --find-links "${RPC_LINKS}" \
-                                   "${RPC_ANSIBLE}"
-}
-
 ## Main ----------------------------------------------------------------------
-# If /opt/openstack-ansible exists, delete it if it is not a git checkout
-if [[ -d "/opt/openstack-ansible" ]] && [[ ! -d "/opt/openstack-ansible/.git" ]]; then
-  mv /opt/openstack-ansible /opt/openstack-ansible.original
-fi
-
 # NOTE(cloudnull): Create a virtualenv for RPC-Ansible which is used for
 #                  initial bootstrap purposes. While playbooks can be run using
 #                  this ansible release in the general sense, the OSA ansible
@@ -63,23 +52,9 @@ fi
 virtualenv /opt/rpc-ansible
 
 # Install a Ansible for RPC-OpenStack.
-install_ansible_wheel || install_ansible_source
-
-# NOTE(cloudnull): This will only created the minimal wrapper if
-#                  OpenStack-Ansible has not been installed. The
-#                  wrapper is single use until OSA is prep'd.
-#                  Because OSA will overrwite this file the
-#                  command is setting the exit code when a Run
-#                  succeeds. Variable exports are here so that
-#                  the dependent roles RPC-OpenStack is using,
-#                  pip_install, has access to all of the things
-#                  it will need.
-if [[ ! -f "/usr/local/bin/openstack-ansible" ]]; then
-  cp "${SCRIPT_PATH}/openstack-ansible-wrapper.sh" /usr/local/bin/openstack-ansible
-  chmod +x /usr/local/bin/openstack-ansible
-fi
+install_ansible_source
 
 # Setup the basic release
 pushd "${SCRIPT_PATH}/../playbooks"
-  openstack-ansible site-release.yml
+  /opt/rpc-ansible/bin/ansible-playbook -i 'localhost,' site-release.yml
 popd

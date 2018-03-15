@@ -1,0 +1,16 @@
+- name: logstash
+  scm: git
+  src: https://github.com/rcbops/rpc-role-logstash.git
+  version: df5e033dbd9942c091299079a470b192c2f20050
+- name: filebeat
+  scm: git
+  src: https://github.com/rcbops/rpc-role-filebeat.git
+  version: ce4c1b16e9bfd7b27a874b95218cde2bc1293bec
+- name: kibana
+  scm: git
+  src: https://github.com/rcbops/rpc-role-kibana.git
+  version: 342fa3b2af826c6cae3c4b6e91edb112f5ba883b
+- name: elasticsearch
+  scm: git
+  src: https://github.com/elastic/ansible-elasticsearch
+  version: eb82e1b055ddcac2ee9d9c1b38bcf9b093962a95
