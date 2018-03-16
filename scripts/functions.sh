@@ -53,7 +53,6 @@ done
 
 # Other
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
-export HOST_RCBOPS_DOMAIN="rpc-repo.rackspace.com"
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml)"
 export OSA_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c osa)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
