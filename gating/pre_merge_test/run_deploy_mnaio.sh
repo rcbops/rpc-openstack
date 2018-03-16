@@ -119,7 +119,7 @@ pushd /opt/rpc-openstack
   scripts/deploy.sh
 popd
 pushd /opt/rpc-openstack/playbooks
-  openstack-ansible openstack-ansible-install.yml
+  /opt/rpc-ansible/bin/ansible-playbook -i 'localhost,' openstack-ansible-install.yml
 popd
 pushd /opt/openstack-ansible/scripts
   python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
