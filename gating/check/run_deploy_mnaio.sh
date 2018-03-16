@@ -16,7 +16,7 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -evu
+set -exu
 
 echo "Building a Multi Node AIO (MNAIO)"
 echo "+-------------------- MNAIO ENV VARS --------------------+"
@@ -123,7 +123,7 @@ done
 # generate infra1 deploy script
 cat > /opt/rpc-openstack/deploy-infra1.sh <<EOF
 #!/bin/bash
-set -evu
+set -exu
 # starts the deploy from infra1 vm
 source /opt/rpc-openstack/RE_ENV
 
