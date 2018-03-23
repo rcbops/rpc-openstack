@@ -1,0 +1,9 @@
+---
+fixes:
+  - |
+    `scripts/get-rpc_release.py` was ignoring the RPC_PRODUCT_RELEASE
+    environment variable to allow for branchless deployments. This fix
+    will cause allow RPC_PRODUCT_RELEASE to overfide the branch 
+    default.
+
+
