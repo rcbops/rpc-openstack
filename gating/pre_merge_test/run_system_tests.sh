@@ -30,7 +30,14 @@ pushd "${SYS_TEST_SOURCE}"
 git checkout "${SYS_TEST_BRANCH}"
 echo "${SYS_TEST_SOURCE} at SHA $(git rev-parse HEAD)"
 
-# 2. Execute script from repo
+# Gather submodules
+git submodule init
+git submodule update --recursive
+
+# fail softly if the tests or artifact gathering fails
+set +e
+
+# 2. Execute script from repository
 ./execute_tests.sh
 [[ $? -ne 0 ]] && RC=$?  # record non-zero exit code
 
