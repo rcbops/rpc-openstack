@@ -40,18 +40,8 @@ if [ "${DEPLOY_AIO}" != false ]; then
   ## Run the basic installation script
   basic_install
 
-  # Implement the artifact configuration
-  openstack-ansible -i 'localhost,' \
-                    -e 'apt_target_group=localhost' \
-                    -e "apt_artifact_enabled='${RPC_APT_ARTIFACT_ENABLED}'" \
-                    -e "apt_artifact_mode='${RPC_APT_ARTIFACT_MODE}'" \
-                    "${SCRIPT_PATH}/../playbooks/site-artifacts.yml"
-
   # Install OpenStack-Ansible
   openstack-ansible "${SCRIPT_PATH}/../playbooks/openstack-ansible-install.yml"
-
-  # Set the AIO config bootstrap options to take apt artifacts into consideration
-  export ANSIBLE_PARAMETERS=-e@${SCRIPT_PATH}/../playbooks/files/bootstrap-aio-opts.yml
 
   ## Create the AIO
   pushd /opt/openstack-ansible

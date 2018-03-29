@@ -44,12 +44,6 @@ function install_ansible_source {
   /opt/rpc-ansible/bin/pip install "ansible==${RPC_ANSIBLE_VERSION}"
 }
 
-function install_ansible_wheel {
-  /opt/rpc-ansible/bin/pip install --trusted-host "${HOST_RCBOPS_DOMAIN}" \
-                                   --find-links "${RPC_LINKS}" \
-                                   "${RPC_ANSIBLE}"
-}
-
 ## Main ----------------------------------------------------------------------
 # If /opt/openstack-ansible exists, delete it if it is not a git checkout
 if [[ -d "/opt/openstack-ansible" ]] && [[ ! -d "/opt/openstack-ansible/.git" ]]; then
@@ -63,7 +57,7 @@ fi
 virtualenv /opt/rpc-ansible
 
 # Install a Ansible for RPC-OpenStack.
-install_ansible_wheel || install_ansible_source
+install_ansible_source
 
 # NOTE(cloudnull): This will only created the minimal wrapper if
 #                  OpenStack-Ansible has not been installed. The
