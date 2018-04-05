@@ -17,3 +17,11 @@
   scm: git
   src: https://github.com/rcbops/openstack-ansible-openstack_hosts
   version: 235ec6f0fc5570e7c657b243bcf4208cc2c7739c
+# Note (odyssey4me):
+# PBR released a new version after newton went EOL,
+# causing various builds to break. We therefore use
+# a patched fork here to resolve the issue.
+- name: repo_build
+  scm: git
+  src: https://github.com/rcbops/openstack-ansible-repo_build
+  version: a87ce06b2c5ae567ab28a13085dfbf81393cd153
