@@ -10,14 +10,14 @@
   scm: git
   src: https://github.com/ceph/ansible-ceph-osd.git
   version: 434a13f4d3ee3f60c410052d2670d5dfea034bf8
-# Created for JIRA RLM-322
-# Frank: this is a forked ansible role for removing
+# Note (Frank) - RLM-322:
+# this is a forked ansible role for removing
 # hardcoded period mark from hostname template.
 - name: openstack_hosts
   scm: git
   src: https://github.com/rcbops/openstack-ansible-openstack_hosts
-  version: 235ec6f0fc5570e7c657b243bcf4208cc2c7739c
-# Note (odyssey4me):
+  version: c6bab1bd157ec807b6b696f65290a4549e041fc5
+# Note (odyssey4me) - RO-4147:
 # PBR released a new version after newton went EOL,
 # causing various builds to break. We therefore use
 # a patched fork here to resolve the issue.
