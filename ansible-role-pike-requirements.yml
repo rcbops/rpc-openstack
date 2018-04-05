@@ -17,4 +17,4 @@
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
-  version: c3c7a06010112409679893a47e513d7f4e84f4af
+  version: 3ca7caca8a34e71024b5f36a8f5adf0e94e03ca1
