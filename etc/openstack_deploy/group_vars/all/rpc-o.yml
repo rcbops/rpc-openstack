@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# The base repo URL for all artifacts
-# TODO(odyssey4me):
-# Switch this to HTTPS before we use this in production but only once the
-# container artifact build issues with https are figured out
-rpco_mirror_base_url: "http://rpc-repo.rackspace.com"
-
 # List of files to override using the OSA horizon role
 rackspace_static_files_folder: "/opt/rpc-openstack/logo_files"
 horizon_custom_uploads:
@@ -37,7 +31,3 @@ horizon_custom_uploads:
   favicon:
     src: "{{ rackspace_static_files_folder }}/favicon.ico"
     dest: img/favicon.ico
-
-# Use RPC python package index
-repo_build_pip_extra_indexes:
-  - "https://rpc-repo.rackspace.com/pools"

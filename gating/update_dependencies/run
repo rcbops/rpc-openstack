@@ -47,10 +47,6 @@ WORKSPACE="${WORKSPACE:-/opt}"
 # Note for local testing: this script expects to be executed from the root
 # of an rpco clone, checkout at master.
 
-# Pull in the latest version of the rpc-artifacts using the submodule. Remove
-# and revise this when the use of submodules has been terminated.
-git submodule update --init --remote
-
 ## Get current head of osa
 # We clean up any existing directory to make
 # testing simpler (re-executing this script)
