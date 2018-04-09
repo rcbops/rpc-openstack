@@ -1,4 +1,0 @@
-[submodule "scripts/artifacts-building"]
-	path = scripts/artifacts-building
-	url = https://github.com/rcbops/rpc-artifacts
-	branch = master
