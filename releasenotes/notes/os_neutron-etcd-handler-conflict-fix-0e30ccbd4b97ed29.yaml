@@ -1,0 +1,13 @@
+---
+fixes:
+  - | 
+    `ansible-role-requirements.yml` is modified to point to a forked
+    openstack-ansible-os_neutron repo with a fix to a bug that is 
+    causing neutron services to run on old versions after a minor
+    upgrade.  This was due to a conflict on the os_neutron and its
+    etcd dependancy's handler for reloading the systemd daemon. When
+    the .service files were updated the call to reload the systemd 
+    daemon was being handled by the etcd role and skipped.  The 
+    fix was to rename the handler for os_neutron role to keep the 
+    conflict from happening.
+
