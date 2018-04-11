@@ -101,6 +101,7 @@ else
 If there is no RC branch then the mainline branch is considered unreleased and
 therefore the rpc_release value is left alone. It is still important for the
 dependencies to be updated regularly though, so that part continues to be done."
+  export RC_BRANCH_VERSION=""
 fi
 
 
