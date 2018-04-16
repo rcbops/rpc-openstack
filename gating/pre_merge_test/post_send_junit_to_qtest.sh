@@ -26,6 +26,7 @@ source "${VENV_NAME}/bin/activate"
 VENV_PIP="${VENV_NAME}/bin/pip"
 
 # Install zigzag from PyPI
+${VENV_PIP} install -e git+git://github.com/ryan-rs/qtest-swagger-client.git@master#egg=swagger-client-1.0.0
 ${VENV_PIP} install --process-dependency-links rpc-zigzag
 
 # Search for xml files in RE_HOOK_RESULT_DIR
