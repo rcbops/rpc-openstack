@@ -17,7 +17,6 @@ export DEPLOY_MAGNUM=${DEPLOY_MAGNUM:-"no"}
 export DEPLOY_HARDENING=${DEPLOY_HARDENING:-"yes"}
 export DEPLOY_RPC=${DEPLOY_RPC:-"yes"}
 export ANSIBLE_FORCE_COLOR=${ANSIBLE_FORCE_COLOR:-"true"}
-export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-""}
 export UNAUTHENTICATED_APT=${UNAUTHENTICATED_APT:-no}
 
 export BASE_DIR='/opt/rpc-openstack'
@@ -26,6 +25,9 @@ export RPCD_DIR='/opt/rpc-openstack/rpcd'
 export CONTRIB_DIR='/opt/rpc-openstack/contrib'
 export RPCD_VARS='/etc/openstack_deploy/user_rpco_variables_defaults.yml'
 export RPCD_SECRETS='/etc/openstack_deploy/user_rpco_secrets.yml'
+# We need to ensure get-pip.py uses the global-requirements as a constraint
+export BOOTSTRAP_OPTS=${BOOTSTRAP_OPTS:-"pip_get_pip_options='-c $OA_DIR/global-requirement-pins.txt'"}
+
 
 source ${BASE_DIR}/scripts/functions.sh
 
@@ -48,6 +50,11 @@ esac
 # begin the bootstrap process
 cd ${OA_DIR}
 
+# This is a hack to fix pip10 issues on Mitaka.
+# Mitaka is EOL so we can't change upstream to allow PIP_OPTS to be specified,
+# but UPPER_CONSTRAINTS_FILE is configurable. so we can set it to be what it is
+# in OSA, but with an added '-U'
+export UPPER_CONSTRAINTS_FILE="http://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt?id=$(awk '/requirements_git_install_branch:/ {print $2}' playbooks/defaults/repo_packages/openstack_services.yml) -U"
 ./scripts/bootstrap-ansible.sh
 
 # This removes Ceph roles downloaded using their pre-Ansible-Galaxy names
@@ -69,11 +76,13 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
                      awk '/d[b-z]+ disk 0/{ if ($4>m && $4>='$DATA_DISK_MIN_SIZE'){m=$4; d=$1}}; END{print d}')
   # Only set the secondary disk device option if there is one
   if [ -n "${DATA_DISK_DEVICE}" ]; then
-    export BOOTSTRAP_OPTS="${BOOTSTRAP_OPTS} bootstrap_host_data_disk_device=${DATA_DISK_DEVICE}"
+    export BOOTSTRAP_OPTS="${BOOTSTRAP_OPTS} -e bootstrap_host_data_disk_device=${DATA_DISK_DEVICE}"
   fi
   # force the deployment of haproxy for an AIO
   export DEPLOY_HAPROXY="yes"
   if [[ ! -d /etc/openstack_deploy/ ]]; then
+    # bootstrap-aio.sh will fail if pip10 is present so lets remove it and
+    # replace it with the versions from global-requirement-pins.txt
     ./scripts/bootstrap-aio.sh
     # move OSA variables file to AIO location.
     mv /etc/openstack_deploy/user_variables.yml /etc/openstack_deploy/user_osa_aio_variables.yml
