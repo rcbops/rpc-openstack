@@ -71,6 +71,8 @@ export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
 # place variable in file to be sourced by parent calling script 'run'
 export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
 echo "export MNAIO_SSH=\"${MNAIO_SSH}\"" > "${MNAIO_VAR_FILE}"
+echo "export RPC_RELEASE=\"${RPC_RELEASE}\"" > "${MNAIO_VAR_FILE}"
+echo "export RPC_PRODUCT_RELEASE=\"${RPC_PRODUCT_RELEASE}\"" > "${MNAIO_VAR_FILE}"
 
 ## Main --------------------------------------------------------------------
 
