@@ -10,6 +10,30 @@
         - "{{ artifacts_dir }}/{{ inventory_hostname }}/containers"
       delegate_to: "localhost"
 
+    - name: Generate ARA reports
+      shell: |
+        ARA_CMD="/opt/ansible-runtime/bin/ara"
+        if [[ -e ${ARA_CMD} ]]; then
+            ARA_REPORT_PATH="/openstack/log/ara-report"
+            mkdir -p ${ARA_REPORT_PATH}
+            ${ARA_CMD} generate html ${ARA_REPORT_PATH}
+            ${ARA_CMD} generate junit ${ARA_REPORT_PATH}/deployment_results.xml
+            cp "${HOME}/.ara/ansible.sqlite" ${ARA_REPORT_PATH}/
+        fi
+      args:
+        executable: /bin/bash
+      # We never want a failure of this task to cause a
+      # failure in the playbook, so we ignore errors to
+      # ensure that the task shows failure, but does not
+      # fail the playbook.
+      ignore_errors: yes
+      # This needs to run wherever the ansible runtime is.
+      # For AIO deployments, the deploy host is localhost.
+      # For MNAIO deployments, the deploy host is infra1.
+      when:
+        - (inventory_hostname == 'localhost') or
+          (inventory_hostname == 'infra1')
+
     - name: Grab host data
       command: >
                rsync
@@ -89,7 +113,7 @@
       find:
         paths: "{{ artifacts_dir }}"
         recurse: yes
-        patterns: "tempest_results.xml"
+        patterns: "deployment_results.xml,tempest_results.xml"
       register: results_files
 
     - name: Copy tempest results to RE_HOOK_RESULT_DIR
