@@ -59,6 +59,8 @@ lxc_cache_prep_pre_commands: |
     if [ -a /etc/resolv.conf ]; then
       mv /etc/resolv.conf /etc/resolv.conf.org
     fi
+    # remove any existing /etc/resolv.conf and start fresh
+    rm /etc/resolv.conf || true
     # Use the LXC host's dnsmasq service as a resolver
     echo "nameserver {{ lxc_net_address | default('10.0.3.1') }}" > /etc/resolv.conf
     # Add the host's repository keys, including the RPC-O keys
@@ -87,10 +89,4 @@ lxc_cache_prep_pre_commands: |
       # Execute the downgrade of all the packages at the same time so that
       # we reduce the likelihood of conflicts.
       apt-get install -y --force-yes ${pkg_downgrade_list_versioned}
-    fi
-    # Return the resolver to its previous state.
-    if [ -a /etc/resolv.conf.org ]; then
-      mv /etc/resolv.conf.org /etc/resolv.conf
-    else
-      rm -f /etc/resolv.conf
     fi
