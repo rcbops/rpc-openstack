@@ -9,7 +9,6 @@ set -x
 export QTEST_API_TOKEN=$RPC_ASC_QTEST_API_TOKEN
 VENV_NAME="venv-qtest"
 PROJECT_ID="76551"
-TEST_CYCLE="CL-1"
 
 ## Functions -----------------------------------------------------------------
 
@@ -40,7 +39,7 @@ echo "Attempting upload of ${#xml_files[@]} XML files"
 printf '%s\n' "${xml_files[@]}"
 for i in "${xml_files[@]}"; do
     # Use <TOOL NAME> to process and upload to qtest
-    if zigzag $i $PROJECT_ID $TEST_CYCLE; then
+    if zigzag $i $PROJECT_ID; then
         echo "Upload Success: $i"
     else
         echo "Upload Failure: $i"
