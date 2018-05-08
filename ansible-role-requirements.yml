@@ -27,9 +27,18 @@
   version: a87ce06b2c5ae567ab28a13085dfbf81393cd153
 # Note (shananigans) - RE-1396:
 # Handler naming conflict on os_neutron and etc dependancy
-# causing neutron services to remain on old versions on 
+# causing neutron services to remain on old versions on
 # minor upgrades. Using a patched fork to fix.
 - name: os_neutron
   scm: git
   src: https://github.com/rcbops/openstack-ansible-os_neutron
   version: cf7802828f85b38deccb8d9674fc229780a50da1
+# Note (odyssey4me) - RO4188:
+# In https://review.openstack.org/547448 a registered
+# var was misspelled. To fix this, we back ported
+# https://review.openstack.org/557792 into a fork given
+# that the upstream repo is now EOL.
+- name: pip_install
+  scm: git
+  src: https://github.com/rcbops/openstack-ansible-pip_install
+  version: ed68b924b8f54e9c45fb068ef27efe6367ccc48d
