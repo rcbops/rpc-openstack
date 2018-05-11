@@ -16,7 +16,7 @@ export SYS_VENV_NAME="${SYS_VENV_NAME:-venv-molecule}"
 SYS_TEST_SOURCE_BASE="${SYS_TEST_SOURCE_BASE:-https://github.com/rcbops}"
 SYS_TEST_SOURCE="${SYS_TEST_SOURCE:-rpc-openstack-system-tests}"
 SYS_TEST_SOURCE_REPO="${SYS_TEST_SOURCE_BASE}/${SYS_TEST_SOURCE}"
-SYS_TEST_BRANCH="${SYS_TEST_BRANCH:-master}"
+SYS_TEST_BRANCH="${RE_JOB_BRANCH:-master}"
 export SYS_INVENTORY="/opt/openstack-ansible/playbooks/inventory"
 
 ## Main ----------------------------------------------------------------------
