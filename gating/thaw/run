@@ -16,6 +16,8 @@ cp /opt/root_ssh_backup/.ssh/id_rsa.pub /root/.ssh
 cp /opt/root_ssh_backup/.ssh/known_hosts /root/.ssh ||:
 ssh-keyscan localhost >> /root/.ssh/known_hosts
 
+# Re-populate /etc/hosts file with container data
+/usr/local/bin/openstack-host-hostfile-setup.sh
 
 cd /opt/openstack-ansible/playbooks/
 
