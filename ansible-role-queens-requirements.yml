@@ -13,4 +13,4 @@
 - name: elasticsearch
   scm: git
   src: https://github.com/elastic/ansible-elasticsearch
-  version: 046f5c25000dba22160b40cc9a1cf45423557537
+  version: 0179bd1eefa6d5c6358f3db29b9e2ad902625393
