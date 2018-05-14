@@ -19,6 +19,9 @@ ssh-keyscan localhost >> /root/.ssh/known_hosts
 # Remove Jenkins workspace reference from openstack-ansible.rc
 sed -i -e 's@/var/lib/jenkins/workspace/.*/rpc-openstack@/opt/rpc-openstack@g' /usr/local/bin/openstack-ansible.rc
 
+# Re-populate /etc/hosts file with container data
+/usr/local/bin/openstack-host-hostfile-setup.sh
+
 cd /opt/rpc-openstack/openstack-ansible/playbooks/
 
 # Use implicit fact gathering to ensure the fact cache is ignored,
