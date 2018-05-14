@@ -52,6 +52,11 @@ Set the ``DEPLOY_AIO`` variable:
 export DEPLOY_AIO='yes'
 ```
 
+Set the ``RPC_APT_ARTIFACT_MODE`` variable to loose:
+```
+export RPC_APT_ARTIFACT_MODE="loose"
+```
+
 Run the ``deploy.sh`` script. It is recommended to run this script in either
 a tmux or screen session. It will take about 90 minutes to complete:
 ```
@@ -99,7 +104,14 @@ maas_api_key: YourAPIKey
        `openstack_user_config.yml.aio`
     2. There is a tool to generate the inventory for RAX datacenters, otherwise
        it will need to be coded by hand.
-3. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
+3. By default, the Apt Artifact mode is set to strict.  This mode is currently
+   unreliable so the recommendation is to use loose mode when doing an install.
+
+   ```
+   export RPC_APT_ARTIFACT_MODE=loose
+   ```
+
+4. Run the RPC deploy script: `cd /opt/rpc-openstack && ./scripts/deploy.sh`
   1. If building without the ELK stack, set `DEPLOY_ELK=no` before running
 
 # Environment Variables for deploy.sh
