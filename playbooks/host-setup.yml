@@ -1,0 +1,29 @@
+---
+
+- name: Create, format and mount machines lv
+  hosts: shared-infra_hosts
+  become: true
+  gather_facts: true
+  vars:
+    host_vg: lxc
+
+  pre_tasks:
+    - name: Create machines lv
+      lvol:
+        vg: "{{ host_vg }}"
+        lv: machines00
+        size: 50G
+
+    - name: Format the machines lv
+      filesystem:
+        fstype: btrfs
+        dev: "/dev/{{ host_vg }}/machines00"
+
+  roles:
+    - role: systemd_mount
+      systemd_mounts:
+        - what: "/dev/{{ host_vg }}/machines00"
+          where: "/var/lib/machines"
+          options: "defaults,noatime,nodiratime,compress=lzo,commit=120,{{ (ansible_kernel is version_compare('4.5', '>=')) | ternary('space_cache=v2', 'space_cache') }}"
+          type: "btrfs"
+          state: 'started'
