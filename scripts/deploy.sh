@@ -45,6 +45,11 @@ if [ "${DEPLOY_AIO}" != false ]; then
     -i 'localhost,' \
     "${SCRIPT_PATH}/../playbooks/openstack-ansible-install.yml"
 
+  # RO-4206
+  # Use fork of Ansible which exposes the apt errors so that we
+  # can diagnose the cause of the apt fetch failures.
+  export ANSIBLE_PACKAGE="git+https://github.com/rcbops/ansible@v2.4.4.0-with_apt_errors"
+
   ## Create the AIO
   pushd /opt/openstack-ansible
     bash -c "ANSIBLE_ROLE_FILE='/tmp/does-not-exist' scripts/gate-check-commit.sh"
