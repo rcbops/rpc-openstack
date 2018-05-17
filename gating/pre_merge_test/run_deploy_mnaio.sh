@@ -127,7 +127,7 @@ pushd /opt/openstack-ansible/scripts
   python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
 popd
 pushd /opt/openstack-ansible/playbooks
-  openstack-ansible setup-everything.yml
+  openstack-ansible setup-hosts.yml setup-infrastructure.yml setup-openstack.yml
 popd
 EOF
 
