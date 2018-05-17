@@ -58,6 +58,13 @@ if [ "${DEPLOY_AIO}" != false ]; then
   # role.
   echo 'Debug::Acquire::http "true";' > /etc/apt/apt.conf.d/99debug
 
+  # NOTE(odyssey4me):
+  # The test execution nodes do not have these packages installed, so
+  # we need to do that until an upstream patch is merged and used by
+  # RPC-O which does not require it to be installed, or installs the
+  # required packages, before running gate-check-commit.
+  apt-get install -y iptables util-linux
+
   ## Create the AIO
   pushd /opt/openstack-ansible
     bash -c "ANSIBLE_ROLE_FILE='/tmp/does-not-exist' scripts/gate-check-commit.sh"
