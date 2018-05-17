@@ -117,6 +117,12 @@ cat > /opt/rpc-openstack/deploy-infra1.sh <<EOF
 set -evu
 # starts the deploy from infra1 vm
 source /opt/rpc-openstack/RE_ENV
+
+# RO-4206
+# Use fork of Ansible which exposes the apt errors so that we
+# can diagnose the cause of the apt fetch failures.
+export ANSIBLE_PACKAGE="git+https://github.com/rcbops/ansible@v2.3-OSA_SHA-with_apt_errors"
+
 pushd /opt/rpc-openstack
   scripts/deploy.sh
 popd
@@ -127,7 +133,7 @@ pushd /opt/openstack-ansible/scripts
   python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
 popd
 pushd /opt/openstack-ansible/playbooks
-  openstack-ansible setup-everything.yml
+  openstack-ansible setup-hosts.yml setup-infrastructure.yml setup-openstack.yml
 popd
 EOF
 
