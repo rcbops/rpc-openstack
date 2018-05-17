@@ -48,6 +48,21 @@ if [ "${DEPLOY_AIO}" != false ]; then
   # can diagnose the cause of the apt fetch failures.
   export ANSIBLE_PACKAGE="git+https://github.com/rcbops/ansible@v2.3-OSA_SHA-with_apt_errors"
 
+  # RO-4211
+  # Implement debug output for apt so that we can see more information
+  # about whether the 'Acquire-by-hash' feature is being used, and what
+  # might be causing it to fall back to the old style.
+  # This config file should be copied into containers by the lxc_hosts
+  # role.
+  echo 'Debug::Acquire::http "true";' > /etc/apt/apt.conf.d/99debug
+
+  # NOTE(odyssey4me):
+  # The test execution nodes do not have these packages installed, so
+  # we need to do that until an upstream patch is merged and used by
+  # RPC-O which does not require it to be installed, or installs the
+  # required packages, before running gate-check-commit.
+  apt-get install -y iptables util-linux
+
   ## Create the AIO
   pushd /opt/openstack-ansible
     bash -c "ANSIBLE_ROLE_FILE='/tmp/does-not-exist' scripts/gate-check-commit.sh"
