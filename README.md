@@ -94,17 +94,6 @@ and `openstack-ansible-install.yml` playbooks to install the correct version.
 openstack-ansible site-release.yml openstack-ansible-install.yml -e 'osa_release=master'
 ```
 
-###### Optional | Host setup
-
-Depending on how the host OS was deployed there may be additional setup steps
-required to prepare the host machines. The `host-setup.yml` playbook exists to
-assist with some of those additional steps. If **required** or **necessary**,
-run this playbook.
-
-``` shell
-openstack-ansible host-setup.yml -e 'host_vg=lxc'
-```
-
 ##### Running the playbooks
 
 Once the deploy configuration has been completed please refer to the

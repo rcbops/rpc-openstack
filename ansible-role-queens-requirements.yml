@@ -14,7 +14,3 @@
   scm: git
   src: https://github.com/elastic/ansible-elasticsearch
   version: 0179bd1eefa6d5c6358f3db29b9e2ad902625393
-- name: systemd_mount
-  scm: git
-  src: https://github.com/openstack/ansible-role-systemd_mount
-  version: master
