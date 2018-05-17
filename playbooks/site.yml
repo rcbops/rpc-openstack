@@ -14,6 +14,5 @@
 # limitations under the License.
 
 - include: site-release.yml
-- include: host-setup.yml
 - include: site-logging.yml
 - include: site-openstack.yml

@@ -31,6 +31,3 @@ horizon_custom_uploads:
   favicon:
     src: "{{ rackspace_static_files_folder }}/favicon.ico"
     dest: img/favicon.ico
-
-# Sets the default RPC-OpenStack container backing store.
-lxc_container_backing_store: machinectl
