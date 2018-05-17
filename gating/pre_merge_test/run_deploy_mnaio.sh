@@ -133,6 +133,13 @@ pushd /opt/openstack-ansible/scripts
   python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
 popd
 pushd /opt/openstack-ansible/playbooks
+  # RO-4211
+  # Implement debug output for apt so that we can see more information
+  # about whether the 'Acquire-by-hash' feature is being used, and what
+  # might be causing it to fall back to the old style.
+  # This config file should be copied into containers by the lxc_hosts
+  # role.
+  ansible hosts -m lineinfile -a 'create=yes dest=/etc/apt/apt.conf.d/99debug line="Debug::Acquire::http \"true\";"'
   openstack-ansible setup-hosts.yml setup-infrastructure.yml setup-openstack.yml
 popd
 EOF
