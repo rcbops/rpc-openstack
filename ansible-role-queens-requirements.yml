@@ -5,7 +5,7 @@
 - name: filebeat
   scm: git
   src: https://github.com/rcbops/rpc-role-filebeat.git
-  version: dd2c65f2bc827b45417ecafc4ef1db8f4fda4643
+  version: 0b9b02dc26c5812d2e5a8b8266832a9dba2fe4e1
 - name: kibana
   scm: git
   src: https://github.com/rcbops/rpc-role-kibana.git
