@@ -16,11 +16,11 @@
 - name: logstash
   scm: git
   src: https://github.com/rcbops/rpc-role-logstash.git
-  version: f42bd2ccdc9c4608e2a357a9f088e3873a6ecad4
+  version: 50438ef199e60eb6f604b057273f9c282063c246
 - name: filebeat
   scm: git
   src: https://github.com/rcbops/rpc-role-filebeat.git
-  version: ce4c1b16e9bfd7b27a874b95218cde2bc1293bec
+  version: 0b9b02dc26c5812d2e5a8b8266832a9dba2fe4e1
 - name: kibana
   scm: git
   src: https://github.com/rcbops/rpc-role-kibana.git
