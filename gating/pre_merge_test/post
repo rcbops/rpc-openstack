@@ -14,3 +14,10 @@ fi
 if [ $RE_JOB_ACTION == "system" ]; then
   bash -c "$(readlink -f $(dirname ${0})/post_send_junit_to_qtest.sh)"
 fi
+
+if [[ ! $RE_JOB_IMAGE =~ .*mnaio.* ]] && [[ "$RE_JOB_ACTION" != "system" ]]; then
+  # RE-1501
+  # Generate the dstat charts using the function built
+  # into OSA.
+  bash -c "source /opt/openstack-ansible/scripts/scripts-library.sh; generate_dstat_charts"
+fi
