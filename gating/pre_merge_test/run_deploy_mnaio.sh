@@ -23,6 +23,9 @@ echo "+-------------------- MNAIO ENV VARS --------------------+"
 env
 echo "+-------------------- MNAIO ENV VARS --------------------+"
 
+echo "Installing python"
+apt-get update && apt-get install -y python-minimal python-yaml
+
 ## Vars ----------------------------------------------------------------------
 
 # These vars are set by the CI environment, but are given defaults
