@@ -13,6 +13,7 @@ echo "+-------------------- ENV VARS --------------------+"
 ## Vars ----------------------------------------------------------------------
 
 export DEPLOY_AIO="true"
+export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
 # These vars are set by the CI environment, but are given defaults
 # here to cater for situations where someone is executing the test
 # outside of the CI environment.
@@ -27,10 +28,16 @@ export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
 ## Main ----------------------------------------------------------------------
 
+echo "rpc-openstack at SHA $(git rev-parse HEAD)"
+
 if [[ $RE_JOB_ACTION == "tox-test" ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_tox.sh)"
 elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_deploy_mnaio.sh)"
+  source "${MNAIO_VAR_FILE}"
 else
   bash -c "$(readlink -f $(dirname ${0})/run_deploy.sh)"
+fi
+if [[ $RE_JOB_ACTION == "system" ]]; then
+  bash -c "$(readlink -f $(dirname ${0})/run_system_tests.sh)"
 fi
