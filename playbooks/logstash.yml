@@ -22,6 +22,10 @@
       apt_key:
         url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
         state: "present"
+    - name: Debian - Add HTTPS Apt Transport
+      apt:
+        name: apt-transport-https
+        state: present
 
   roles:
     - role: "logstash"
