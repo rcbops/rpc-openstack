@@ -64,6 +64,21 @@ glance_glance_api_conf_overrides:
   DEFAULT:
     image_cache_dir: None
 
+# Octavia tuning
+# activate octavia - Queens only
+octavia_v2: True
+octavia_v1: False
+# Keep this while there is no Barbican or Vault
+octavia_tls_listener_enabled: False
+
+# Octavia HA settings
+octavia_loadbalancer_topology: ACTIVE_STANDBY
+octavia_spare_amphora_pool_size: 0
+octavia_enable_anti_affinity: "{{ lookup('env', 'DEPLOY_AIO') != 'yes' }}"
+
+# no event streamer
+octavia_event_streamer: False
+
 # Elasticsearch global variables
 elasticsearch_http_port: 9200
 elasticsearch_tcp_port: 9300
