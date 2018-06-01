@@ -6,6 +6,10 @@
 # an RPCO deployment. It should fix things that are broken by the switch
 # to a difference instance (eg IPs, hostname)
 
+ORIG_IP=$(
+  cat /etc/openstack_deploy/openstack_user_config.yml | \
+  awk '/external_lb_vip_address/{print $2}' | sed -e 's/[ "]//g'
+)
 
 # Need to ensure SSH config is ok before running ansible
 mkdir -p /root/.ssh
@@ -29,6 +33,7 @@ cd /opt/rpc-openstack/openstack-ansible/playbooks/
 # IP fact being up to date.
 export ANSIBLE_GATHERING=implicit
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/thaw.yml
+openstack-ansible -v /opt/rpc-openstack/gating/thaw/fix_endpoints.yml -e orig_ip=${ORIG_IP}
 openstack-ansible -t haproxy_server-config haproxy-install.yml
 
 lxc-autostart --all
