@@ -10,6 +10,9 @@ export QTEST_API_TOKEN=$RPC_ASC_QTEST_API_TOKEN
 VENV_NAME="venv-qtest"
 PROJECT_ID="76551"
 
+# Work-around for ASC-592. Hardcoded for proper results in qtest
+export RPC_PRODUCT_RELEASE="newton"
+
 ## Functions -----------------------------------------------------------------
 
 source $(dirname ${0})/../../scripts/functions.sh

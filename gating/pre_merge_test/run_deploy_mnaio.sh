@@ -41,6 +41,10 @@ export RE_JOB_TRIGGER="${RE_JOB_TRIGGER:-PR}"
 export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 
+## Functions -----------------------------------------------------------------
+export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
+source ${BASE_DIR}/scripts/functions.sh
+
 ## OSA MNAIO Vars
 export PARTITION_HOST="true"
 export NETWORK_BASE="172.29"
@@ -70,9 +74,7 @@ export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
 # place variable in file to be sourced by parent calling script 'run'
 export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
 echo "export MNAIO_SSH=\"${MNAIO_SSH}\"" > "${MNAIO_VAR_FILE}"
-
-## Functions -----------------------------------------------------------------
-source /opt/rpc-openstack/scripts/functions.sh
+echo "export RPC_RELEASE=\"${RPC_RELEASE}\"" >> "${MNAIO_VAR_FILE}"
 
 ## Main --------------------------------------------------------------------
 
