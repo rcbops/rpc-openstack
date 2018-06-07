@@ -18,6 +18,13 @@ source $(dirname ${0})/../../scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
+echo "Killing dstat process to ensure the data file is flushed for log collection."
+if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
+  ansible -m shell -a 'kill $(pgrep -f dstat) || true' pxe_servers || true
+else
+  kill $(pgrep -f dstat) || true
+fi
+
 echo "#### BEGIN LOG COLLECTION ###"
 
 collect_logs_cmd="ansible-playbook"
@@ -44,7 +51,6 @@ echo "#### BEGIN DSTAT CHART GENERATION ###"
 # Unfortunately using the OSA function does not work, and
 # it spits out a bunch of junk we don't want either.
 # We therefore replicate the content of it here instead.
-kill $(pgrep -f dstat) || true
 dstat_files=$(find ${RE_HOOK_ARTIFACT_DIR} -name 'dstat.csv')
 if [ -n "${dstat_files}" ]; then
   if [[ ! -d /opt/dstat_graph ]]; then
