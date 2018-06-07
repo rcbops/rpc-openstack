@@ -1,0 +1,17 @@
+- hosts: utility_all[0]
+  user: root
+  tasks:
+    - name: Get a list of public endpoints
+      shell: |
+        . {{ ansible_env.HOME }}/openrc
+        openstack endpoint list --interface public --column ID --column URL -f json
+      args:
+        executable: /bin/bash
+      register: public_endpoints
+    - name: Update all public endpoints w/ new public IP
+      shell: |
+        . {{ ansible_env.HOME }}/openrc
+        openstack endpoint set --url '{{ item.URL | replace(orig_ip, hostvars['localhost']['ansible_default_ipv4']['address']) }}' {{ item.ID }}
+      args:
+        executable: /bin/bash
+      with_items: "{{ public_endpoints.stdout | from_json }}"
