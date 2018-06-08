@@ -19,6 +19,9 @@ SYS_TEST_SOURCE_REPO="${SYS_TEST_SOURCE_BASE}/${SYS_TEST_SOURCE}"
 SYS_TEST_BRANCH="${RE_JOB_BRANCH:-master}"
 export SYS_INVENTORY="/opt/openstack-ansible/playbooks/inventory"
 
+# Work-around for ASC-592. Hardcoded for proper results in qtest
+export RPC_PRODUCT_RELEASE="newton"
+
 ## Main ----------------------------------------------------------------------
 
 # 1. Clone test repository into working directory.
