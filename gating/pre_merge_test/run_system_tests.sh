@@ -20,7 +20,7 @@ SYS_TEST_BRANCH="${RE_JOB_BRANCH:-master}"
 export SYS_INVENTORY="/opt/openstack-ansible/playbooks/inventory"
 
 # Work-around for ASC-592. Hardcoded for proper results in qtest
-export RPC_PRODUCT_RELEASE="newton"
+export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-newton}"
 
 ## Main ----------------------------------------------------------------------
 
