@@ -18,6 +18,13 @@ source $(dirname ${0})/../../scripts/functions.sh
 
 ## Main ----------------------------------------------------------------------
 
+echo "Killing dstat process to ensure the data file is flushed for log collection."
+if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
+  ansible -m shell -a 'kill $(pgrep -f dstat) || true' pxe_servers || true
+else
+  kill $(pgrep -f dstat) || true
+fi
+
 echo "#### BEGIN LOG COLLECTION ###"
 
 collect_logs_cmd="ansible-playbook"
@@ -38,26 +45,26 @@ eval $collect_logs_cmd || true
 
 echo "#### END LOG COLLECTION ###"
 
-if [[ ! $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
-  echo "#### BEGIN DSTAT CHART GENERATION ###"
-  # RE-1501
-  # Generate the dstat charts.
-  # Unfortunately using the OSA function does not work, and
-  # it spits out a bunch of junk we don't want either.
-  # We therefore replicate the content of it here instead.
-  kill $(pgrep -f dstat) || true
+echo "#### BEGIN DSTAT CHART GENERATION ###"
+# RE-1501
+# Generate the dstat charts.
+# Unfortunately using the OSA function does not work, and
+# it spits out a bunch of junk we don't want either.
+# We therefore replicate the content of it here instead.
+dstat_files=$(find ${RE_HOOK_ARTIFACT_DIR} -name 'dstat.csv')
+if [ -n "${dstat_files}" ]; then
   if [[ ! -d /opt/dstat_graph ]]; then
     git clone https://github.com/Dabz/dstat_graph /opt/dstat_graph
   fi
   pushd /opt/dstat_graph
-    if [[ -e /openstack/log/instance-info/dstat.csv ]]; then
-      /usr/bin/env bash -e ./generate_page.sh /openstack/log/instance-info/dstat.csv >> /openstack/log/instance-info/dstat.html
-    else
-      echo "Source file dstat.csv not found. Skipping report generation."
-    fi
+    for dstat_file in ${dstat_files}; do
+      /usr/bin/env bash -e ./generate_page.sh ${dstat_file} > ${dstat_file%.csv}.html
+    done
   popd
-  echo "#### END DSTAT CHART GENERATION ###"
+else
+  echo "No dstat.csv source files found. Skipping report generation."
 fi
+echo "#### END DSTAT CHART GENERATION ###"
 
 # Only enable snapshot when triggered by a commit push.
 # This is to enable image updates whenever a PR is merged, but not before
