@@ -21,6 +21,14 @@ if [[ "$(basename ${PWD})" == "rpc-openstack" ]]; then
   fi
 fi
 
+# NOTE(odyssey4me):
+# The test execution nodes do not have these packages installed in
+# order for boostrap-aio to complete. This is used for AIO and MNAIO
+# tests, but applicable only for host bootstrapping for tests, so we
+# add this here rather than in the normal production execution.
+apt-get update
+apt-get install -y iptables util-linux
+
 # Clone the kibana-selenium git repository
 git clone -b ${KIBANA_SELENIUM_BRANCH} ${KIBANA_SELENIUM_REPO} /opt/kibana-selenium
 
@@ -31,7 +39,6 @@ cd /opt/kibana-selenium
 # https://github.com/ariya/phantomjs/issues/14900
 # https://bugs.launchpad.net/ubuntu/+source/phantomjs/+bug/1578444
 #apt-get install -y phantomjs
-apt-get update
 apt-get install -y fontconfig
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
 tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
