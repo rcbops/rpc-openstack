@@ -54,10 +54,6 @@ if [[ "${DEPLOY_AIO}" == "yes" ]]; then
   # execute the AIO configuration bootstrap
   source "${BASE_DIR}/scripts/bootstrap-aio.sh"
 
-  # set the ansible inventory hostname to the host's name
-  sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/openstack_user_config.yml
-  sed -i "s/aio1/$(hostname)/" /etc/openstack_deploy/conf.d/*.yml
-
 fi
 
 # move OSA secrets to correct locations
