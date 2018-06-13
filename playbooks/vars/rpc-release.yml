@@ -17,5 +17,5 @@ rpc_product_releases:
     rpc_release: r16.2.0
   queens:
     maas_release: 1.7.3
-    osa_release: c96379091c859548f698a3e25101b36d774faf29
+    osa_release: 650ab5953340c7c1fa7ebc01ccd983012bc60adb
     rpc_release: r17.0.1
