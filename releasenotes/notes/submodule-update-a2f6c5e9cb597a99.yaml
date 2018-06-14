@@ -1,0 +1,26 @@
+---
+critical:
+  - |
+    From this release on, a rcbops fork is used for the openstack-ansible
+    submodule. Due to this change, a pre-existing checkout of rpc-openstack will
+    require a submodule sync to ensure that the submodule is pointing to the
+    right repository. Failing to keep the submodule in sync will result in some
+    unexpected behavior, primarily you will be missing any code updates that
+    have been pushed up to the forked repository. To resolve this execute the
+    following:
+
+    .. code-block:: shell
+
+      $ git config --list | grep \^submodule
+      submodule.openstack-ansible.active=true
+      submodule.openstack-ansible.url=https://git.openstack.org/openstack/openstack-ansible
+
+      $ git submodule sync
+      Synchronizing submodule url for 'openstack-ansible'
+
+      $ git submodule update --init
+      Submodule path 'openstack-ansible': checked out '5644b36dbd74352d7503f809760a0684f0a84a9d'
+
+      $ git config --list | grep \^submodule
+      submodule.openstack-ansible.active=true
+      submodule.openstack-ansible.url=https://github.com/rcbops/openstack-ansible
