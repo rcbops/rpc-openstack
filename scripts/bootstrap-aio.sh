@@ -27,6 +27,14 @@ source ${BASE_DIR}/scripts/functions.sh
 # Check the openstack-ansible submodule status
 check_submodule_status
 
+# NOTE(odyssey4me):
+# The test execution nodes do not have these packages installed in
+# order for bootstrap-aio to complete.
+# iptables   - used for the br-vxlan network config
+# util-linux - used by lsblk for data disk device detection
+apt-get update
+apt-get install -y iptables util-linux
+
 # Get minimum disk size
 DATA_DISK_MIN_SIZE="$((1024**3 * $(awk '/bootstrap_host_data_disk_min_size/{print $2}' ${OA_DIR}/tests/roles/bootstrap-host/defaults/main.yml) ))"
 # Determine the largest secondary disk device available for repartitioning which meets the minimum size requirements
