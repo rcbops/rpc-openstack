@@ -76,7 +76,6 @@
       tags:
         - skip_ansible_lint
 
-
     - name: List containers
       command: "lxc-ls -1"
       failed_when:
