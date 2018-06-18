@@ -34,6 +34,24 @@
         - (inventory_hostname == 'localhost') or
           (inventory_hostname == 'infra1')
 
+    - name: Collect journald logs
+      command: >
+               journalctl
+               --output json
+               --no-pager
+      register: host_journald_logs
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint
+
+    - name: Write journald logs to a file
+      copy:
+        content: {{ host_journald_logs.stdout }}
+        dest: /var/log/{{ inventory_hostname }}-journald.log.json
+      ignore_errors: true
+      tags:
+        - skip_ansible_lint
+
     - name: Grab host data
       command: >
                rsync
@@ -57,6 +75,7 @@
       ignore_errors: true
       tags:
         - skip_ansible_lint
+
 
     - name: List containers
       command: "lxc-ls -1"
