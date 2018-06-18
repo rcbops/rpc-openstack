@@ -22,6 +22,10 @@
       apt_key:
         url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
         state: "present"
+      register: apt_res
+      delay: 15
+      retries: 3
+      until: apt_res | success
 
     - name: Create ElasticSearch data directory on host
       file:
