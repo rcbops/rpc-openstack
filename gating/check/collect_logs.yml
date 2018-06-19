@@ -46,7 +46,7 @@
 
     - name: Write journald logs to a file
       copy:
-        content: {{ host_journald_logs.stdout }}
+        content: "{{ host_journald_logs.stdout }}"
         dest: /var/log/{{ inventory_hostname }}-journald.log.json
       ignore_errors: true
       tags:
