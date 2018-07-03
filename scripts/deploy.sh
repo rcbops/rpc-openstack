@@ -22,8 +22,6 @@ set -o pipefail
 export SCRIPT_PATH="$(readlink -f $(dirname ${0}))"
 
 ## Functions -----------------------------------------------------------------
-source "${SCRIPT_PATH}/functions.sh"
-
 function exit_notice {
   cat "${SCRIPT_PATH}/../README.md"
 }
