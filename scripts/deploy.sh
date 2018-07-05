@@ -34,7 +34,7 @@ function basic_install {
 ## Main ----------------------------------------------------------------------
 
 # Setup OpenStack
-if [ "${DEPLOY_AIO}" != false ]; then
+if [ "${DEPLOY_AIO:-false}" != false ]; then
   ## Run the basic installation script
   basic_install
 
