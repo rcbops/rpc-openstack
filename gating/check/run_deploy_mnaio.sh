@@ -80,7 +80,11 @@ echo "export RPC_PRODUCT_RELEASE=\"${RPC_PRODUCT_RELEASE}\"" >> "${MNAIO_VAR_FIL
 ## Main --------------------------------------------------------------------
 
 # capture all RE_ variables
-env | grep RE_ | sed 's/^/export /' > /opt/rpc-openstack/RE_ENV
+> /opt/rpc-openstack/RE_ENV
+env | grep RE_ | while read -r match; do
+  varName=$(echo ${match} | cut -d= -f1)
+  echo "export ${varName}='${!varName}'" >> /opt/rpc-openstack/RE_ENV
+done
 
 # checkout openstack-ansible-ops
 if [ ! -d "/opt/openstack-ansible-ops" ]; then
