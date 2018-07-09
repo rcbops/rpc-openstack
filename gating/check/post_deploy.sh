@@ -33,7 +33,7 @@ collect_logs_cmd+=" --extra-vars='artifacts_dir=${RE_HOOK_ARTIFACT_DIR}'"
 collect_logs_cmd+=" --extra-vars='result_dir=${RE_HOOK_RESULT_DIR}'"
 
 if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
-  collect_logs_cmd+=" --extra-vars='target_hosts=pxe_servers'"
+  collect_logs_cmd+=" --extra-vars='target_hosts=pxe_servers:localhost'"
   collect_logs_cmd+=" --inventory='/opt/openstack-ansible-ops/multi-node-aio/playbooks/inventory/hosts'"
 else
   collect_logs_cmd+=" --extra-vars='target_hosts=localhost'"
