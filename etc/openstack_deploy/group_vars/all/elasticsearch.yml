@@ -21,6 +21,11 @@ es_api_host: "{{ container_address }}"
 es_api_port: "{{ elasticsearch_http_port }}"
 es_version: "{{ elasticsearch_version }}"
 es_major_version: "{{ elasticsearch_major_version }}"
+es_basic_auth_username: "admin"
+es_basic_auth_password: "{{ elasticsearch_basic_auth_password }}"
+es_api_basic_auth_username: "admin"
+es_api_basic_auth_password: "{{ elasticsearch_basic_auth_password }}"
+
 
 es_config:
   node.name: "{{ container_name }}"
