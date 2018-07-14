@@ -13,7 +13,7 @@
 - name: elasticsearch
   scm: git
   src: https://github.com/elastic/ansible-elasticsearch
-  version: 8b92ab9edcfe67756086ba860b357dd49e9e2220
+  version: ce6f83bf6a73c8d54cd098c488c746126d3ee3f9
 - name: rcbops_openstack-ops
   scm: git
   src: https://github.com/rsoprivatecloud/openstack-ops
