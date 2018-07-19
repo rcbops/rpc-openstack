@@ -37,7 +37,7 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 tmux
 cd /opt/rpc-openstack
 export DEPLOY_AIO=true
-export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
@@ -61,14 +61,14 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
 #### Configure and deploy the cloud
 
 To configure the installation please refer to the upstream OpenStack-Ansible
-documentation regarding basic [system setup](https://docs.openstack.org/project-deploy-guide/openstack-ansible/queens/configure.html).
+documentation regarding basic [system setup](https://docs.openstack.org/project-deploy-guide/openstack-ansible/latest/configure.html).
 
 ##### OpenStack-Ansible Installation
 
@@ -79,8 +79,8 @@ created for convenience and will maintain impotency.
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
-openstack-ansible openstack-ansible-install.yml
+export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
+/opt/rpc-ansible/bin/ansible-playbook -i 'localhost,' playbooks/openstack-ansible-install.yml
 ```
 
 ###### Optional | Setting the OpenStack-Ansible release
@@ -97,7 +97,7 @@ openstack-ansible site-release.yml openstack-ansible-install.yml -e 'osa_release
 ##### Running the playbooks
 
 Once the deploy configuration has been completed please refer to the
-OpenStack-Ansible documentation regarding [running the playbooks](https://docs.openstack.org/project-deploy-guide/openstack-ansible/queens/run-playbooks.html).
+OpenStack-Ansible documentation regarding [running the playbooks](https://docs.openstack.org/project-deploy-guide/openstack-ansible/latest/run-playbooks.html).
 
 ----
 
@@ -130,12 +130,12 @@ To run a basic system upgrade set the `${RPC_PRODUCT_RELEASE}` option, re-run
 ``` shell
 tmux
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="queens"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 openstack-ansible openstack-ansible-install.yml
 ```
 
-Once basic system configuration has completed, [run through the upgrade process](https://docs.openstack.org/openstack-ansible/queens/user/minor-upgrade.html)
+Once basic system configuration has completed, [run through the upgrade process](https://docs.openstack.org/openstack-ansible/latest/user/minor-upgrade.html)
 for the specified product release.  
 
 ### Perform a Major Product Upgrade (BETA)
@@ -151,8 +151,8 @@ export RPC_PRODUCT_RELEASE="master"  # This needs to be set to the new product
 openstack-ansible openstack-ansible-install.yml
 ```
 
-Once the deployment is ready either [run the major upgrade script](https://docs.openstack.org/openstack-ansible/queens/user/script-upgrade.html)
-or [run the manual upgrade](https://docs.openstack.org/openstack-ansible/queens/user/manual-upgrade.html)
+Once the deployment is ready either [run the major upgrade script](https://docs.openstack.org/openstack-ansible/latest/user/script-upgrade.html)
+or [run the manual upgrade](https://docs.openstack.org/openstack-ansible/latest/user/manual-upgrade.html)
 process.
 
 ### Testing and Gating

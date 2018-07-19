@@ -52,12 +52,11 @@ rpc_release = release_data['rpc_release']
 # standard.
 
 release_naming_standard = re.compile(
-    "^r[0-9]+.[0-9]+.[0-9]+(-(alpha|beta).[0-9]+)?$")
+    "^r[0-9]+.[0-9]+.[0-9]+(-(alpha|beta).[0-9]+)?$|^master$")
 
 assert release_naming_standard.match(rpc_release), (
     "The rpc_release value of %s does not comply with the release naming"
     " standard. Please correct it!" % rpc_release)
-
 # Extract the SemVer-compliant portion of the version (no 'r' prefix)
 rpc_release_semver = re.sub('^r', '', rpc_release)
 
@@ -67,17 +66,18 @@ if rpc_rc_release == rpc_release:
 
     # If the current version is a prerelease version,
     # then increment the prerelease.
-    rpc_release_parts = semver.parse(rpc_release_semver)
-    if rpc_release_parts['prerelease'] is not None:
-        rpc_release_semver_new = semver.bump_prerelease(rpc_release_semver)
 
-    # Otherwise, this is a standard release and we
-    # just need to do a patch version increment.
-    else:
-        rpc_release_semver_new = semver.bump_patch(rpc_release_semver)
+    if rpc_release != "master":
+        rpc_release_parts = semver.parse(rpc_release_semver)
+        if rpc_release_parts['prerelease'] is not None:
+            rpc_release_semver_new = semver.bump_prerelease(rpc_release_semver)
+        # Otherwise, this is a standard release and we
+        # just need to do a patch version increment.
+        else:
+            rpc_release_semver_new = semver.bump_patch(rpc_release_semver)
 
     # Now add the 'r' prefix back on for the final version
-    rpc_release = "r" + rpc_release_semver_new
+        rpc_release = "r" + rpc_release_semver_new
 
 # Adjust the maas release
 release_data['maas_release'] = maas_release

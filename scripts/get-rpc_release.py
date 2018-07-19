@@ -53,7 +53,7 @@ parser.add_argument(
     '-r',
     '--release_series',
     action=EnvDefault,
-    default='queens',
+    default='master',
     envvar='RPC_PRODUCT_RELEASE',
     help='Release series, optionally set using the RPC_PRODUCT_RELEASE'
          'environment variable.',

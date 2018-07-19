@@ -33,7 +33,7 @@ export INFLUX_PORT="${INFLUX_PORT:-8086}"
 export BUILD_TAG="${BUILD_TAG:-testing}"
 
 # RPC-OpenStack product release, this variable is used in the config playbooks.
-export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-queens}"
+export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-master}"
 
 # OSA release branch
 if [ -z ${OSA_RELEASE_BRANCH+x} ]; then
@@ -56,7 +56,7 @@ export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml)"
 export OSA_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c osa)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
-export RPC_ANSIBLE_VERSION="2.4.3.0"
+export RPC_ANSIBLE_VERSION="2.5.5"
 
 # Validate that RPC_RELEASE is set and has a value
 # before continuing. If it is not, then something has
