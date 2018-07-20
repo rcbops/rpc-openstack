@@ -97,9 +97,12 @@ with TempDirMake() as mkd:
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE
         )
-        p = subprocess.check_output(['git', 'log', '-n', '1', '--format=%H'])
-        item['version'] = p.strip()
-
+        if item['version'] != 'master':
+            p = subprocess.check_output(
+                ['git', 'log', '-n', '1', '--format=%H'])
+            item['version'] = p.strip()
+        else:
+            item['version'] = 'master'
 
 with open(requirements_file, 'w') as f:
     f.write(
