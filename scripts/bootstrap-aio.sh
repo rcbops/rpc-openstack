@@ -52,15 +52,23 @@ fi
 # artifacts are not available then the updates
 # repo is needed.
 # The RPCO_APT_ARTIFACTS_AVAILABLE env var is
-# used to provide the right information to the
-# bootstrap-aio.yml playbook which rewrites the
-# /etc/apt/sources.list file.
+# used to determine whether the bootstrap-aio.yml
+# playbook should implement UCA or not.
 if apt_artifacts_available; then
   export RPCO_APT_ARTIFACTS_AVAILABLE="yes"
 else
   export RPCO_APT_ARTIFACTS_AVAILABLE="no"
   rm -f ${BASE_DIR}/group_vars/all/apt.yml
   sed -i '/^# Apt artifact repo configuration$/,$d' ${RPCD_DIR}/etc/openstack_deploy/user_rpco_variables_defaults.yml
+  # Return the apt sources to the original set of upstream sources.
+  # This is necessary for builds which run on the nodepool nodes.
+  # They already have the sources pre-configured to use the artifact
+  # repository for a fixed RPC-O version and we need to ensure that
+  # there is access to the upstream sources too for PR tests that
+  # change the value for rpc_release.
+  if [[ -f "/etc/apt/sources.list.original" ]]; then
+    cp /etc/apt/sources.list.original /etc/apt/sources.list
+  fi
 fi
 
 # Run AIO bootstrap playbook
