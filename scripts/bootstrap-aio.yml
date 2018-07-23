@@ -237,10 +237,6 @@
 - name: Execute the OSA AIO bootstrap
   include: "{{ lookup('env', 'OA_DIR') }}/tests/bootstrap-aio.yml"
   vars:
-    bootstrap_host_apt_distribution_suffix_list: >-
-      {{ ((lookup('env', 'RPCO_APT_ARTIFACTS_AVAILABLE') | bool) and
-          (lookup('env', 'RPC_APT_ARTIFACT_MODE') == 'strict'))
-          | ternary([], ['updates', 'backports']) }}
     scenario: >-
       {%- if lookup('env', 'DEPLOY_IRONIC') | bool -%}
       ironic
