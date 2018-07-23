@@ -79,14 +79,19 @@ if rpc_rc_release == rpc_release:
     # Now add the 'r' prefix back on for the final version
         rpc_release = "r" + rpc_release_semver_new
 
-# Adjust the maas release
-release_data['maas_release'] = maas_release
+if rpc_release == 'master':
+    release_data['maas_release'] = 'master'
+    release_data['osa_release'] = 'master'
+    release_data['rpc_release'] = 'master'
+else:
+    # Adjust the maas release
+    release_data['maas_release'] = maas_release
 
-# Adjust the OSA SHA
-release_data['osa_release'] = osa_release
+    # Adjust the OSA SHA
+    release_data['osa_release'] = osa_release
 
-# Adjust the RPC release version
-release_data['rpc_release'] = rpc_release
+    # Adjust the RPC release version
+    release_data['rpc_release'] = rpc_release
 
 # Write the file
 with open(release_file, 'w') as f:
