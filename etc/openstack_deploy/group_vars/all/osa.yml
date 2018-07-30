@@ -71,6 +71,50 @@ glance_glance_api_conf_overrides:
   DEFAULT:
     image_cache_dir: None
 
+# Octavia tuning
+# activate octavia - Queens only
+octavia_v2: True
+octavia_v1: False
+# Keep this while there is no Barbican or Vault
+octavia_tls_listener_enabled: False
+
+# Octavia HA settings
+octavia_loadbalancer_topology: ACTIVE_STANDBY
+octavia_spare_amphora_pool_size: 0
+octavia_enable_anti_affinity: "{{ lookup('env', 'DEPLOY_AIO') != 'yes' }}"
+
+# no event streamer
+octavia_event_streamer: False
+octavia_sync_provisioning_status: False
+
+rackspace_octavia_files_folder: "/opt/rpc-openstack/playbooks/templates/octavia"
+octavia_user_haproxy_templates:
+  - src: "{{ rackspace_octavia_files_folder }}/base.j2"
+    dest: "/etc/octavia/templates/base.j2"
+  - src: "{{ rackspace_octavia_files_folder }}/haproxy.cfg.j2"
+    dest: "/etc/octavia/templates/haproxy.cfg.j2"
+  - src: "{{ rackspace_octavia_files_folder }}/macros.j2"
+    dest: "/etc/octavia/templates/macros.j2"
+octavia_haproxy_amphora_template: /etc/octavia/templates/haproxy.cfg.j2
+
+octavia_octavia_conf_overrides:
+  # Production clouds should be able to boot VMs in ten minutes
+  haproxy_amphora:
+    connection_max_retries: 120
+    build_active_retries: 120
+  keepalived_vrrp:
+    vrrp_check_interval: 2
+  # Wait for up to half an hour for nova to actually delete an instance and
+  # release the port
+  networking:
+    port_detach_timeout: 1800
+  task_flow:
+    engine: parallel
+
+# Elasticsearch global variables
+elasticsearch_http_port: 9200
+elasticsearch_tcp_port: 9300
+
 # Adding elastic search and kibana to haproxy_extra_services
 haproxy_extra_services:
   - service:
