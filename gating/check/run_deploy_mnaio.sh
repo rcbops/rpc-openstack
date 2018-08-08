@@ -122,7 +122,11 @@ popd
 echo "Multi Node AIO setup completed..."
 
 # capture all RE_ variables for push to infra1
-env | grep RE_ | sed 's/^/export /' > /opt/rpc-openstack/RE_ENV
+> /opt/rpc-openstack/RE_ENV
+env | grep RE_ | while read -r match; do
+  varName=$(echo ${match} | cut -d= -f1)
+  echo "export ${varName}='${!varName}'" >> /opt/rpc-openstack/RE_ENV
+done
 
 # check if we're using artifacts or not
 if [[ ${RE_JOB_IMAGE} =~ no_artifacts$ ]]; then
