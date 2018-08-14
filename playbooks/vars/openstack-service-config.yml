@@ -72,12 +72,19 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"
+  - name: Cirros-0.3.5 (kvm)
+    format: qcow2
+    url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+    properties:
+      hypervisor_type: "kvm"
   - name: Cirros-0.3.5
     format: qcow2
     url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+    properties:
+      hypervisor_type: "qemu"
   - name: Debian 9
     format: qcow2
     url: http://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.qcow2
@@ -86,7 +93,7 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"
   - name: OpenSuse Leap 42.3
@@ -97,7 +104,7 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"
   - name: Ubuntu 14.04 LTS
@@ -108,7 +115,7 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"
   - name: Ubuntu 16.04
@@ -119,7 +126,7 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"
   - name: Ubuntu 18.04
@@ -130,6 +137,6 @@ openstack_images:
       hw_disk_bus: "scsi"
       hw_vif_multiqueue_enabled: "true"
       hw_qemu_guest_agent: "yes"
-      hypervisor_type: "qemu"
+      hypervisor_type: "kvm"
       os_require_quiesce: "yes"
       img_config_drive: "optional"

@@ -55,6 +55,7 @@ done
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 export RPC_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml)"
 export OSA_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c osa)"
+export MAAS_RELEASE="$(${BASE_DIR}/scripts/get-rpc_release.py -f ${BASE_DIR}/playbooks/vars/rpc-release.yml -c maas)"
 export RPC_OS="${ID}-${VERSION_ID}-x86_64"
 export RPC_ANSIBLE_VERSION="2.4.3.0"
 
