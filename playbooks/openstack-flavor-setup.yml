@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: OpenStack flavor setup
-  hosts: utility_all[0]
+  hosts: localhost
   environment: "{{ deployment_environment_variables | default({}) }}"
   user: root
   tasks:
@@ -22,6 +22,7 @@
       pip:
         name: "shade"
         state: "present"
+        virtualenv: "/opt/ansible-runtime"
       register: install_packages
       until: install_packages|success
       retries: 5
