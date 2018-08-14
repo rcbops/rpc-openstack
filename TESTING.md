@@ -1,9 +1,9 @@
 # Testing for Rackspace Private Cloud Powered by OpenStack
 
 ## Overview
-RPCO is an integration of OpenStack-Ansible with logging (ELK), and Monitoring
-(MaaS). RPCO testing is not designed to test the individual services, it is
-designed to test the functionality of the whole platform.
+RPCO is an integration of OpenStack-Ansible, and Monitoring (MaaS). RPCO testing
+is not designed to test the individual services, it is designed to test the
+functionality of the whole platform.
 
 The reason for this is that each service is tested by the appropriate upstream,
 for example the deployment of Nova is tested in OSA, and the nova service itself

@@ -1,7 +1,0 @@
----
-fixes:
-  - Having logstash process it's own log can lead to a "feedback" loop
-    wherein an error that is logged into the logstash log will be
-    re-logged ad-infinitum, eventually filling the disk and crashing
-    logstash. This removes the filebeat shipping of the logstash.log
-    file to logstash.

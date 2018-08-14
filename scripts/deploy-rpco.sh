@@ -38,11 +38,8 @@ for file_name in user_secrets.yml user_rpco_secrets.yml; do
   fi
 done
 
-# Begin the RPC installation by uploading images and creating flavors and
-# deploying ELK.
+# Begin the RPC installation by uploading images and creating flavors.
 pushd "${SCRIPT_PATH}/../playbooks"
-  # Deploy and configure the ELK stack
-  openstack-ansible site-logging.yml
   # Create default VM images and flavors
   openstack-ansible site-openstack.yml
 popd

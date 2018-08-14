@@ -1,0 +1,5 @@
+---
+deprecations:
+  - Legacy RPC-OpenStack Elasticsearch components have all been removed. These
+    tools were no longer being maintained. All new ELK+ deployments are starting
+    from the new upstream `elk_metrics_6x` tooling.

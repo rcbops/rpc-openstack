@@ -22,7 +22,6 @@
     3. [The details](#the-details)
         1. [Adding the ability to be deployed](#ability-to-deploy)
         2. [Adding the necessary(if any) variables to default variable files](#add-variables)
-        3. [Adding ELK configurations](#add-elk-configs)
         4. [Adding the f5 configurations(TBD)](#add-f5-configs)
         5. [Adding MaaS(Monitoring) plugins](#add-maas-plugins)
         6. [Integration tests](#integration-tests)
@@ -208,7 +207,6 @@ Once the feature is out of beta, it will go into LA status. LA features must hav
 
   * Ability to be deployed via our bootstrap and deployment scripts (This is currently being changed as part of https://github.com/rcbops/u-suk-dev/issues/834)
   * All necessary addition of variables inserted in our group_vars/ or, for overrides of OSA existing group_vars, into [user_osa_varibles_defaults.yml](https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/user_osa_variables_defaults.yml)
-  * Integration with RPCO's ELK configurations
   * If the new project has a service that needs to be load-balanced, then f5 support for these services must be added into the [f5-config.py script](https://github.com/rcbops/rpc-openstack/tree/master/scripts#f5-configpy)
   * Must be monitored via a MaaS plugin
   * Documentation on how to deploy the feature/project with RPCO
@@ -237,33 +235,6 @@ For more information on the ``bootstrap-aio.yml`` playbook, please see https://g
 
 #### Adding the necessary (if any) variables to default variable files<a name="add-variables"></a>
 It might be necessary to specify OpenStack-Ansible or RPCO variable overrides so they take new values by default. To override these variables, they must be set in the proper variable files. For more information, please see https://github.com/rcbops/rpc-openstack/blob/master/rpcd/etc/openstack_deploy/README.rst
-
-#### Adding ELK configurations<a name="add-elk-configs"></a>
-First, add the filebeat configurations into the filebeat role's [default variable file](https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/filebeat/defaults/main.yml).
-For example, the filebeat configurations for the cinder logs will look like the following:
-```yaml
-
-filebeat_logging_paths:
-  - paths:
-    - '/var/log/cinder/*.log'
-    document_type: openstack
-    tags:
-    - openstack
-    - oslofmt
-    - cinder
-    multiline:
-      pattern: "{{ multiline_openstack_pattern }}"
-      negate: 'true'
-match: after
-```
-If the service you are adding does not have multiline logging, you may omit the multiline option.
-
-Next, add a logstash filter configuration template file for the service that you are adding. Please make sure to follow the numbering convention used for the other services i.e. ``21_myservice.conf``. For an example, please see:
-https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/logstash/templates/06-cinder.conf
-For more documentation about using filters with logstash, please see:
-https://www.elastic.co/guide/en/logstash/2.3/advanced-pipeline.html#configuring-grok-filter
-
-Finally, add the template file created above as an item in the ``logstash_post_install.yml`` task file, in the task "Deploy Logstash configuration files": https://github.com/rcbops/rpc-openstack/blob/master/rpcd/playbooks/roles/logstash/tasks/logstash_post_install.yml#L45
 
 #### Adding the f5 configurations<a name="add-f5-configs"></a>
 For information on how to add a service to our f5-config.py script, please see https://github.com/rcbops/rpc-openstack/blob/master/scripts/README.rst#f5-configpy
