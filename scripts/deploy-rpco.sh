@@ -41,7 +41,11 @@ done
 # Begin the RPC installation by uploading images and creating flavors.
 pushd "${SCRIPT_PATH}/../playbooks"
   # Create default VM images and flavors
-  openstack-ansible site-openstack.yml
+  if [ "${DEPLOY_AIO:-false}" != false ]; then
+    openstack-ansible site-openstack.yml -e 'openstack_images=[]'
+  else
+    openstack-ansible site-openstack.yml
+  fi
 popd
 
 pushd /opt/rpc-maas/playbooks

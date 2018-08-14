@@ -64,7 +64,7 @@ if [ "${DEPLOY_AIO:-false}" != false ]; then
   popd
 
   # Deploy RPC-OpenStack.
-  bash -c "${SCRIPT_PATH}/deploy-rpco.sh"
+  bash -c "DEPLOY_AIO=true ${SCRIPT_PATH}/deploy-rpco.sh"
 else
   basic_install
   exit_notice
