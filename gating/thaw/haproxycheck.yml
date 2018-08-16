@@ -5,7 +5,6 @@
     shell: |
       set -xeu
       # Check haproxy backends excluding elasticsearch
-      # TODO: Fix elk in thaw process.
       # Haproxy prints the stats iteration so if the line is "1" its ignored
       # Lines where the first field is hash are comments and are ignored
       # Field 6 is srv_op_state, and 2 is fully up.

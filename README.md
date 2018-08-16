@@ -155,6 +155,75 @@ Once the deployment is ready either [run the major upgrade script](https://docs.
 or [run the manual upgrade](https://docs.openstack.org/openstack-ansible/latest/user/manual-upgrade.html)
 process.
 
+
+### Remove legacy ELK from an RPC-OpenStack deployment and deploy ELK 6x.
+
+The following procedure will deactivate the legacy ELK tooling within an
+environment and redeploy the new tools.
+
+If the **optional** step to destroy the containers is not executed, the old
+containers will remain online but will no longer receive any more data.
+
+* Retrieve the ops tooling from openstack-ansible.
+
+``` shell
+git clone https://github.com/openstack/openstack-ansible-ops /opt/openstack-ansible-ops
+```
+
+* **OPTIONAL** | Destroy existing ELK related containers.
+
+``` shell
+openstack-ansible /opt/openstack-ansible/playbooks/lxc-containers-destroy.yml --limit 'elasticsearch_all:kibana_all:logstash_all'
+```
+
+* Move old config files out of the way.
+
+``` shell
+rm /etc/openstack_deploy/env.d/{elasicsearch,kibana,logstash}.yml
+```
+
+* Remove old containers from openstack-ansible inventory.
+
+``` shell
+for i in $(/opt/openstack-ansible/scripts/inventory-manage.py -l | grep -e elastic -e kibana -e logstash | awk '{print $2}'); do
+  /opt/openstack-ansible/scripts/inventory-manage.py -r "${i}"
+done
+```
+
+* Ensure the legacy implementation of `filebeat` is stopped and removed.
+
+``` shell
+cd /opt/openstack-ansible/playbooks
+ansible -m package  -a 'name=filebeat state=absent' all
+```
+
+* Copy the ELK `env.d` file into place.
+
+``` shell
+cp etc/openstack_deploy/env.d/elk.yml /etc/openstack_deploy/env.d/
+```
+
+* Create the new ELK containers.
+
+``` shell
+cd /opt/openstack-ansible/playbooks
+openstack-ansible lxc-containers-create.yml --limit 'log_hosts:elk_all'
+```
+
+* Switch to directory with ELK 6.x playbooks and bootstrap embedded ansible and
+  run the ELK 6x deployment.
+
+``` shell
+cd /opt/openstack-ansible-ops/elk_metrics_6x
+source bootstrap-embedded-ansible.sh
+ansible-playbook site.yml $USER_VARS
+```
+
+**NOTICE:** *the variable `$USER_VARS` is an option provided by the bootstrap
+embedded ansible script. This option is not required and is only provided as a
+convenience for sourcing the secrets files. Extra variable files can be added
+on the CLI as needed.*
+
 ### Testing and Gating
 
 Please see the documentation in [rpc-gating/README.md](https://github.com/rcbops/rpc-gating/blob/master/README.md)

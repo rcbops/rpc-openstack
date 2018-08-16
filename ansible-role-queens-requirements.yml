@@ -1,16 +1,20 @@
-- name: logstash
+---
+# Copyright 2014-2017, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# RPC-Support specific role
+- name: rcbops_openstack-ops
   scm: git
-  src: https://github.com/rcbops/rpc-role-logstash.git
-  version: bb3980f7642bb8ef192568129552a10419b78da6
-- name: filebeat
-  scm: git
-  src: https://github.com/rcbops/rpc-role-filebeat.git
-  version: 0b9b02dc26c5812d2e5a8b8266832a9dba2fe4e1
-- name: kibana
-  scm: git
-  src: https://github.com/rcbops/rpc-role-kibana.git
-  version: cc4821fa4487df87564e009aaccd421465e14ce3
-- name: elasticsearch
-  scm: git
-  src: https://github.com/elastic/ansible-elasticsearch
-  version: 89695d781cd923a164d21331cbc3ce1b9a819426
+  src: https://github.com/rsoprivatecloud/openstack-ops
+  version: 86c8e3c6327b5958b5eb3124455e3c12cd280e75

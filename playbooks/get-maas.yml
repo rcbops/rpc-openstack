@@ -16,6 +16,7 @@
 - name: Clone MaaS
   hosts: localhost
   environment: "{{ deployment_environment_variables | default({}) }}"
+  connection: local
   gather_facts: false
   tasks:
     - name: Clone RPC-MaaS

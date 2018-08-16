@@ -107,6 +107,12 @@
       when:
         - osa_release is undefined
 
+    - name: Set MaaS release option
+      set_fact:
+        maas_release: "{{ rpc_product_releases[rpc_product_release]['maas_release'] }}"
+      when:
+        - maas_release is undefined
+
     - name: Set the rpc-product bootstrapped variables
       set_fact:
         rpc_product_bootstrapped: "{{ rpc_openstack['rpc_product_bootstrapped'] | default('undefined') }}"
