@@ -72,7 +72,7 @@ glance_glance_api_conf_overrides:
     image_cache_dir: None
 
 # Octavia tuning
-# activate octavia - Queens only
+# activate octavia
 octavia_v2: True
 octavia_v1: False
 # Keep this while there is no Barbican or Vault
