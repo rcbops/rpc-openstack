@@ -75,3 +75,26 @@ if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]]; then
   echo "rpc-${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}" > /gating/thaw/image_name
   echo "### END SNAPSHOT PREP ###"
 fi
+
+if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]] && [[ ${RE_JOB_ACTION} == "deploy" ]]; then
+  echo "Preparing machine image artifacts."
+  pushd /opt/openstack-ansible-ops/multi-node-aio
+    ansible-playbook -vv -i ${MNAIO_INVENTORY:-"playbooks/inventory"} playbooks/save-vms.yml
+  popd
+
+  echo "Deleting unnecessary image files to prevent artifacting them."
+  find /data/images -name \*.img -not -name \*-base.img -delete
+
+  echo "Moving files to named folder for artifact upload."
+  mv /data/images /data/${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}
+
+  echo "Preparing machine image artifact upload configuration."
+  cat > component_metadata.yml <<EOF
+"artifacts": [
+  {
+    "type": "file",
+    "source": "/data/${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}"
+  }
+]
+EOF
+fi
