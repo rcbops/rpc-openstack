@@ -11,13 +11,6 @@ export GATING_PATH="$(readlink -f $(dirname ${0}))"
 # Set the base RPC-O directory which the functions use
 export BASE_DIR="$(readlink -f ${GATING_PATH}/../..)"
 
-# As get-rpc_release.py requires a yaml import, make
-# sure that it is installed and available.
-if ! python -c 'import yaml' &>/dev/null; then
-  echo "Python YAML library not available. Installing it."
-  apt-get install -y python-yaml
-fi
-
 # Source the functions
 source "${BASE_DIR}/scripts/functions.sh"
 

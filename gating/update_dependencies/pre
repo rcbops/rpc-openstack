@@ -2,25 +2,14 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -euv
+set -eux
 set -o pipefail
 
 ## Vars ----------------------------------------------------------------------
 
 ## Main ----------------------------------------------------------------------
 
-# If the current folder's basename is rpc-openstack then we assume
-# that it is the root of the git clone. If the git clone is not in
-# /opt then we symlink the current folder there so that all the
-# rpc-openstack scripts work as expected.
-if [[ "$(basename ${PWD})" == "rpc-openstack" ]]; then
-  if [[ "${PWD}" != "/opt/rpc-openstack" ]]; then
-    ln -sfn ${PWD} /opt/rpc-openstack
-  fi
-fi
-
 # We need to ensure that we use the rackspace mirrors, as they are
 # most reliable. We also need to ensure that python and the python
 # yaml library are present for ansible to work.
 source "$(readlink -f $(dirname ${0}))/../gating_prerequisites.sh"
-
