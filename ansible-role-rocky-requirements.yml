@@ -1,0 +1,4 @@
+- name: rcbops_openstack-ops
+  scm: git
+  src: https://github.com/rsoprivatecloud/openstack-ops
+  version: master

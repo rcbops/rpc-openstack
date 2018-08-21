@@ -37,7 +37,7 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 tmux
 cd /opt/rpc-openstack
 export DEPLOY_AIO=true
-export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="rocky"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
@@ -61,7 +61,7 @@ Run the ``deploy.sh`` script within a tmux or screen session:
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="rocky"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 ```
 
@@ -79,7 +79,7 @@ created for convenience and will maintain impotency.
 
 ``` shell
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="rocky"  # This is optional, if unset the current stable product will be used
 /opt/rpc-ansible/bin/ansible-playbook -i 'localhost,' playbooks/openstack-ansible-install.yml
 ```
 
@@ -130,7 +130,7 @@ To run a basic system upgrade set the `${RPC_PRODUCT_RELEASE}` option, re-run
 ``` shell
 tmux
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="master"  # This is optional, if unset the current stable product will be used
+export RPC_PRODUCT_RELEASE="rocky"  # This is optional, if unset the current stable product will be used
 ./scripts/deploy.sh
 openstack-ansible openstack-ansible-install.yml
 ```
@@ -146,7 +146,7 @@ To run a major upgrade set the `${RPC_PRODUCT_RELEASE}` option, re-run
 ``` shell
 tmux
 cd /opt/rpc-openstack
-export RPC_PRODUCT_RELEASE="master"  # This needs to be set to the new product
+export RPC_PRODUCT_RELEASE="rocky"  # This needs to be set to the new product
 ./scripts/deploy.sh
 openstack-ansible openstack-ansible-install.yml
 ```
