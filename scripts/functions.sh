@@ -206,12 +206,14 @@ function safe_to_replace_artifacts {
 
   # This function is used by the artifact pipeline to determine whether it
   # is safe to rebuild artifacts for the current head of the mainline branch.
-  # It is only ever safe when the mainline and rc branches are different
-  # versions or if there is no rc branch. When this is the case, the function
-  # will return 0.
+  # It is only ever safe when:
+  #  - the mainline and rc branches are different versions
+  #  - there is no rc branch, and the last tag released does not match the version
+  # When this is the case, the function will return 0.
 
   rc_branch="newton-rc"
 
+  # Check for an RC branch
   if git show origin/${rc_branch} &>/dev/null; then
     rc_branch_version="$(git show origin/${rc_branch}:group_vars/all/release.yml \
                          | awk '/rpc_release/{print $2}' | tr -d '"')"
@@ -220,7 +222,12 @@ function safe_to_replace_artifacts {
     else
       return 0
     fi
+  # If there is no RC branch, check the most recent tag
   else
-    return 0
+    if [[ "$(git describe --abbrev=0 --tags)" == "${RPC_RELEASE}" ]]; then
+      return 1
+    else
+      return 0
+    fi
   fi
 }
