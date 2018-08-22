@@ -46,17 +46,10 @@ extract_rpc_release(){
 }
 
 update_rpc_release(){
-  rc_branch_version="$(git show origin/${rc_branch}:group_vars/all/release.yml \
-                      | extract_rpc_release)"
-  echo "rpc_release version from rc-branch (${rc_branch}): ${rc_branch_version}"
-
-  current_branch_version="$(extract_rpc_release < group_vars/all/release.yml)"
-  echo "rpc_release version from current branch (${rpco_branch}): ${current_branch_version}"
-
   # Extract the required version info
-  major_version=$( echo ${rc_branch_version} | cut -d. -f1 )
-  minor_version=$( echo ${rc_branch_version} | cut -d. -f2 )
-  patch_version=$( echo ${rc_branch_version} | cut -d. -f3 )
+  major_version=$( echo ${current_branch_version} | cut -d. -f1 )
+  minor_version=$( echo ${current_branch_version} | cut -d. -f2 )
+  patch_version=$( echo ${current_branch_version} | cut -d. -f3 )
 
   # increment the minor version
   minor_version=$(( minor_version + 1 ))
@@ -68,23 +61,35 @@ update_rpc_release(){
     group_vars/all/release.yml
 }
 
-# Update rpc_release. The mainline branch should always be one version
-# ahead of the rc branch, as the next rc branch will be cut from mainline
-# post release.
-
-# This update script will only ever run against a mainline branch, as
-# dependencies should not change once an RC branch has been cut.
+# Update rpc_release.
+# If an RC branch is being used, the mainline branch should always
+# be one version ahead of the rc branch, as the next rc branch will
+# be cut from mainline post release.
+# If there is no RC branch, then the mainline branch should always
+# be one version ahead of the last tag.
 
 # Get RC branch version
 rc_branch="${rpco_branch}-rc"
 git fetch origin
-if git show origin/${rc_branch}
-then
-  update_rpc_release
+if git show origin/${rc_branch} &>/dev/null; then
+  rc_branch_version="$(git show origin/${rc_branch}:group_vars/all/release.yml \
+                      | extract_rpc_release)"
+  echo "rpc_release version from rc-branch (${rc_branch}): ${rc_branch_version}"
+
+  current_branch_version="$(extract_rpc_release < group_vars/all/release.yml)"
+  echo "rpc_release version from current branch (${rpco_branch}): ${current_branch_version}"
+
+  if [[ "${current_branch_version}" == "${rc_branch_version}" ]]; then
+    update_rpc_release
+  fi
 else
-  echo "RC branch ${rc_branch} not found, skipping rpc_release version bump.
-If there is no RC branch then the mainline branch is considered unreleased
-and therefore the rpc_release value is left alone. It is still important
-for the dependencies to be updated regularly though, so that part continues
-to be done."
+  last_released_tag="$(git describe --abbrev=0 --tags)"
+  echo "last released tag for current branch (${rpco_branch}): ${last_released_tag}"
+
+  current_branch_version="$(extract_rpc_release < group_vars/all/release.yml)"
+  echo "rpc_release version from current branch (${rpco_branch}): ${current_branch_version}"
+
+  if [[ "${current_branch_version}" == "${last_released_tag}" ]]; then
+    update_rpc_release
+  fi
 fi
