@@ -22,8 +22,6 @@ set -o pipefail
 export SCRIPT_PATH="$(readlink -f $(dirname ${0}))"
 
 ## Functions -----------------------------------------------------------------
-source "${SCRIPT_PATH}/functions.sh"
-
 function exit_notice {
   cat "${SCRIPT_PATH}/../README.md"
 }
@@ -36,7 +34,7 @@ function basic_install {
 ## Main ----------------------------------------------------------------------
 
 # Setup OpenStack
-if [ "${DEPLOY_AIO}" != false ]; then
+if [ "${DEPLOY_AIO:-false}" != false ]; then
   ## Run the basic installation script
   basic_install
 
