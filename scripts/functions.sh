@@ -33,7 +33,7 @@ export INFLUX_PORT="${INFLUX_PORT:-8086}"
 export BUILD_TAG="${BUILD_TAG:-testing}"
 
 # RPC-OpenStack product release, this variable is used in the config playbooks.
-export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-master}"
+export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-rocky}"
 
 # OSA release branch
 if [ -z ${OSA_RELEASE_BRANCH+x} ]; then
