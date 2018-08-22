@@ -72,29 +72,17 @@ popd
 
 ## Check what version is set in the RC branch
 
-# We can only use this method once this file exists in the RC branch, so
-# we have to implement the new method and a fall back to the old method.
-
-new_file_to_fetch="origin/${rc_branch}:playbooks/vars/rpc-release.yml"
-old_file_to_fetch="origin/${rc_branch}:etc/openstack_deploy/group_vars/all/release.yml"
+file_to_fetch="origin/${rc_branch}:playbooks/vars/rpc-release.yml"
 release_data_file="${WORKSPACE}/rc-release-data.yml"
 
-# new method
-if git cat-file -e ${new_file_to_fetch} 2>/dev/null; then
-  git show ${new_file_to_fetch} > ${release_data_file}
+# if there is an RC branch, then use the version information from it
+if git show origin/${rc_branch} &>/dev/null; then
+  git show ${file_to_fetch} > ${release_data_file}
   export RC_BRANCH_VERSION=$(${BASE_DIR}/scripts/get-rpc_release.py -f ${release_data_file})
 
-# old method
-elif git cat-file -e ${old_file_to_fetch} 2>/dev/null; then
-  git show ${old_file_to_fetch} > ${release_data_file}
-  export RC_BRANCH_VERSION=$(awk '/^rpc_release/{print $2}' ${release_data_file} | tr -d '"')
-
+# if there is no RC branch, then use the last tag from the branch
 else
-  echo "RC branch ${rc_branch} not found, skipping rpc_release version bump.
-If there is no RC branch then the mainline branch is considered unreleased and
-therefore the rpc_release value is left alone. It is still important for the
-dependencies to be updated regularly though, so that part continues to be done."
-  export RC_BRANCH_VERSION=""
+  export RC_BRANCH_VERSION="$(git describe --abbrev=0 --tags)"
 fi
 
 
