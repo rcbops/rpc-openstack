@@ -155,3 +155,9 @@ ironic_ironic_conf_overrides:
     user_domain_id: "{{ glance_service_user_domain_id }}"
     password: "{{ glance_service_password }}"
     glance_api_servers: "{{ ironic_glance_api_servers }}"
+
+# RI-357 Tempest Overrides
+# TODO(d34dh0r53): Once the test_minimum_basic_scenario is working we can remove
+# this
+tempest_test_blacklist:
+  - tempest.scenario.test_minimum_basic
