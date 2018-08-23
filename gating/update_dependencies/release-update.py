@@ -52,7 +52,7 @@ rpc_release = release_data['rpc_release']
 # standard.
 
 release_naming_standard = re.compile(
-    "^r[0-9]+.[0-9]+.[0-9]+(-(alpha|beta).[0-9]+)?$|^master$")
+    "^r[0-9]+.[0-9]+.[0-9]+(-(alpha|beta|rc).[0-9]+)?$|^master$")
 
 assert release_naming_standard.match(rpc_release), (
     "The rpc_release value of %s does not comply with the release naming"
