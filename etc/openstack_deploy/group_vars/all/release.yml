@@ -24,4 +24,4 @@ rpc_release: "undefined"
 openstack_release: "{{ rpc_release }}"
 
 # Set the release of the maas
-maas_release: "undefined"
+maas_release: "master"
