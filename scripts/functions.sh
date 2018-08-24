@@ -20,6 +20,9 @@ export DEPLOY_MAAS=${DEPLOY_MAAS:-false}
 export DEPLOY_TELEGRAF=${DEPLOY_TELEGRAF:-false}
 export DEPLOY_INFLUX=${DEPLOY_INFLUX:-false}
 
+if [ ${DEPLOY_AIO} == true ]; then
+  export DEPLOY_MAAS=false
+fi
 # To send data to the influxdb server, we need to deploy and configure
 #  telegraf. By default, telegraf will use log_hosts (rsyslog hosts) to
 #  define its influxdb servers. These playbooks need maas-get to have run
