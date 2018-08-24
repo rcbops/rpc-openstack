@@ -49,9 +49,9 @@ pushd "${SCRIPT_PATH}/../playbooks"
   fi
 popd
 
-pushd /opt/rpc-maas/playbooks
+if [ "${DEPLOY_MAAS}" != false ]; then
+  pushd /opt/rpc-maas/playbooks
   # Deploy and configure RAX MaaS
-  if [ "${DEPLOY_MAAS}" != false ]; then
     if [ "${DEPLOY_TELEGRAF}" != false ]; then
       # Set the rpc_maas vars.
       if [[ ! -f "/etc/openstack_deploy/user_rpco_maas_variables.yml" ]]; then
@@ -65,5 +65,5 @@ pushd /opt/rpc-maas/playbooks
     fi
     # Run the rpc-maas setup process
     openstack-ansible site.yml
-  fi
-popd
+  popd
+fi
