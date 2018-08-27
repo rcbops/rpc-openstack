@@ -14,4 +14,3 @@
 # limitations under the License.
 
 - include: configure-release.yml
-- include: get-maas.yml
