@@ -19,3 +19,7 @@ rpc_product_releases:
     maas_release: 1.7.5
     osa_release: 09a6e10d96a137467dc05c528094991bdfd776d0
     rpc_release: r17.1.1
+  rocky:
+    maas_release: 1.7.5
+    osa_release: 9e72443b0d0a2e72f85419ae3aba94dee22f1436
+    rpc_release: r18.0.0
