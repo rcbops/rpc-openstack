@@ -22,6 +22,3 @@ rpc_release: "undefined"
 #                 The release tag to use for the repo and venvs
 #                 This can't be overriden because OSA is using group_vars.
 openstack_release: "{{ rpc_release }}"
-
-# Set the release of the maas
-maas_release: "undefined"
