@@ -30,8 +30,6 @@ if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
   source "$(readlink -f $(dirname ${0}))/pre_deploy_mnaio.sh"
 fi
 
-apt-get update
-
 # Clone the kibana-selenium git repository
 if [[ ! -e /opt/kibana-selenium ]]; then
   git clone -b ${KIBANA_SELENIUM_BRANCH} ${KIBANA_SELENIUM_REPO} /opt/kibana-selenium
