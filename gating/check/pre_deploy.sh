@@ -45,7 +45,11 @@ pkgs_to_install=""
 # https://bugs.launchpad.net/ubuntu/+source/phantomjs/+bug/1578444
 #dpkg-query --list | grep phantomjs &>/dev/null || pkgs_to_install+="phantonjs "
 dpkg-query --list | grep fontconfig &>/dev/null || pkgs_to_install+="fontconfig "
-virtualenv --version &>/dev/null || pkgs_to_install+="python-virtualenv virtualenv "
+if [[ $(lsb_release -cd | grep Codename | awk '{print $2}') == "trusty" ]]; then
+  virtualenv --version &>/dev/null || pkgs_to_install+="python-virtualenv "
+else
+  virtualenv --version &>/dev/null || pkgs_to_install+="python-virtualenv virtualenv "
+fi
 if [ "${pkgs_to_install}" != "" ]; then
   apt-get update
   apt-get install -y ${pkgs_to_install}
