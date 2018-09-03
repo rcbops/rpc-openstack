@@ -67,7 +67,7 @@ fi
 # Work around https://github.com/pypa/virtualenv/issues/1029
 export VIRTUAL_ENV_DISABLE_PROMPT=true
 
-set +x; source .venv/bin/activate; set -x
+set +xu; source .venv/bin/activate; set -xu
 
 if [ -f ~/.pip/pip.conf ]; then
   mv ~/.pip/pip.conf ~/.pip/pip.conf.bak
