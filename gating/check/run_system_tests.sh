@@ -49,6 +49,7 @@ tar -xf test_results.tar -C "${RE_HOOK_RESULT_DIR}"
 
 # 4. Collect logs from script
 mkdir -p "${RE_HOOK_ARTIFACT_DIR}" || true  # ensure that artifact directory exists
+cp test_results.tar "${RE_HOOK_ARTIFACT_DIR}/molecule_test_results.tar"
 # Molecule does not produce logs outside of STDOUT
 # record non-zero exit code if not already recorded
 [[ $? -ne 0 ]] && [[ ! -z ${RC+x} ]] && RC=$?
