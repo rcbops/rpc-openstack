@@ -8,6 +8,7 @@ set -x
 
 export QTEST_API_TOKEN=$RPC_ASC_QTEST_API_TOKEN
 VENV_NAME="venv-qtest"
+VENV_PATH="${WORKSPACE}/${VENV_NAME}"
 PROJECT_ID="76551"
 
 ## Functions -----------------------------------------------------------------
@@ -17,12 +18,12 @@ source $(dirname ${0})/../../scripts/functions.sh
 ## Main ----------------------------------------------------------------------
 
 # Create virtualenv for <TOOL NAME>
-virtualenv --no-wheel "${VENV_NAME}"
+virtualenv --no-wheel "${VENV_PATH}"
 
 # Activate virtualenv
-source "${VENV_NAME}/bin/activate"
+source "${VENV_PATH}/bin/activate"
 
-VENV_PIP="${VENV_NAME}/bin/pip"
+VENV_PIP="${VENV_PATH}/bin/pip"
 
 # Install zigzag from PyPI
 ${VENV_PIP} install rpc-zigzag
