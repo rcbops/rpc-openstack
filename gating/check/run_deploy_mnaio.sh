@@ -166,7 +166,6 @@ ${MNAIO_SSH} <<EOC
   cp /etc/openstack_deploy/user_variables.yml.bak /etc/openstack_deploy/user_variables.yml
   cp /opt/rpc-openstack/rpcd/etc/openstack_deploy/user_*.yml /etc/openstack_deploy
   cp /opt/rpc-openstack/rpcd/etc/openstack_deploy/env.d/* /etc/openstack_deploy/env.d
-  rm /usr/local/bin/openstack-ansible
 EOC
 
 # start the rpc-o install from infra1
