@@ -172,7 +172,6 @@ ${MNAIO_SSH} <<EOC
   echo -e '---\nsecurity_sshd_client_alive_interval: 1200' | tee /etc/openstack_deploy/user_mnaio_long_hardening_timeout.yml
   chmod +x /opt/rpc-openstack/deploy-infra1.sh
   rm -rf /opt/openstack-ansible
-  rm /usr/local/bin/openstack-ansible
 EOC
 
 # start the rpc-o install from infra1
