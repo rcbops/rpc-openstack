@@ -71,6 +71,8 @@ octavia_spare_amphora_pool_size: 0
 octavia_enable_anti_affinity: "{{ lookup('env', 'DEPLOY_AIO') != 'yes' }}"
 # RPC disables connection logging, so setting this back to 2GB
 octavia_amp_disk: 2
+# RPC doesn't use images from an artefact storage - so disable download
+octavia_download_artefact: False
 
 rackspace_octavia_files_folder: "/opt/rpc-openstack/playbooks/templates/octavia"
 octavia_user_haproxy_templates:
