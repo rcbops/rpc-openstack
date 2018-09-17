@@ -1,0 +1,9 @@
+---
+fixes:
+  - |
+    OS-octavia was downlaoding its amphora image from the upstream
+    daily master build - thus delaying the deploy for the duration
+    of the downlaod and potentially using untested octavia versions.
+    This patch deactivates the automatic download which might result
+    in the deployer ghaving to uplaod the octavia amphora image to
+    glance themselves.
