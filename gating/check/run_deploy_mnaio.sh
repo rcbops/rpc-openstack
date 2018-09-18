@@ -69,11 +69,6 @@ export MNAIO_ANSIBLE_PARAMETERS="-e default_vm_disk_mode=file"
 export DEPLOY_MAAS=false
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
-# place variable in file to be sourced by parent calling script 'run'
-export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
-echo "export MNAIO_SSH=\"${MNAIO_SSH}\"" > "${MNAIO_VAR_FILE}"
-echo "export RPC_RELEASE=\"${RPC_RELEASE}\"" >> "${MNAIO_VAR_FILE}"
-echo "export RPC_PRODUCT_RELEASE=\"${RPC_PRODUCT_RELEASE}\"" >> "${MNAIO_VAR_FILE}"
 
 ## Main --------------------------------------------------------------------
 
@@ -174,3 +169,11 @@ EOC
 ${MNAIO_SSH} "/opt/rpc-openstack/deploy-infra1.sh"
 
 echo "MNAIO RPC-O deploy completed..."
+
+if [[ $RE_JOB_ACTION == "deploy" ]]; then
+  # run tempest tests on MNAIO for deploy action
+  ${MNAIO_SSH} <<EOS
+    cd /opt/openstack-ansible
+    openstack-ansible -e tempest_run=yes playbooks/os-tempest-install.yml
+EOS
+fi
