@@ -5,6 +5,10 @@
 set -euv
 set -o pipefail
 
+## Vars ----------------------------------------------------------------------
+
+source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
+
 ## Main ----------------------------------------------------------------------
 
 if [ $RE_JOB_ACTION != "tox-test" ]; then
