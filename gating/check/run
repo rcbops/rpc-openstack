@@ -20,7 +20,10 @@ source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
 ## Main ----------------------------------------------------------------------
 
 if [[ $RE_JOB_ACTION == "tox-test" ]]; then
-  bash -c "$(readlink -f $(dirname ${0})/run_tox.sh)"
+
+  tmp_tox_dir=$(mktemp -d)
+  tox -e $RE_JOB_SCENARIO --workdir $tmp_tox_dir
+
 elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_deploy_mnaio.sh)"
   source "${MNAIO_VAR_FILE}"
