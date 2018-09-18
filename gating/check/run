@@ -37,11 +37,13 @@ elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
 EOS
   fi
 else
-  bash -c "$(readlink -f $(dirname ${0})/run_deploy.sh)"
+  bash -c "$(readlink -f $(dirname ${0})/../../scripts/deploy.sh)"
 fi
+
 if [[ $RE_JOB_ACTION == "system" ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_system_tests.sh)"
 fi
+
 if [[ $RE_JOB_ACTION == "sdqc" ]]; then
   export RE_JOB_BRANCH="openstack-ops-only"
   bash -c "$(readlink -f $(dirname ${0})/run_system_tests.sh)"
