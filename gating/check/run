@@ -13,7 +13,6 @@ echo "+-------------------- ENV VARS --------------------+"
 ## Vars ----------------------------------------------------------------------
 
 export DEPLOY_AIO="true"
-export MNAIO_VAR_FILE="${MNAIO_VAR_FILE:-/tmp/mnaio_vars}"
 
 source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
 
@@ -28,14 +27,6 @@ if [[ $RE_JOB_ACTION == "tox-test" ]]; then
 
 elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_deploy_mnaio.sh)"
-  source "${MNAIO_VAR_FILE}"
-  if [[ $RE_JOB_ACTION == "deploy" ]]; then
-    # run tempest tests on MNAIO for deploy action
-    ${MNAIO_SSH} <<EOS
-      cd /opt/openstack-ansible
-      openstack-ansible -e tempest_run=yes playbooks/os-tempest-install.yml
-EOS
-  fi
 else
   bash -c "$(readlink -f $(dirname ${0})/../../scripts/deploy.sh)"
 fi
