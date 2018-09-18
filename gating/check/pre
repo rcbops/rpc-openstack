@@ -7,6 +7,8 @@ set -o pipefail
 
 ## Vars ----------------------------------------------------------------------
 
+source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
+
 ## Main ----------------------------------------------------------------------
 
 # If the current folder's basename is rpc-openstack then we assume
