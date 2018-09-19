@@ -28,6 +28,10 @@
       retries: 5
       delay: 2
 
+    - name: Create OpenStack client configuration
+      include_role:
+        name: "openstack_openrc"
+
     - name: Create flavors of nova VMs
       os_nova_flavor:
         endpoint_type: internal
