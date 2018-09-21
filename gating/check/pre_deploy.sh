@@ -60,10 +60,10 @@ if [[ ! -e phantomjs-2.1.1-linux-x86_64.tar.bz2 ]]; then
   tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
 fi
 
-# FrankZhang: Limit venv python to python2 
+# FrankZhang: Limit venv python to python2
 # to avoid python3 code making syntax error https://rpc-openstack.atlassian.net/browse/RI-458
 if [[ ! -d ".venv" ]]; then
-  virtualenv .venv --python=python2 --always-copy --no-download
+  virtualenv .venv --python=python2 --always-copy --never-download
 fi
 
 # FrankZhang: Upgrade pip and setuptools due to outdate issue https://rpc-openstack.atlassian.net/browse/RI-458
