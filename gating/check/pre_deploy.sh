@@ -63,7 +63,11 @@ fi
 # FrankZhang: Limit venv python to python2
 # to avoid python3 code making syntax error https://rpc-openstack.atlassian.net/browse/RI-458
 if [[ ! -d ".venv" ]]; then
-  virtualenv .venv --python=python2 --always-copy --never-download
+  if [[ $(lsb_release -cd | grep Codename | awk '{print $2}') == "trusty" ]]; then
+    virtualenv .venv --python=python2 --always-copy --never-download
+  else
+    virtualenv .venv --python=python2 --always-copy --no-download
+  fi
 fi
 
 # FrankZhang: Upgrade pip and setuptools due to outdate issue https://rpc-openstack.atlassian.net/browse/RI-458
