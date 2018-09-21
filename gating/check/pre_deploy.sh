@@ -60,9 +60,14 @@ if [[ ! -e phantomjs-2.1.1-linux-x86_64.tar.bz2 ]]; then
   tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
 fi
 
+# FrankZhang: Limit venv python to python2 
+# to avoid python3 code making syntax error https://rpc-openstack.atlassian.net/browse/RI-458
 if [[ ! -d ".venv" ]]; then
-  virtualenv .venv
+  virtualenv .venv --python=python2 --always-copy --no-download
 fi
+
+# FrankZhang: Upgrade pip and setuptools due to outdate issue https://rpc-openstack.atlassian.net/browse/RI-458
+pip install --upgrade pip setuptools -c https://raw.githubusercontent.com/rcbops/openstack-ansible/stable/newton/global-requirement-pins.txt
 
 # Work around https://github.com/pypa/virtualenv/issues/1029
 export VIRTUAL_ENV_DISABLE_PROMPT=true
