@@ -39,7 +39,7 @@ fi
 cd /opt/kibana-selenium
 
 # Install pre-requisites
-pkgs_to_install=""
+pkgs_to_install="libyaml-cpp-dev"
 # The phantomjs package on 16.04 is buggy, see:
 # https://github.com/ariya/phantomjs/issues/14900
 # https://bugs.launchpad.net/ubuntu/+source/phantomjs/+bug/1578444
