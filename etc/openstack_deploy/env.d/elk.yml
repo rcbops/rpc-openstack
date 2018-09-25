@@ -26,8 +26,4 @@ container_skel:
       - log_containers
     contains:
       - elastic-logstash
-  kibana_container:
-    belongs_to:
-      - log_containers
-    contains:
       - kibana
