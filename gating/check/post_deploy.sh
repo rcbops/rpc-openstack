@@ -45,7 +45,7 @@ extract_rpc_release(){
 
 # Only enable snapshot when triggered by a commit push.
 # This is to enable image updates whenever a PR is merged, but not before
-if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]]; then
+if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]] && [[ ${RE_JOB_STATUS:-SUCCESS} == "SUCCESS" ]]; then
   echo "### BEGIN SNAPSHOT PREP ###"
   mkdir -p /gating/thaw
 
@@ -76,7 +76,7 @@ if [[ "${RE_JOB_TRIGGER:-USER}" == "PUSH" ]]; then
   echo "### END SNAPSHOT PREP ###"
 fi
 
-if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]] && [[ ${RE_JOB_ACTION} == "deploy" ]]; then
+if [[ ${RE_JOB_IMAGE} =~ .*mnaio.* ]] && [[ ${RE_JOB_ACTION} == "deploy" ]] && [[ "${RE_JOB_STATUS:-SUCCESS}" == "SUCCESS" ]]; then
   echo "Preparing machine image artifacts."
   pushd /opt/openstack-ansible-ops/multi-node-aio
     ansible-playbook -vv -i ${MNAIO_INVENTORY:-"playbooks/inventory"} playbooks/save-vms.yml
