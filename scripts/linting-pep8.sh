@@ -26,7 +26,3 @@ fi
 flake8 $(grep -rln -e '^#!/usr/bin/env python' \
                    -e '^#!/bin/python' \
                    -e '^#!/usr/bin/python' * )
-# NOTE(sigmavirus24): This will run the git commit checks while ensuring that
-# the commit error messages do not appear more than once (by constraining
-# flake8 to not using multiprocessing). It's hacky but presently necessary
-flake8 --ignore F403,H303 --jobs 0 hacking/

@@ -1,6 +1,5 @@
 ansible-lint>=2.7.0,<3.0.0
 flake8==2.2.4
-hacking>=0.10.0,<0.11
 pep8==1.5.7
 pyflakes==0.8.1
 mccabe==0.2.1 # capped for flake8
