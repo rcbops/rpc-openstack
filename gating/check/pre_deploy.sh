@@ -70,15 +70,14 @@ if [[ ! -d ".venv" ]]; then
   fi
 fi
 
-# FrankZhang: Upgrade pip and setuptools due to outdate issue https://rpc-openstack.atlassian.net/browse/RI-458
-pip install --upgrade --force pip==9.0.1
-hash -d pip
-pip install --upgrade pip setuptools -c https://raw.githubusercontent.com/rcbops/openstack-ansible/stable/newton/global-requirement-pins.txt
-
 # Work around https://github.com/pypa/virtualenv/issues/1029
 export VIRTUAL_ENV_DISABLE_PROMPT=true
 
 set +xu; source .venv/bin/activate; set -xu
+
+# FrankZhang: Upgrade pip and setuptools due to outdate issue https://rpc-openstack.atlassian.net/browse/RI-458
+pip install --upgrade --force pip==9.0.1
+pip install --upgrade pip setuptools -c https://raw.githubusercontent.com/rcbops/openstack-ansible/stable/newton/global-requirement-pins.txt
 
 if [ -f ~/.pip/pip.conf ]; then
   mv ~/.pip/pip.conf ~/.pip/pip.conf.bak
