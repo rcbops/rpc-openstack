@@ -2,7 +2,7 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -euv
+set -eux
 set -o pipefail
 
 ## Vars ----------------------------------------------------------------------
@@ -78,7 +78,7 @@ cd /opt/kibana-selenium
 # Work around https://github.com/pypa/virtualenv/issues/1029
 export VIRTUAL_ENV_DISABLE_PROMPT=true
 
-set +x; source .venv/bin/activate; set -x
+set +ux; source .venv/bin/activate; set -ux
 
 export PYTHONPATH=$(pwd)
 export PATH=$PATH:./phantomjs-2.1.1-linux-x86_64/bin

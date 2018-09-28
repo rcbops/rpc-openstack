@@ -16,7 +16,7 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -evu
+set -eux
 
 echo "Building a Multi Node AIO (MNAIO)"
 echo "+-------------------- MNAIO ENV VARS --------------------+"
