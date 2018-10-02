@@ -65,6 +65,7 @@ export RPC_BRANCH="${RE_JOB_BRANCH}"
 export DEFAULT_MIRROR_HOSTNAME=mirror.rackspace.com
 export DEFAULT_MIRROR_DIR=/ubuntu
 export INFRA_VM_SERVER_RAM=16384
+export MNAIO_ANSIBLE_PARAMETERS="-e default_vm_disk_mode=file"
 export DEPLOY_MAAS=false
 # ssh command used to execute tests on infra1
 export MNAIO_SSH="ssh -ttt -oStrictHostKeyChecking=no root@infra1"
