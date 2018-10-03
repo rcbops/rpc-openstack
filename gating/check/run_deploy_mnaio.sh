@@ -28,8 +28,9 @@ source /opt/rpc-openstack/scripts/functions.sh
 
 source "$(readlink -f $(dirname ${0}))/../mnaio_vars.sh"
 
-# If there are images available, and this is not the 'deploy' action,
-# then we need to run the OSA deploy playbook for some pre-configuration
+# If there is no set of images available yet, or this is the deploy
+# action, then we need to build from scratch.
+# We need to run the OSA deploy playbook for some pre-configuration
 # before doing the RPC-O bits. The conditional was already evaluated in
 # mnaio_vars, so we key off DEPLOY_VMS here.
 if [[ "${DEPLOY_VMS}" == "true" ]]; then
