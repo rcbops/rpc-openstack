@@ -36,7 +36,7 @@ fi
 
 if [[ $RE_JOB_ACTION == "tox-test" ]]; then
   dpkg-query --list | grep wget &>/dev/null || distro_pkgs_to_install+="wget "
-  pip freeze | grep tox &>/dev/null || py_pkgs_to_install+="tox==3.3.0 "
+  pip freeze | grep tox &>/dev/null || py_pkgs_to_install+="tox "
 fi
 
 if [ "${distro_pkgs_to_install}" != "" ]; then
@@ -44,7 +44,7 @@ if [ "${distro_pkgs_to_install}" != "" ]; then
 fi
 
 if [ "${py_pkgs_to_install}" != "" ]; then
-  pip install --disable-pip-version-check --upgrade --upgrade-strategy only-if-needed ${py_pkgs_to_install}
+  pip install --disable-pip-version-check --upgrade --upgrade-strategy only-if-needed ${py_pkgs_to_install} -c upper-constraints.txt
 fi
 
 if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then

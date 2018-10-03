@@ -23,10 +23,9 @@ fi
 
 # Install the semver library to manipulate the
 # rpc_release version strings
-semver_version="2.7.9"
-if [[ "$(pip --disable-pip-version-check freeze | grep semver)" != "semver==${semver_version}" ]]; then
+if [[ "$(pip --disable-pip-version-check freeze | grep semver)" != *"semver"* ]]; then
   echo "Python SemVer library not available. Installing it."
-  pip install semver==${semver_version}
+  pip install semver -c upper-constraints.txt
 fi
 
 ## Update OSA SHA to head of stable/XXX
