@@ -28,6 +28,15 @@ if [[ "$(pip --disable-pip-version-check freeze | grep semver)" != *"semver"* ]]
   pip install semver -c upper-constraints.txt
 fi
 
+# Install tox to run the update constraints job
+if [[ "$(pip --disable-pip-version-check freeze | grep tox)" != *"tox"* ]]; then
+  echo "tox not installed, Installing it."
+  pip install tox -c upper-constraints.txt
+fi
+
+# update constraints
+tox -e requirements
+
 ## Update OSA SHA to head of stable/XXX
 # These var must be set per branch of RPC-Openstack
 rpco_branch="${BRANCH:-master}" # BRANCH injected by Jenkins.
