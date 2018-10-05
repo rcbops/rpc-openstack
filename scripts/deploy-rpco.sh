@@ -47,6 +47,9 @@ pushd "${SCRIPT_PATH}/../playbooks"
   else
     openstack-ansible site-openstack.yml
   fi
+
+  # Deploy RPC operational modifications
+  openstack-ansible site-ops.yml
 popd
 
 if [ "${DEPLOY_MAAS}" != false ]; then

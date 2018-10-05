@@ -1,0 +1,87 @@
+---
+# Copyright 2018-Present, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Configure Linux CPU governor
+  hosts: hosts:mons:osds
+  vars:
+    governor: "{{ cpu_governor | default('performance') }}"
+  handlers:
+    - name: restart sysfs
+      systemd:
+        name: sysfsutils
+        enabled: yes
+        state: restarted
+  tasks:
+    - name: Check for cpuidle
+      stat:
+        path: /sys/devices/system/cpu/cpu0/cpuidle
+      register: cpuidle_check
+
+    - name: Check for governor
+      stat:
+        path: /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+      register: scaling_governor_check
+
+    - name: setup cpu_scaling_governor
+      block:
+        - name: Disable ondemand service
+          systemd:
+            name: ondemand
+            state: stopped
+            masked: yes
+            enabled: no
+          failed_when: false
+
+        - name: Disable cpufrequtils service
+          systemd:
+            name: cpufrequtils
+            state: stopped
+            enabled: no
+            masked: yes
+          failed_when: false
+
+        - name: Find cpus scaling governor
+          shell: ls -1 /sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_governor
+          changed_when: false
+          register: cpus_scaling_governor
+
+        - name: Persist cpus scaling governor
+          lineinfile:
+            dest: "/etc/sysfs.conf"
+            line: "{{ item.lstrip('/sys/') }} = {{ governor }}"
+            regexp: "^{{ item.lstrip('/sys/') }}.*"
+          with_items: "{{ cpus_scaling_governor.stdout_lines }}"
+          notify:
+            - restart sysfs
+      when:
+        - scaling_governor_check.stat.exists
+
+    - name: setup cpuidle
+      block:
+        - name: Find cpus cpuidle
+          shell: ls -1 /sys/devices/system/cpu/cpu*/cpuidle/state[2-4]/disable
+          changed_when: false
+          register: cpus_cpuidle
+
+        - name: Persist cpus scaling governor
+          lineinfile:
+            dest: "/etc/sysfs.conf"
+            line: "{{ item.lstrip('/sys/') }} = 1"
+            regexp: "^{{ item.lstrip('/sys/') }}.*"
+          with_items: "{{ cpus_cpuidle.stdout_lines }}"
+          notify:
+            - restart sysfs
+      when:
+        - cpuidle_check.stat.exists
