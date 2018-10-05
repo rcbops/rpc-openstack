@@ -1,3 +1,4 @@
+---
 rpc_product_releases:
   master:
     maas_release: master
@@ -6,26 +7,26 @@ rpc_product_releases:
     rpc_release: master
   newton:
     maas_release: 1.7.0
-    openstack_ansible_ops: 9237bc3abe039a748cd2502bd67de02b648b030e
+    openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
     osa_release: 3553c048188093c7a8d912cc32c30730536d70d3
     rpc_release: r14.8.0
   ocata:
     maas_release: 1.7.0
-    openstack_ansible_ops: 9237bc3abe039a748cd2502bd67de02b648b030e
+    openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
     osa_release: 5047124f1fe181306674c60beeccd189252a9d62
     rpc_release: r15.0.0
   pike:
     maas_release: 1.7.0
-    openstack_ansible_ops: 9237bc3abe039a748cd2502bd67de02b648b030e
+    openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
     osa_release: 5c341a7bada78edab5f3d132d55adb00eaf2413f
     rpc_release: r16.2.0
   queens:
     maas_release: 1.7.4
-    openstack_ansible_ops: 9237bc3abe039a748cd2502bd67de02b648b030e
+    openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
     osa_release: d38e190e43dfb737e6684096084b9f98f89e0637
     rpc_release: r17.0.2
   rocky:
-    maas_release: 1.7.9
-    openstack_ansible_ops: 9237bc3abe039a748cd2502bd67de02b648b030e
-    osa_release: 6aa831eb43b5cc053a211e79ae1312e08961837e
+    maas_release: 1.7.5
+    openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
+    osa_release: 9e72443b0d0a2e72f85419ae3aba94dee22f1436
     rpc_release: r18.0.0
