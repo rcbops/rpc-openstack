@@ -41,4 +41,4 @@
 - name: pip_install
   scm: git
   src: https://github.com/rcbops/openstack-ansible-pip_install
-  version: ed68b924b8f54e9c45fb068ef27efe6367ccc48d
+  version: 2480ab547e22f5b0a0bb27a1abce561a7832ec96
