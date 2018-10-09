@@ -21,7 +21,7 @@ if [[ "$(basename ${PWD})" == "rpc-openstack" ]]; then
   fi
 fi
 
-if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
+if [[ ${RE_JOB_IMAGE} =~ .*mnaio.* ]]; then
   # We need to ensure that we use the rackspace mirrors, as they are
   # most reliable. We also need to ensure that python and the python
   # yaml library are present for ansible to work. This is implemented
