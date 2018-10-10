@@ -2,20 +2,14 @@
 
 ## Shell Opts ----------------------------------------------------------------
 
-set -euv
+set -eux
 set -o pipefail
 
-## Vars ----------------------------------------------------------------------
+## Vars & Functions ----------------------------------------------------------
 
-# These vars are set by the CI environment, but are given defaults
-# here to cater for situations where someone is executing the test
-# outside of the CI environment.
-export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
-export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
-
-## Functions -----------------------------------------------------------------
 export BASE_DIR=${BASE_DIR:-"/opt/rpc-openstack"}
 source ${BASE_DIR}/scripts/functions.sh
+source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
 
 ## Main ----------------------------------------------------------------------
 
@@ -26,7 +20,7 @@ collect_logs_cmd+=" --ssh-common-args='-o StrictHostKeyChecking=no'"
 collect_logs_cmd+=" --extra-vars='artifacts_dir=${RE_HOOK_ARTIFACT_DIR}'"
 collect_logs_cmd+=" --extra-vars='result_dir=${RE_HOOK_RESULT_DIR}'"
 
-if [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
+if [[ ${RE_JOB_IMAGE} =~ .*mnaio.* ]]; then
   collect_logs_cmd+=" --extra-vars='target_hosts=pxe_servers'"
   collect_logs_cmd+=" --inventory='/opt/openstack-ansible-ops/multi-node-aio/playbooks/inventory/hosts'"
 else
