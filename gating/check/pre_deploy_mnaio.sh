@@ -22,6 +22,8 @@ echo "Preparing a Multi Node AIO (MNAIO)"
 
 ## Vars and Functions --------------------------------------------------------
 
+source "$(readlink -f $(dirname ${0}))/../gating_vars.sh"
+
 source /opt/rpc-openstack/scripts/functions.sh
 
 source "$(readlink -f $(dirname ${0}))/../mnaio_vars.sh"
@@ -58,7 +60,7 @@ pushd /opt/openstack-ansible-ops/multi-node-aio
   # then we need to download the images, then create the VM's. The conditional
   # was already evaluated in mnaio_vars, so we key off DEPLOY_VMS here.
   if [[ "${DEPLOY_VMS}" == "false" ]]; then
-    run_mnaio_playbook playbooks/download-vms.yml -e manifest_url=${RPCO_IMAGE_MANIFEST_URL}
+    run_mnaio_playbook playbooks/download-vms.yml -e manifest_url=${RPCO_IMAGE_MANIFEST_URL} -e aria2c_log_path=${RE_HOOK_ARTIFACT_DIR}
     run_mnaio_playbook playbooks/deploy-vms.yml
   fi
 popd
