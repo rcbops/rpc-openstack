@@ -15,7 +15,7 @@ MarkupSafe===1.0
 doc8===0.8.0
 traceback2===1.4.0
 extras===1.0.0
-reno===2.11.0
+reno===2.11.2
 imagesize===1.1.0
 rpc-differ===0.3.9
 urllib3===1.23
