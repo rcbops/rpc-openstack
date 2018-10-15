@@ -61,13 +61,6 @@ fi
 
 ## Main --------------------------------------------------------------------
 
-# capture all RE_ variables
-> /opt/rpc-openstack/RE_ENV
-env | grep RE_ | while read -r match; do
-  varName=$(echo ${match} | cut -d= -f1)
-  echo "export ${varName}='${!varName}'" >> /opt/rpc-openstack/RE_ENV
-done
-
 echo "Multi Node AIO setup completed..."
 
 # capture all RE_ variables for push to infra1
