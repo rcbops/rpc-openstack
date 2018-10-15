@@ -133,5 +133,3 @@ haproxy_extra_services:
 
 # Define the distro version globally
 repo_build_os_distro_version: "{{ (ansible_distribution | lower) | replace(' ', '_') }}-{{ ansible_distribution_version.split('.')[:2] | join('.') }}-{{ ansible_architecture | lower }}"
-
-lxc_container_backing_store: machinectl
