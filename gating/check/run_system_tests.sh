@@ -9,6 +9,12 @@ set -o pipefail
 
 ## Variables -----------------------------------------------------------------
 
+# The RPC_PRODUCT_RELEASE and RPC_RELEASE need to be brought into scope
+# before running system tests.
+if [[ ${RE_JOB_IMAGE} =~ .*mnaio.* ]]; then
+  source /opt/rpc-openstack/scripts/functions.sh
+fi
+
 RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 SYS_WORKING_DIR=$(mktemp  -d -t system_test_workingdir.XXXXXXXX)
