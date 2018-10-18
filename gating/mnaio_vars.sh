@@ -90,7 +90,7 @@ function run_mnaio_playbook() {
                  -e compute_vm_server_ram=${COMPUTE_VM_SERVER_RAM:-"8196"} \
                  -e infra_vm_server_ram=${INFRA_VM_SERVER_RAM:-"8196"} \
                  -e loadbalancer_vm_server_ram=${LOADBALANCER_VM_SERVER_RAM:-"2048"} \
-                 -e logging_vm_server_ram=${LOGGING_VM_SERVER_RAM:-"2048"} \
+                 -e logging_vm_server_ram=${LOGGING_VM_SERVER_RAM:-"16384"} \
                  -e swift_vm_server_ram=${SWIFT_VM_SERVER_RAM:-"2048"} \
                  -e container_tech=${CONTAINER_TECH:-"lxc"} \
                  -e ipxe_kernel_base_url=${IPXE_KERNEL_BASE_URL:-"http://boot.ipxe.org"} \
