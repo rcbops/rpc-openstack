@@ -173,6 +173,8 @@ git clone https://github.com/openstack/openstack-ansible-ops /opt/openstack-ansi
 * **OPTIONAL** | Destroy existing ELK related containers.
 
 ``` shell
+cd /opt/openstack-ansible/playbooks || cd /opt/rpc-openstack/openstack-ansible/playbooks
+ansible all -m service -a 'name=filebeat state=stopped'
 openstack-ansible /opt/openstack-ansible/playbooks/lxc-containers-destroy.yml --limit 'elasticsearch_all:kibana_all:logstash_all'
 ```
 
@@ -194,24 +196,32 @@ done
 
 ``` shell
 cd /opt/openstack-ansible/playbooks
-ansible -m package  -a 'name=filebeat state=absent' all
+ansible -m apt -a 'name=filebeat state=absent' all
 ```
 
 * Copy the ELK `env.d` file into place.
 
 ``` shell
-cp etc/openstack_deploy/env.d/elk.yml /etc/openstack_deploy/env.d/
+cp etc/openstack_deploy/env.d/elk.yml /etc/openstack_deploy/env.d/ || \
+curl -O /etc/openstack_deploy/env.d/elk.yml https://raw.githubusercontent.com/rcbops/rpc-openstack/master/etc/openstack_deploy/env.d/elk.yml
 ```
 
 * Create the new ELK containers.
 
 ``` shell
-cd /opt/openstack-ansible/playbooks
+cd /opt/openstack-ansible/playbooks || cd /opt/rpc-openstack/openstack-ansible/playbooks
 openstack-ansible lxc-containers-create.yml --limit 'log_hosts:elk_all'
 ```
 
 * Switch to directory with ELK 6.x playbooks and bootstrap embedded ansible and
   run the ELK 6x deployment.
+
+**NOTICE:*** *Older RPC releases require `ANSIBLE_INVENTORY` to be set in order to
+make the OSA inventory availably to the embedded Ansible environment.
+In such case you may set:*
+ ``` shell
+export ANSIBLE_INVENTORY=/opt/rpc-openstack/openstack-ansible/playbooks/inventory
+```
 
 ``` shell
 cd /opt/openstack-ansible-ops/elk_metrics_6x
@@ -219,7 +229,7 @@ source bootstrap-embedded-ansible.sh
 ansible-playbook site.yml $USER_VARS
 ```
 
-**NOTICE:** *the variable `$USER_VARS` is an option provided by the bootstrap
+**NOTICE:** *The variable `$USER_VARS` is an option provided by the bootstrap
 embedded ansible script. This option is not required and is only provided as a
 convenience for sourcing the secrets files. Extra variable files can be added
 on the CLI as needed.*
