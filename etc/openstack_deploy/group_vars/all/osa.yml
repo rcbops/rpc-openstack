@@ -86,6 +86,8 @@ octavia_enable_anti_affinity: "{{ lookup('env', 'DEPLOY_AIO') != 'yes' }}"
 # no event streamer
 octavia_event_streamer: False
 octavia_sync_provisioning_status: False
+# RPC doesn't use images from an artefact storage - so disable download
+octavia_download_artefact: False
 
 rackspace_octavia_files_folder: "/opt/rpc-openstack/playbooks/templates/octavia"
 octavia_user_haproxy_templates:
