@@ -3,7 +3,7 @@
 #
 
 # the base URL to download image artifacts from
-export RPCO_ARTIFACT_URL="https://dc61f63876c1acf31f7b-b28e2b85e22a27f072118ea786afca3a.ssl.cf1.rackcdn.com"
+export RPCO_ARTIFACT_URL="https://a5ce27333a8948d82738-b28e2b85e22a27f072118ea786afca3a.ssl.cf5.rackcdn.com/"
 export RPCO_IMAGE_MANIFEST_URL="${RPCO_ARTIFACT_URL}/${RPC_RELEASE}-${RE_JOB_IMAGE}-${RE_JOB_SCENARIO}/manifest.json"
 
 # Check whether there is a manifest file available
