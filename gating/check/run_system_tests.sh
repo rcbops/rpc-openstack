@@ -27,6 +27,12 @@ SYS_TEST_BRANCH="${RE_JOB_BRANCH:-master}"
 # Work-around for ASC-592. Hardcoded for proper results in qtest
 export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-newton}"
 
+# Switch system test branch to `dev` on the experimental-asc job.
+# This job is specifically for running system tests under development.
+if [[ $RE_JOB_NAME == experimental-asc* ]] ; then
+    SYS_TEST_BRANCH=dev
+fi
+
 ## Main ----------------------------------------------------------------------
 
 # 1. Clone test repository into working directory.
