@@ -18,16 +18,6 @@
   environment: "{{ deployment_environment_variables | default({}) }}"
   user: root
   tasks:
-    - name: Install shade
-      pip:
-        name: "shade"
-        state: "present"
-        virtualenv: "/opt/ansible-runtime"
-      register: install_packages
-      until: install_packages|success
-      retries: 5
-      delay: 2
-
     - name: Create OpenStack client configuration
       include_role:
         name: "openstack_openrc"
