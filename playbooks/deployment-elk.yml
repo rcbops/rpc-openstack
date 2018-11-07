@@ -80,7 +80,7 @@
       become: yes
       become_user: root
       command: >-
-        {{ ansible_env.HOME }}/ansible25/bin/ansible-playbook
+        {{ ansible_env.HOME }}/ansible_venv/bin/ansible-playbook
         {{ secrets_files.files | map(attribute='path') | list | map('regex_replace', '(.*)' ,'-e @' ~ '\1') | list | join(' ') }}
         -e elk_package_state=latest
         {{ item }}
@@ -94,11 +94,11 @@
         - skip_ansible_lint
       environment:
         ANSIBLE_LOG_PATH: "/var/log/ansible-elk-beats-deployment.log"
-        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible25/inventory/openstack_inventory.sh"
+        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible_venv/inventory/openstack_inventory.sh"
         ANSIBLE_HOST_KEY_CHECKING: "False"
-        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible25/repositories/roles"
-        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/ansible-config_template/action"
-        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/openstack-ansible-plugins/connection/"
+        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible_venv/repositories/roles"
+        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/ansible-config_template/action"
+        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/openstack-ansible-plugins/connection/"
       args:
         chdir: "/opt/openstack-ansible-ops/elk_metrics_6x"
   tags:
