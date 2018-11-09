@@ -79,21 +79,17 @@ haproxy_extra_services:
       haproxy_balance_type: http
       haproxy_backend_options:
         - "httpchk"
+      haproxy_enabled: "{{ groups['elasticsearch'] is defined and groups['elasticsearch'] | length > 0 }}"
   - service:
       haproxy_service_name: kibana_ssl
       haproxy_backend_nodes: "{{ groups['kibana'] | default([]) }}"
       haproxy_ssl: True
       haproxy_port: 8443
       haproxy_backend_port: 81
-      haproxy_balance_type: tcp
-  - service:
-      haproxy_service_name: appformix
-      haproxy_backend_nodes: "{{ groups['log_hosts'] }}"
-      haproxy_ssl: True
-      haproxy_port: 9000
       haproxy_balance_type: http
       haproxy_backend_options:
         - "httpchk"
+      haproxy_enabled: "{{ groups['kibana'] is defined and groups['kibana'] | length > 0 }}"
 
 # Define the distro version globally
 repo_build_os_distro_version: "{{ (ansible_distribution | lower) | replace(' ', '_') }}-{{ ansible_distribution_version.split('.')[:2] | join('.') }}-{{ ansible_architecture | lower }}"
