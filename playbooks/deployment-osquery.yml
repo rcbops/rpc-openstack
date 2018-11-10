@@ -82,18 +82,18 @@
       become: yes
       become_user: root
       command: >-
-        {{ ansible_env.HOME }}/ansible25/bin/ansible-galaxy install -r ansible-role-requirements.yml
-        --roles-path={{ ansible_env.HOME }}/ansible25/repositories/roles
+        {{ ansible_env.HOME }}/ansible_venv/bin/ansible-galaxy install -r ansible-role-requirements.yml
+        --roles-path={{ ansible_env.HOME }}/ansible_venv/repositories/roles
         --ignore-errors
       tags:
         - skip_ansible_lint
       environment:
         ANSIBLE_LOG_PATH: "/var/log/ansible-kolide-fleet-deployment.log"
-        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible25/inventory/openstack_inventory.sh"
+        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible_venv/inventory/openstack_inventory.sh"
         ANSIBLE_HOST_KEY_CHECKING: "False"
-        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible25/repositories/roles"
-        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/ansible-config_template/action"
-        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/openstack-ansible-plugins/connection/"
+        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible_venv/repositories/roles"
+        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/ansible-config_template/action"
+        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/openstack-ansible-plugins/connection/"
       args:
         chdir: "/opt/openstack-ansible-ops/osquery"
 
@@ -108,7 +108,7 @@
       become: yes
       become_user: root
       command: >-
-        {{ ansible_env.HOME }}/ansible25/bin/ansible-playbook
+        {{ ansible_env.HOME }}/ansible_venv/bin/ansible-playbook
         {{ secrets_files.files | map(attribute='path') | list | map('regex_replace', '(.*)' ,'-e @' ~ '\1') | list | join(' ') }}
         {{ item }}
       with_items:
@@ -118,11 +118,11 @@
         - skip_ansible_lint
       environment:
         ANSIBLE_LOG_PATH: "/var/log/ansible-kolide-fleet-deployment.log"
-        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible25/inventory/openstack_inventory.sh"
+        ANSIBLE_INVENTORY: "{{ ansible_env.HOME }}/ansible_venv/inventory/openstack_inventory.sh"
         ANSIBLE_HOST_KEY_CHECKING: "False"
-        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible25/repositories/roles"
-        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/ansible-config_template/action"
-        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible25/repositories/openstack-ansible-plugins/connection/"
+        ANSIBLE_ROLES_PATH: "{{ ansible_env.HOME }}/ansible_venv/repositories/roles"
+        ANSIBLE_ACTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/ansible-config_template/action"
+        ANSIBLE_CONNECTION_PLUGINS: "{{ ansible_env.HOME }}/ansible_venv/repositories/openstack-ansible-plugins/connection/"
       args:
         chdir: "/opt/openstack-ansible-ops/osquery"
   tags:
