@@ -32,5 +32,5 @@ source "$(readlink -f $(dirname ${0}))/../mnaio_vars.sh"
 
 ${MNAIO_SSH} <<EOS
   cd /opt/rpc-openstack
-  openstack-ansible playbooks/elk-deployment.yml
+  openstack-ansible playbooks/site-logging.yml
 EOS
