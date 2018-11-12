@@ -24,10 +24,15 @@ SYS_TEST_SOURCE="${SYS_TEST_SOURCE:-rpc-openstack-system-tests}"
 SYS_TEST_SOURCE_REPO="${SYS_TEST_SOURCE_BASE}/${SYS_TEST_SOURCE}"
 SYS_TEST_BRANCH="${RE_JOB_BRANCH:-master}"
 
-# Switch system test branch to `dev` on the experimental-asc job.
+# Switch system test branch to `dev` or `maas` on the experimental-asc job.
 # This job is specifically for running system tests under development.
-if [[ ${RE_JOB_NAME} == experimental-asc* ]] ; then
-    SYS_TEST_BRANCH=dev
+if [[ ${RE_JOB_NAME} == experimental-asc* ]]; then
+    if [[ ${RE_JOB_ACTION} == "system_staging" ]]; then
+        SYS_TEST_BRANCH=dev
+    fi
+    if [[ ${RE_JOB_ACTION} == "system_maas" ]]; then
+        SYS_TEST_BRANCH=maas
+    fi
 fi
 
 ## Main ----------------------------------------------------------------------
