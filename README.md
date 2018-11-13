@@ -175,27 +175,27 @@ git clone https://github.com/openstack/openstack-ansible-ops /opt/openstack-ansi
 ``` shell
 cd /opt/openstack-ansible/playbooks || cd /opt/rpc-openstack/openstack-ansible/playbooks
 ansible all -m service -a 'name=filebeat state=stopped'
-openstack-ansible /opt/openstack-ansible/playbooks/lxc-containers-destroy.yml --limit 'elasticsearch_all:kibana_all:logstash_all'
+openstack-ansible lxc-containers-destroy.yml --limit 'elasticsearch_all:kibana_all:logstash_all'
 ```
 
 * Move old config files out of the way.
 
 ``` shell
-rm /etc/openstack_deploy/env.d/{elasicsearch,kibana,logstash}.yml
+rm /etc/openstack_deploy/env.d/{elasticsearch,kibana,logstash}.yml
 ```
 
 * Remove old containers from openstack-ansible inventory.
 
 ``` shell
-for i in $(/opt/openstack-ansible/scripts/inventory-manage.py -l | grep -e elastic -e kibana -e logstash | awk '{print $2}'); do
-  /opt/openstack-ansible/scripts/inventory-manage.py -r "${i}"
+for i in $(../scripts/inventory-manage.py -l | grep -e elastic -e kibana -e logstash | awk '{print $2}'); do
+  echo "Removing $i"
+  ../scripts/inventory-manage.py -r "${i}"
 done
 ```
 
 * Ensure the legacy implementation of `filebeat` is stopped and removed.
 
 ``` shell
-cd /opt/openstack-ansible/playbooks
 ansible -m apt -a 'name=filebeat state=absent' all
 ```
 
@@ -203,13 +203,12 @@ ansible -m apt -a 'name=filebeat state=absent' all
 
 ``` shell
 cp etc/openstack_deploy/env.d/elk.yml /etc/openstack_deploy/env.d/ || \
-curl -O /etc/openstack_deploy/env.d/elk.yml https://raw.githubusercontent.com/rcbops/rpc-openstack/master/etc/openstack_deploy/env.d/elk.yml
+curl -o /etc/openstack_deploy/env.d/elk.yml https://raw.githubusercontent.com/rcbops/rpc-openstack/master/etc/openstack_deploy/env.d/elk.yml
 ```
 
 * Create the new ELK containers.
 
 ``` shell
-cd /opt/openstack-ansible/playbooks || cd /opt/rpc-openstack/openstack-ansible/playbooks
 openstack-ansible lxc-containers-create.yml --limit 'log_hosts:elk_all'
 ```
 
