@@ -74,16 +74,6 @@ octavia_amp_disk: 2
 # RPC doesn't use images from an artefact storage - so disable download
 octavia_download_artefact: False
 
-rackspace_octavia_files_folder: "/opt/rpc-openstack/playbooks/templates/octavia"
-octavia_user_haproxy_templates:
-  - src: "{{ rackspace_octavia_files_folder }}/base.j2"
-    dest: "/etc/octavia/templates/base.j2"
-  - src: "{{ rackspace_octavia_files_folder }}/haproxy.cfg.j2"
-    dest: "/etc/octavia/templates/haproxy.cfg.j2"
-  - src: "{{ rackspace_octavia_files_folder }}/macros.j2"
-    dest: "/etc/octavia/templates/macros.j2"
-octavia_haproxy_amphora_template: /etc/octavia/templates/haproxy.cfg.j2
-
 octavia_octavia_conf_overrides:
   # Production clouds should be able to boot VMs in ten minutes
   haproxy_amphora:
