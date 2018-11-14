@@ -184,6 +184,12 @@ openstack-ansible lxc-containers-destroy.yml --limit 'elasticsearch_all:kibana_a
 rm /etc/openstack_deploy/env.d/{elasticsearch,kibana,logstash}.yml
 ```
 
+* Ensure the legacy implementation of `filebeat` is stopped and removed.
+
+``` shell
+ansible -m apt -a 'name=filebeat state=absent' all
+```
+
 * Remove old containers from openstack-ansible inventory.
 
 ``` shell
@@ -191,12 +197,6 @@ for i in $(../scripts/inventory-manage.py -l | grep -e elastic -e kibana -e logs
   echo "Removing $i"
   ../scripts/inventory-manage.py -r "${i}"
 done
-```
-
-* Ensure the legacy implementation of `filebeat` is stopped and removed.
-
-``` shell
-ansible -m apt -a 'name=filebeat state=absent' all
 ```
 
 * Copy the ELK `env.d` file into place.
