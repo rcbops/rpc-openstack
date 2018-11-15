@@ -29,7 +29,7 @@ export RPC_PRODUCT_RELEASE="${RPC_PRODUCT_RELEASE:-newton}"
 
 # Switch system test branch to `dev` or `maas` on the experimental-asc job.
 # This job is specifically for running system tests under development.
-if [[ ${RE_JOB_NAME} == experimental-asc* ]]; then
+if [[ ${RE_JOB_PROJECT_NAME} == experimental-asc* ]]; then
     if [[ ${RE_JOB_ACTION} == "system_staging" ]]; then
         SYS_TEST_BRANCH=dev
     fi
