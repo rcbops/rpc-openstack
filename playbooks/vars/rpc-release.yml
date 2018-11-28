@@ -22,5 +22,5 @@ rpc_product_releases:
   queens:
     maas_release: 1.7.9
     openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
-    osa_release: 11310afb1ec2fe31f279cdf594b288f3fc00dade
+    osa_release: 944f682f85e01d0c580a0b402156940688d4284b
     rpc_release: r17.1.3
