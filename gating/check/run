@@ -27,6 +27,13 @@ elif [[ $RE_JOB_IMAGE =~ .*mnaio.* ]]; then
   bash -c "$(readlink -f $(dirname ${0})/run_deploy_mnaio.sh)"
 else
   bash -c "$(readlink -f $(dirname ${0})/../../scripts/deploy.sh)"
+
+  # Enable the debug stdout callback to ensure that the console
+  # output is easily legible
+  export ANSIBLE_STDOUT_CALLBACK=debug
+  # Verify that there are no haproxy backends down
+  cd /opt/openstack-ansible/playbooks/
+  openstack-ansible -v /opt/rpc-openstack/gating/thaw/haproxycheck.yml
 fi
 
 if [[ $RE_JOB_ACTION == system* ]]; then
