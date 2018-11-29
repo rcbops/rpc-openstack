@@ -197,32 +197,12 @@ cd /opt/openstack-ansible/playbooks
 ansible -m package  -a 'name=filebeat state=absent' all
 ```
 
-* Copy the ELK `env.d` file into place.
+* Deploy the new ELK infrastructure
 
 ``` shell
-cp etc/openstack_deploy/env.d/elk.yml /etc/openstack_deploy/env.d/
+cd /opt/rpc-openstack/playbooks
+openstack-ansible deployment-elk.yml
 ```
-
-* Create the new ELK containers.
-
-``` shell
-cd /opt/openstack-ansible/playbooks
-openstack-ansible lxc-containers-create.yml --limit 'log_hosts:elk_all'
-```
-
-* Switch to directory with ELK 6.x playbooks and bootstrap embedded ansible and
-  run the ELK 6x deployment.
-
-``` shell
-cd /opt/openstack-ansible-ops/elk_metrics_6x
-source bootstrap-embedded-ansible.sh
-ansible-playbook site.yml $USER_VARS
-```
-
-**NOTICE:** *the variable `$USER_VARS` is an option provided by the bootstrap
-embedded ansible script. This option is not required and is only provided as a
-convenience for sourcing the secrets files. Extra variable files can be added
-on the CLI as needed.*
 
 ### Testing and Gating
 
