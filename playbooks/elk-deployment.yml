@@ -26,7 +26,7 @@
       tags:
         - always
 
-    - name: Clone RPC-MaaS
+    - name: Clone openstack-ansible-ops
       git:
         repo: "https://github.com/openstack/openstack-ansible-ops"
         dest: "/opt/openstack-ansible-ops"
@@ -36,7 +36,7 @@
     - elk-get
 
 
-- name: Bootstrap embedded ansible
+- name: Bootstrap embedded ansible and the inventory configuration
   hosts: localhost
   environment: "{{ deployment_environment_variables | default({}) }}"
   connection: local
@@ -46,7 +46,21 @@
       command: "/opt/openstack-ansible-ops/elk_metrics_6x/bootstrap-embedded-ansible.sh"
       changed_when: false
 
-    - name: Create elk groups
+    - name: Ensure that the required user space folders are present
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "/etc/openstack_deploy/conf.d"
+        - "/etc/openstack_deploy/env.d"
+
+    - name: Add the inventory environment information
+      copy:
+        src: "/opt/openstack-ansible-ops/elk_metrics_6x/env.d/elk.yml"
+        dest: "/etc/openstack_deploy/env.d/elk.yml"
+        remote_src: yes
+
+    - name: Configure ELK groups in the inventory
       copy:
         content: |
           ---
