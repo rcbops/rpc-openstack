@@ -258,7 +258,7 @@ backend {{ pool.id }}
     fullconn {{ listener.connection_limit }}
     {% endif %}
     option allbackups
-    {% for member in pool.members if member.enabled %}
+    {% for member in pool.members %}
         {{- member_macro(constants, pool, member) -}}
     {% endfor %}
 {% endmacro %}
