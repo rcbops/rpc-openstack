@@ -25,6 +25,10 @@ ssh-keyscan localhost >> /root/.ssh/known_hosts
 
 cd /opt/openstack-ansible/playbooks/
 
+# Enable the debug stdout callback to ensure that the console
+# output is easily legible
+export ANSIBLE_STDOUT_CALLBACK=debug
+
 # Use implicit fact gathering to ensure the fact cache is ignored,
 # and facts are always gathered. This important we rely on the public
 # IP fact being up to date.

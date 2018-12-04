@@ -3,7 +3,16 @@
   tasks:
   - name: Check state of haproxy backends
     shell: |
-      set -xeu
+      set -eu
+
+      # There are two flavors of netcat on Ubuntu, but
+      # only this one supports the -U parameter.
+      if ! dpkg-query --status netcat-openbsd &>/dev/null; then
+        echo "netcat not installed - installing it now"
+        apt-get update
+        apt-get install netcat-openbsd
+      fi
+
       # Check haproxy backends excluding elasticsearch
       # Haproxy prints the stats iteration so if the line is "1" its ignored
       # Lines where the first field is hash are comments and are ignored
