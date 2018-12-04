@@ -126,7 +126,8 @@ haproxy_extra_services:
       haproxy_backend_port: 443
       haproxy_balance_type: tcp
       haproxy_enabled: "{{ groups['fleet_all'] is defined and groups['fleet_all'] | length > 0 }}"
-
+# Force TLS-1.2 for haproxy
+haproxy_ssl_bind_options: "force-tlsv12"
 
 # Define the distro version globally
 repo_build_os_distro_version: "{{ (ansible_distribution | lower) | replace(' ', '_') }}-{{ ansible_distribution_version.split('.')[:2] | join('.') }}-{{ ansible_architecture | lower }}"
