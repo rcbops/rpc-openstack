@@ -25,7 +25,7 @@ rpc_product_releases:
     osa_release: d38e190e43dfb737e6684096084b9f98f89e0637
     rpc_release: r17.0.2
   rocky:
-    maas_release: 1.7.9
+    maas_release: 1.8.0
     openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
-    osa_release: c475673a6422cb513bbbc61dbb92370327d037c8
+    osa_release: b52d00da83ab1d460667635aead0224d7cd4b14e
     rpc_release: r18.0.0
