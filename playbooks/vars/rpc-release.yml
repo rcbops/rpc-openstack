@@ -15,9 +15,9 @@ rpc_product_releases:
     osa_release: stable/ocata
     rpc_release: r15.0.0
   pike:
-    maas_release: 1.7.9
+    maas_release: 1.8.0
     openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
-    osa_release: 1eb08d1b4d3016a63846886bd083b746dbcfceba
+    osa_release: 759fe3fe8420098cbb7b452b00bcc71bb95aeb68
     rpc_release: r16.2.8
   queens:
     maas_release: 1.7.4
