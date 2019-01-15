@@ -15,4 +15,6 @@
 
 - include: openstack-ansible-ops-get.yml
 - include: deployment-osquery.yml
+  when: groups['log_hosts'] is defined and (groups['log_hosts'] | length>0)
 - include: deployment-elk.yml
+  when: groups['log_hosts'] is defined and (groups['log_hosts'] | length>0)
