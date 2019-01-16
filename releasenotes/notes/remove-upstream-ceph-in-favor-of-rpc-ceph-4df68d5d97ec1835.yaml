@@ -1,0 +1,5 @@
+---
+deprecations:
+  - |
+    Because RPC-O utilizes RPC-Ceph, we are removing the native ceph-ansible
+    related roles. Ceph has removed the repos that we clone down.
