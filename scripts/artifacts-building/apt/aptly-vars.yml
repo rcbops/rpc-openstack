@@ -29,9 +29,9 @@ rpc_series: "{{ rpc_release.split('.')[0] }}"
 
 # Prepare for aptly, repos to clone.
 aptly_clone_this_first:
-  - repo: "https://github.com/evrardjp/ansible-role-aptly.git"
+  - repo: "https://github.com/rcbops/ansible-role-aptly.git"
     dest: "{{ ansible_roles_folder }}/infOpen.aptly"
-    version: "rax"
+    version: "master"
 
 aptly_custom_gpg_key_file: "{{ artifacts_root_folder }}/aptly.private.key"
 aptly_custom_gpg_pubkey_file: "{{ artifacts_root_folder }}/aptly.public.key"
@@ -69,7 +69,7 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
       - "slushie-{{ rpc_release }}-influxdata-trusty"
-      - "slushie-{{ rpc_release }}-grafana-jessie-ALL"
+      - "slushie-{{ rpc_release }}-grafana-stable-ALL"
     xenial:
       - "slushie-{{ rpc_release }}-ubuntu-updates-xenial"
       - "slushie-{{ rpc_release }}-uca-newton-updates-xenial"
@@ -83,7 +83,7 @@ aptly_miko_mapping:
       - "slushie-{{ rpc_release }}-elastic-es-1.7-ALL"
       - "slushie-{{ rpc_release }}-elastic-es-2.x-ALL"
       - "slushie-{{ rpc_release }}-influxdata-xenial"
-      - "slushie-{{ rpc_release }}-grafana-jessie-ALL"
+      - "slushie-{{ rpc_release }}-grafana-stable-ALL"
 
 # mapping for N (NOT MERGE) snapshots
 # This is a list of the repo/mirror snapshots (slushies) that will be published separately.
@@ -499,6 +499,24 @@ aptly_mirrors:
       - "-keyring='trustedkeys.gpg'"
     update_flags:
       - "-keyring='trustedkeys.gpg'"
+    do_update: no
+
+  - name: grafana-stable-ALL
+    archive_url: https://packages.grafana.com/oss/deb
+    distribution: stable
+    component1:
+      - main
+    state: "present"
+    gpg:
+      key: "8c8c34c524098cb6"
+      server: "hkp://keyserver.ubuntu.com:80"
+      keyring: "trustedkeys.gpg"
+    create_flags:
+      - "-keyring='trustedkeys.gpg'"
+      - "-architectures=amd64"
+    update_flags:
+      - "-keyring='trustedkeys.gpg'"
+      - "-architectures=amd64"
     do_update: "{{ aptly_mirror_do_updates }}"
 
 ## TODO
