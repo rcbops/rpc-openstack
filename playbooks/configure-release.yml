@@ -158,25 +158,41 @@
         line: '{{ item.key }}: "{{ item.value }}"'
       with_dict: "{{ rpc_product_releases[rpc_product_release] }}"
 
-    - name: Galaxy install the RPC-OpenStack roles
-      command: |
-        /opt/rpc-ansible/bin/ansible-galaxy install \
-          --role-file={{ playbook_dir }}/../ansible-role-{{ rpc_product_release }}-requirements.yml \
-          --roles-path=/etc/ansible/roles \
-          --force
+    - name: Remove any existing roles
+      file:
+        path: "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}"
+        state: absent
       when:
+        - item.scm == "git" or item.scm is undefined
         - rpc_product_bootstrapped != rpc_product_new_bootstrap
-      tags:
-        - skip_ansible_lint
+      with_items:
+        - "{{ rpco_required_roles }}"
+        - "{{ osa_required_roles }}"
 
-    - name: Galaxy install the OpenStack-Ansible roles
-      command: |
-        /opt/rpc-ansible/bin/ansible-galaxy install \
-          --role-file=/opt/openstack-ansible/ansible-role-requirements.yml \
-          --roles-path=/etc/ansible/roles \
-          --force
+    - name: Ensure the default roles directory exists
+      file:
+        path: "{{ role_path_default }}"
+        state: directory
+
+    - name: Clone OSA and RPC-O roles from git
+      git:
+        repo: "{{ item.src }}"
+        dest: "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}"
+        version: "{{ item.version | default('master') }}"
+        refspec: "{{ item.refspec | default(omit) }}"
+        depth: "{{ item.depth | default('10') }}"
+        update: true
+        force: true
       when:
+        - item.scm == "git" or item.scm is undefined
         - rpc_product_bootstrapped != rpc_product_new_bootstrap
+      with_items:
+        - "{{ osa_required_roles }}"
+        - "{{ rpco_required_roles }}"
+      register: git_clone
+      until: git_clone is succeeded
+      retries: "{{ git_clone_retries }}"
+      delay: "{{ git_clone_retry_delay }}"
       tags:
         - skip_ansible_lint
 
@@ -219,6 +235,13 @@
   vars:
     ansible_python_interpreter: "/usr/bin/python"
     rpc_product_release: "{{ lookup('env', 'RPC_PRODUCT_RELEASE') | default('undefined', true) }}"
+    osa_required_roles: "{{ lookup('file', osa_role_file) | from_yaml }}"
+    rpco_required_roles: "{{ lookup('file', rpco_role_file) | from_yaml }}"
+    osa_role_file: "/opt/openstack-ansible/ansible-role-requirements.yml"
+    rpco_role_file: "{{ playbook_dir }}/../ansible-role-{{ rpc_product_release }}-requirements.yml"
+    role_path_default: '/etc/ansible/roles'
+    git_clone_retries: 2
+    git_clone_retry_delay: 5
 
   vars_files:
     - vars/rpc-release.yml
