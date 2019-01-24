@@ -9,7 +9,12 @@ set -x
 export QTEST_API_TOKEN=${RPC_ASC_QTEST_API_TOKEN}
 VENV_NAME="venv-qtest"
 VENV_PATH="${WORKSPACE}/${VENV_NAME}"
-PROJECT_ID="76551"
+
+if [[ ${RE_JOB_ACTION} == "system_staging" ]]; then
+    PROJECT_ID="84820"
+else
+    PROJECT_ID="76551"
+fi
 
 ## Functions -----------------------------------------------------------------
 
