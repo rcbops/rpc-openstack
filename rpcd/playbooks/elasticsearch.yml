@@ -54,6 +54,7 @@
       tags:
         - elasticsearch-pre-install
   roles:
+    - "pip_install"
     - "elasticsearch"
   vars:
     is_metal: "{{ properties.is_metal | default(False) }}"

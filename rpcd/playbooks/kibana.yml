@@ -16,4 +16,5 @@
 - name: Setup Kibana host
   hosts: kibana_all
   roles:
+    - "pip_install"
     - "kibana"
