@@ -16,4 +16,5 @@
 - name: Setup Logstash host
   hosts: logstash_all
   roles:
+    - "pip_install"
     - "logstash"

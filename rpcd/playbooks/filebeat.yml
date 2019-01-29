@@ -17,4 +17,5 @@
   hosts: all
   max_fail_percentage: 20
   roles:
+    - "pip_install"
     - "filebeat"
