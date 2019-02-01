@@ -4,7 +4,7 @@ typing===3.6.6
 bandit===1.5.1
 certifi===2018.11.29
 alabaster===0.7.12
-pbr===5.1.1
+pbr===5.1.2
 fixtures===3.0.0
 sphinxcontrib-websupport===1.1.0
 ipaddress===1.0.22
@@ -64,5 +64,5 @@ Babel===2.6.0
 smmap2===2.0.5
 filelock===3.0.10
 gitdb2===2.0.5
-virtualenv===16.2.0
+virtualenv===16.3.0
 pytz===2018.9
