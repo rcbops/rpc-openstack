@@ -19,7 +19,7 @@ traceback2===1.4.0
 extras===1.0.0
 reno===2.11.2
 imagesize===1.1.0
-rpc-differ===0.3.11
+rpc-differ===0.3.12
 urllib3===1.24.1
 osa-differ===0.3.10
 pycparser===2.19

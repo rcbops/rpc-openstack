@@ -12,6 +12,7 @@ apt-get install -y pandoc python3-dev python-dev
 
 pip install dulwich -c upper-constraints.txt
 pip install -r test-requirements.txt -c upper-constraints.txt
+pip3 install 'rpc_component==0.0.2'
 
 gating/generate_release_notes/generate_release_notes.sh
 
