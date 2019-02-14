@@ -17,7 +17,7 @@ rpc_product_releases:
   pike:
     maas_release: 1.8.1
     openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
-    osa_release: c14c8426d4fc423552918b7033ff94131cf99e89
+    osa_release: 3bf08d154c8618c37a34d1ed824d9edf2508fbc5
     rpc_release: r16.2.10
   queens:
     maas_release: 1.7.4
