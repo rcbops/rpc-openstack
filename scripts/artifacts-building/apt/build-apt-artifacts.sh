@@ -136,7 +136,13 @@ echo "repo ansible_host=${REPO_HOST} ansible_user=${REPO_USER} ansible_ssh_priva
 # Execute the playbooks
 cd ${BASE_DIR}/scripts/artifacts-building/apt
 ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} aptly-pre-install.yml
-ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} aptly-all.yml
 
-source /opt/rpc-openstack/openstack-ansible/scripts/openstack-ansible.rc
-ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} apt-artifacts-testing.yml
+if [[ $PULL_FROM_MIRROR == "YES" && ${BUILD_APT_ARTIFACTS:-YES} != "YES" ]]
+then
+  # Here the user wants to update the local copy of rpc-repo, but not actually build artifacts
+  ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} -t pull_from_mirror aptly-all.yml
+else
+  ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} ${pfm_only} aptly-all.yml
+  source /opt/rpc-openstack/openstack-ansible/scripts/openstack-ansible.rc
+  ansible-playbook -i /opt/inventory ${ANSIBLE_PARAMETERS} apt-artifacts-testing.yml
+fi
