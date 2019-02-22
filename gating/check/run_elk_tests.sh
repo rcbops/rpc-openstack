@@ -32,7 +32,7 @@ source "$(readlink -f $(dirname ${0}))/../mnaio_vars.sh"
 
 ${MNAIO_SSH} <<EOS
   cd /opt
-  curl https://raw.githubusercontent.com/rcbops/magnanimous-turbo-chainsaw/master/scripts/setup.sh | bash
+  wget https://raw.githubusercontent.com/rcbops/magnanimous-turbo-chainsaw/master/scripts/setup.sh -O /opt/mtc-setup.sh; bash /opt/mtc-setup.sh
   cd /opt/magnanimous-turbo-chainsaw
   bash ./scripts/deploy-elk.sh
 EOS
