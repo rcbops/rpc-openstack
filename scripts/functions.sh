@@ -20,11 +20,6 @@ export DEPLOY_MAAS=${DEPLOY_MAAS:-false}
 export DEPLOY_TELEGRAF=${DEPLOY_TELEGRAF:-false}
 export DEPLOY_INFLUX=${DEPLOY_INFLUX:-false}
 
-# Tox Variables
-# Known working for master 2/27/19
-export OSA_TEST_RELEASE=${OSA_TEST_RELEASE:-d90acf00b639496cd0669153534fe5588875f3ee}
-export OSA_UPPER_CONSTRAINTS=${OSA_UPPER_CONSTRAINTS:-377fde64ac16dc94da2e29e16a4102adcc081a6e}
-
 if [ ${DEPLOY_AIO} == true ]; then
   export DEPLOY_MAAS=false
 fi
