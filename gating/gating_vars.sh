@@ -10,3 +10,9 @@ export RE_HOOK_ARTIFACT_DIR="${RE_HOOK_ARTIFACT_DIR:-/tmp/artifacts}"
 export RE_HOOK_RESULT_DIR="${RE_HOOK_RESULT_DIR:-/tmp/results}"
 export RE_JOB_NAME="${RE_JOB_NAME:-${RE_JOB_TRIGGER}_rpc-openstack-master-${RE_JOB_IMAGE}_no_artifacts-${RE_JOB_SCENARIO}-${RE_JOB_ACTION}}"
 export RE_JOB_PROJECT_NAME="${RE_JOB_PROJECT_NAME:-}"
+
+# OSA Tests SHA
+# # These variables pin the SHA for the OSA Testing repository
+export OSA_TEST_RELEASE=${OSA_TEST_RELEASE:-stable/queens}
+export OSA_UPPER_CONSTRAINTS=${OSA_UPPER_CONSTRAINTS:-stable/queens}
+
