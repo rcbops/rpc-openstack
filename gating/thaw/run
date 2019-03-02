@@ -33,9 +33,13 @@ cd /opt/rpc-openstack/openstack-ansible/playbooks/
 # IP fact being up to date.
 export ANSIBLE_GATHERING=implicit
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/thaw.yml
+
 openstack-ansible -t haproxy_server-config haproxy-install.yml
 
 lxc-autostart --all
+
+# This should rebuild the networking for the containers and ensure that they are all up
+openstack-ansible -t lxc_container_create-networks lxc-containers-create.yml
 
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/haproxycheck.yml
 openstack-ansible -v /opt/rpc-openstack/gating/thaw/fix_endpoints.yml -e orig_ip=${ORIG_IP}
