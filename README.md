@@ -1,3 +1,10 @@
+
+# This project is EOL 
+
+This project is retired with Rocky and releases forward are using native openstack-ansible.
+Do not file any issues in this project
+
+
 # Rackspace Private Cloud - OpenStack
 
 The RPC-OpenStack repository contains additional scripts, variables, and
