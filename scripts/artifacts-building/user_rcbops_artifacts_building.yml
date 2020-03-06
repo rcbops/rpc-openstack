@@ -55,6 +55,13 @@ lxc_image_cache_server: images.linuxcontainers.org
 # in an available apt source.
 #
 lxc_cache_prep_pre_commands: |
+    # openssh-server's ssh-keygen needs these
+    if [ ! -e /dev/random ]; then
+      mknod -m 0644 /dev/random c 1 8
+    fi
+    if [ ! -e /dev/urandom ]; then
+      mknod -m 0644 /dev/urandom c 1 9
+    fi
     # If there is a configured resolver, save it.
     if [ -a /etc/resolv.conf ]; then
       mv /etc/resolv.conf /etc/resolv.conf.org
