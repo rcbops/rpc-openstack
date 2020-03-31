@@ -28,4 +28,4 @@ rpc_product_releases:
     maas_release: 1.8.1
     openstack_ansible_ops: d3b53d6f802259b5ea4d12f5a567a7ec86677087
     osa_release: 3abb4b391da11c8521bfe9efc4c7f1eb3f698095
-    rpc_release: r18.0.1
+    rpc_release: r18.0.2
